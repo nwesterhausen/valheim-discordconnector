@@ -7,15 +7,20 @@ namespace DiscordConnector
     [BepInProcess("valheim_server.exe")]
     public class Plugin : BaseUnityPlugin
     {
-        internal static new ManualLogSource Logger;
-        internal static new PluginConfig Config;
+        internal static ManualLogSource StaticLogger;
+        internal static PluginConfig StaticConfig;
         private void Awake()
         {
-            Logger = base.Logger;
-            Config = new PluginConfig(base.Config);
+            StaticLogger = base.Logger;
+            StaticConfig = new PluginConfig(base.Config);
 
             // Plugin startup logic
-            Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
+            StaticLogger.LogInfo($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
+
+            if (string.IsNullOrEmpty(StaticConfig.WebHookURL))
+            {
+                StaticLogger.LogError($"No value set for WebHookURL");
+            }
         }
     }
 }
