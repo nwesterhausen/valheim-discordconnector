@@ -17,9 +17,3 @@ in the project directory which contains the following:
   </packageSources>
 </configuration>
 ```
-
-### Publicized Assemblies
-
-(Not sure if needed atm, but publicizer part of
-[Bepinex-Tools](https://github.com/MrPurple6411/Bepinex-Tools) was used in other
-plugins which tied into the game.)
