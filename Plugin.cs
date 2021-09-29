@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿using HarmonyLib;
+using BepInEx;
 using BepInEx.Logging;
 
 namespace DiscordConnector
@@ -13,6 +14,7 @@ namespace DiscordConnector
         {
             StaticLogger = base.Logger;
             StaticConfig = new PluginConfig(base.Config);
+            var harmony = new Harmony(PluginInfo.PLUGIN_ID);
 
             // Plugin startup logic
             StaticLogger.LogInfo($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
@@ -20,7 +22,11 @@ namespace DiscordConnector
             if (string.IsNullOrEmpty(StaticConfig.WebHookURL))
             {
                 StaticLogger.LogError($"No value set for WebHookURL");
+                return;
             }
+
+            DiscordApi.SendMessage("Server is starting up..");
+            harmony.PatchAll();
         }
     }
 }
