@@ -22,4 +22,25 @@
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
+
+   <Target Name="CreatePluginDir" AfterTargets="PrepareForBuild">
+    <MakeDir Directories="$(ProjectDir)bin/DiscordConnector" Condition="!Exists('$(ProjectDir)bin/DiscordConnector')"  />
+  </Target>
+
+  <Target Name="CopyPluginFiles" AfterTargets="Build">
+    <ItemGroup>
+      <BuiltLibraryAndDeps 
+        Include="$(ProjectDir)bin/Debug/net48/DiscordConnector.dll" />
+      <!-- Include System.Text.Json dependency -->
+      <BuiltLibraryAndDeps
+        Include="$(ProjectDir)bin/Debug/net48/System.*.dll" />
+      <BuiltLibraryAndDeps
+        Include="$(ProjectDir)bin/Debug/net48/Microsoft.Bcl.AsyncInterfaces.dll" />
+    </ItemGroup>
+
+    <Copy 
+      SourceFiles="@(BuiltLibraryAndDeps)"
+      DestinationFolder="$(ProjectDir)bin/DiscordConnector"
+      SkipUnchangedFiles="true" />
+  </Target>
 </Project>
