@@ -20,8 +20,6 @@ namespace DiscordConnector
         private ConfigEntry<bool> serverLoadedToggle;
         private ConfigEntry<bool> serverStopToggle;
         private ConfigEntry<bool> chatToggle;
-        private ConfigEntry<bool> chatArrivalToggle;
-        private ConfigEntry<bool> chatArrivalPosToggle;
         private ConfigEntry<bool> chatShoutToggle;
         private ConfigEntry<bool> chatShoutPosToggle;
         private ConfigEntry<bool> chatPingToggle;
@@ -75,18 +73,6 @@ namespace DiscordConnector
                 true,
                 "If enabled, this will send a message to Discord the server chat has new messages." + Environment.NewLine +
                 "If this is false, no messages will be sent based on the server chat, even if specific notifications are enabled.");
-
-            chatArrivalToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
-                "Chat Arrival Messages Notifications",
-                true,
-                "If enabled, this will send a message to Discord when a player joins the server." + Environment.NewLine +
-                "EX: Nick has arrived!");
-
-            chatArrivalPosToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
-                "Chat Arrival Messages Position Notifications",
-                true,
-                "If enabled, include a position with the arrival message." + Environment.NewLine +
-                "EX: Nick has arrived! (at -124, 81.4, -198.9)");
 
             chatShoutToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
                 "Chat Shout Messages Notifications",
@@ -162,8 +148,6 @@ namespace DiscordConnector
         public bool ChatMessageEnabled => chatToggle.Value;
         public bool ChatShoutEnabled => chatShoutToggle.Value;
         public bool ChatShoutPosEnabled => chatShoutPosToggle.Value;
-        public bool ChatArrivalEnabled => chatArrivalToggle.Value;
-        public bool ChatArrivalPosEnabled => chatArrivalPosToggle.Value;
         public bool ChatPingEnabled => chatPingToggle.Value;
         public bool PlayerJoinMessageEnabled => playerJoinToggle.Value;
         public bool PlayerLeaveMessageEnabled => playerLeaveToggle.Value;

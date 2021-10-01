@@ -14,33 +14,28 @@ Connect your Valheim server to a Discord Webhook. ([How to get a webhook](https:
 - Server started (world loaded, ready to join)
 - Server shutting down (server stopping)
 - Player join
+- Player leave
 - Player shouting
 - Player pinging
 
 ### Roadmap
 
-- Messages on player leave
 - Message when events start/end
+- Player death
 
 ## Changelog
 
-Full changelog history available on the 
+Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
-### Version 0.3.0
 
-Bug fixes:
+### Version 0.4.0
 
-When the server loaded it was sending the same message from the launch.
+Features:
 
-New Features:
+- Player leave messages
 
-Added 3 messages from hooking into the chat on the server. This includes:
+Thanks to a contribution from Digitalroot, player join and leave messages are now
+implemented. You can modify what is announced when players join and leave or toggle
+them on or off.
 
-- Players joining the server
-- Shouting
-- Pinging
-
-All 3 are togglable and can have the position toggled separately.
-
-To include when players leave, more work has to be done because those events
-are not broadcast and instead it is only network messages.
+This removes the PlayerArrival settings.

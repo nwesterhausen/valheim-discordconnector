@@ -92,20 +92,11 @@ namespace DiscordConnector.Patches
                             }
                             break;
                         case Talker.Type.Shout:
-                            if (text.Equals("I have arrived!") && Plugin.StaticConfig.ChatArrivalEnabled)
+                            if (text.Equals("I have arrived!"))
                             {
-                                if (Plugin.StaticConfig.ChatArrivalPosEnabled)
-                                {
-                                    DiscordApi.SendMessage(
-                                        $"{user} has arrived at {pos}!"
-                                    );
-                                }
-                                else
-                                {
-                                    DiscordApi.SendMessage(
-                                        $"{user} has arrived!"
-                                    );
-                                }
+                                Plugin.StaticLogger.LogDebug(
+                                    $"{user} shouts 'I have arrived!'"
+                                );
                             }
                             else if (Plugin.StaticConfig.ChatShoutEnabled)
                             {
