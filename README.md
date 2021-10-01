@@ -9,6 +9,7 @@ See [the README](Metadata/README.md) for the plugin.
 ### Changelog
 
 See [the changelog](Metadata/CHANGELOG.md).
+
 ## Development
 
 To contribute or modify for a PR etc, simply clone this repository. A good set of
@@ -40,11 +41,18 @@ public repository.
 
 ### Building
 
-Use dotnet to restore and build the project. Post build, the compiled library and its 
-dependencies get copied into `bin/DiscordConnector` which enables you to simply copy 
+Use dotnet to restore and build the project. Post build, the compiled library and its
+dependencies get copied into `bin/DiscordConnector` which enables you to simply copy
 that folder into `$(GameDir)/BepinEx/plugins` for testing.
 
 ### Dependencies
 
 For JSON serialization, I chose to use the System.Text.Json library which is part of
 the most recent .NET but can be used with .NET 4.8 which is used in this project.
+
+### Contributors
+
+Thanks for the helpful contributions!
+
+- @Digitalroot
+- @nwesterhausen
