@@ -17,15 +17,20 @@ namespace DiscordConnector
             var harmony = new Harmony(PluginInfo.PLUGIN_ID);
 
             // Plugin startup logic
-            StaticLogger.LogInfo($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
+            StaticLogger.LogDebug($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
 
             if (string.IsNullOrEmpty(StaticConfig.WebHookURL))
             {
-                StaticLogger.LogError($"No value set for WebHookURL");
+                StaticLogger.LogWarning($"No value set for WebHookURL");
                 return;
             }
+            if (StaticConfig.LaunchMessageEnabled)
+            {
+                DiscordApi.SendMessage(
+                    StaticConfig.LaunchMessage
+                );
+            }
 
-            DiscordApi.SendMessage("Server is starting up..");
             harmony.PatchAll();
         }
     }

@@ -10,7 +10,12 @@ namespace DiscordConnector.Patches
         {
             private static void Postfix(ref ZNet __instance)
             {
-                DiscordApi.SendMessage("Server has started!");
+                if (Plugin.StaticConfig.LoadedMessageEnabled)
+                {
+                    DiscordApi.SendMessage(
+                        Plugin.StaticConfig.LaunchMessage
+                    );
+                }
             }
         }
 
@@ -19,7 +24,12 @@ namespace DiscordConnector.Patches
         {
             private static void Prefix(ref ZNet __instance)
             {
-                DiscordApi.SendMessage("Server is shutting down!");
+                if (Plugin.StaticConfig.StopMessageEnabled)
+                {
+                    DiscordApi.SendMessage(
+                        Plugin.StaticConfig.StopMessage
+                        );
+                }
             }
         }
     }

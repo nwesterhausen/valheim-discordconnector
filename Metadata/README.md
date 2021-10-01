@@ -22,6 +22,11 @@ Connect your Valheim server to a Discord Webhook. ([How to get a webhook](https:
 
 ## Changelog
 
+### Version 0.2.0
+
+- Use config values to set what messages get sent for what actions
+- More granualarity with Enable/Disable for existing messages
+
 ### Version 0.1.2
 
 Added link to a how-to guide for creating a discord webhook.
