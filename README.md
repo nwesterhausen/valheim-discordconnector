@@ -1,6 +1,6 @@
 # Discord Connector
 
-Connect your Valheim server to a Discord Webhook.
+Connect your Valheim server to a Discord Webhook. ([How to get a webhook](Metadata/HowtoGuide.md))
 
 ## Features
 
