@@ -13,7 +13,7 @@ namespace DiscordConnector.Patches
                 if (Plugin.StaticConfig.LoadedMessageEnabled)
                 {
                     DiscordApi.SendMessage(
-                        Plugin.StaticConfig.LaunchMessage
+                        Plugin.StaticConfig.LoadedMessage
                     );
                 }
             }
