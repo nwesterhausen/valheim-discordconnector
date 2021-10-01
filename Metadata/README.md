@@ -6,39 +6,41 @@ Connect your Valheim server to a Discord Webhook. ([How to get a webhook](https:
 
 - Set your own webhook, lets you configure icon, title, and a target channel
 - Enable or Disable any messages
+- Set what text gets sent for most messages
 
 ### Supported Message Notificaitons
 
 - Server startup (server starting, loading the world)
 - Server started (world loaded, ready to join)
 - Server shutting down (server stopping)
+- Player join
+- Player shouting
+- Player pinging
 
 ### Roadmap
 
-- Messages on player join/leave
-- Messages on player ping
-- Message on player shouting
+- Messages on player leave
 - Message when events start/end
 
 ## Changelog
 
-### Version 0.2.0
+Full changelog history available on the 
+[Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
+### Version 0.3.0
 
-- Use config values to set what messages get sent for what actions
-- More granualarity with Enable/Disable for existing messages
+Bug fixes:
 
-### Version 0.1.2
+When the server loaded it was sending the same message from the launch.
 
-Added link to a how-to guide for creating a discord webhook.
+New Features:
 
-### Version 0.1.1
+Added 3 messages from hooking into the chat on the server. This includes:
 
-Initial release. Configuration and sends messages on server startup and shutdown.
-Essentially a minimally viable product.
+- Players joining the server
+- Shouting
+- Pinging
 
-- Configuration file with webhook and enable disable for each notification
-- Ability to send messages to a Discord webhook
-- Detection and message sent for:
-    - server starting
-    - server started
-    - server stopping
+All 3 are togglable and can have the position toggled separately.
+
+To include when players leave, more work has to be done because those events
+are not broadcast and instead it is only network messages.
