@@ -24,7 +24,12 @@
   </ItemGroup>
 
    <Target Name="CreatePluginDir" AfterTargets="PrepareForBuild">
-    <MakeDir Directories="$(ProjectDir)bin/DiscordConnector" Condition="!Exists('$(ProjectDir)bin/DiscordConnector')"  />
+    <MakeDir 
+      Directories="$(ProjectDir)bin/DiscordConnector" 
+      Condition="!Exists('$(ProjectDir)bin/DiscordConnector')"  />
+    <MakeDir 
+      Directories="$(ProjectDir)bin/DiscordConnector/plugins" 
+      Condition="!Exists('$(ProjectDir)bin/DiscordConnector/plugins')"  />
   </Target>
 
   <Target Name="CopyPluginFiles" AfterTargets="Build">
@@ -36,11 +41,33 @@
         Include="$(ProjectDir)bin/Debug/net48/System.*.dll" />
       <BuiltLibraryAndDeps
         Include="$(ProjectDir)bin/Debug/net48/Microsoft.Bcl.AsyncInterfaces.dll" />
+      <!-- Metadata files for Thunderstore -->
+      <ThunderstoreMetadata
+        Include="$(ProjectDir)Metadata/manifest.json" />
+      <ThunderstoreMetadata
+        Include="$(ProjectDir)Metadata/icon.png" />
+      <ThunderstoreMetadata
+        Include="$(ProjectDir)Metadata/README.md" />
     </ItemGroup>
-
+    <!-- Plugin files go into a 'plugins' subdirectory -->
     <Copy 
       SourceFiles="@(BuiltLibraryAndDeps)"
+      DestinationFolder="$(ProjectDir)bin/DiscordConnector/plugins"
+      SkipUnchangedFiles="true" />
+    <!-- Metadata files go into the base directory -->
+    <Copy 
+      SourceFiles="@(ThunderstoreMetadata)"
       DestinationFolder="$(ProjectDir)bin/DiscordConnector"
       SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles">
+    <!-- Remove the zip file if it exists, so that we can create a new one. -->
+    <Delete 
+      Files="$(ProjectDir)bin/DiscordConnector.zip" 
+      Condition="!Exists('$(ProjectDir)bin/bin/DiscordConnector.zip')"  />
+    <ZipDirectory
+      SourceDirectory="$(ProjectDir)bin/DiscordConnector"
+      DestinationFile="$(ProjectDir)bin/DiscordConnector.zip" />
   </Target>
 </Project>
