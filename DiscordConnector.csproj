@@ -14,14 +14,60 @@
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.4" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
+    <PackageReference Include="System.Text.Json" Version="5.0.*" />
     <PackageReference Include="UnityEngine.Modules" Version="2019.4.24" IncludeAssets="compile" />
-    <PackageReference Include="Valheim.GameLibs" Version="*-*">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="Valheim.GameLibs" Version="*-*" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
+
+   <Target Name="CreatePluginDir" AfterTargets="PrepareForBuild">
+    <MakeDir 
+      Directories="$(ProjectDir)bin/DiscordConnector" 
+      Condition="!Exists('$(ProjectDir)bin/DiscordConnector')"  />
+    <MakeDir 
+      Directories="$(ProjectDir)bin/DiscordConnector/plugins" 
+      Condition="!Exists('$(ProjectDir)bin/DiscordConnector/plugins')"  />
+  </Target>
+
+  <Target Name="CopyPluginFiles" AfterTargets="Build">
+    <ItemGroup>
+      <BuiltLibraryAndDeps 
+        Include="$(ProjectDir)bin/Debug/net48/DiscordConnector.dll" />
+      <!-- Include System.Text.Json dependency -->
+      <BuiltLibraryAndDeps
+        Include="$(ProjectDir)bin/Debug/net48/System.*.dll" />
+      <BuiltLibraryAndDeps
+        Include="$(ProjectDir)bin/Debug/net48/Microsoft.Bcl.AsyncInterfaces.dll" />
+      <!-- Metadata files for Thunderstore -->
+      <ThunderstoreMetadata
+        Include="$(ProjectDir)Metadata/manifest.json" />
+      <ThunderstoreMetadata
+        Include="$(ProjectDir)Metadata/icon.png" />
+      <ThunderstoreMetadata
+        Include="$(ProjectDir)Metadata/README.md" />
+    </ItemGroup>
+    <!-- Plugin files go into a 'plugins' subdirectory -->
+    <Copy 
+      SourceFiles="@(BuiltLibraryAndDeps)"
+      DestinationFolder="$(ProjectDir)bin/DiscordConnector/plugins"
+      SkipUnchangedFiles="true" />
+    <!-- Metadata files go into the base directory -->
+    <Copy 
+      SourceFiles="@(ThunderstoreMetadata)"
+      DestinationFolder="$(ProjectDir)bin/DiscordConnector"
+      SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles">
+    <!-- Remove the zip file if it exists, so that we can create a new one. -->
+    <Delete 
+      Files="$(ProjectDir)bin/DiscordConnector.zip" 
+      Condition="!Exists('$(ProjectDir)bin/bin/DiscordConnector.zip')"  />
+    <ZipDirectory
+      SourceDirectory="$(ProjectDir)bin/DiscordConnector"
+      DestinationFile="$(ProjectDir)bin/DiscordConnector.zip" />
+  </Target>
 </Project>
