@@ -1,6 +1,6 @@
 {
     "name": "DiscordConnector",
-    "version_number": "0.1.2",
+    "version_number": "0.2.0",
     "website_url": "https://github.com/nwesterhausen/valheim-discordconnector",
     "description": "Connects your Valheim server to a Discord webhook.",
     "dependencies": [
