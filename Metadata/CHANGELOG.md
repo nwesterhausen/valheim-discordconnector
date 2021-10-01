@@ -2,6 +2,9 @@
 
 A full changelog for reference.
 
+### Version 0.1.2
+
+Added link to a how-to guide for creating a discord webhook.
 ### Version 0.1.1
 
 Initial release. Configuration and sends messages on server startup and shutdown.
