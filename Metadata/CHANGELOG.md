@@ -2,6 +2,25 @@
 
 A full changelog for reference.
 
+### Version 0.3.0
+
+Bug fixes:
+
+When the server loaded it was sending the same message from the launch.
+
+New Features:
+
+Added 3 messages from hooking into the chat on the server. This includes:
+
+- Players joining the server
+- Shouting
+- Pinging
+
+All 3 are togglable and can have the position toggled separately.
+
+To include when players leave, more work has to be done because those events
+are not broadcast and instead it is only network messages.
+
 ### Version 0.2.0
 
 - Use config values to set what messages get sent for what actions
