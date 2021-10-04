@@ -11,6 +11,7 @@ namespace DiscordConnector
         private const string DISCORD_SETTINGS = "Discord Settings";
         private const string NOTIFICATION_SETTINGS = "Notification Settings";
         private const string NOTIFICATION_CONTENT_SETTINGS = "Notification Content Settings";
+        private const string STATISTIC_COLLECTION_SETTINGS = "Statistics Collection Settings and Opt-Outs";
 
         // Webhook Url
         private ConfigEntry<string> webhookUrl;
@@ -26,6 +27,8 @@ namespace DiscordConnector
 
         private ConfigEntry<bool> playerJoinToggle;
         private ConfigEntry<bool> playerLeaveToggle;
+        private ConfigEntry<bool> statsAnnouncementToggle;
+        private ConfigEntry<int> statsAnnouncementPeriod;
 
         // Logged Information Messages
         private ConfigEntry<string> serverLaunchMessage;
@@ -33,6 +36,13 @@ namespace DiscordConnector
         private ConfigEntry<string> serverStopMessage;
         private ConfigEntry<string> playerJoinMessage;
         private ConfigEntry<string> playerLeaveMessage;
+
+        // Statistic collection settings
+        private ConfigEntry<bool> collectStatsJoins;
+        private ConfigEntry<bool> collectStatsLeaves;
+        private ConfigEntry<bool> collectStatsDeaths;
+        private ConfigEntry<bool> collectStatsShouts;
+        private ConfigEntry<bool> collectStatsPings;
 
         public PluginConfig(ConfigFile config)
         {
@@ -105,6 +115,18 @@ namespace DiscordConnector
                 "If enabled, this will send a message to Discord when a player leaves the server." + Environment.NewLine +
                 "EX: Player has left.");
 
+            statsAnnouncementToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+                "Periodic Player Stats Notifications",
+                false,
+                "If enabled, periodically send a leaderboard or of top player stats to Discord." + Environment.NewLine +
+                "EX: Top Player Deaths: etc etc Top Player Joins: etc etc");
+
+            statsAnnouncementPeriod = config.Bind<int>(NOTIFICATION_SETTINGS,
+                "Player Stats Notifications Period",
+                600,
+                "Set the number of minutes between a leaderboard announcement sent to discord." + Environment.NewLine +
+                "This time starts when the server is started. Default is set to 10 hours (600 mintues).");
+
             // Message Settings
 
             serverLaunchMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
@@ -141,6 +163,29 @@ namespace DiscordConnector
                 "Set the message that will be sent when a player leaves the server." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
                 "Random choice example: 'has left;has moved on;returns to dreams'");
+
+            // Statistic Settings
+            collectStatsDeaths = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
+                "Collect and Send Player Death Stats",
+                true,
+                "If enabled, will collect and enable sending player death statistics.");
+            collectStatsJoins = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
+                "Collect and Send Player Join Stats",
+                true,
+                "If enabled, will collect and enable sending stat announcements for how many times a player has joined the game.");
+            collectStatsLeaves = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
+                "Collect and Send Player Leave Stats",
+                true,
+                "If enabled, will collect and enable sending stat announcements for how many times a player has left the game.");
+            collectStatsPings = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
+                "Collect and Send Player Ping Stats",
+                true,
+                "If enabled, will collect and enable sending stat announcements for number of pings made by a player.");
+            collectStatsShouts = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
+                "Collect and Send Player Shout Stats",
+                true,
+                "If enabled, will collect and enable sending stat announcements for number of times a player has shouted.");
+
 
 
             config.Save();
