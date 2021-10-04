@@ -94,43 +94,53 @@ namespace DiscordConnector
                 "EX: Nick pinged the map at -124, 81.4, -198.9!");
 
             playerJoinToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
-                          "Player Join Notifications",
-                          true,
-                          "If enabled, this will send a message to Discord when a player joins the server." + Environment.NewLine +
-                          "EX: Player has joined");
+                "Player Join Notifications",
+                true,
+                "If enabled, this will send a message to Discord when a player joins the server." + Environment.NewLine +
+                "EX: Player has joined");
 
             playerLeaveToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
-              "Player Leave Notifications",
-              true,
-              "If enabled, this will send a message to Discord when a player leaves the server." + Environment.NewLine +
-              "EX: Player has left.");
+                "Player Leave Notifications",
+                true,
+                "If enabled, this will send a message to Discord when a player leaves the server." + Environment.NewLine +
+                "EX: Player has left.");
 
             // Message Settings
 
             serverLaunchMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
                 "Server Launch Message",
                 "Server is starting up.",
-                "Set the message that will be sent when the server starts up.");
+                "Set the message that will be sent when the server starts up." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "Random choice example: 'Server is starting;Server beginning to load'");
 
             serverLoadedMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
                 "Server Started Message",
                 "Server has started!",
-                "Set the message that will be sent when the server has loaded the map and is ready for connections.");
+                "Set the message that will be sent when the server has loaded the map and is ready for connections." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "Random choice example: 'Server has started;Server ready!'");
 
             serverStopMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
                 "Server Stop Message",
                 "Server is stopping.",
-                "Set the message that will be sent when the server shuts down.");
+                "Set the message that will be sent when the server shuts down." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "Random choice example: 'Server stopping;Valheim signing off!'");
 
             playerJoinMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
-              "Player Join Message",
-              "has joined.",
-              "Set the message that will be sent when a player joins the server");
+                "Player Join Message",
+                "has joined.",
+                "Set the message that will be sent when a player joins the server" + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "Random choice example: 'has joined;awakens;arrives'");
 
             playerLeaveMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
-              "Player Leave Message",
-              "has left.",
-              "Set the message that will be sent when a player leaves the server.");
+                "Player Leave Message",
+                "has left.",
+                "Set the message that will be sent when a player leaves the server." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "Random choice example: 'has left;has moved on;returns to dreams'");
 
 
             config.Save();
@@ -139,9 +149,8 @@ namespace DiscordConnector
         // Exposed Config Values
 
         public string WebHookURL => webhookUrl.Value;
-        public string LaunchMessage => serverLaunchMessage.Value;
-        public string LoadedMessage => serverLoadedMessage.Value;
-        public string StopMessage => serverStopMessage.Value;
+
+        // Toggles
         public bool LaunchMessageEnabled => serverLaunchToggle.Value;
         public bool LoadedMessageEnabled => serverLaunchToggle.Value;
         public bool StopMessageEnabled => serverLaunchToggle.Value;
@@ -151,7 +160,72 @@ namespace DiscordConnector
         public bool ChatPingEnabled => chatPingToggle.Value;
         public bool PlayerJoinMessageEnabled => playerJoinToggle.Value;
         public bool PlayerLeaveMessageEnabled => playerLeaveToggle.Value;
-        public string JoinMessage => playerJoinMessage.Value;
-        public string LeaveMessage => playerLeaveMessage.Value;
+
+        // Messages
+        public string LaunchMessage
+        {
+            get
+            {
+                if (!serverLaunchMessage.Value.Contains(";"))
+                {
+                    return serverLaunchMessage.Value;
+                }
+                string[] choices = serverLaunchMessage.Value.Split(';');
+                int selection = (new Random()).Next(choices.Length);
+                return choices[selection];
+            }
+        }
+        public string LoadedMessage
+        {
+            get
+            {
+                if (!serverLoadedMessage.Value.Contains(";"))
+                {
+                    return serverLoadedMessage.Value;
+                }
+                string[] choices = serverLoadedMessage.Value.Split(';');
+                int selection = (new Random()).Next(choices.Length);
+                return choices[selection];
+            }
+        }
+        public string StopMessage
+        {
+            get
+            {
+                if (!serverStopMessage.Value.Contains(";"))
+                {
+                    return serverStopMessage.Value;
+                }
+                string[] choices = serverStopMessage.Value.Split(';');
+                int selection = (new Random()).Next(choices.Length);
+                return choices[selection];
+            }
+        }
+        public string JoinMessage
+        {
+            get
+            {
+                if (!playerJoinMessage.Value.Contains(";"))
+                {
+                    return playerJoinMessage.Value;
+                }
+                string[] choices = playerJoinMessage.Value.Split(';');
+                int selection = (new Random()).Next(choices.Length);
+                return choices[selection];
+            }
+        }
+        public string LeaveMessage
+        {
+            get
+            {
+                if (!playerLeaveMessage.Value.Contains(";"))
+                {
+                    return playerLeaveMessage.Value;
+                }
+                string[] choices = playerLeaveMessage.Value.Split(';');
+                int selection = (new Random()).Next(choices.Length);
+                return choices[selection];
+            }
+        }
     }
 }
