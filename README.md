@@ -18,32 +18,13 @@ steps to follow to prepare your machine for development are listed in the
 (essentially, make sure you have the .NET SDK setup, an IDE of your choice like
 vscode, and that you are prepared to test the compiled plugin after you build it).
 
-### BepInEx Packages
-
-If you are unable to build due to package errors, make sure you've done the setup listed on the
-[BepInEx docs](https://docs.bepinex.dev/master/articles/dev_guide/plugin_tutorial/1_setup.html).
-Then, you need to add a NuGet.config file in the project directory which contains the following:
-
-```
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-  <packageSources>
-    <add key="BepInEx" value="https://nuget.bepinex.dev/v3/index.json" />
-  </packageSources>
-</configuration>
-```
-
-This lets dotnet find the packages hosted on bepinex.dev. That file gets created as
-part of the template process but is ignored by the .gitignore because that file
-can point to local nuget mirrors (may not be present for others) or contain some
-sensitive information used for publishing. It's good practice to keep it out of a
-public repository.
-
 ### Building
 
 Use dotnet to restore and build the project. Post build, the compiled library and its
 dependencies get copied into `bin/DiscordConnector` which enables you to simply copy
 that folder into `$(GameDir)/BepinEx/plugins` for testing.
+
+The compiled plugin will be in a zip ready for upload at `bin/DiscordConnector.zip`.
 
 ### Dependencies
 
