@@ -2,6 +2,9 @@
 
 Connect your Valheim server to a Discord Webhook. ([How to get a webhook](Metadata/HowtoGuide.md))
 
+Plugin available on [Thunderstore.io](https://valheim.thunderstore.io/package/nwesterhausen/DiscordConnector/) 
+or [NexusMods](https://www.nexusmods.com/valheim/mods/1551/).
+
 ### Plugin Details
 
 See [the README](Metadata/README.md) for the plugin.
