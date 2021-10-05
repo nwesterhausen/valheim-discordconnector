@@ -128,18 +128,6 @@ namespace DiscordConnector
                 "Set the number of minutes between a leaderboard announcement sent to discord." + Environment.NewLine +
                 "This time starts when the server is started. Default is set to 10 hours (600 mintues).");
 
-            statsAnnouncementToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
-                "Periodic Player Stats Notifications",
-                false,
-                "If enabled, periodically send a leaderboard or of top player stats to Discord." + Environment.NewLine +
-                "EX: Top Player Deaths: etc etc Top Player Joins: etc etc");
-
-            statsAnnouncementPeriod = config.Bind<int>(NOTIFICATION_SETTINGS,
-                "Player Stats Notifications Period",
-                600,
-                "Set the number of minutes between a leaderboard announcement sent to discord." + Environment.NewLine +
-                "This time starts when the server is started. Default is set to 10 hours (600 mintues).");
-
             // Message Settings
 
             serverLaunchMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
