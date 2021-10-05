@@ -10,6 +10,7 @@ namespace DiscordConnector
     {
         internal static ManualLogSource StaticLogger;
         internal static PluginConfig StaticConfig;
+        internal static Records StaticRecords;
         private void Awake()
         {
             StaticLogger = base.Logger;
@@ -30,6 +31,8 @@ namespace DiscordConnector
                     StaticConfig.LaunchMessage
                 );
             }
+
+            StaticRecords = new Records(BepInEx.Paths.GameRootPath);
 
             harmony.PatchAll();
         }
