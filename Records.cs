@@ -43,47 +43,58 @@ namespace DiscordConnector
         {
             storepath = $"{basepath}{(basepath.EndsWith($"{Path.DirectorySeparatorChar}") ? "" : Path.DirectorySeparatorChar)}{filename}";
             PopulateCache();
+            if (!Plugin.StaticConfig.CollectStatsEnabled)
+            {
+                Plugin.StaticLogger.LogInfo("Saving stats is disabled, nothing will be recorded.");
+            }
         }
 
         public void Store(string key, string playername, int value)
         {
-            if (Array.IndexOf<string>(Categories.All, key) >= 0)
+            if (Plugin.StaticConfig.CollectStatsEnabled)
             {
-                foreach (Record r in recordCache)
+                if (Array.IndexOf<string>(Categories.All, key) >= 0)
                 {
-                    if (r.Category.Equals(key))
+                    foreach (Record r in recordCache)
                     {
-                        bool stored = false;
-                        foreach (RecordValue v in r.Values)
+                        if (r.Category.Equals(key))
                         {
-                            if (v.PlayerName.Equals(playername))
+                            bool stored = false;
+                            foreach (RecordValue v in r.Values)
                             {
-                                v.Value += value;
-                                stored = true;
+                                if (v.PlayerName.Equals(playername))
+                                {
+                                    v.Value += value;
+                                    stored = true;
+                                }
+                            }
+                            if (!stored)
+                            {
+                                r.Values.Add(new RecordValue()
+                                {
+                                    PlayerName = playername,
+                                    Value = value
+                                });
                             }
                         }
-                        if (!stored)
-                        {
-                            r.Values.Add(new RecordValue()
-                            {
-                                PlayerName = playername,
-                                Value = value
-                            });
-                        }
                     }
+                    // After adding new data, flush data to disk.
+                    FlushCache().ContinueWith(
+                        t => Plugin.StaticLogger.LogWarning(t.Exception),
+                        TaskContinuationOptions.OnlyOnFaulted);
                 }
-                // After adding new data, flush data to disk.
-                FlushCache()
-                .ContinueWith(t => Plugin.StaticLogger.LogWarning(t.Exception),
-        TaskContinuationOptions.OnlyOnFaulted);
-            }
-            else
-            {
-                Plugin.StaticLogger.LogWarning($"Unable to store record of {key} for player {playername} - not considered a valid category.");
+                else
+                {
+                    Plugin.StaticLogger.LogWarning($"Unable to store record of {key} for player {playername} - not considered a valid category.");
+                }
             }
         }
         public int Retrieve(string key, string playername)
         {
+            if (!Plugin.StaticConfig.CollectStatsEnabled)
+            {
+                return -1;
+            }
             if (Array.IndexOf<string>(Categories.All, key) >= 0)
             {
                 foreach (Record r in recordCache)
@@ -106,14 +117,17 @@ namespace DiscordConnector
 
         private async Task FlushCache()
         {
-            string jsonString = JsonSerializer.Serialize(recordCache);
-
-            using (var stream = new StreamWriter(@storepath, false))
+            if (Plugin.StaticConfig.CollectStatsEnabled)
             {
-                await stream.WriteAsync(jsonString);
-            }
+                string jsonString = JsonSerializer.Serialize(recordCache);
 
-            Plugin.StaticLogger.LogInfo($"Flushed cached stats to {storepath}");
+                using (var stream = new StreamWriter(@storepath, false))
+                {
+                    await stream.WriteAsync(jsonString);
+                }
+
+                Plugin.StaticLogger.LogInfo($"Flushed cached stats to {storepath}");
+            }
         }
 
         private void PopulateCache()
@@ -136,9 +150,9 @@ namespace DiscordConnector
                         Values = new List<RecordValue>()
                     });
                 }
-                FlushCache()
-                .ContinueWith(t => Plugin.StaticLogger.LogWarning(t.Exception),
-        TaskContinuationOptions.OnlyOnFaulted);
+                FlushCache().ContinueWith(
+                    t => Plugin.StaticLogger.LogWarning(t.Exception),
+                    TaskContinuationOptions.OnlyOnFaulted);
             }
         }
     }
