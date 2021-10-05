@@ -1,5 +1,5 @@
 DISCORD CONNECTOR - 0.5.0
-Connect your Valheim server to a Discord Webhook. ([How to get a webhook](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md#how-to-get-a-discord-webhook) or [Short FAQ Guide for this mode](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md))
+Connect your Valheim server to a Discord Webhook. (Visit the github repo for a how-to guide.)
 
 :: REQUIREMENTS ::
 - BepInEx 5.*
