@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -20,8 +22,74 @@ namespace DiscordConnector
             SendSerializedJson(payloadString);
         }
 
+        public static void SendComplexMessage(string title = null, string description = null, List<Tuple<string, string>> fields = null)
+        {
+            // A complex message with embedded fields (optional) and a title and description (optional)
+            var payload = new DiscordComplexWebhook
+            {
+                embeds = new DiscordEmbed()
+            };
+            if (!string.IsNullOrEmpty(title))
+            {
+                payload.embeds.title = title;
+            }
+            if (!string.IsNullOrEmpty(description))
+            {
+                payload.embeds.description = description;
+            }
+            if (fields != null)
+            {
+                payload.embeds.fields = new List<DiscordField>();
+                foreach (Tuple<string, string> pair in fields)
+                {
+                    payload.embeds.fields.Add(new DiscordField
+                    {
+                        name = pair.Item1,
+                        value = pair.Item2
+                    });
+                }
+            }
+            if (string.IsNullOrEmpty(title) && string.IsNullOrEmpty(description) && fields == null)
+            {
+                payload.embeds.description = "Uh-oh! An unexpectedly empty message was sent!";
+            }
+
+            // Previously attempted to serialize the string automatically but discord doesn't like having
+            // fields set to null when posting to the webhook. Here's a manual serialization..
+            string payloadString = "{\"embeds\":[{";
+            if (payload.embeds.title != null)
+            {
+                payloadString += $"\"title\":\"{payload.embeds.title}\"";
+                if (payload.embeds.description != null || payload.embeds.fields != null)
+                {
+                    payloadString += ",";
+                }
+            }
+            if (payload.embeds.description != null)
+            {
+                payloadString += $"\"description\":\"{payload.embeds.description}\"";
+                if (payload.embeds.fields != null)
+                {
+                    payloadString += ",";
+                }
+            }
+            if (payload.embeds.fields != null)
+            {
+                payloadString += "\"fields\":[";
+                foreach (DiscordField f in payload.embeds.fields)
+                {
+                    payloadString += JsonSerializer.Serialize(f);
+                }
+                payloadString += "]";
+            }
+            payloadString += "}]}";
+
+            SendSerializedJson(payloadString);
+        }
+
         internal static void SendSerializedJson(string serializedJson)
         {
+            Plugin.StaticLogger.LogInfo($"Trying webhook with payload: {serializedJson}");
             // Responsible for sending a JSON string to the webhook.
             byte[] byteArray = Encoding.UTF8.GetBytes(serializedJson);
 
@@ -58,5 +126,23 @@ namespace DiscordConnector
     internal class DiscordSimpleWebhook
     {
         public string content { get; set; }
+    }
+    internal class DiscordComplexWebhook
+    {
+        public DiscordEmbed embeds { get; set; }
+    }
+    internal class DiscordEmbed
+    {
+
+#nullable enable
+        public string? title { get; set; }
+        public string? description { get; set; }
+        public List<DiscordField>? fields { get; set; }
+#nullable restore
+    }
+    internal class DiscordField
+    {
+        public string name { get; set; }
+        public string value { get; set; }
     }
 }
