@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace DiscordConnector
 {
@@ -19,9 +18,9 @@ namespace DiscordConnector
     }
     class Records
     {
-        internal static string filename = "records.json";
-        internal static string storepath;
-        internal List<Record> recordCache;
+        private static string filename = "records.json";
+        private static string storepath;
+        private List<Record> recordCache;
         public static string[] CATEGORIES = new string[] {
             "death",
             "join",
@@ -63,6 +62,8 @@ namespace DiscordConnector
                         }
                     }
                 }
+                // After adding new data, flush data to disk.
+                FlushCache().Start();
             }
             else
             {
@@ -91,8 +92,39 @@ namespace DiscordConnector
             return 0;
         }
 
-        //TODO: WriteCache to disk
+        private async Task FlushCache()
+        {
+            string jsonString = JsonSerializer.Serialize(recordCache);
 
-        //TODO: Read file from disk to populate initial cache
+            using (var stream = new StreamWriter(@storepath, false))
+            {
+                await stream.WriteAsync(jsonString);
+            }
+
+            Plugin.StaticLogger.LogInfo($"Flushed cached stats to {storepath}");
+        }
+
+        private void PopulateCache()
+        {
+            if (File.Exists(storepath))
+            {
+                string jsonString = File.ReadAllText(@storepath);
+                recordCache = JsonSerializer.Deserialize<List<Record>>(jsonString);
+                Plugin.StaticLogger.LogInfo($"Read existing stats from disk {storepath}");
+            }
+            else
+            {
+                Plugin.StaticLogger.LogInfo($"Unable to find existing stats data at {storepath}");
+                recordCache = new List<Record>();
+                foreach (string category in CATEGORIES)
+                {
+                    recordCache.Add(new Record
+                    {
+                        Category = category,
+                        Values = new List<RecordValue>()
+                    });
+                }
+            }
+        }
     }
 }
