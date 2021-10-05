@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
 
@@ -44,9 +46,27 @@ namespace DiscordConnector.Patches
                     ZNetPeer peer = ZNet.instance.GetPeer(rpc);
                     if (peer != null)
                     {
-                        DiscordApi.SendMessage(
-                          $"{peer.m_playerName} {Plugin.StaticConfig.JoinMessage}"
-                        );
+                        string message = $"{peer.m_playerName} {Plugin.StaticConfig.JoinMessage}";
+                        if (Plugin.StaticConfig.DiscordEmbedsEnabled)
+                        {
+                            if (Plugin.StaticConfig.PlayerJoinPosEnabled)
+                            {
+                                DiscordApi.SendMessage(
+                                    message,
+                                    peer.m_refPos
+                                );
+                            }
+                            else
+                            {
+                                DiscordApi.SendMessage(message);
+                            }
+                        }
+                        else
+                        {
+                            DiscordApi.SendMessage(
+                              message
+                            );
+                        }
                         if (Plugin.StaticConfig.StatsJoinEnabled)
                         {
                             Plugin.StaticRecords.Store(Categories.Join, peer.m_playerName, 1);
@@ -66,9 +86,20 @@ namespace DiscordConnector.Patches
                     ZNetPeer peer = ZNet.instance.GetPeer(rpc);
                     if (peer != null)
                     {
-                        DiscordApi.SendMessage(
-                          $"{peer.m_playerName} {Plugin.StaticConfig.LeaveMessage}"
-                        );
+                        string message = $"{peer.m_playerName} {Plugin.StaticConfig.LeaveMessage}";
+                        if (Plugin.StaticConfig.PlayerJoinPosEnabled)
+                        {
+                            DiscordApi.SendMessage(
+                                message,
+                                peer.m_refPos
+                            );
+                        }
+                        else
+                        {
+                            DiscordApi.SendMessage(
+                              message
+                            );
+                        }
                         if (Plugin.StaticConfig.StatsLeaveEnabled)
                         {
                             Plugin.StaticRecords.Store(Categories.Leave, peer.m_playerName, 1);
@@ -94,9 +125,18 @@ namespace DiscordConnector.Patches
                         case Talker.Type.Ping:
                             if (Plugin.StaticConfig.ChatPingEnabled)
                             {
-                                DiscordApi.SendMessage(
-                                    $"{user} pings the map at {pos}"
-                                );
+                                string message = $"{user} pings the map!";
+                                if (Plugin.StaticConfig.ChatPingPosEnabled)
+                                {
+                                    DiscordApi.SendMessage(
+                                        message,
+                                        pos
+                                    );
+                                }
+                                else
+                                {
+                                    DiscordApi.SendMessage(message);
+                                }
                                 if (Plugin.StaticConfig.StatsPingEnabled)
                                 {
                                     Plugin.StaticRecords.Store(Categories.Ping, user, 1);
@@ -106,7 +146,7 @@ namespace DiscordConnector.Patches
                         case Talker.Type.Shout:
                             if (text.Equals("I have arrived!"))
                             {
-                                if (!BepInEx.Paths.ProcessName.Equals("valheim_server.exe"))
+                                if (!BepInEx.Paths.ProcessName.Equals("valheim_server"))
                                 {
                                     DiscordApi.SendMessage(
                                         $"{user} {Plugin.StaticConfig.JoinMessage}"
@@ -118,26 +158,21 @@ namespace DiscordConnector.Patches
                             }
                             else if (Plugin.StaticConfig.ChatShoutEnabled)
                             {
-
+                                string message = $"{user} shouts: **{text}**!";
                                 if (Plugin.StaticConfig.ChatShoutPosEnabled)
                                 {
                                     DiscordApi.SendMessage(
-                                        $"{user} shouts {text} from {pos}!"
+                                        message,
+                                        pos
                                     );
-                                    if (Plugin.StaticConfig.StatsShoutEnabled)
-                                    {
-                                        Plugin.StaticRecords.Store(Categories.Shout, user, 1);
-                                    }
                                 }
                                 else
                                 {
-                                    DiscordApi.SendMessage(
-                                        $"{user} shouts {text}!"
-                                    );
-                                    if (Plugin.StaticConfig.StatsShoutEnabled)
-                                    {
-                                        Plugin.StaticRecords.Store(Categories.Shout, user, 1);
-                                    }
+                                    DiscordApi.SendMessage(message);
+                                }
+                                if (Plugin.StaticConfig.StatsShoutEnabled)
+                                {
+                                    Plugin.StaticRecords.Store(Categories.Shout, user, 1);
                                 }
                             }
                             break;

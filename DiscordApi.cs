@@ -4,11 +4,25 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using UnityEngine;
 
 namespace DiscordConnector
 {
     class DiscordApi
     {
+        public static void SendMessage(string message, Vector3 pos)
+        {
+            if (Plugin.StaticConfig.DiscordEmbedsEnabled)
+            {
+                SendMessageWithFields(message, new List<Tuple<string, string>> {
+                    Tuple.Create("Coordinates",$"{pos}")
+                });
+            }
+            else
+            {
+                SendMessage($"{message} Coords: {pos}");
+            }
+        }
         public static void SendMessage(string message)
         {
             // A simple string message
@@ -22,74 +36,44 @@ namespace DiscordConnector
             SendSerializedJson(payloadString);
         }
 
-        public static void SendComplexMessage(string title = null, string description = null, List<Tuple<string, string>> fields = null)
+        public static void SendMessageWithFields(string content = null, List<Tuple<string, string>> fields = null)
         {
-            // A complex message with embedded fields (optional) and a title and description (optional)
-            var payload = new DiscordComplexWebhook
+
+            if (string.IsNullOrEmpty(content) && fields == null)
             {
-                embeds = new DiscordEmbed()
-            };
-            if (!string.IsNullOrEmpty(title))
-            {
-                payload.embeds.title = title;
-            }
-            if (!string.IsNullOrEmpty(description))
-            {
-                payload.embeds.description = description;
-            }
-            if (fields != null)
-            {
-                payload.embeds.fields = new List<DiscordField>();
-                foreach (Tuple<string, string> pair in fields)
-                {
-                    payload.embeds.fields.Add(new DiscordField
-                    {
-                        name = pair.Item1,
-                        value = pair.Item2
-                    });
-                }
-            }
-            if (string.IsNullOrEmpty(title) && string.IsNullOrEmpty(description) && fields == null)
-            {
-                payload.embeds.description = "Uh-oh! An unexpectedly empty message was sent!";
+                content = "Uh-oh! An unexpectedly empty message was sent!";
             }
 
-            // Previously attempted to serialize the string automatically but discord doesn't like having
-            // fields set to null when posting to the webhook. Here's a manual serialization..
-            string payloadString = "{\"embeds\":[{";
-            if (payload.embeds.title != null)
+            string payloadString = "{";
+            if (fields != null)
             {
-                payloadString += $"\"title\":\"{payload.embeds.title}\"";
-                if (payload.embeds.description != null || payload.embeds.fields != null)
+                payloadString += "\"embeds\":[{\"fields\":[";
+                foreach (Tuple<string, string> t in fields)
+                {
+                    payloadString += JsonSerializer.Serialize(new DiscordField
+                    {
+                        name = t.Item1,
+                        value = t.Item2
+                    });
+                }
+                payloadString += "]}]";
+                if (content != null)
                 {
                     payloadString += ",";
                 }
             }
-            if (payload.embeds.description != null)
+            if (content != null)
             {
-                payloadString += $"\"description\":\"{payload.embeds.description}\"";
-                if (payload.embeds.fields != null)
-                {
-                    payloadString += ",";
-                }
+                payloadString += $"\"content\":\"{content}\"";
             }
-            if (payload.embeds.fields != null)
-            {
-                payloadString += "\"fields\":[";
-                foreach (DiscordField f in payload.embeds.fields)
-                {
-                    payloadString += JsonSerializer.Serialize(f);
-                }
-                payloadString += "]";
-            }
-            payloadString += "}]}";
+            payloadString += "}";
 
             SendSerializedJson(payloadString);
         }
 
         internal static void SendSerializedJson(string serializedJson)
         {
-            Plugin.StaticLogger.LogInfo($"Trying webhook with payload: {serializedJson}");
+            Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
             // Responsible for sending a JSON string to the webhook.
             byte[] byteArray = Encoding.UTF8.GetBytes(serializedJson);
 

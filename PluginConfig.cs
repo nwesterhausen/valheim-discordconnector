@@ -13,8 +13,9 @@ namespace DiscordConnector
         private const string NOTIFICATION_CONTENT_SETTINGS = "Notification Content Settings";
         private const string STATISTIC_COLLECTION_SETTINGS = "Statistics Collection Settings and Opt-Outs";
 
-        // Webhook Url
+        // Discord Settings
         private ConfigEntry<string> webhookUrl;
+        private ConfigEntry<bool> discordEmbedMessagesToggle;
 
         // Logged Information Toggles
         private ConfigEntry<bool> serverLaunchToggle;
@@ -24,9 +25,11 @@ namespace DiscordConnector
         private ConfigEntry<bool> chatShoutToggle;
         private ConfigEntry<bool> chatShoutPosToggle;
         private ConfigEntry<bool> chatPingToggle;
-
+        private ConfigEntry<bool> chatPingPosToggle;
         private ConfigEntry<bool> playerJoinToggle;
+        private ConfigEntry<bool> playerJoinPosToggle;
         private ConfigEntry<bool> playerLeaveToggle;
+        private ConfigEntry<bool> playerLeavePosToggle;
         private ConfigEntry<bool> statsAnnouncementToggle;
         private ConfigEntry<int> statsAnnouncementPeriod;
 
@@ -58,6 +61,12 @@ namespace DiscordConnector
                 "",
                 "Discord channel webhook URL. For instructions, reference the 'MAKING A WEBHOOK' section of " + Environment.NewLine +
                 "Discord's documentation: https://support.Discord.com/hc/en-us/articles/228383668-Intro-to-Webhook");
+
+            discordEmbedMessagesToggle = config.Bind<bool>(DISCORD_SETTINGS,
+                "Use fancier discord messages",
+                false,
+                "Enable this setting to use embeds in the messages sent to Discord." + Environment.NewLine +
+                "NOTE: Some things may not work as expected with this enabled. Report any weirdness!");
 
             // Message Toggles
 
@@ -102,7 +111,12 @@ namespace DiscordConnector
                 true,
                 "If enabled, include a position with the arrival message." + Environment.NewLine +
                 "If the top-level chat notifications are disabled, that will disable these messages." + Environment.NewLine +
-                "EX: Nick pinged the map at -124, 81.4, -198.9!");
+                "EX: Nick pinged the map!");
+
+            chatPingPosToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+                "Ping Notificiations Include Position",
+                true,
+                "If enabled, includes the coordinates of the ping.");
 
             playerJoinToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
                 "Player Join Notifications",
@@ -110,11 +124,21 @@ namespace DiscordConnector
                 "If enabled, this will send a message to Discord when a player joins the server." + Environment.NewLine +
                 "EX: Player has joined");
 
+            playerJoinPosToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+                "Include POS With Player Join",
+                false,
+                "If enabled, this will include the coordinates of the player when they join.");
+
             playerLeaveToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
                 "Player Leave Notifications",
                 true,
                 "If enabled, this will send a message to Discord when a player leaves the server." + Environment.NewLine +
                 "EX: Player has left.");
+
+            playerLeavePosToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+                "Include POS With Player Leave",
+                false,
+                "If enabled, this will include the coordinates of the player when they leave.");
 
             statsAnnouncementToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
                 "Periodic Player Stats Notifications",
@@ -200,6 +224,7 @@ namespace DiscordConnector
         public string WebHookURL => webhookUrl.Value;
 
         // Toggles
+        public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
         public bool LaunchMessageEnabled => serverLaunchToggle.Value;
         public bool LoadedMessageEnabled => serverLaunchToggle.Value;
         public bool StopMessageEnabled => serverLaunchToggle.Value;
@@ -207,8 +232,11 @@ namespace DiscordConnector
         public bool ChatShoutEnabled => chatShoutToggle.Value;
         public bool ChatShoutPosEnabled => chatShoutPosToggle.Value;
         public bool ChatPingEnabled => chatPingToggle.Value;
+        public bool ChatPingPosEnabled => chatPingPosToggle.Value;
         public bool PlayerJoinMessageEnabled => playerJoinToggle.Value;
+        public bool PlayerJoinPosEnabled => playerJoinPosToggle.Value;
         public bool PlayerLeaveMessageEnabled => playerLeaveToggle.Value;
+        public bool PlayerLeavePosEnabled => playerLeavePosToggle.Value;
         public bool CollectStatsEnabled => collectStatsEnable.Value;
         public bool StatsDeathEnabled => collectStatsDeaths.Value;
         public bool StatsJoinEnabled => collectStatsJoins.Value;
