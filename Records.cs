@@ -63,7 +63,9 @@ namespace DiscordConnector
                     }
                 }
                 // After adding new data, flush data to disk.
-                FlushCache().Start();
+                FlushCache()
+                .ContinueWith(t => Plugin.StaticLogger.LogWarning(t.Exception),
+        TaskContinuationOptions.OnlyOnFaulted);
             }
             else
             {
@@ -124,7 +126,9 @@ namespace DiscordConnector
                         Values = new List<RecordValue>()
                     });
                 }
-                FlushCache().Start();
+                FlushCache()
+                .ContinueWith(t => Plugin.StaticLogger.LogWarning(t.Exception),
+        TaskContinuationOptions.OnlyOnFaulted);
             }
         }
     }
