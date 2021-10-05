@@ -32,7 +32,7 @@ namespace DiscordConnector
         public Records(string basepath)
         {
             storepath = $"{basepath}{(basepath.EndsWith($"{Path.PathSeparator}") ? "" : Path.PathSeparator)}{filename}";
-            recordCache = new List<Record>() { };
+            PopulateCache();
         }
 
         public void Store(string key, string playername, int value)
@@ -124,6 +124,7 @@ namespace DiscordConnector
                         Values = new List<RecordValue>()
                     });
                 }
+                FlushCache().Start();
             }
         }
     }
