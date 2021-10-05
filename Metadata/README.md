@@ -1,12 +1,13 @@
 # Discord Connector
 
-Connect your Valheim server to a Discord Webhook. ([How to get a webhook](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md))
+Connect your Valheim server to a Discord Webhook. ([How to get a webhook](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md#how-to-get-a-discord-webhook) or [Short FAQ Guide for this mode](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md))
 
 ## Features
 
 - Set your own webhook, lets you configure icon, title, and a target channel
 - Enable or Disable any messages
 - Set what text gets sent for most messages
+- Set more than one message for each type and have one randomly chosen!
 
 ### Supported Message Notificaitons
 
