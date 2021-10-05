@@ -47,6 +47,7 @@ namespace DiscordConnector.Patches
                         DiscordApi.SendMessage(
                           $"{peer.m_playerName} {Plugin.StaticConfig.JoinMessage}"
                         );
+                        Plugin.StaticRecords.Store(Categories.Join, peer.m_playerName, 1);
                     }
                 }
             }
@@ -65,6 +66,7 @@ namespace DiscordConnector.Patches
                         DiscordApi.SendMessage(
                           $"{peer.m_playerName} {Plugin.StaticConfig.LeaveMessage}"
                         );
+                        Plugin.StaticRecords.Store(Categories.Leave, peer.m_playerName, 1);
                     }
                 }
             }
@@ -89,6 +91,7 @@ namespace DiscordConnector.Patches
                                 DiscordApi.SendMessage(
                                     $"{user} pings the map at ${pos}"
                                 );
+                                Plugin.StaticRecords.Store(Categories.Ping, user, 1);
                             }
                             break;
                         case Talker.Type.Shout:
@@ -106,12 +109,14 @@ namespace DiscordConnector.Patches
                                     DiscordApi.SendMessage(
                                         $"{user} shouts {text} from {pos}!"
                                     );
+                                    Plugin.StaticRecords.Store(Categories.Shout, user, 1);
                                 }
                                 else
                                 {
                                     DiscordApi.SendMessage(
                                         $"{user} shouts {text}!"
                                     );
+                                    Plugin.StaticRecords.Store(Categories.Shout, user, 1);
                                 }
                             }
                             break;
