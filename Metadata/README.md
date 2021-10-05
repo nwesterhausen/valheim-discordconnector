@@ -29,14 +29,19 @@ Connect your Valheim server to a Discord Webhook. ([How to get a webhook](https:
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
 
-### Version 0.4.0
+### Version 0.5.0
 
-Features:
+Allows for randomized messages to get sent. If you want only one message to be sent
+(the existing functionality 0.4.0 and earlier), you don't need to change anything,
+and default configuration will only have one message for each notification. If you
+would like to have a random message chosen each time, add multiple messages for each
+config value and separate them with a semicolon ';'. Then, when Discord notifications
+are sent, a random message will be sent from what you have provided.
 
-- Player leave messages
+New Features:
 
-Thanks to a contribution from Digitalroot, player join and leave messages are now
-implemented. You can modify what is announced when players join and leave or toggle
-them on or off.
+- Randomized messages amongst configured messages (separated with semicolon)
 
-This removes the PlayerArrival settings.
+Breaking Changes:
+
+- If you used a semicolon in your message, it will be seen as multiple messages
