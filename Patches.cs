@@ -1,5 +1,6 @@
 using HarmonyLib;
 using UnityEngine;
+using System;
 
 namespace DiscordConnector.Patches
 {
@@ -121,6 +122,24 @@ namespace DiscordConnector.Patches
                             );
                             break;
                     }
+                }
+            }
+        }
+    }
+
+    internal class EventPatches
+    {
+        [HarmonyPatch(typeof(RandEventSystem), nameof(RandEventSystem.RPC_SetEvent))]
+        internal class RPC_SetEvent
+        {
+            private static void Postfix(ref long sender, ref string eventName, ref float time, ref Vector3 pos)
+            {
+                if (!String.IsNullOrEmpty(eventName))
+                {
+                    Plugin.StaticLogger.LogInfo(
+                        $"Random event details: {eventName}{Environment.NewLine}sender: {sender}; time: {time} at {pos}"
+                    );
+
                 }
             }
         }
