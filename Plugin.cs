@@ -5,7 +5,6 @@ using BepInEx.Logging;
 namespace DiscordConnector
 {
     [BepInPlugin(PluginInfo.PLUGIN_ID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-    [BepInProcess("valheim_server.exe")]
     public class Plugin : BaseUnityPlugin
     {
         internal static ManualLogSource StaticLogger;
@@ -20,16 +19,21 @@ namespace DiscordConnector
             // Plugin startup logic
             StaticLogger.LogDebug($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
 
-            if (string.IsNullOrEmpty(StaticConfig.WebHookURL))
+            if (!BepInEx.Paths.ProcessName.Equals("valheim_server.exe"))
             {
-                StaticLogger.LogWarning($"No value set for WebHookURL");
-                return;
+                StaticLogger.LogInfo("Not running on a dedicated server, some features may break -- please report them!");
             }
-            if (StaticConfig.LaunchMessageEnabled)
+            else if (StaticConfig.LaunchMessageEnabled)
             {
                 DiscordApi.SendMessage(
                     StaticConfig.LaunchMessage
                 );
+            }
+
+            if (string.IsNullOrEmpty(StaticConfig.WebHookURL))
+            {
+                StaticLogger.LogWarning($"No value set for WebHookURL");
+                return;
             }
 
             StaticRecords = new Records(BepInEx.Paths.GameRootPath);

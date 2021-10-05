@@ -1,6 +1,7 @@
 # Discord Connector
 
-Connect your Valheim server to a Discord Webhook. ([How to get a webhook](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md#how-to-get-a-discord-webhook) or [Short FAQ Guide for this mode](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md))
+Connect your Valheim server (dedicated or served from the game itself) to a Discord Webhook. 
+([How to get a webhook](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md#how-to-get-a-discord-webhook) or [Short FAQ Guide for this mod](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md))
 
 ## Features
 
@@ -9,6 +10,7 @@ Connect your Valheim server to a Discord Webhook. ([How to get a webhook](https:
 - Set what text gets sent for most messages
 - Set more than one message for each type and have one randomly chosen!
 - Record number of logins/deaths/pings and flavor the Discord messages
+- Works with non-dedicated server (games opened to lan from the client)
 
 ### Supported Message Notificaitons
 
@@ -31,21 +33,14 @@ Connect your Valheim server to a Discord Webhook. ([How to get a webhook](https:
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
 
-### Version 0.5.1
+### Version 0.6.0
 
-Fixes:
-- removed '$' before the position for ping messages
+Enabled for both the client and server versions of Valheim.
 
-New this version:
-- stats recording
+Key differences if running a server from the client:
 
-Added a stat recording mechanism. This will record the player name and the trigger
-(join, leave, shout, or ping) when a notification is generated for Discord. These
-are stored in a 'records.json' file in the game server directory. The plan is to
-(optionally) incorporate these stats into the messages sent to Discord. For example,
-when you log in, it adds a little context: "John joined the game for the 1st time!" or
-"Stuart arrives. Previous logins: 15". The context additions are not yet created but
-record-keeping is ready and makes sense to get it started as soon as possible.
-
-If you want to disable the record keeping in its entirity, set the Collect Player Stats
-config value to false. This will prevent any records from being saved or written to disk.
+- No Launch/Startup message is sent. This is because when the server launches it
+immediately begins loading the world, but for the client it is loading into the
+main menu. This may be fixable in the future to be a hook that goes before the
+world begins getting loaded to keep the functionality on the server and to enable
+similar functionality on the client.
