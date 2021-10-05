@@ -6,6 +6,22 @@ using System.Threading.Tasks;
 
 namespace DiscordConnector
 {
+    internal static class Categories
+    {
+        internal const string Death = "death";
+        internal const string Join = "join";
+        internal const string Leave = "leave";
+        internal const string Ping = "ping";
+        internal const string Shout = "shout";
+
+        internal static string[] All = new string[] {
+            Death,
+            Join,
+           Leave,
+            Ping,
+            Shout
+        };
+    }
     internal class RecordValue
     {
         public string PlayerName { get; set; }
@@ -21,13 +37,7 @@ namespace DiscordConnector
         private static string filename = "records.json";
         private static string storepath;
         private List<Record> recordCache;
-        public static string[] CATEGORIES = new string[] {
-            "death",
-            "join",
-            "leave",
-            "ping",
-            "shout"
-        };
+
 
         public Records(string basepath)
         {
@@ -37,7 +47,7 @@ namespace DiscordConnector
 
         public void Store(string key, string playername, int value)
         {
-            if (Array.IndexOf<string>(CATEGORIES, key) >= 0)
+            if (Array.IndexOf<string>(Categories.All, key) >= 0)
             {
                 foreach (Record r in recordCache)
                 {
@@ -74,7 +84,7 @@ namespace DiscordConnector
         }
         public int Retrieve(string key, string playername)
         {
-            if (Array.IndexOf<string>(CATEGORIES, key) >= 0)
+            if (Array.IndexOf<string>(Categories.All, key) >= 0)
             {
                 foreach (Record r in recordCache)
                 {
@@ -118,7 +128,7 @@ namespace DiscordConnector
             {
                 Plugin.StaticLogger.LogInfo($"Unable to find existing stats data at {storepath}");
                 recordCache = new List<Record>();
-                foreach (string category in CATEGORIES)
+                foreach (string category in Categories.All)
                 {
                     recordCache.Add(new Record
                     {
