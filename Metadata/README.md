@@ -8,6 +8,7 @@ Connect your Valheim server to a Discord Webhook. ([How to get a webhook](https:
 - Enable or Disable any messages
 - Set what text gets sent for most messages
 - Set more than one message for each type and have one randomly chosen!
+- Record number of logins/deaths/pings and flavor the Discord messages
 
 ### Supported Message Notificaitons
 
@@ -23,25 +24,28 @@ Connect your Valheim server to a Discord Webhook. ([How to get a webhook](https:
 
 - Message when events start/end
 - Player death
+- Fancier Discord messages
 
 ## Changelog
 
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
 
-### Version 0.5.0
+### Version 0.5.1
 
-Allows for randomized messages to get sent. If you want only one message to be sent
-(the existing functionality 0.4.0 and earlier), you don't need to change anything,
-and default configuration will only have one message for each notification. If you
-would like to have a random message chosen each time, add multiple messages for each
-config value and separate them with a semicolon ';'. Then, when Discord notifications
-are sent, a random message will be sent from what you have provided.
+Fixes:
+- removed '$' before the position for ping messages
 
-New Features:
+New this version:
+- stats recording
 
-- Randomized messages amongst configured messages (separated with semicolon)
+Added a stat recording mechanism. This will record the player name and the trigger
+(join, leave, shout, or ping) when a notification is generated for Discord. These
+are stored in a 'records.json' file in the game server directory. The plan is to
+(optionally) incorporate these stats into the messages sent to Discord. For example,
+when you log in, it adds a little context: "John joined the game for the 1st time!" or
+"Stuart arrives. Previous logins: 15". The context additions are not yet created but
+record-keeping is ready and makes sense to get it started as soon as possible.
 
-Breaking Changes:
-
-- If you used a semicolon in your message, it will be seen as multiple messages
+If you want to disable the record keeping in its entirity, set the Collect Player Stats
+config value to false. This will prevent any records from being saved or written to disk.
