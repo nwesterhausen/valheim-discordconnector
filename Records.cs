@@ -31,7 +31,7 @@ namespace DiscordConnector
 
         public Records(string basepath)
         {
-            storepath = $"{basepath}{(basepath.EndsWith($"{Path.PathSeparator}") ? "" : Path.PathSeparator)}{filename}";
+            storepath = $"{basepath}{(basepath.EndsWith($"{Path.DirectorySeparatorChar}") ? "" : Path.DirectorySeparatorChar)}{filename}";
             PopulateCache();
         }
 
