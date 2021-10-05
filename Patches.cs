@@ -106,6 +106,12 @@ namespace DiscordConnector.Patches
                         case Talker.Type.Shout:
                             if (text.Equals("I have arrived!"))
                             {
+                                if (!BepInEx.Paths.ProcessName.Equals("valheim_server.exe"))
+                                {
+                                    DiscordApi.SendMessage(
+                                        $"{user} {Plugin.StaticConfig.JoinMessage}"
+                                    );
+                                }
                                 Plugin.StaticLogger.LogDebug(
                                     $"{user} shouts 'I have arrived!'"
                                 );

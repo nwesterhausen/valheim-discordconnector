@@ -1,4 +1,4 @@
-DISCORD CONNECTOR - 0.5.1
+DISCORD CONNECTOR - 0.6.0
 Connect your Valheim server to a Discord Webhook. (Visit the github repo for a how-to guide.)
 
 :: REQUIREMENTS ::
@@ -8,6 +8,8 @@ Connect your Valheim server to a Discord Webhook. (Visit the github repo for a h
 - Set your own webhook, lets you configure icon, title, and a target channel
 - Enable or Disable any messages
 - Set what text gets sent for most messages
+- Optionally set multiple messages for each notification and have a random message sent
+- Supports both the client and the server
 
 :: SUPPORTED MESSAGES ::
 - Server startup (server starting, loading the world)
@@ -21,3 +23,4 @@ Connect your Valheim server to a Discord Webhook. (Visit the github repo for a h
 :: ROADMAP ::
 - Message when events start/end
 - Player death
+- Fancier Discord messages

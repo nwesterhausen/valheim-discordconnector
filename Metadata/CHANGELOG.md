@@ -2,6 +2,18 @@
 
 A full changelog for reference.
 
+### Version 0.6.0
+
+Enabled for both the client and server versions of Valheim.
+
+Key differences if running a server from the client:
+
+- No Launch/Startup message is sent. This is because when the server launches it
+immediately begins loading the world, but for the client it is loading into the
+main menu. This may be fixable in the future to be a hook that goes before the
+world begins getting loaded to keep the functionality on the server and to enable
+similar functionality on the client.
+
 ### Version 0.5.1
 
 Fixes:
