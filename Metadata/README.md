@@ -33,14 +33,15 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
 
-### Version 0.6.0
+### Version 0.7.0
 
-Enabled for both the client and server versions of Valheim.
+Fixes:
+- properly check for dedicated vs non-dedicated servers
 
-Key differences if running a server from the client:
-
-- No Launch/Startup message is sent. This is because when the server launches it
-immediately begins loading the world, but for the client it is loading into the
-main menu. This may be fixable in the future to be a hook that goes before the
-world begins getting loaded to keep the functionality on the server and to enable
-similar functionality on the client.
+Features:
+- when sending position (POS or coordinates) with the message, will use an embed
+to improve visibility (if enabled)
+- added config options to enable/disable sending position with join and leave
+- added config option to enable/disable using the embed with discord when sending
+position data (disabled by default, I find it very busy when enabled atm)
+- added config option to enable/disable sending position with pings

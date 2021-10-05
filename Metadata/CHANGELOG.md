@@ -2,6 +2,19 @@
 
 A full changelog for reference.
 
+### Version 0.7.0
+
+Fixes:
+- properly check for dedicated vs non-dedicated servers
+
+Features:
+- when sending position (POS or coordinates) with the message, will use an embed
+to improve visibility (if enabled)
+- added config options to enable/disable sending position with join and leave
+- added config option to enable/disable using the embed with discord when sending
+position data (disabled by default, I find it very busy when enabled atm)
+- added config option to enable/disable sending position with pings
+
 ### Version 0.6.0
 
 Enabled for both the client and server versions of Valheim.

@@ -1,12 +1,28 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using UnityEngine;
 
 namespace DiscordConnector
 {
     class DiscordApi
     {
+        public static void SendMessage(string message, Vector3 pos)
+        {
+            if (Plugin.StaticConfig.DiscordEmbedsEnabled)
+            {
+                SendMessageWithFields(message, new List<Tuple<string, string>> {
+                    Tuple.Create("Coordinates",$"{pos}")
+                });
+            }
+            else
+            {
+                SendMessage($"{message} Coords: {pos}");
+            }
+        }
         public static void SendMessage(string message)
         {
             // A simple string message
@@ -20,8 +36,44 @@ namespace DiscordConnector
             SendSerializedJson(payloadString);
         }
 
+        public static void SendMessageWithFields(string content = null, List<Tuple<string, string>> fields = null)
+        {
+
+            if (string.IsNullOrEmpty(content) && fields == null)
+            {
+                content = "Uh-oh! An unexpectedly empty message was sent!";
+            }
+
+            string payloadString = "{";
+            if (fields != null)
+            {
+                payloadString += "\"embeds\":[{\"fields\":[";
+                foreach (Tuple<string, string> t in fields)
+                {
+                    payloadString += JsonSerializer.Serialize(new DiscordField
+                    {
+                        name = t.Item1,
+                        value = t.Item2
+                    });
+                }
+                payloadString += "]}]";
+                if (content != null)
+                {
+                    payloadString += ",";
+                }
+            }
+            if (content != null)
+            {
+                payloadString += $"\"content\":\"{content}\"";
+            }
+            payloadString += "}";
+
+            SendSerializedJson(payloadString);
+        }
+
         internal static void SendSerializedJson(string serializedJson)
         {
+            Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
             // Responsible for sending a JSON string to the webhook.
             byte[] byteArray = Encoding.UTF8.GetBytes(serializedJson);
 
@@ -58,5 +110,23 @@ namespace DiscordConnector
     internal class DiscordSimpleWebhook
     {
         public string content { get; set; }
+    }
+    internal class DiscordComplexWebhook
+    {
+        public DiscordEmbed embeds { get; set; }
+    }
+    internal class DiscordEmbed
+    {
+
+#nullable enable
+        public string? title { get; set; }
+        public string? description { get; set; }
+        public List<DiscordField>? fields { get; set; }
+#nullable restore
+    }
+    internal class DiscordField
+    {
+        public string name { get; set; }
+        public string value { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
 using BepInEx;
 using BepInEx.Logging;
+using System;
+using System.Collections.Generic;
 
 namespace DiscordConnector
 {
@@ -18,16 +20,17 @@ namespace DiscordConnector
 
             // Plugin startup logic
             StaticLogger.LogDebug($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
-
-            if (!BepInEx.Paths.ProcessName.Equals("valheim_server.exe"))
+            if (!BepInEx.Paths.ProcessName.Equals("valheim_server"))
             {
                 StaticLogger.LogInfo("Not running on a dedicated server, some features may break -- please report them!");
             }
             else if (StaticConfig.LaunchMessageEnabled)
             {
+
                 DiscordApi.SendMessage(
                     StaticConfig.LaunchMessage
                 );
+
             }
 
             if (string.IsNullOrEmpty(StaticConfig.WebHookURL))
