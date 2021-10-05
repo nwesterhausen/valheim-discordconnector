@@ -38,6 +38,7 @@ namespace DiscordConnector
         private ConfigEntry<string> playerLeaveMessage;
 
         // Statistic collection settings
+        private ConfigEntry<bool> collectStatsEnable;
         private ConfigEntry<bool> collectStatsJoins;
         private ConfigEntry<bool> collectStatsLeaves;
         private ConfigEntry<bool> collectStatsDeaths;
@@ -177,6 +178,10 @@ namespace DiscordConnector
                 "Random choice example: 'has left;has moved on;returns to dreams'");
 
             // Statistic Settings
+            collectStatsEnable = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
+                "Collect Player Stats",
+                true,
+                "Disable this setting to disable all stat collections and notifications. (Overwrites any individual setting.)");
             collectStatsDeaths = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
                 "Collect and Send Player Death Stats",
                 true,
@@ -197,30 +202,6 @@ namespace DiscordConnector
                 "Collect and Send Player Shout Stats",
                 true,
                 "If enabled, will collect and enable sending stat announcements for number of times a player has shouted.");
-
-
-            // Statistic Settings
-            collectStatsDeaths = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
-                "Collect and Send Player Death Stats",
-                true,
-                "If enabled, will collect and enable sending player death statistics.");
-            collectStatsJoins = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
-                "Collect and Send Player Join Stats",
-                true,
-                "If enabled, will collect and enable sending stat announcements for how many times a player has joined the game.");
-            collectStatsLeaves = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
-                "Collect and Send Player Leave Stats",
-                true,
-                "If enabled, will collect and enable sending stat announcements for how many times a player has left the game.");
-            collectStatsPings = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
-                "Collect and Send Player Ping Stats",
-                true,
-                "If enabled, will collect and enable sending stat announcements for number of pings made by a player.");
-            collectStatsShouts = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
-                "Collect and Send Player Shout Stats",
-                true,
-                "If enabled, will collect and enable sending stat announcements for number of times a player has shouted.");
-
 
 
             config.Save();
@@ -240,6 +221,12 @@ namespace DiscordConnector
         public bool ChatPingEnabled => chatPingToggle.Value;
         public bool PlayerJoinMessageEnabled => playerJoinToggle.Value;
         public bool PlayerLeaveMessageEnabled => playerLeaveToggle.Value;
+        public bool CollectStatsEnabled => collectStatsEnable.Value;
+        public bool StatsDeathEnabled => collectStatsDeaths.Value;
+        public bool StatsJoinEnabled => collectStatsJoins.Value;
+        public bool StatsLeaveEnabled => collectStatsLeaves.Value;
+        public bool StatsPingEnabled => collectStatsPings.Value;
+        public bool StatsShoutEnabled => collectStatsShouts.Value;
 
         // Messages
         public string LaunchMessage
