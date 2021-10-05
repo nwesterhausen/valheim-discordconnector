@@ -120,6 +120,11 @@ namespace DiscordConnector.Patches
             {
                 if (Plugin.StaticConfig.ChatMessageEnabled)
                 {
+                    if (Plugin.StaticConfig.MutedPlayers.IndexOf(user) < 0)
+                    {
+                        Plugin.StaticLogger.LogInfo($"Ignored shout from user on muted list. User: {user} Shout: {text}");
+                        return;
+                    }
                     switch (type)
                     {
                         case Talker.Type.Ping:

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using BepInEx.Configuration;
 
 namespace DiscordConnector
@@ -16,6 +17,7 @@ namespace DiscordConnector
         // Discord Settings
         private ConfigEntry<string> webhookUrl;
         private ConfigEntry<bool> discordEmbedMessagesToggle;
+        private ConfigEntry<string> mutedDiscordUserlist;
 
         // Logged Information Toggles
         private ConfigEntry<bool> serverLaunchToggle;
@@ -52,6 +54,8 @@ namespace DiscordConnector
         {
             PluginConfig.config = config;
             LoadConfig();
+
+            MutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(','));
         }
 
         public void LoadConfig()
@@ -67,6 +71,12 @@ namespace DiscordConnector
                 false,
                 "Enable this setting to use embeds in the messages sent to Discord." + Environment.NewLine +
                 "NOTE: Some things may not work as expected with this enabled. Report any weirdness!");
+
+            mutedDiscordUserlist = config.Bind<string>(DISCORD_SETTINGS,
+                "Ignored Players",
+                "",
+                "It may be that you have some players that you never want to send Discord messages for. Adding a player name to this list will ignore them." + Environment.NewLine +
+                "Format should be a comma-separated list: Stuart,John McJohnny,Weird-name1");
 
             // Message Toggles
 
@@ -310,5 +320,6 @@ namespace DiscordConnector
                 return choices[selection];
             }
         }
+        public List<string> MutedPlayers;
     }
 }

@@ -2,6 +2,10 @@
 
 A full changelog for reference.
 
+### Version 0.7.1
+
+Added config option to ignore players when sending shout messages to Discord.
+
 ### Version 0.7.0
 
 Fixes:
