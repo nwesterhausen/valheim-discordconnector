@@ -47,6 +47,10 @@ namespace DiscordConnector.Patches
                         DiscordApi.SendMessage(
                           $"{peer.m_playerName} {Plugin.StaticConfig.JoinMessage}"
                         );
+                        if (Plugin.StaticConfig.StatsJoinEnabled)
+                        {
+                            Plugin.StaticRecords.Store(Categories.Join, peer.m_playerName, 1);
+                        }
                     }
                 }
             }
@@ -65,6 +69,10 @@ namespace DiscordConnector.Patches
                         DiscordApi.SendMessage(
                           $"{peer.m_playerName} {Plugin.StaticConfig.LeaveMessage}"
                         );
+                        if (Plugin.StaticConfig.StatsLeaveEnabled)
+                        {
+                            Plugin.StaticRecords.Store(Categories.Leave, peer.m_playerName, 1);
+                        }
                     }
                 }
             }
@@ -87,8 +95,12 @@ namespace DiscordConnector.Patches
                             if (Plugin.StaticConfig.ChatPingEnabled)
                             {
                                 DiscordApi.SendMessage(
-                                    $"{user} pings the map at ${pos}"
+                                    $"{user} pings the map at {pos}"
                                 );
+                                if (Plugin.StaticConfig.StatsPingEnabled)
+                                {
+                                    Plugin.StaticRecords.Store(Categories.Ping, user, 1);
+                                }
                             }
                             break;
                         case Talker.Type.Shout:
@@ -106,12 +118,20 @@ namespace DiscordConnector.Patches
                                     DiscordApi.SendMessage(
                                         $"{user} shouts {text} from {pos}!"
                                     );
+                                    if (Plugin.StaticConfig.StatsShoutEnabled)
+                                    {
+                                        Plugin.StaticRecords.Store(Categories.Shout, user, 1);
+                                    }
                                 }
                                 else
                                 {
                                     DiscordApi.SendMessage(
                                         $"{user} shouts {text}!"
                                     );
+                                    if (Plugin.StaticConfig.StatsShoutEnabled)
+                                    {
+                                        Plugin.StaticRecords.Store(Categories.Shout, user, 1);
+                                    }
                                 }
                             }
                             break;
