@@ -87,7 +87,7 @@ namespace DiscordConnector.Patches
                             if (Plugin.StaticConfig.ChatPingEnabled)
                             {
                                 DiscordApi.SendMessage(
-                                    $"{user} pings the map at ${pos}"
+                                    $"{user} pings the map at {pos}"
                                 );
                             }
                             break;
