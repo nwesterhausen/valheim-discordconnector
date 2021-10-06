@@ -58,7 +58,7 @@ namespace DiscordConnector.Patches
                     {
                         // Seems that player is dead if character ZDOID id is 0
                         // m_characterID id=0 means dead, user_id always matches peer.m_uid
-                        if (peer.m_characterID.id == 0)
+                        if (peer.m_characterID.id == 0 && Plugin.StaticConfig.PlayerDeathMessageEnabled)
                         {
                             string message = $"{peer.m_playerName} {Plugin.StaticConfig.DeathMessage}";
                             if (Plugin.StaticConfig.PlayerDeathPosEnabled)
@@ -78,7 +78,7 @@ namespace DiscordConnector.Patches
                             }
                         }
                     }
-                    else
+                    else if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
                     {
                         // PLAYER JOINED
                         joinedPlayers.Add(peer.m_uid);
