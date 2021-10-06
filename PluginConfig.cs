@@ -61,6 +61,8 @@ namespace DiscordConnector
             LoadConfig();
 
             mutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(';'));
+            Plugin.StaticLogger.LogDebug("Configuration Loaded");
+            Plugin.StaticLogger.LogDebug(ConfigAsJson());
         }
 
         public void LoadConfig()
@@ -141,7 +143,7 @@ namespace DiscordConnector
 
             playerJoinPosToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
                 "Include POS With Player Join",
-                false,
+                true,
                 "If enabled, this will include the coordinates of the player when they join.");
 
             playerDeathToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
@@ -152,7 +154,7 @@ namespace DiscordConnector
 
             playerDeathPosToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
                 "Include POS With Player Death",
-                false,
+                true,
                 "If enabled, this will include the coordinates of the player when they die.");
 
             playerLeaveToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
@@ -163,7 +165,7 @@ namespace DiscordConnector
 
             playerLeavePosToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
                 "Include POS With Player Leave",
-                false,
+                true,
                 "If enabled, this will include the coordinates of the player when they leave.");
 
             statsAnnouncementToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
@@ -278,6 +280,8 @@ namespace DiscordConnector
         public bool StatsLeaveEnabled => collectStatsLeaves.Value;
         public bool StatsPingEnabled => collectStatsPings.Value;
         public bool StatsShoutEnabled => collectStatsShouts.Value;
+        public bool StatsAnnouncementEnabled => statsAnnouncementToggle.Value;
+        public int StatsAnnouncementPeriod => statsAnnouncementPeriod.Value;
 
         // Messages
         public string LaunchMessage
@@ -359,5 +363,57 @@ namespace DiscordConnector
             }
         }
         public List<string> MutedPlayers => mutedPlayers;
+
+        public string ConfigAsJson()
+        {
+            string jsonString = "{";
+
+            // Discord Settings
+            jsonString += "\"discord\":{";
+            jsonString += $"\"webhook\":\"{(string.IsNullOrEmpty(WebHookURL) ? "unset" : "REDACTED")}\",";
+            jsonString += $"\"fancierMessages\":\"{DiscordEmbedsEnabled}\",";
+            jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserlist.Value}\"";
+            jsonString += "},";
+
+            // Notification Content Settings
+            jsonString += "\"notificationContent\":{";
+            jsonString += $"\"launchMessage\":\"{serverLaunchMessage.Value}\",";
+            jsonString += $"\"startMessage\":\"{serverLoadedMessage.Value}\",";
+            jsonString += $"\"stopMessage\":\"{serverStopMessage.Value}\",";
+            jsonString += $"\"joinMessage\":\"{playerJoinMessage.Value}\",";
+            jsonString += $"\"deathMessage\":\"{playerDeathMessage.Value}\",";
+            jsonString += $"\"leaveMessage\":\"{playerLeaveMessage.Value}\"";
+            jsonString += "},";
+
+            // Notification Settings
+            jsonString += "\"notificationToggles\":{";
+            jsonString += $"\"launchMessageEnabled\":\"{LaunchMessageEnabled}\",";
+            jsonString += $"\"loadedMessageEnabled\":\"{LoadedMessageEnabled}\",";
+            jsonString += $"\"stopMessageEnabled\":\"{StopMessageEnabled}\",";
+            jsonString += $"\"chatMessageEnabled\":\"{ChatMessageEnabled}\",";
+            jsonString += $"\"chatShoutEnabled\":\"{ChatShoutEnabled}\",";
+            jsonString += $"\"chatShoutPosEnabled\":\"{ChatShoutPosEnabled}\",";
+            jsonString += $"\"chatPingEnabled\":\"{ChatPingEnabled}\",";
+            jsonString += $"\"chatPingPosEnabled\":\"{ChatPingPosEnabled}\",";
+            jsonString += $"\"playerJoinEnabled\":\"{PlayerJoinMessageEnabled}\",";
+            jsonString += $"\"playerJoinPosEnabled\":\"{PlayerJoinPosEnabled}\",";
+            jsonString += $"\"playerLeaveEnabled\":\"{PlayerLeaveMessageEnabled}\",";
+            jsonString += $"\"playerLeavePosEnabled\":\"{PlayerLeavePosEnabled}\",";
+            jsonString += $"\"playerDeathEnabled\":\"{PlayerDeathMessageEnabled}\",";
+            jsonString += $"\"playerDeathPosEnabled\":\"{PlayerDeathPosEnabled}\",";
+            jsonString += $"\"periodicLeaderboardEnabled\":\"{StatsAnnouncementEnabled}\",";
+            jsonString += $"\"periodicLeaderabordPeriodSeconds\":\"{StatsAnnouncementPeriod}\"";
+            jsonString += "},";
+
+            // Stats Collection
+            jsonString += "\"statsCollection\":{";
+            jsonString += $"\"statsDeathEnabled\":\"{StatsDeathEnabled}\",";
+            jsonString += $"\"statsJoinEnabled\":\"{StatsJoinEnabled}\",";
+            jsonString += $"\"statsLeaveEnabled\":\"{StatsLeaveEnabled}\",";
+            jsonString += $"\"statsPingEnabled\":\"{StatsPingEnabled}\",";
+            jsonString += $"\"statsShoutEnabled\":\"{StatsShoutEnabled}\"";
+            jsonString += "}}";
+            return jsonString;
+        }
     }
 }
