@@ -24,14 +24,6 @@ namespace DiscordConnector
             {
                 StaticLogger.LogInfo("Not running on a dedicated server, some features may break -- please report them!");
             }
-            else if (StaticConfig.LaunchMessageEnabled)
-            {
-
-                DiscordApi.SendMessage(
-                    StaticConfig.LaunchMessage
-                );
-
-            }
 
             if (string.IsNullOrEmpty(StaticConfig.WebHookURL))
             {

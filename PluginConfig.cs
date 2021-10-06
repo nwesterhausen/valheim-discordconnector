@@ -8,6 +8,8 @@ namespace DiscordConnector
     {
         public static ConfigFile config;
 
+        private static List<String> mutedPlayers;
+
         // config header strings
         private const string DISCORD_SETTINGS = "Discord Settings";
         private const string NOTIFICATION_SETTINGS = "Notification Settings";
@@ -55,7 +57,7 @@ namespace DiscordConnector
             PluginConfig.config = config;
             LoadConfig();
 
-            MutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(','));
+            mutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(';'));
         }
 
         public void LoadConfig()
@@ -76,7 +78,7 @@ namespace DiscordConnector
                 "Ignored Players",
                 "",
                 "It may be that you have some players that you never want to send Discord messages for. Adding a player name to this list will ignore them." + Environment.NewLine +
-                "Format should be a comma-separated list: Stuart,John McJohnny,Weird-name1");
+                "Format should be a semicolon-separated list: Stuart;John McJohnny;Weird-name1");
 
             // Message Toggles
 
@@ -320,6 +322,6 @@ namespace DiscordConnector
                 return choices[selection];
             }
         }
-        public List<string> MutedPlayers;
+        public List<string> MutedPlayers => mutedPlayers;
     }
 }

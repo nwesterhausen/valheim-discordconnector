@@ -20,6 +20,15 @@ namespace DiscordConnector.Patches
                     );
                 }
             }
+            private static void Prefix(ref ZNet __instance)
+            {
+                if (Plugin.StaticConfig.LaunchMessageEnabled)
+                {
+                    DiscordApi.SendMessage(
+                        Plugin.StaticConfig.LaunchMessage
+                    );
+                }
+            }
         }
 
         [HarmonyPatch(typeof(ZNet), nameof(ZNet.Shutdown))]
@@ -120,9 +129,9 @@ namespace DiscordConnector.Patches
             {
                 if (Plugin.StaticConfig.ChatMessageEnabled)
                 {
-                    if (Plugin.StaticConfig.MutedPlayers.IndexOf(user) < 0)
+                    if (Plugin.StaticConfig.MutedPlayers.IndexOf(user) >= 0)
                     {
-                        Plugin.StaticLogger.LogInfo($"Ignored shout from user on muted list. User: {user} Shout: {text}");
+                        Plugin.StaticLogger.LogInfo($"Ignored shout from user on muted list. User: {user} Shout: {text}. Index {Plugin.StaticConfig.MutedPlayers.IndexOf(user)}");
                         return;
                     }
                     switch (type)
