@@ -73,6 +73,11 @@ namespace DiscordConnector
 
         internal static void SendSerializedJson(string serializedJson)
         {
+            if (string.IsNullOrEmpty(Plugin.StaticConfig.WebHookURL))
+            {
+                Plugin.StaticLogger.LogInfo("Not sending message, no webhook set.");
+                return;
+            }
             Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
             // Responsible for sending a JSON string to the webhook.
             byte[] byteArray = Encoding.UTF8.GetBytes(serializedJson);

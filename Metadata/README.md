@@ -33,6 +33,10 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
 
+### Version 0.7.1
+
+Added config option to ignore players when sending shout messages to Discord.
+
 ### Version 0.7.0
 
 Fixes:
