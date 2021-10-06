@@ -2,6 +2,24 @@
 
 A full changelog for reference.
 
+### Version 0.9.0
+
+Default config options are updated to be true for all notification and coordinates.
+
+Features:
+
+- Periodic stats leaderboard functionality (opt-in)
+
+Fixes:
+
+- Corrected duplicate "join" message when player dies
+- Correctly looks at leave config option before sending leave message
+- Correctly looks at join/death config option before sending messages
+
+Improvements:
+
+- Loaded config is now debug logged to make debugging easier
+
 ### Version 0.8.0
 
 Added a Death detection and config options to enable/disable the messages as well as
@@ -18,9 +36,11 @@ Added config option to ignore players when sending shout messages to Discord.
 ### Version 0.7.0
 
 Fixes:
+
 - properly check for dedicated vs non-dedicated servers
 
 Features:
+
 - when sending position (POS or coordinates) with the message, will use an embed
 to improve visibility (if enabled)
 - added config options to enable/disable sending position with join and leave

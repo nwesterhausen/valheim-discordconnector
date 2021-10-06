@@ -48,14 +48,16 @@ namespace DiscordConnector
             if (fields != null)
             {
                 payloadString += "\"embeds\":[{\"fields\":[";
+                List<string> fieldStrings = new List<string>();
                 foreach (Tuple<string, string> t in fields)
                 {
-                    payloadString += JsonSerializer.Serialize(new DiscordField
+                    fieldStrings.Add(JsonSerializer.Serialize(new DiscordField
                     {
                         name = t.Item1,
                         value = t.Item2
-                    });
+                    }));
                 }
+                payloadString += string.Join(",", fieldStrings.ToArray());
                 payloadString += "]}]";
                 if (content != null)
                 {

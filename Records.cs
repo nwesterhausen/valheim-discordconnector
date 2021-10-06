@@ -115,6 +115,39 @@ namespace DiscordConnector
             return 0;
         }
 
+        public Tuple<string, int> Retrieve(string key)
+        {
+            if (!Plugin.StaticConfig.CollectStatsEnabled)
+            {
+                return Tuple.Create("not allowed", -1);
+            }
+
+            if (Array.IndexOf<string>(Categories.All, key) >= 0)
+            {
+                string player = "no result";
+                int records = -1;
+                foreach (Record r in recordCache)
+                {
+                    if (r.Category.Equals(key))
+                    {
+                        foreach (RecordValue v in r.Values)
+                        {
+                            if (v.Value > records)
+                            {
+                                player = v.PlayerName;
+                                records = v.Value;
+                            }
+                        }
+                    }
+                }
+                return Tuple.Create(player, records);
+            }
+            else
+            {
+                return Tuple.Create($"not recording for {key}", -1);
+            }
+        }
+
         private async Task FlushCache()
         {
             if (Plugin.StaticConfig.CollectStatsEnabled)
