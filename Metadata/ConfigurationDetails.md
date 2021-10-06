@@ -52,24 +52,46 @@ So keep that in mind as your write messages. In a future update, this will likel
 
 ## Toggles
 
-The toggle configuration is a collection of on/off switches for all the message types and all the extra data that can be sent with them. It's broken up into 3 sections, "Message.Toggles" which turns on or off each type of message, "Position.Toggles" which turns on or off sending player coordinates with messages, "Stats.Toggles" which turns on or off collection of individual stats and "Leaderboard.Toggles" which turns on or off what stats to send with the leaderboard updates
+The toggle configuration is a collection of on/off switches for all the message types and all the extra data that can be sent with them. It's broken up into 3 sections, "Toggles.Messages" which turns on or off each type of message, "Toggles.Positions" which turns on or off sending player coordinates with messages, "Toggles.Stats" which turns on or off collection of individual stats and "Toggles.Leaderboards" which turns on or off what stats to send with the leaderboard updates
 
 ### Message.Toggles
 
-| Option | Default | Description |
-| ------ | ------- | ----------- |
+| Option                     | Default | Description                                                  |
+| -------------------------- | ------- | ------------------------------------------------------------ |
+| Send Launch Messages       | true    | If true, a message will be sent to Discord when the server launches |
+| Send Loaded Messages       | true    | If true, a message will be sent to Discord when the server is online and ready for players |
+| Send Shutdown Messages     | true    | If true, a message will be sent to Discord when the server shuts down |
+| Send Player Join Messages  | true    | Set to true to send a message when a player joins the world  |
+| Send Player Leave Messages | true    | Set to true to send a message when a player leaves the world |
+| Send Player Death Messages | true    | Set to true to send a message when a player dies             |
+| Send Player Shout Messages | true    | Set to true to send a message when a player shouts           |
+| Send Player Ping Messages  | true    | Set to true to send a message when a player pings the map    |
 
 ### Position.Toggles
 
-| Option | Default | Description |
-| ------ | ------- | ----------- |
+| Option                           | Default | Description                                                  |
+| -------------------------------- | ------- | ------------------------------------------------------------ |
+| Send Position with Player Joins  | false   | Set to true to send a player's coordinates when they join the world |
+| Send Position with Player Leaves | false   | Set to true to send a player's coordinates when they leave the world |
+| Send Position with Player Pings  | true    | Set to true to send a player's coordinates when theyping on the map |
+| Send Position with Player Shouts | false   | Set to true to send a player's coordinates when they shout in game |
+| Send Position with Player Deaths | true    | Set to true to send a player's coordinates when they die     |
 
 ### Stats.Toggles
 
-| Option | Default | Description |
-| ------ | ------- | ----------- |
+| Option                        | Default | Description                                                  |
+| ----------------------------- | ------- | ------------------------------------------------------------ |
+| Allow recording player joins  | true    | Set to false to never record players joining in records.json |
+| Allow recording player leaves | true    | Set to false to never record players leaving in records.json |
+| Allow recording player pings  | true    | Set to false to never record player pings in records.json    |
+| Allow recording player shouts | true    | Set to false to never record player shouts in records.json   |
+| Allow recording player deaths | true    | Set to false to never record player deaths in records.json   |
 
 ### Leaderboard.Toggles
 
-| Option | Default | Description |
-| ------ | ------- | ----------- |
+| Option                    | Default | Description                                                  |
+| ------------------------- | ------- | ------------------------------------------------------------ |
+| Send pings leaderboard    | false   | Send a leaderboard (at the interval) for top-pinging players |
+| Send deaths leaderboard   | true    | Send a leaderboard (at the interval) for what players have the most deaths |
+| Send sessions leaderboard | false   | Send a leaderboard (at the interval) for players with the most joins/leaves |
+| Send shouts leaderboard   | false   | Send a leaderboard (at the interval) for players with the most shouts sent |
