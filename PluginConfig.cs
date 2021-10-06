@@ -32,6 +32,8 @@ namespace DiscordConnector
         private ConfigEntry<bool> chatPingPosToggle;
         private ConfigEntry<bool> playerJoinToggle;
         private ConfigEntry<bool> playerJoinPosToggle;
+        private ConfigEntry<bool> playerDeathToggle;
+        private ConfigEntry<bool> playerDeathPosToggle;
         private ConfigEntry<bool> playerLeaveToggle;
         private ConfigEntry<bool> playerLeavePosToggle;
         private ConfigEntry<bool> statsAnnouncementToggle;
@@ -43,6 +45,7 @@ namespace DiscordConnector
         private ConfigEntry<string> serverStopMessage;
         private ConfigEntry<string> playerJoinMessage;
         private ConfigEntry<string> playerLeaveMessage;
+        private ConfigEntry<string> playerDeathMessage;
 
         // Statistic collection settings
         private ConfigEntry<bool> collectStatsEnable;
@@ -141,6 +144,17 @@ namespace DiscordConnector
                 false,
                 "If enabled, this will include the coordinates of the player when they join.");
 
+            playerDeathToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+                "Player Death Notifications",
+                true,
+                "If enabled, this will send a message to Discord when a player dies on the server." + Environment.NewLine +
+                "EX: Player has died");
+
+            playerDeathPosToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+                "Include POS With Player Death",
+                false,
+                "If enabled, this will include the coordinates of the player when they die.");
+
             playerLeaveToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
                 "Player Leave Notifications",
                 true,
@@ -193,6 +207,13 @@ namespace DiscordConnector
                 "Set the message that will be sent when a player joins the server" + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
                 "Random choice example: 'has joined;awakens;arrives'");
+
+            playerDeathMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
+                "Player Death Message",
+                "has died.",
+                "Set the message that will be sent when a player dies." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "Random choice example: 'has died;was yeeted'");
 
             playerLeaveMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
                 "Player Leave Message",
@@ -247,6 +268,8 @@ namespace DiscordConnector
         public bool ChatPingPosEnabled => chatPingPosToggle.Value;
         public bool PlayerJoinMessageEnabled => playerJoinToggle.Value;
         public bool PlayerJoinPosEnabled => playerJoinPosToggle.Value;
+        public bool PlayerDeathMessageEnabled => playerJoinToggle.Value;
+        public bool PlayerDeathPosEnabled => playerJoinPosToggle.Value;
         public bool PlayerLeaveMessageEnabled => playerLeaveToggle.Value;
         public bool PlayerLeavePosEnabled => playerLeavePosToggle.Value;
         public bool CollectStatsEnabled => collectStatsEnable.Value;
@@ -318,6 +341,19 @@ namespace DiscordConnector
                     return playerLeaveMessage.Value;
                 }
                 string[] choices = playerLeaveMessage.Value.Split(';');
+                int selection = (new Random()).Next(choices.Length);
+                return choices[selection];
+            }
+        }
+        public string DeathMessage
+        {
+            get
+            {
+                if (!playerDeathMessage.Value.Contains(";"))
+                {
+                    return playerDeathMessage.Value;
+                }
+                string[] choices = playerDeathMessage.Value.Split(';');
                 int selection = (new Random()).Next(choices.Length);
                 return choices[selection];
             }

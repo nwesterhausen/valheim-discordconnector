@@ -2,7 +2,12 @@
 
 A full changelog for reference.
 
-### Version 0.7.2
+### Version 0.8.0
+
+Added a Death detection and config options to enable/disable the messages as well as
+set either a single message or list of messages to be chosen from when sending a message.
+
+### Version 0.7.2, 0.7.3
 
 Hotfix for mis-packed plugin
 
