@@ -48,37 +48,47 @@ namespace DiscordConnector.Patches
         [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_CharacterID))]
         internal class RPC_CharacterID
         {
+            private static List<long> joinedPlayers = new List<long>();
             private static void Postfix(ZRpc rpc, ZDOID characterID)
             {
-                if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
+                ZNetPeer peer = ZNet.instance.GetPeer(rpc);
+                if (peer != null)
                 {
-                    ZNetPeer peer = ZNet.instance.GetPeer(rpc);
-                    if (peer != null)
+                    string message;
+                    bool death = false;
+                    if (joinedPlayers.IndexOf(peer.m_uid) >= 0)
                     {
-                        string message = $"{peer.m_playerName} {Plugin.StaticConfig.JoinMessage}";
-                        if (Plugin.StaticConfig.DiscordEmbedsEnabled)
+                        // PLAYER DIED
+                        joinedPlayers.Remove(peer.m_uid);
+                        message = $"{peer.m_playerName} {Plugin.StaticConfig.DeathMessage}";
+                        if (Plugin.StaticConfig.StatsDeathEnabled)
                         {
-                            if (Plugin.StaticConfig.PlayerJoinPosEnabled)
-                            {
-                                DiscordApi.SendMessage(
-                                    message,
-                                    peer.m_refPos
-                                );
-                            }
-                            else
-                            {
-                                DiscordApi.SendMessage(message);
-                            }
+                            Plugin.StaticRecords.Store(Categories.Death, peer.m_playerName, 1);
                         }
-                        else
-                        {
-                            DiscordApi.SendMessage(
-                              message
-                            );
-                        }
+                    }
+                    else
+                    {
+                        // PLAYER JOINED | RESPAWNED
+                        joinedPlayers.Add(peer.m_uid);
+                        message = $"{peer.m_playerName} {Plugin.StaticConfig.JoinMessage}";
                         if (Plugin.StaticConfig.StatsJoinEnabled)
                         {
                             Plugin.StaticRecords.Store(Categories.Join, peer.m_playerName, 1);
+                        }
+                    }
+
+                    if ((death && Plugin.StaticConfig.PlayerDeathMessageEnabled) || Plugin.StaticConfig.PlayerJoinMessageEnabled)
+                    {
+                        if ((death && Plugin.StaticConfig.PlayerDeathPosEnabled) || Plugin.StaticConfig.PlayerJoinPosEnabled)
+                        {
+                            DiscordApi.SendMessage(
+                                message,
+                                peer.m_refPos
+                            );
+                        }
+                        else
+                        {
+                            DiscordApi.SendMessage(message);
                         }
                     }
                 }
