@@ -2,6 +2,13 @@
 
 A full changelog for reference.
 
+### Version 0.9.1
+
+Fixes
+
+- Time interval for leaderboard in **minutes** not seconds.
+- Don't display a leave message for disconnects due to version mismatch
+
 ### Version 0.9.0
 
 Default config options are updated to be true for all notification and coordinates.
