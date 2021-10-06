@@ -33,19 +33,20 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
 
-### Version 0.7.1
+### Version 0.9.0
 
-Added config option to ignore players when sending shout messages to Discord.
-
-### Version 0.7.0
-
-Fixes:
-- properly check for dedicated vs non-dedicated servers
+Default config options are updated to be true for all notification and coordinates.
 
 Features:
-- when sending position (POS or coordinates) with the message, will use an embed
-to improve visibility (if enabled)
-- added config options to enable/disable sending position with join and leave
-- added config option to enable/disable using the embed with discord when sending
-position data (disabled by default, I find it very busy when enabled atm)
-- added config option to enable/disable sending position with pings
+
+- Periodic stats leaderboard functionality (opt-in)
+
+Fixes:
+
+- Corrected duplicate "join" message when player dies
+- Correctly looks at leave config option before sending leave message
+- Correctly looks at join/death config option before sending messages
+
+Improvements:
+
+- Loaded config is now debug logged to make debugging easier
