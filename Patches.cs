@@ -111,7 +111,7 @@ namespace DiscordConnector.Patches
                 if (Plugin.StaticConfig.PlayerLeaveMessageEnabled)
                 {
                     ZNetPeer peer = ZNet.instance.GetPeer(rpc);
-                    if (peer != null)
+                    if (peer != null && peer.m_uid != 0)
                     {
                         string message = $"{peer.m_playerName} {Plugin.StaticConfig.LeaveMessage}";
                         if (Plugin.StaticConfig.PlayerLeavePosEnabled)
