@@ -106,7 +106,7 @@ namespace DiscordConnector.Patches
                     if (peer != null)
                     {
                         string message = $"{peer.m_playerName} {Plugin.StaticConfig.LeaveMessage}";
-                        if (Plugin.StaticConfig.PlayerJoinPosEnabled)
+                        if (Plugin.StaticConfig.PlayerLeavePosEnabled)
                         {
                             DiscordApi.SendMessage(
                                 message,
