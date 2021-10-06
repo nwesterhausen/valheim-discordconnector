@@ -60,22 +60,22 @@ namespace DiscordConnector.Patches
                         // m_characterID id=0 means dead, user_id always matches peer.m_uid
                         if (peer.m_characterID.id == 0)
                         {
-                        string message = $"{peer.m_playerName} {Plugin.StaticConfig.DeathMessage}";
-                        if (Plugin.StaticConfig.PlayerDeathPosEnabled)
-                        {
-                            DiscordApi.SendMessage(
-                                message,
-                                peer.m_refPos
-                            );
-                        }
-                        else
-                        {
-                            DiscordApi.SendMessage(message);
-                        }
-                        if (Plugin.StaticConfig.StatsDeathEnabled)
-                        {
-                            Plugin.StaticRecords.Store(Categories.Death, peer.m_playerName, 1);
-                        }
+                            string message = $"{peer.m_playerName} {Plugin.StaticConfig.DeathMessage}";
+                            if (Plugin.StaticConfig.PlayerDeathPosEnabled)
+                            {
+                                DiscordApi.SendMessage(
+                                    message,
+                                    peer.m_refPos
+                                );
+                            }
+                            else
+                            {
+                                DiscordApi.SendMessage(message);
+                            }
+                            if (Plugin.StaticConfig.StatsDeathEnabled)
+                            {
+                                Plugin.StaticRecords.Store(Categories.Death, peer.m_playerName, 1);
+                            }
                         }
                     }
                     else

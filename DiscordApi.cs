@@ -57,7 +57,7 @@ namespace DiscordConnector
                         value = t.Item2
                     }));
                 }
-                payloadString += string.Join(",",fieldStrings.ToArray());
+                payloadString += string.Join(",", fieldStrings.ToArray());
                 payloadString += "]}]";
                 if (content != null)
                 {

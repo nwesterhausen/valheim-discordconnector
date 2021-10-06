@@ -53,10 +53,22 @@ namespace DiscordConnector
             var pingLeader = StaticRecords.Retrieve(Categories.Ping);
 
             List<Tuple<string, string>> leaderFields = new List<Tuple<string, string>>();
-            if (deathLeader.Item2 > 0) { leaderFields.Add(Tuple.Create("Most Deaths", $"{deathLeader.Item1} ({deathLeader.Item2})")); }
-            if (joinLeader.Item2 > 0) { leaderFields.Add(Tuple.Create("Most Joins|Leaves", $"{joinLeader.Item1} ({joinLeader.Item2})")); }
-            if (shoutLeader.Item2 > 0) { leaderFields.Add(Tuple.Create("Most Shouts", $"{shoutLeader.Item1} ({shoutLeader.Item2})")); }
-            if (pingLeader.Item2 > 0) { leaderFields.Add(Tuple.Create("Most Pings", $"{pingLeader.Item1} ({pingLeader.Item2})")); }
+            if (deathLeader.Item2 > 0)
+            {
+                leaderFields.Add(Tuple.Create("Most Deaths", $"{deathLeader.Item1} ({deathLeader.Item2})"));
+            }
+            if (joinLeader.Item2 > 0)
+            {
+                leaderFields.Add(Tuple.Create("Most Joins|Leaves", $"{joinLeader.Item1} ({joinLeader.Item2})"));
+            }
+            if (shoutLeader.Item2 > 0)
+            {
+                leaderFields.Add(Tuple.Create("Most Shouts", $"{shoutLeader.Item1} ({shoutLeader.Item2})"));
+            }
+            if (pingLeader.Item2 > 0)
+            {
+                leaderFields.Add(Tuple.Create("Most Pings", $"{pingLeader.Item1} ({pingLeader.Item2})"));
+            }
 
             DiscordApi.SendMessageWithFields("Current leaderboard for tracked stats:", leaderFields);
         }
