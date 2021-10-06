@@ -37,8 +37,8 @@ namespace DiscordConnector
             {
                 System.Timers.Timer leaderboardTimer = new System.Timers.Timer();
                 leaderboardTimer.Elapsed += new System.Timers.ElapsedEventHandler(SendLeaderboardAnnouncement);
-                // Interval is learned from config file in seconds
-                leaderboardTimer.Interval = 1000 * StaticConfig.StatsAnnouncementPeriod;
+                // Interval is learned from config file in minutes
+                leaderboardTimer.Interval = 60 * 1000 * StaticConfig.StatsAnnouncementPeriod;
                 leaderboardTimer.Start();
             }
 

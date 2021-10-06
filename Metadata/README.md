@@ -33,6 +33,13 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
 
+### Version 0.9.1
+
+Fixes
+
+- Time interval for leaderboard in **minutes** not seconds.
+- Don't display a leave message for disconnects due to version mismatch
+
 ### Version 0.9.0
 
 Default config options are updated to be true for all notification and coordinates.
