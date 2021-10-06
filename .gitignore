@@ -391,4 +391,4 @@ FodyWeavers.xsd
 *.sln
 
 # Test Files
-build-copy.ps1
+rundev.ps1
