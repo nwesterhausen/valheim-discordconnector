@@ -54,32 +54,14 @@ namespace DiscordConnector.Patches
                 ZNetPeer peer = ZNet.instance.GetPeer(rpc);
                 if (peer != null)
                 {
-                    string message;
-                    bool death = false;
                     if (joinedPlayers.IndexOf(peer.m_uid) >= 0)
                     {
-                        // PLAYER DIED
-                        joinedPlayers.Remove(peer.m_uid);
-                        message = $"{peer.m_playerName} {Plugin.StaticConfig.DeathMessage}";
-                        if (Plugin.StaticConfig.StatsDeathEnabled)
+                        // Seems that player is dead if character ZDOID id is 0
+                        // m_characterID id=0 means dead, user_id always matches peer.m_uid
+                        if (peer.m_characterID.id == 0)
                         {
-                            Plugin.StaticRecords.Store(Categories.Death, peer.m_playerName, 1);
-                        }
-                    }
-                    else
-                    {
-                        // PLAYER JOINED | RESPAWNED
-                        joinedPlayers.Add(peer.m_uid);
-                        message = $"{peer.m_playerName} {Plugin.StaticConfig.JoinMessage}";
-                        if (Plugin.StaticConfig.StatsJoinEnabled)
-                        {
-                            Plugin.StaticRecords.Store(Categories.Join, peer.m_playerName, 1);
-                        }
-                    }
-
-                    if ((death && Plugin.StaticConfig.PlayerDeathMessageEnabled) || Plugin.StaticConfig.PlayerJoinMessageEnabled)
-                    {
-                        if ((death && Plugin.StaticConfig.PlayerDeathPosEnabled) || Plugin.StaticConfig.PlayerJoinPosEnabled)
+                        string message = $"{peer.m_playerName} {Plugin.StaticConfig.DeathMessage}";
+                        if (Plugin.StaticConfig.PlayerDeathPosEnabled)
                         {
                             DiscordApi.SendMessage(
                                 message,
@@ -89,6 +71,32 @@ namespace DiscordConnector.Patches
                         else
                         {
                             DiscordApi.SendMessage(message);
+                        }
+                        if (Plugin.StaticConfig.StatsDeathEnabled)
+                        {
+                            Plugin.StaticRecords.Store(Categories.Death, peer.m_playerName, 1);
+                        }
+                        }
+                    }
+                    else
+                    {
+                        // PLAYER JOINED
+                        joinedPlayers.Add(peer.m_uid);
+                        string message = $"{peer.m_playerName} {Plugin.StaticConfig.JoinMessage}";
+                        if (Plugin.StaticConfig.PlayerJoinPosEnabled)
+                        {
+                            DiscordApi.SendMessage(
+                                message,
+                                peer.m_refPos
+                            );
+                        }
+                        else
+                        {
+                            DiscordApi.SendMessage(message);
+                        }
+                        if (Plugin.StaticConfig.StatsJoinEnabled)
+                        {
+                            Plugin.StaticRecords.Store(Categories.Join, peer.m_playerName, 1);
                         }
                     }
                 }
