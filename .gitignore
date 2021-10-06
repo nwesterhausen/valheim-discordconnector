@@ -389,3 +389,6 @@ FodyWeavers.xsd
 
 # Solution ignoring
 *.sln
+
+# Test Files
+build-copy.ps1
