@@ -33,27 +33,14 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
 
-### Version 0.9.1
-
-Fixes
-
-- Time interval for leaderboard in **minutes** not seconds.
-- Don't display a leave message for disconnects due to version mismatch
-
-### Version 0.9.0
-
-Default config options are updated to be true for all notification and coordinates.
+### Version 0.10.0
 
 Features:
 
-- Periodic stats leaderboard functionality (opt-in)
+- %PLAYER_NAME% is replaced in messages with the player name, allowing you to change
+where in the message the playe is mentioned (Thanks @Digitalroot)
+- Configurable Ping and Shout messages
 
 Fixes:
 
-- Corrected duplicate "join" message when player dies
-- Correctly looks at leave config option before sending leave message
-- Correctly looks at join/death config option before sending messages
-
-Improvements:
-
-- Loaded config is now debug logged to make debugging easier
+- More robust dedicated server detection (Thanks @Digitalroot)
