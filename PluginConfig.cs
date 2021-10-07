@@ -3,7 +3,7 @@ using BepInEx.Configuration;
 
 namespace DiscordConnector
 {
-    class PluginConfig
+    internal class PluginConfig
     {
         public static ConfigFile config;
 
@@ -29,13 +29,13 @@ namespace DiscordConnector
         private ConfigEntry<string> PlayerJoinMessage;
         private ConfigEntry<string> PlayerLeaveMessage;
 
-    public PluginConfig(ConfigFile config)
+        public PluginConfig(ConfigFile config)
         {
             PluginConfig.config = config;
             LoadConfig();
         }
 
-        public void LoadConfig()
+        private void LoadConfig()
         {
             webhookUrl = config.Bind<string>(DISCORD_SETTINGS,
                 "Webhook URL",
@@ -94,14 +94,13 @@ namespace DiscordConnector
 
             PlayerJoinMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
               "Player Join Message",
-              "has joined.",
+              "%PLAYER_NAME% has joined.",
               "Set the message that will be sent when a player joins the server");
 
             PlayerLeaveMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
               "Player Leave Message",
-              "has left.",
+              "%PLAYER_NAME% has left.",
               "Set the message that will be sent when a player leaves the server.");
-
 
             config.Save();
         }

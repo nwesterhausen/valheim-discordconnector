@@ -5,17 +5,20 @@ using BepInEx.Logging;
 namespace DiscordConnector
 {
     [BepInPlugin(PluginInfo.PLUGIN_ID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-    [BepInProcess("valheim_server.exe")]
     public class Plugin : BaseUnityPlugin
     {
         internal static ManualLogSource StaticLogger;
         internal static PluginConfig StaticConfig;
+        private Harmony _harmony;
+
+        public Plugin()
+        {
+          StaticLogger = Logger;
+          StaticConfig = new PluginConfig(Config);
+        }
+
         private void Awake()
         {
-            StaticLogger = base.Logger;
-            StaticConfig = new PluginConfig(base.Config);
-            var harmony = new Harmony(PluginInfo.PLUGIN_ID);
-
             // Plugin startup logic
             StaticLogger.LogDebug($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
 
@@ -24,6 +27,7 @@ namespace DiscordConnector
                 StaticLogger.LogWarning($"No value set for WebHookURL");
                 return;
             }
+
             if (StaticConfig.LaunchMessageEnabled)
             {
                 DiscordApi.SendMessage(
@@ -31,7 +35,12 @@ namespace DiscordConnector
                 );
             }
 
-            harmony.PatchAll();
+            _harmony = Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, PluginInfo.PLUGIN_ID);
+        }
+
+        private void OnDestroy()
+        {
+          _harmony.UnpatchSelf();
         }
     }
 }

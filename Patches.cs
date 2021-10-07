@@ -19,7 +19,7 @@ namespace DiscordConnector.Patches
             }
         }
 
-        [HarmonyPatch(typeof(ZNet),  nameof(ZNet.Shutdown))]
+        [HarmonyPatch(typeof(ZNet), nameof(ZNet.Shutdown))]
         internal class Shutdown
         {
             private static void Prefix(ref ZNet __instance)
@@ -44,7 +44,7 @@ namespace DiscordConnector.Patches
               if (peer != null)
               {
                 DiscordApi.SendMessage(
-                  $"{peer.m_playerName} {Plugin.StaticConfig.JoinMessage}"
+                  Plugin.StaticConfig.JoinMessage.Replace("%PLAYER_NAME%", peer.m_playerName)
                 );
               }
             }
@@ -62,7 +62,7 @@ namespace DiscordConnector.Patches
               if (peer != null)
               {
                 DiscordApi.SendMessage(
-                  $"{peer.m_playerName} {Plugin.StaticConfig.LeaveMessage}"
+                  Plugin.StaticConfig.LeaveMessage.Replace("%PLAYER_NAME%", peer.m_playerName)
                 );
               }
             }
