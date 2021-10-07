@@ -30,25 +30,21 @@ All of the message options support having multiple messages defined in a semicol
 If you wanted to have a couple different messages for when a player dies (always chosen at random), you could simply set the config value like this:
 
 ```
-Player Death Message = has died a beautiful death!;went to their end with honor!;died.
+Player Death Message = %PLAYER_NAME% has died a beautiful death!;%PLAYER_NAME% went to their end with honor!;%PLAYER_NAME% died.
 ```
 
-As of version 0.10.0, all the player messages are constructed like this:
+In the player messages, anywhere in the message you put `%PLAYER_NAME%`, when the message is sent it will be replaced with that player's name.
 
-```
-{{player name}} {{chosen message from config}}
-```
-
-So keep that in mind as your write messages. In a future update, this will likely change to allow you to specify in the config itself where to inject the player's name.
-
-| Option                | Default                | Description                                                                                                 |
-| --------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Server Launch Message | Server is starting up. | The message defined here is sent when the server is starting up.                                            |
-| Server Loaded Message | Server has started!    | The message defined here is sent when the server has finished loading the map and is ready for connections. |
-| Server Stop Message   | Server is stopping.    | The message defined here is sent when the server is shutting down.                                          |
-| Player Join Message   | has joined.            | The message that will be sent when a player joins the server.                                               |
-| Player Leave Message  | has left.              | The message that will be sent when a player leaves the server.                                              |
-| Player Death Message  | has died.              | The message that will be sent when a player dies..                                                          |
+| Option                | Default                            | Description                                                                                                 |
+| --------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Server Launch Message | `Server is starting up.`           | The message defined here is sent when the server is starting up.                                            |
+| Server Loaded Message | `Server has started!`              | The message defined here is sent when the server has finished loading the map and is ready for connections. |
+| Server Stop Message   | `Server is stopping.`              | The message defined here is sent when the server is shutting down.                                          |
+| Player Join Message   | `%PLAYER_NAME% has joined.`        | The message that will be sent when a player joins the server.                                               |
+| Player Leave Message  | `%PLAYER_NAME% has left.`          | The message that will be sent when a player leaves the server.                                              |
+| Player Death Message  | `%PLAYER_NAME% has died.`          | The message that will be sent when a player dies..                                                          |
+| Player Ping Message   | `%PLAYER_NAME% pings the map`      | The message that will be sent when a player pings the map.                                                  |
+| Player Shout Message  | `%PLAYER_NAME% shout **%SHOUT%**.` | The message that will be sent when a player shouts in game.                                                 |
 
 ## Toggles
 
@@ -56,26 +52,26 @@ The toggle configuration is a collection of on/off switches for all the message 
 
 ### Message.Toggles
 
-| Option                     | Default | Description                                                  |
-| -------------------------- | ------- | ------------------------------------------------------------ |
-| Send Launch Messages       | true    | If true, a message will be sent to Discord when the server launches |
+| Option                     | Default | Description                                                                                |
+| -------------------------- | ------- | ------------------------------------------------------------------------------------------ |
+| Send Launch Messages       | true    | If true, a message will be sent to Discord when the server launches                        |
 | Send Loaded Messages       | true    | If true, a message will be sent to Discord when the server is online and ready for players |
-| Send Shutdown Messages     | true    | If true, a message will be sent to Discord when the server shuts down |
-| Send Player Join Messages  | true    | Set to true to send a message when a player joins the world  |
-| Send Player Leave Messages | true    | Set to true to send a message when a player leaves the world |
-| Send Player Death Messages | true    | Set to true to send a message when a player dies             |
-| Send Player Shout Messages | true    | Set to true to send a message when a player shouts           |
-| Send Player Ping Messages  | true    | Set to true to send a message when a player pings the map    |
+| Send Shutdown Messages     | true    | If true, a message will be sent to Discord when the server shuts down                      |
+| Send Player Join Messages  | true    | Set to true to send a message when a player joins the world                                |
+| Send Player Leave Messages | true    | Set to true to send a message when a player leaves the world                               |
+| Send Player Death Messages | true    | Set to true to send a message when a player dies                                           |
+| Send Player Shout Messages | true    | Set to true to send a message when a player shouts                                         |
+| Send Player Ping Messages  | true    | Set to true to send a message when a player pings the map                                  |
 
 ### Position.Toggles
 
-| Option                           | Default | Description                                                  |
-| -------------------------------- | ------- | ------------------------------------------------------------ |
-| Send Position with Player Joins  | false   | Set to true to send a player's coordinates when they join the world |
+| Option                           | Default | Description                                                          |
+| -------------------------------- | ------- | -------------------------------------------------------------------- |
+| Send Position with Player Joins  | false   | Set to true to send a player's coordinates when they join the world  |
 | Send Position with Player Leaves | false   | Set to true to send a player's coordinates when they leave the world |
-| Send Position with Player Pings  | true    | Set to true to send a player's coordinates when theyping on the map |
-| Send Position with Player Shouts | false   | Set to true to send a player's coordinates when they shout in game |
-| Send Position with Player Deaths | true    | Set to true to send a player's coordinates when they die     |
+| Send Position with Player Pings  | true    | Set to true to send a player's coordinates when theyping on the map  |
+| Send Position with Player Shouts | false   | Set to true to send a player's coordinates when they shout in game   |
+| Send Position with Player Deaths | true    | Set to true to send a player's coordinates when they die             |
 
 ### Stats.Toggles
 
@@ -89,9 +85,9 @@ The toggle configuration is a collection of on/off switches for all the message 
 
 ### Leaderboard.Toggles
 
-| Option                    | Default | Description                                                  |
-| ------------------------- | ------- | ------------------------------------------------------------ |
-| Send pings leaderboard    | false   | Send a leaderboard (at the interval) for top-pinging players |
-| Send deaths leaderboard   | true    | Send a leaderboard (at the interval) for what players have the most deaths |
+| Option                    | Default | Description                                                                 |
+| ------------------------- | ------- | --------------------------------------------------------------------------- |
+| Send pings leaderboard    | false   | Send a leaderboard (at the interval) for top-pinging players                |
+| Send deaths leaderboard   | true    | Send a leaderboard (at the interval) for what players have the most deaths  |
 | Send sessions leaderboard | false   | Send a leaderboard (at the interval) for players with the most joins/leaves |
-| Send shouts leaderboard   | false   | Send a leaderboard (at the interval) for players with the most shouts sent |
+| Send shouts leaderboard   | false   | Send a leaderboard (at the interval) for players with the most shouts sent  |
