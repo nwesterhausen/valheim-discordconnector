@@ -171,7 +171,7 @@ namespace DiscordConnector.Patches
                         case Talker.Type.Shout:
                             if (text.Equals("I have arrived!"))
                             {
-                                if (Plugin.IsHeadless())
+                                if (!Plugin.IsHeadless())
                                 {
                                     DiscordApi.SendMessage(
                                         $"{user} {Plugin.StaticConfig.JoinMessage}"
