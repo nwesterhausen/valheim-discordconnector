@@ -16,6 +16,7 @@ namespace DiscordConnector
         private ConfigEntry<string> serverLaunchMessage;
         private ConfigEntry<string> serverLoadedMessage;
         private ConfigEntry<string> serverStopMessage;
+        private ConfigEntry<string> serverShutdownMessage;
         private ConfigEntry<string> playerJoinMessage;
         private ConfigEntry<string> playerLeaveMessage;
         private ConfigEntry<string> playerDeathMessage;
@@ -52,6 +53,12 @@ namespace DiscordConnector
                 "Set the message that will be sent when the server shuts down." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
                 "Random choice example: 'Server stopping;Valheim signing off!'");
+
+            serverShutdownMessage = config.Bind<string>(MESSAGES_SETTINGS,
+                "Server Shutdown Message",
+                "Server has stoped!",
+                "Set the message that will be sent when the server finishes shutting down." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
             playerJoinMessage = config.Bind<string>(MESSAGES_SETTINGS,
                 "Player Join Message",
@@ -95,6 +102,7 @@ namespace DiscordConnector
             jsonString += $"\"launchMessage\":\"{serverLaunchMessage.Value}\",";
             jsonString += $"\"startMessage\":\"{serverLoadedMessage.Value}\",";
             jsonString += $"\"stopMessage\":\"{serverStopMessage.Value}\",";
+            jsonString += $"\"shutdownMessage\":\"{serverShutdownMessage.Value}\",";
             jsonString += $"\"joinMessage\":\"{playerJoinMessage.Value}\",";
             jsonString += $"\"deathMessage\":\"{playerDeathMessage.Value}\",";
             jsonString += $"\"leaveMessage\":\"{playerLeaveMessage.Value}\",";
@@ -141,6 +149,19 @@ namespace DiscordConnector
                     return serverStopMessage.Value;
                 }
                 string[] choices = serverStopMessage.Value.Split(';');
+                int selection = (new Random()).Next(choices.Length);
+                return choices[selection];
+            }
+        }
+        public string ShutdownMessage
+        {
+            get
+            {
+                if (!serverShutdownMessage.Value.Contains(";"))
+                {
+                    return serverShutdownMessage.Value;
+                }
+                string[] choices = serverShutdownMessage.Value.Split(';');
                 int selection = (new Random()).Next(choices.Length);
                 return choices[selection];
             }

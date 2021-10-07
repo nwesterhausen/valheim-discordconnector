@@ -51,6 +51,7 @@ namespace DiscordConnector
         private ConfigEntry<bool> serverLaunchToggle;
         private ConfigEntry<bool> serverLoadedToggle;
         private ConfigEntry<bool> serverStopToggle;
+        private ConfigEntry<bool> serverShutdownToggle;
         private ConfigEntry<bool> chatShoutToggle;
         private ConfigEntry<bool> chatShoutPosToggle;
         private ConfigEntry<bool> chatPingToggle;
@@ -99,10 +100,16 @@ namespace DiscordConnector
                 "EX: Server has started. | Server has stopped.");
 
             serverStopToggle = config.Bind<bool>(MESSAGES_TOGGLES,
-                "Server Status Notifications",
+                "Server Stopping Notifications",
                 true,
-                "If enabled, this will send a message to Discord when the server shuts down." + Environment.NewLine +
-                "EX: Server has started. | Server has stopped.");
+                "If enabled, this will send a message to Discord when the server begins stopping." + Environment.NewLine +
+                "EX: Server is stopping.");
+
+            serverShutdownToggle = config.Bind<bool>(MESSAGES_TOGGLES,
+                "Server Shutdown Notifications",
+                true,
+                "If enabled, this will send a message to Discord when the server has shut down." + Environment.NewLine +
+                "EX: Server has stopped.");
 
             chatShoutToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Chat Shout Messages Notifications",
@@ -214,6 +221,7 @@ namespace DiscordConnector
             jsonString += $"\"launchMessageEnabled\":\"{LaunchMessageEnabled}\",";
             jsonString += $"\"loadedMessageEnabled\":\"{LoadedMessageEnabled}\",";
             jsonString += $"\"stopMessageEnabled\":\"{StopMessageEnabled}\",";
+            jsonString += $"\"shutdownMessageEnabled\":\"{ShutdownMessageEnabled}\",";
             jsonString += $"\"chatShoutEnabled\":\"{ChatShoutEnabled}\",";
             jsonString += $"\"chatPingEnabled\":\"{ChatPingEnabled}\",";
             jsonString += $"\"playerJoinEnabled\":\"{PlayerJoinMessageEnabled}\",";
@@ -251,6 +259,7 @@ namespace DiscordConnector
         public bool LaunchMessageEnabled => serverLaunchToggle.Value;
         public bool LoadedMessageEnabled => serverLaunchToggle.Value;
         public bool StopMessageEnabled => serverLaunchToggle.Value;
+        public bool ShutdownMessageEnabled => serverShutdownToggle.Value;
         public bool ChatShoutEnabled => chatShoutToggle.Value;
         public bool ChatShoutPosEnabled => chatShoutPosToggle.Value;
         public bool ChatPingEnabled => chatPingToggle.Value;

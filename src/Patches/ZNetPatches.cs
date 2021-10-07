@@ -41,6 +41,15 @@ namespace DiscordConnector.Patches
                         );
                 }
             }
+            private static void Postfix(ref ZNet __instance)
+            {
+                if (Plugin.StaticConfig.ShutdownMessageEnabled)
+                {
+                    DiscordApi.SendMessage(
+                        Plugin.StaticConfig.ShutdownMessage
+                        );
+                }
+            }
         }
 
         [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_CharacterID))]

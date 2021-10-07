@@ -37,6 +37,7 @@ namespace DiscordConnector
         public bool LaunchMessageEnabled => togglesConfig.LaunchMessageEnabled;
         public bool LoadedMessageEnabled => togglesConfig.LoadedMessageEnabled;
         public bool StopMessageEnabled => togglesConfig.StopMessageEnabled;
+        public bool ShutdownMessageEnabled => togglesConfig.ShutdownMessageEnabled;
         public bool ChatShoutEnabled => togglesConfig.ChatShoutEnabled;
         public bool ChatShoutPosEnabled => togglesConfig.ChatShoutPosEnabled;
         public bool ChatPingEnabled => togglesConfig.ChatPingEnabled;
@@ -67,6 +68,7 @@ namespace DiscordConnector
         public string LaunchMessage => messagesConfig.LaunchMessage;
         public string LoadedMessage => messagesConfig.LoadedMessage;
         public string StopMessage => messagesConfig.StopMessage;
+        public string ShutdownMessage => messagesConfig.ShutdownMessage;
         public string JoinMessage => messagesConfig.JoinMessage;
         public string LeaveMessage => messagesConfig.LeaveMessage;
         public string DeathMessage => messagesConfig.DeathMessage;
