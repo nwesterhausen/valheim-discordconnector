@@ -2,8 +2,7 @@
 
 Connect your Valheim server to a Discord Webhook. ([How to get a webhook](Metadata/HowtoGuide.md)). This plugin is largely based on [valheim-discord-notifier](https://github.com/aequasi/valheim-discord-notifier), but this plugin supports randomized messages, muting players, and Discord message embeds.
 
-Plugin available on [Thunderstore.io](https://valheim.thunderstore.io/package/nwesterhausen/DiscordConnector/) 
-or [NexusMods](https://www.nexusmods.com/valheim/mods/1551/).
+Plugin available on [Thunderstore.io](https://valheim.thunderstore.io/package/nwesterhausen/DiscordConnector/), [NexusMods](https://www.nexusmods.com/valheim/mods/1551/), and [Mod Vault](https://modvault.xyz/viewmod/132).
 
 ### Plugin Details
 
