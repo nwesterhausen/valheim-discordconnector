@@ -145,7 +145,7 @@ namespace DiscordConnector
             jsonString += $"\"launchMessage\":\"{serverLaunchMessage.Value}\",";
             jsonString += $"\"startMessage\":\"{serverLoadedMessage.Value}\",";
             jsonString += $"\"stopMessage\":\"{serverStopMessage.Value}\",";
-            jsonString += $"\"shutdownMessage\":\"{serverShutdownMessage.Value}\",";
+            jsonString += $"\"shutdownMessage\":\"{serverShutdownMessage.Value}\"";
             jsonString += "},";
 
             jsonString += $"\"{PLAYER_MESSAGES}\":{{";

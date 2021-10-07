@@ -208,7 +208,7 @@ namespace DiscordConnector
             jsonString += $"\"chatPingEnabled\":\"{ChatPingEnabled}\",";
             jsonString += $"\"playerJoinEnabled\":\"{PlayerJoinMessageEnabled}\",";
             jsonString += $"\"playerLeaveEnabled\":\"{PlayerLeaveMessageEnabled}\",";
-            jsonString += $"\"playerDeathEnabled\":\"{PlayerDeathMessageEnabled}\",";
+            jsonString += $"\"playerDeathEnabled\":\"{PlayerDeathMessageEnabled}\"";
             jsonString += "},";
 
             jsonString += $"\"{POSITION_TOGGLES}\":{{";
