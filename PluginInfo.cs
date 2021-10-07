@@ -3,7 +3,7 @@ using DiscordConnector;
 
 #region Assembly attributes
 /*
- * These attributes define various metainformation of the generated DLL.
+ * These attributes define various meta information of the generated DLL.
  */
 [assembly: AssemblyVersion(PluginInfo.PLUGIN_VERSION)]
 [assembly: AssemblyTitle(PluginInfo.PLUGIN_NAME + " (" + PluginInfo.PLUGIN_ID + ")")]

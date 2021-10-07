@@ -1,8 +1,11 @@
-﻿using HarmonyLib;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Logging;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Timers;
+using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace DiscordConnector
 {
@@ -12,40 +15,48 @@ namespace DiscordConnector
         internal static ManualLogSource StaticLogger;
         internal static PluginConfig StaticConfig;
         internal static Records StaticRecords;
+        private Harmony _harmony;
+
+        public Plugin()
+        {
+          StaticLogger = Logger;
+          StaticConfig = new PluginConfig(Config);
+          StaticRecords = new Records(Paths.GameRootPath);
+        }
+        
         private void Awake()
         {
-            StaticLogger = base.Logger;
-            StaticConfig = new PluginConfig(base.Config);
-            StaticRecords = new Records(BepInEx.Paths.GameRootPath);
-
-            var harmony = new Harmony(PluginInfo.PLUGIN_ID);
-
             // Plugin startup logic
             StaticLogger.LogDebug($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
-            if (!BepInEx.Paths.ProcessName.Equals("valheim_server"))
+            if (!IsHeadless())
             {
                 StaticLogger.LogInfo("Not running on a dedicated server, some features may break -- please report them!");
             }
 
             if (string.IsNullOrEmpty(StaticConfig.WebHookURL))
             {
-                StaticLogger.LogWarning($"No value set for WebHookURL");
+                StaticLogger.LogWarning("No value set for WebHookURL");
                 return;
             }
 
             if (StaticConfig.StatsAnnouncementEnabled)
             {
                 System.Timers.Timer leaderboardTimer = new System.Timers.Timer();
-                leaderboardTimer.Elapsed += new System.Timers.ElapsedEventHandler(SendLeaderboardAnnouncement);
+                leaderboardTimer.Elapsed += SendLeaderboardAnnouncement;
                 // Interval is learned from config file in minutes
                 leaderboardTimer.Interval = 60 * 1000 * StaticConfig.StatsAnnouncementPeriod;
                 leaderboardTimer.Start();
             }
 
-            harmony.PatchAll();
+            _harmony = Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, PluginInfo.PLUGIN_ID);
         }
 
-        private void SendLeaderboardAnnouncement(object sender, System.Timers.ElapsedEventArgs elapsedEventArgs)
+        private void OnDestroy()
+        {
+            _harmony.UnpatchSelf();
+        }
+
+        private void SendLeaderboardAnnouncement(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             var deathLeader = StaticRecords.Retrieve(Categories.Death);
             var joinLeader = StaticRecords.Retrieve(Categories.Join);
@@ -70,7 +81,12 @@ namespace DiscordConnector
                 leaderFields.Add(Tuple.Create("Most Pings", $"{pingLeader.Item1} ({pingLeader.Item2})"));
             }
 
-            DiscordApi.SendMessageWithFields("Current leaderboard for tracked stats:", leaderFields);
+            DiscordApi.SendMessageWithFields("Current leader board for tracked stats:", leaderFields);
         }
-    }
+
+        /// <summary>
+        /// Works in Awake()
+        /// </summary>
+        public static bool IsHeadless() => SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null;
+  }
 }
