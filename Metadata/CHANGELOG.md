@@ -2,6 +2,27 @@
 
 A full changelog for reference.
 
+### Version 1.0.0
+
+Release 1.0.0 is a breaking release since the structure of the configuration files completely changes. When you update you will need to modify the config
+to save your webhook again and to update any message customization you have done!
+
+Features:
+
+- Send an extra message the first time a player does something (by default only for Join and Death on server)
+- Configuration is "simpler" with other configuration files to consult for full customization
+- Server shutdown message
+
+Fixes:
+
+- Global toggles weren't being applied
+
+Other Changes:
+
+- Mention Mod Vault in readme
+
+This version included a source code restructuring which should make it easier to maintain in the future.
+
 ### Version 0.10.1
 
 Hotfix: Message toggles don't act independently.
