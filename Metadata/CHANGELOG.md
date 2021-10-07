@@ -2,6 +2,12 @@
 
 A full changelog for reference.
 
+### Version 0.10.1
+
+Hotfix: Message toggles don't act independently.
+
+This is fixed and you can have join messages disabled and death messages enabled and get death messages sent.
+
 ### Version 0.10.0
 
 Features:
