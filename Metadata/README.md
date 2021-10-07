@@ -33,6 +33,12 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
 
+### Version 0.10.1
+
+Hotfix: Message toggles don't act independently.
+
+This is fixed and you can have join messages disabled and death messages enabled and get death messages sent.
+
 ### Version 0.10.0
 
 Features:
