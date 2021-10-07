@@ -3,7 +3,7 @@ using DiscordConnector;
 
 #region Assembly attributes
 /*
- * These attributes define various metainformation of the generated DLL.
+ * These attributes define various meta information of the generated DLL.
  */
 [assembly: AssemblyVersion(PluginInfo.PLUGIN_VERSION)]
 [assembly: AssemblyTitle(PluginInfo.PLUGIN_NAME + " (" + PluginInfo.PLUGIN_ID + ")")]
@@ -17,7 +17,7 @@ namespace DiscordConnector
     {
         public const string PLUGIN_ID = "games.nwest.valheim.discordconnector";
         public const string PLUGIN_NAME = "Valheim Discord Connector";
-        public const string PLUGIN_VERSION = "0.9.1";
+        public const string PLUGIN_VERSION = "0.10.0";
         public const string PLUGIN_REPO_SHORT = "github: nwesterhausen/valheim-discordconnector";
         public const string PLUGIN_AUTHOR = "Nicholas Westerhausen";
     }

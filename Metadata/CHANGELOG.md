@@ -2,6 +2,18 @@
 
 A full changelog for reference.
 
+### Version 0.10.0
+
+Features:
+
+- %PLAYER_NAME% is replaced in messages with the player name, allowing you to change
+where in the message the playe is mentioned (Thanks @Digitalroot)
+- Configurable Ping and Shout messages
+
+Fixes:
+
+- More robust dedicated server detection (Thanks @Digitalroot)
+
 ### Version 0.9.1
 
 Fixes
