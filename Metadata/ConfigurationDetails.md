@@ -22,6 +22,7 @@ DiscordConnector uses multiple configuration files to make find the setting you 
 | Collect stats                | true    | When this setting is enabled, DiscordConnector will create a file in the game root directory "records.json" where it will record the number of times each player joins, leaves, dies, shouts or pings. If this is set to false, DiscordConnector will not keep a record of number of times each player does something it alerts to. If this is false, it takes precendent over the "Send leaderboard updates" setting and no leaderboards will get sent. |
 | Send leaderboard updates     | false   | If you set this to true, that will enable DiscordConnector to send a leaderboard for stats to Discord on the set interval                                                                                                                                                                                                                                                                                                                                |
 | Leaderboard update interval  | 600     | Time in minutes between each leaderboard update sent to Discord.                                                                                                                                                                                                                                                                                                                                                                                         |
+| Announce Player Firsts       | true    | Disable this setting to disable all extra announcements the first time each player does something. (Overwrites any individual setting.)                                                                                                                                                                                                                                                                                                                  |
 
 ## Messages
 
@@ -33,24 +34,44 @@ If you wanted to have a couple different messages for when a player dies (always
 Player Death Message = %PLAYER_NAME% has died a beautiful death!;%PLAYER_NAME% went to their end with honor!;%PLAYER_NAME% died.
 ```
 
+### Messages.Server
+
+| Option                  | Default                  | Description                                                                                                 |
+| ----------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| Server Launch Message   | `Server is starting up.` | The message defined here is sent when the server is starting up.                                            |
+| Server Loaded Message   | `Server has started!`    | The message defined here is sent when the server has finished loading the map and is ready for connections. |
+| Server Stop Message     | `Server is stopping.`    | The message defined here is sent when the server is shutting down.                                          |
+| Server Shutdown Message | `Server has stopped.`    | The message defined here is sent when the server finishes shutting down.                                    |
+
+### Messages.Players
+
 In the player messages, anywhere in the message you put `%PLAYER_NAME%`, when the message is sent it will be replaced with that player's name.
 
-| Option                | Default                            | Description                                                                                                 |
-| --------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Server Launch Message | `Server is starting up.`           | The message defined here is sent when the server is starting up.                                            |
-| Server Loaded Message | `Server has started!`              | The message defined here is sent when the server has finished loading the map and is ready for connections. |
-| Server Stop Message   | `Server is stopping.`              | The message defined here is sent when the server is shutting down.                                          |
-| Player Join Message   | `%PLAYER_NAME% has joined.`        | The message that will be sent when a player joins the server.                                               |
-| Player Leave Message  | `%PLAYER_NAME% has left.`          | The message that will be sent when a player leaves the server.                                              |
-| Player Death Message  | `%PLAYER_NAME% has died.`          | The message that will be sent when a player dies..                                                          |
-| Player Ping Message   | `%PLAYER_NAME% pings the map`      | The message that will be sent when a player pings the map.                                                  |
-| Player Shout Message  | `%PLAYER_NAME% shout **%SHOUT%**.` | The message that will be sent when a player shouts in game.                                                 |
+| Option               | Default                            | Description                                                                                                                                  |
+| -------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Player Join Message  | `%PLAYER_NAME% has joined.`        | The message that will be sent when a player joins the server.                                                                                |
+| Player Leave Message | `%PLAYER_NAME% has left.`          | The message that will be sent when a player leaves the server.                                                                               |
+| Player Death Message | `%PLAYER_NAME% has died.`          | The message that will be sent when a player dies..                                                                                           |
+| Player Ping Message  | `%PLAYER_NAME% pings the map`      | The message that will be sent when a player pings the map.                                                                                   |
+| Player Shout Message | `%PLAYER_NAME% shout **%SHOUT%**.` | The message that will be sent when a player shouts in game. %SHOUT% must be somewhere in this message for what the player shouts to be sent. |
+
+### Messages.PlayerFirsts
+
+In the player messages, anywhere in the message you put `%PLAYER_NAME%`, when the message is sent it will be replaced with that player's name.
+
+| Option                     | Default                                                       | Description                                                              |
+| -------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Player First Join Message  | `Welcome %PLAYER_NAME%, it's their first time on the server!` | The message that will be sent the first time a player joins the server.  |
+| Player First Leave Message | `%PLAYER_NAME% has left for the first time.`                  | The message that will be sent the first time a player leaves the server. |
+| Player First Death Message | `%PLAYER_NAME% has died for the first time.`                  | The message that will be sent the first time a player dies..             |
+| Player First Ping Message  | `%PLAYER_NAME% pings the map for the first time`              | The message that will be sent the first time a player pings the map.     |
+| Player First Shout Message | `%PLAYER_NAME% shouts for the first time.`                    | The message that will be sent the first time a player shouts in game.    |
 
 ## Toggles
 
 The toggle configuration is a collection of on/off switches for all the message types and all the extra data that can be sent with them. It's broken up into 3 sections, "Toggles.Messages" which turns on or off each type of message, "Toggles.Positions" which turns on or off sending player coordinates with messages, "Toggles.Stats" which turns on or off collection of individual stats and "Toggles.Leaderboards" which turns on or off what stats to send with the leaderboard updates
 
-### Message.Toggles
+### Toggles.Messages
 
 | Option                     | Default | Description                                                                                |
 | -------------------------- | ------- | ------------------------------------------------------------------------------------------ |
@@ -63,7 +84,7 @@ The toggle configuration is a collection of on/off switches for all the message 
 | Send Player Shout Messages | true    | Set to true to send a message when a player shouts                                         |
 | Send Player Ping Messages  | true    | Set to true to send a message when a player pings the map                                  |
 
-### Position.Toggles
+### Toggles.Position
 
 | Option                           | Default | Description                                                          |
 | -------------------------------- | ------- | -------------------------------------------------------------------- |
@@ -73,7 +94,7 @@ The toggle configuration is a collection of on/off switches for all the message 
 | Send Position with Player Shouts | false   | Set to true to send a player's coordinates when they shout in game   |
 | Send Position with Player Deaths | true    | Set to true to send a player's coordinates when they die             |
 
-### Stats.Toggles
+### Toggles.Stats
 
 | Option                        | Default | Description                                                  |
 | ----------------------------- | ------- | ------------------------------------------------------------ |
@@ -83,11 +104,21 @@ The toggle configuration is a collection of on/off switches for all the message 
 | Allow recording player shouts | true    | Set to false to never record player shouts in records.json   |
 | Allow recording player deaths | true    | Set to false to never record player deaths in records.json   |
 
-### Leaderboard.Toggles
+### Toggles.Leaderboard
 
-| Option                    | Default | Description                                                                 |
-| ------------------------- | ------- | --------------------------------------------------------------------------- |
-| Send pings leaderboard    | false   | Send a leaderboard (at the interval) for top-pinging players                |
-| Send deaths leaderboard   | true    | Send a leaderboard (at the interval) for what players have the most deaths  |
-| Send sessions leaderboard | false   | Send a leaderboard (at the interval) for players with the most joins/leaves |
-| Send shouts leaderboard   | false   | Send a leaderboard (at the interval) for players with the most shouts sent  |
+| Option                    | Default | Description                                                                                             |
+| ------------------------- | ------- | ------------------------------------------------------------------------------------------------------- |
+| Send pings leaderboard    | false   | If enabled (and leaderboards are enabled), will send a leaderboard for player pings at the interval.    |
+| Send deaths leaderboard   | true    | If enabled (and leaderboards are enabled), will send a leaderboard for player deaths at the interval.   |
+| Send sessions leaderboard | false   | If enabled (and leaderboards are enabled), will send a leaderboard for player sessions at the interval. |
+| Send shouts leaderboard   | false   | If enabled (and leaderboards are enabled), will send a leaderboard for player shouts at the interval.   |
+
+### Toggles.PlayerFirsts
+
+| Option                     | Default | Description                                                                                                                   |
+| -------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Send Player Join Messages  | true    | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first leave from the server. |
+| Send Player Leave Messages | false   | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first join to the server.    |
+| Send Player Death Messages | true    | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first death."                |
+| Send Player Shout Messages | false   | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first ping.                  |
+| Send Player Ping Messages  | false   | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first shout.                 |
