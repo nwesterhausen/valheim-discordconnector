@@ -4,7 +4,7 @@ using BepInEx.Configuration;
 
 namespace DiscordConnector
 {
-    class PluginConfig
+    internal class PluginConfig
     {
         public static ConfigFile config;
 
@@ -46,6 +46,8 @@ namespace DiscordConnector
         private ConfigEntry<string> playerJoinMessage;
         private ConfigEntry<string> playerLeaveMessage;
         private ConfigEntry<string> playerDeathMessage;
+        private ConfigEntry<string> playerPingMessage;
+        private ConfigEntry<string> playerShoutMessage;
 
         // Statistic collection settings
         private ConfigEntry<bool> collectStatsEnable;
@@ -65,7 +67,7 @@ namespace DiscordConnector
             Plugin.StaticLogger.LogDebug(ConfigAsJson());
         }
 
-        public void LoadConfig()
+        private void LoadConfig()
         {
             webhookUrl = config.Bind<string>(DISCORD_SETTINGS,
                 "Webhook URL",
@@ -205,24 +207,36 @@ namespace DiscordConnector
 
             playerJoinMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
                 "Player Join Message",
-                "has joined.",
+                "%PLAYER_NAME% has joined.",
                 "Set the message that will be sent when a player joins the server" + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "Random choice example: 'has joined;awakens;arrives'");
+                "Random choice example: '%PLAYER_NAME% has joined;%PLAYER_NAME% awakens;%PLAYER_NAME% arrives'");
 
             playerDeathMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
                 "Player Death Message",
-                "has died.",
+                "%PLAYER_NAME% has died.",
                 "Set the message that will be sent when a player dies." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "Random choice example: 'has died;was yeeted'");
+                "Random choice example: '%PLAYER_NAME% has died;%PLAYER_NAME% passed on'");
 
             playerLeaveMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
                 "Player Leave Message",
-                "has left.",
+                "%PLAYER_NAME% has left.",
                 "Set the message that will be sent when a player leaves the server." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "Random choice example: 'has left;has moved on;returns to dreams'");
+                "Random choice example: '%PLAYER_NAME% has left;%PLAYER_NAME% has moved on;%PLAYER_NAME% returns to dreams'");
+
+            playerPingMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
+                "Player Ping Message",
+                "%PLAYER_NAME% pings the map.",
+                "Set the message that will be sent when a player pings the map." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
+
+            playerShoutMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
+                "Player Shout Message",
+                "%PLAYER_NAME% shouts **%SHOUT%**.",
+                "Set the message that will be sent when a player shouts on the server." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
             // Statistic Settings
             collectStatsEnable = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
@@ -249,7 +263,6 @@ namespace DiscordConnector
                 "Collect and Send Player Shout Stats",
                 true,
                 "If enabled, will collect and enable sending stat announcements for number of times a player has shouted.");
-
 
             config.Save();
         }
@@ -362,6 +375,32 @@ namespace DiscordConnector
                 return choices[selection];
             }
         }
+        public string PingMessage
+        {
+            get
+            {
+                if (!playerPingMessage.Value.Contains(";"))
+                {
+                    return playerPingMessage.Value;
+                }
+                string[] choices = playerPingMessage.Value.Split(';');
+                int selection = (new Random()).Next(choices.Length);
+                return choices[selection];
+            }
+        }
+        public string ShoutMessage
+        {
+            get
+            {
+                if (!playerShoutMessage.Value.Contains(";"))
+                {
+                    return playerShoutMessage.Value;
+                }
+                string[] choices = playerShoutMessage.Value.Split(';');
+                int selection = (new Random()).Next(choices.Length);
+                return choices[selection];
+            }
+        }
         public List<string> MutedPlayers => mutedPlayers;
 
         public string ConfigAsJson()
@@ -382,7 +421,9 @@ namespace DiscordConnector
             jsonString += $"\"stopMessage\":\"{serverStopMessage.Value}\",";
             jsonString += $"\"joinMessage\":\"{playerJoinMessage.Value}\",";
             jsonString += $"\"deathMessage\":\"{playerDeathMessage.Value}\",";
-            jsonString += $"\"leaveMessage\":\"{playerLeaveMessage.Value}\"";
+            jsonString += $"\"leaveMessage\":\"{playerLeaveMessage.Value}\",";
+            jsonString += $"\"pingMessage\":\"{playerPingMessage.Value}\",";
+            jsonString += $"\"shoutMessage\":\"{playerShoutMessage.Value}\"";
             jsonString += "},";
 
             // Notification Settings
