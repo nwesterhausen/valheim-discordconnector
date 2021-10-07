@@ -33,26 +33,30 @@ namespace DiscordConnector
         // Exposed Config Values
 
 
-        // Toggles
+        // Toggles.Messages
         public bool LaunchMessageEnabled => togglesConfig.LaunchMessageEnabled;
         public bool LoadedMessageEnabled => togglesConfig.LoadedMessageEnabled;
         public bool StopMessageEnabled => togglesConfig.StopMessageEnabled;
         public bool ShutdownMessageEnabled => togglesConfig.ShutdownMessageEnabled;
         public bool ChatShoutEnabled => togglesConfig.ChatShoutEnabled;
-        public bool ChatShoutPosEnabled => togglesConfig.ChatShoutPosEnabled;
         public bool ChatPingEnabled => togglesConfig.ChatPingEnabled;
-        public bool ChatPingPosEnabled => togglesConfig.ChatPingPosEnabled;
         public bool PlayerJoinMessageEnabled => togglesConfig.PlayerJoinMessageEnabled;
-        public bool PlayerJoinPosEnabled => togglesConfig.PlayerJoinPosEnabled;
         public bool PlayerDeathMessageEnabled => togglesConfig.PlayerDeathMessageEnabled;
-        public bool PlayerDeathPosEnabled => togglesConfig.PlayerDeathPosEnabled;
         public bool PlayerLeaveMessageEnabled => togglesConfig.PlayerLeaveMessageEnabled;
-        public bool PlayerLeavePosEnabled => togglesConfig.PlayerLeavePosEnabled;
-        public bool StatsDeathEnabled => togglesConfig.StatsDeathEnabled;
-        public bool StatsJoinEnabled => togglesConfig.StatsJoinEnabled;
-        public bool StatsLeaveEnabled => togglesConfig.StatsLeaveEnabled;
-        public bool StatsPingEnabled => togglesConfig.StatsPingEnabled;
-        public bool StatsShoutEnabled => togglesConfig.StatsShoutEnabled;
+
+        // Toggles.Stats
+        public bool StatsDeathEnabled => mainConfig.CollectStatsEnabled && togglesConfig.StatsDeathEnabled;
+        public bool StatsJoinEnabled => mainConfig.CollectStatsEnabled && togglesConfig.StatsJoinEnabled;
+        public bool StatsLeaveEnabled => mainConfig.CollectStatsEnabled && togglesConfig.StatsLeaveEnabled;
+        public bool StatsPingEnabled => mainConfig.CollectStatsEnabled && togglesConfig.StatsPingEnabled;
+        public bool StatsShoutEnabled => mainConfig.CollectStatsEnabled && togglesConfig.StatsShoutEnabled;
+
+        // Toggles.Positions
+        public bool ChatPingPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.ChatPingPosEnabled;
+        public bool ChatShoutPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.ChatShoutPosEnabled;
+        public bool PlayerJoinPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.PlayerJoinPosEnabled;
+        public bool PlayerDeathPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.PlayerDeathPosEnabled;
+        public bool PlayerLeavePosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.PlayerLeavePosEnabled;
 
         // Main Config
         public string WebHookURL => mainConfig.WebHookURL;
@@ -61,36 +65,41 @@ namespace DiscordConnector
         public bool CollectStatsEnabled => mainConfig.CollectStatsEnabled;
         public bool DiscordEmbedsEnabled => mainConfig.DiscordEmbedsEnabled;
         public bool SendPositionsEnabled => mainConfig.SendPositionsEnabled;
+        public bool AnnouncePlayerFirsts => mainConfig.AnnouncePlayerFirsts;
         public List<string> MutedPlayers => mainConfig.MutedPlayers;
 
 
-        // Messages
+        // Messages.Server
         public string LaunchMessage => messagesConfig.LaunchMessage;
         public string LoadedMessage => messagesConfig.LoadedMessage;
         public string StopMessage => messagesConfig.StopMessage;
         public string ShutdownMessage => messagesConfig.ShutdownMessage;
+
+        // Messages.Players
         public string JoinMessage => messagesConfig.JoinMessage;
         public string LeaveMessage => messagesConfig.LeaveMessage;
         public string DeathMessage => messagesConfig.DeathMessage;
         public string PingMessage => messagesConfig.PingMessage;
         public string ShoutMessage => messagesConfig.ShoutMessage;
+
+        // Messages.PlayerFirsts
         public string PlayerFirstDeathMessage => messagesConfig.PlayerFirstDeathMessage;
         public string PlayerFirstJoinMessage => messagesConfig.PlayerFirstJoinMessage;
         public string PlayerFirstLeaveMessage => messagesConfig.PlayerFirstLeaveMessage;
         public string PlayerFirstPingMessage => messagesConfig.PlayerFirstPingMessage;
         public string PlayerFirstShoutMessage => messagesConfig.PlayerFirstShoutMessage;
 
+        // Toggles.Leaderboard
+        public bool LeaderboardDeathEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardDeathEnabled;
+        public bool LeaderboardPingEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardDeathEnabled;
+        public bool LeaderboardSessionEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardDeathEnabled;
+        public bool LeaderboardShoutEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardDeathEnabled;
 
-        public bool LeaderboardDeathEnabled => togglesConfig.LeaderboardDeathEnabled;
-        public bool LeaderboardPingEnabled => togglesConfig.LeaderboardDeathEnabled;
-        public bool LeaderboardSessionEnabled => togglesConfig.LeaderboardDeathEnabled;
-        public bool LeaderboardShoutEnabled => togglesConfig.LeaderboardDeathEnabled;
-
-        public bool AnnouncePlayerFirstDeathEnabled => togglesConfig.AnnouncePlayerFirstDeathEnabled;
-        public bool AnnouncePlayerFirstJoinEnabled => togglesConfig.AnnouncePlayerFirstJoinEnabled;
-        public bool AnnouncePlayerFirstLeaveEnabled => togglesConfig.AnnouncePlayerFirstLeaveEnabled;
-        public bool AnnouncePlayerFirstPingEnabled => togglesConfig.AnnouncePlayerFirstPingEnabled;
-        public bool AnnouncePlayerFirstShoutEnabled => togglesConfig.AnnouncePlayerFirstShoutEnabled;
+        public bool AnnouncePlayerFirstDeathEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstDeathEnabled;
+        public bool AnnouncePlayerFirstJoinEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstJoinEnabled;
+        public bool AnnouncePlayerFirstLeaveEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstLeaveEnabled;
+        public bool AnnouncePlayerFirstPingEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstPingEnabled;
+        public bool AnnouncePlayerFirstShoutEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstShoutEnabled;
 
         public string ConfigAsJson()
         {
