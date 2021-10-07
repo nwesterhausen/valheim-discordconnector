@@ -46,6 +46,8 @@ namespace DiscordConnector
         private ConfigEntry<string> playerJoinMessage;
         private ConfigEntry<string> playerLeaveMessage;
         private ConfigEntry<string> playerDeathMessage;
+        private ConfigEntry<string> playerPingMessage;
+        private ConfigEntry<string> playerShoutMessage;
 
         // Statistic collection settings
         private ConfigEntry<bool> collectStatsEnable;
@@ -224,6 +226,18 @@ namespace DiscordConnector
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
                 "Random choice example: '%PLAYER_NAME% has left;%PLAYER_NAME% has moved on;%PLAYER_NAME% returns to dreams'");
 
+            playerPingMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
+                "Player Ping Message",
+                "%PLAYER_NAME% pings the map.",
+                "Set the message that will be sent when a player pings the map." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
+
+            playerShoutMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
+                "Player Ping Message",
+                "%PLAYER_NAME% shouts **%SHOUT%**.",
+                "Set the message that will be sent when a player shouts on the server." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
+
             // Statistic Settings
             collectStatsEnable = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
                 "Collect Player Stats",
@@ -361,6 +375,32 @@ namespace DiscordConnector
                 return choices[selection];
             }
         }
+        public string PingMessage
+        {
+            get
+            {
+                if (!playerPingMessage.Value.Contains(";"))
+                {
+                    return playerPingMessage.Value;
+                }
+                string[] choices = playerPingMessage.Value.Split(';');
+                int selection = (new Random()).Next(choices.Length);
+                return choices[selection];
+            }
+        }
+        public string ShoutMessage
+        {
+            get
+            {
+                if (!playerShoutMessage.Value.Contains(";"))
+                {
+                    return playerShoutMessage.Value;
+                }
+                string[] choices = playerShoutMessage.Value.Split(';');
+                int selection = (new Random()).Next(choices.Length);
+                return choices[selection];
+            }
+        }
         public List<string> MutedPlayers => mutedPlayers;
 
         public string ConfigAsJson()
@@ -381,7 +421,9 @@ namespace DiscordConnector
             jsonString += $"\"stopMessage\":\"{serverStopMessage.Value}\",";
             jsonString += $"\"joinMessage\":\"{playerJoinMessage.Value}\",";
             jsonString += $"\"deathMessage\":\"{playerDeathMessage.Value}\",";
-            jsonString += $"\"leaveMessage\":\"{playerLeaveMessage.Value}\"";
+            jsonString += $"\"leaveMessage\":\"{playerLeaveMessage.Value}\",";
+            jsonString += $"\"pingMessage\":\"{playerPingMessage.Value}\",";
+            jsonString += $"\"shoutMessage\":\"{playerShoutMessage.Value}\"";
             jsonString += "},";
 
             // Notification Settings

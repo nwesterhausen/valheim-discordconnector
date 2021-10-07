@@ -150,7 +150,7 @@ namespace DiscordConnector.Patches
                         case Talker.Type.Ping:
                             if (Plugin.StaticConfig.ChatPingEnabled)
                             {
-                                string message = $"{user} pings the map!";
+                                string message = Plugin.StaticConfig.PingMessage.Replace("%PLAYER_NAME%", user);
                                 if (Plugin.StaticConfig.ChatPingPosEnabled)
                                 {
                                     DiscordApi.SendMessage(
@@ -174,7 +174,7 @@ namespace DiscordConnector.Patches
                                 if (!Plugin.IsHeadless())
                                 {
                                     DiscordApi.SendMessage(
-                                        $"{user} {Plugin.StaticConfig.JoinMessage}"
+                    Plugin.StaticConfig.JoinMessage.Replace("%PLAYER_NAME%", user)
                                     );
                                 }
                                 Plugin.StaticLogger.LogDebug(
@@ -183,7 +183,7 @@ namespace DiscordConnector.Patches
                             }
                             else if (Plugin.StaticConfig.ChatShoutEnabled)
                             {
-                                string message = $"{user} shouts: **{text}**!";
+                                string message = Plugin.StaticConfig.PingMessage.Replace("%PLAYER_NAME%", user).Replace("%SHOUT%", text);
                                 if (Plugin.StaticConfig.ChatShoutPosEnabled)
                                 {
                                     DiscordApi.SendMessage(
