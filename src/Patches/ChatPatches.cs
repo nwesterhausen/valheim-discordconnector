@@ -34,10 +34,10 @@ namespace DiscordConnector.Patches
                             {
                                 DiscordApi.SendMessage(message);
                             }
-                            if (Plugin.StaticConfig.StatsPingEnabled)
-                            {
-                                Plugin.StaticRecords.Store(Categories.Ping, user, 1);
-                            }
+                        }
+                        if (Plugin.StaticConfig.StatsPingEnabled)
+                        {
+                            Plugin.StaticRecords.Store(Categories.Ping, user, 1);
                         }
                         break;
                     case Talker.Type.Shout:
@@ -45,27 +45,46 @@ namespace DiscordConnector.Patches
                         {
                             if (!Plugin.IsHeadless())
                             {
-                                DiscordApi.SendMessage(
-                                    Plugin.StaticConfig.JoinMessage.Replace("%PLAYER_NAME%", user)
-                                );
+                                if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
+                                {
+                                    string message = Plugin.StaticConfig.JoinMessage.Replace("%PLAYER_NAME%", user);
+                                    if (Plugin.StaticConfig.PlayerJoinPosEnabled)
+                                    {
+                                        DiscordApi.SendMessage(
+                                        message,
+                                        pos
+                                        );
+                                    }
+                                    else
+                                    {
+                                        DiscordApi.SendMessage(message);
+                                    }
+                                }
+                                if (Plugin.StaticConfig.StatsJoinEnabled)
+                                {
+                                    Plugin.StaticRecords.Store(Categories.Join, user, 1);
+                                }
                             }
                             Plugin.StaticLogger.LogDebug(
                                 $"{user} shouts 'I have arrived!'"
                             );
                         }
-                        else if (Plugin.StaticConfig.ChatShoutEnabled)
+                        else
                         {
-                            string message = Plugin.StaticConfig.ShoutMessage.Replace("%PLAYER_NAME%", user).Replace("%SHOUT%", text);
-                            if (Plugin.StaticConfig.ChatShoutPosEnabled)
+                            if (Plugin.StaticConfig.ChatShoutEnabled)
                             {
-                                DiscordApi.SendMessage(
-                                    message,
-                                    pos
-                                );
-                            }
-                            else
-                            {
-                                DiscordApi.SendMessage(message);
+                                string message = Plugin.StaticConfig.ShoutMessage.Replace("%PLAYER_NAME%", user).Replace("%SHOUT%", text);
+                                if (Plugin.StaticConfig.ChatShoutPosEnabled)
+                                {
+                                    DiscordApi.SendMessage(
+                                        message,
+                                        pos
+                                    );
+                                }
+                                else
+                                {
+                                    DiscordApi.SendMessage(message);
+                                }
                             }
                             if (Plugin.StaticConfig.StatsShoutEnabled)
                             {

@@ -67,42 +67,48 @@ namespace DiscordConnector.Patches
                 {
                     // Seems that player is dead if character ZDOID id is 0
                     // m_characterID id=0 means dead, user_id always matches peer.m_uid
-                    if (peer.m_characterID.id != 0 || !Plugin.StaticConfig.PlayerDeathMessageEnabled)
+                    if (peer.m_characterID.id != 0)
                     {
                         return;
                     }
-                    string message = Plugin.StaticConfig.DeathMessage.Replace("%PLAYER_NAME%", peer.m_playerName);
-                    if (Plugin.StaticConfig.PlayerDeathPosEnabled)
+                    if (Plugin.StaticConfig.PlayerDeathMessageEnabled)
                     {
-                        DiscordApi.SendMessage(
-                          message,
-                          peer.m_refPos
-                        );
-                    }
-                    else
-                    {
-                        DiscordApi.SendMessage(message);
+                        string message = Plugin.StaticConfig.DeathMessage.Replace("%PLAYER_NAME%", peer.m_playerName);
+                        if (Plugin.StaticConfig.PlayerDeathPosEnabled)
+                        {
+                            DiscordApi.SendMessage(
+                            message,
+                            peer.m_refPos
+                            );
+                        }
+                        else
+                        {
+                            DiscordApi.SendMessage(message);
+                        }
                     }
                     if (Plugin.StaticConfig.StatsDeathEnabled)
                     {
                         Plugin.StaticRecords.Store(Categories.Death, peer.m_playerName, 1);
                     }
                 }
-                else if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
+                else
                 {
                     // PLAYER JOINED
                     joinedPlayers.Add(peer.m_uid);
-                    string message = Plugin.StaticConfig.JoinMessage.Replace("%PLAYER_NAME%", peer.m_playerName);
-                    if (Plugin.StaticConfig.PlayerJoinPosEnabled)
+                    if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
                     {
-                        DiscordApi.SendMessage(
-                          message,
-                          peer.m_refPos
-                        );
-                    }
-                    else
-                    {
-                        DiscordApi.SendMessage(message);
+                        string message = Plugin.StaticConfig.JoinMessage.Replace("%PLAYER_NAME%", peer.m_playerName);
+                        if (Plugin.StaticConfig.PlayerJoinPosEnabled)
+                        {
+                            DiscordApi.SendMessage(
+                            message,
+                            peer.m_refPos
+                            );
+                        }
+                        else
+                        {
+                            DiscordApi.SendMessage(message);
+                        }
                     }
                     if (Plugin.StaticConfig.StatsJoinEnabled)
                     {
@@ -117,26 +123,25 @@ namespace DiscordConnector.Patches
         {
             private static void Prefix(ZRpc rpc)
             {
-                if (!Plugin.StaticConfig.PlayerLeaveMessageEnabled)
-                {
-                    return;
-                }
                 ZNetPeer peer = ZNet.instance.GetPeer(rpc);
                 if (peer != null && peer.m_uid != 0)
                 {
-                    string message = Plugin.StaticConfig.LeaveMessage.Replace("%PLAYER_NAME%", peer.m_playerName);
-                    if (Plugin.StaticConfig.PlayerLeavePosEnabled)
+                    if (Plugin.StaticConfig.PlayerLeaveMessageEnabled)
                     {
-                        DiscordApi.SendMessage(
-                          message,
-                          peer.m_refPos
-                        );
-                    }
-                    else
-                    {
-                        DiscordApi.SendMessage(
-                          message
-                        );
+                        string message = Plugin.StaticConfig.LeaveMessage.Replace("%PLAYER_NAME%", peer.m_playerName);
+                        if (Plugin.StaticConfig.PlayerLeavePosEnabled)
+                        {
+                            DiscordApi.SendMessage(
+                            message,
+                            peer.m_refPos
+                            );
+                        }
+                        else
+                        {
+                            DiscordApi.SendMessage(
+                            message
+                            );
+                        }
                     }
                     if (Plugin.StaticConfig.StatsLeaveEnabled)
                     {
