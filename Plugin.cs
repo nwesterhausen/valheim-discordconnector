@@ -19,11 +19,11 @@ namespace DiscordConnector
 
         public Plugin()
         {
-          StaticLogger = Logger;
-          StaticConfig = new PluginConfig(Config);
-          StaticRecords = new Records(Paths.GameRootPath);
+            StaticLogger = Logger;
+            StaticConfig = new PluginConfig(Config);
+            StaticRecords = new Records(Paths.GameRootPath);
         }
-        
+
         private void Awake()
         {
             // Plugin startup logic
@@ -88,5 +88,5 @@ namespace DiscordConnector
         /// Works in Awake()
         /// </summary>
         public static bool IsHeadless() => SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null;
-  }
+    }
 }

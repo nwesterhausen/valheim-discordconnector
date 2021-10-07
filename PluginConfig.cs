@@ -208,21 +208,21 @@ namespace DiscordConnector
                 "%PLAYER_NAME% has joined.",
                 "Set the message that will be sent when a player joins the server" + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "Random choice example: 'has joined;awakens;arrives'");
+                "Random choice example: '%PLAYER_NAME% has joined;%PLAYER_NAME% awakens;%PLAYER_NAME% arrives'");
 
             playerDeathMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
                 "Player Death Message",
-                "has died.",
+                "%PLAYER_NAME% has died.",
                 "Set the message that will be sent when a player dies." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "Random choice example: 'has died;was yeeted'");
+                "Random choice example: '%PLAYER_NAME% has died;%PLAYER_NAME% passed on'");
 
             playerLeaveMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
                 "Player Leave Message",
                 "%PLAYER_NAME% has left.",
                 "Set the message that will be sent when a player leaves the server." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "Random choice example: 'has left;has moved on;returns to dreams'");
+                "Random choice example: '%PLAYER_NAME% has left;%PLAYER_NAME% has moved on;%PLAYER_NAME% returns to dreams'");
 
             // Statistic Settings
             collectStatsEnable = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,

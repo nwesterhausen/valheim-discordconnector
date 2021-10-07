@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DiscordConnector.Patches
 {
-  internal class ZNetPatches
+    internal class ZNetPatches
     {
 
         [HarmonyPatch(typeof(ZNet), nameof(ZNet.LoadWorld))]
@@ -57,7 +57,7 @@ namespace DiscordConnector.Patches
                     // Seems that player is dead if character ZDOID id is 0
                     // m_characterID id=0 means dead, user_id always matches peer.m_uid
                     if (peer.m_characterID.id != 0 || !Plugin.StaticConfig.PlayerDeathMessageEnabled) return;
-                    string message = $"{peer.m_playerName} {Plugin.StaticConfig.DeathMessage}";
+                    string message = Plugin.StaticConfig.DeathMessage.Replace("%PLAYER_NAME%", peer.m_playerName);
                     if (Plugin.StaticConfig.PlayerDeathPosEnabled)
                     {
                         DiscordApi.SendMessage(
@@ -71,7 +71,7 @@ namespace DiscordConnector.Patches
                     }
                     if (Plugin.StaticConfig.StatsDeathEnabled)
                     {
-                       Plugin.StaticRecords.Store(Categories.Death, peer.m_playerName, 1);
+                        Plugin.StaticRecords.Store(Categories.Death, peer.m_playerName, 1);
                     }
                 }
                 else if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
@@ -88,7 +88,7 @@ namespace DiscordConnector.Patches
                     }
                     else
                     {
-                       DiscordApi.SendMessage(message);
+                        DiscordApi.SendMessage(message);
                     }
                     if (Plugin.StaticConfig.StatsJoinEnabled)
                     {
