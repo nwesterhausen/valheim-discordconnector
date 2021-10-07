@@ -1,7 +1,7 @@
 # Discord Connector
 
 Connect your Valheim server (dedicated or served from the game itself) to a Discord Webhook. 
-([How to get a webhook](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md#how-to-get-a-discord-webhook) or [Short FAQ Guide for this mod](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md))
+([How to get a webhook](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md#how-to-get-a-discord-webhook) or [Short FAQ Guide for this mod](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md)) There's also [configuration documentation](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/ConfigurationDetails.md).
 
 ## Features
 
@@ -33,14 +33,23 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
 
-### Version 0.10.0
+### Version 1.0.0
+
+Release 1.0.0 is a breaking release since the structure of the configuration files completely changes. When you update you will need to modify the config
+to save your webhook again and to update any message customization you have done!
 
 Features:
 
-- %PLAYER_NAME% is replaced in messages with the player name, allowing you to change
-where in the message the playe is mentioned (Thanks @Digitalroot)
-- Configurable Ping and Shout messages
+- Send an extra message the first time a player does something (by default only for Join and Death on server)
+- Configuration is "simpler" with other configuration files to consult for full customization
+- Server shutdown message
 
 Fixes:
 
-- More robust dedicated server detection (Thanks @Digitalroot)
+- Global toggles weren't being applied
+
+Other Changes:
+
+- Mention Mod Vault in readme
+
+This version included a source code restructuring which should make it easier to maintain in the future.

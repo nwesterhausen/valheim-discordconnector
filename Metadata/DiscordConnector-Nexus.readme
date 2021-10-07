@@ -1,5 +1,5 @@
-DISCORD CONNECTOR - 0.10.0
-Connect your Valheim server to a Discord Webhook. (Visit the github repo for a how-to guide.)
+DISCORD CONNECTOR - 1.0.0
+Connect your Valheim server to a Discord Webhook. Works for both dedicated and client-hosted servers. (Visit the github repo for a how-to guide.)
 
 :: REQUIREMENTS ::
 - BepInEx 5.*
@@ -12,6 +12,7 @@ Connect your Valheim server to a Discord Webhook. (Visit the github repo for a h
 - Supports both the client and the server
 - Will use an embed for coordinates if enabled
 - Periodic leaderbaord messages with death,ping,shout and join|leave leader. (optional)
+- A message for the first time a player does something (join and death by default, can be entirely disabled)
 
 :: SUPPORTED MESSAGES ::
 - Server startup (server starting, loading the world)
