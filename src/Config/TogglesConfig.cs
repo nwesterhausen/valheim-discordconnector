@@ -45,11 +45,11 @@ namespace DiscordConnector
         private ConfigEntry<bool> sendShoutsLeaderboard;
 
         // Player-firsts Settings
-        private ConfigEntry<bool> announceFirstDeath;
-        private ConfigEntry<bool> announceFirstJoin;
-        private ConfigEntry<bool> announceFirstLeave;
-        private ConfigEntry<bool> announceFirstShout;
-        private ConfigEntry<bool> announceFirstPing;
+        private ConfigEntry<bool> announcePlayerFirstDeath;
+        private ConfigEntry<bool> announcePlayerFirstJoin;
+        private ConfigEntry<bool> announcePlayerFirstLeave;
+        private ConfigEntry<bool> announcePlayerFirstShout;
+        private ConfigEntry<bool> announcePlayerFirstPing;
 
         public TogglesConfig(ConfigFile configFile)
         {
@@ -172,23 +172,23 @@ namespace DiscordConnector
                 "If enabled (and leaderboards are enabled), will send a leaderboard for player shouts at the interval.");
 
             // Player Firsts
-            announceFirstDeath = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
+            announcePlayerFirstDeath = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
                 "Send a Message for the First Death of a Player",
                 true,
                 "If enabled (and player-first anouncements are enabled), will send an extra message on a player's first death.");
-            announceFirstJoin = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
+            announcePlayerFirstJoin = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
                 "Send a Message for the First Join of a Player",
                 true,
                 "If enabled (and player-first anouncements are enabled), will send an extra message on a player's first join to the server.");
-            announceFirstLeave = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
+            announcePlayerFirstLeave = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
                 "Send a Message for the First Leave of a Player",
                 false,
                 "If enabled (and player-first anouncements are enabled), will send an extra message on a player's first leave from the server.");
-            announceFirstPing = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
+            announcePlayerFirstPing = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
                 "Send a Message for the First Ping of a Player",
                 false,
                 "If enabled (and player-first anouncements are enabled), will send an extra message on a player's first ping.");
-            announceFirstShout = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
+            announcePlayerFirstShout = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
                 "Send a Message for the First Shout of a Player",
                 false,
                 "If enabled (and player-first anouncements are enabled), will send an extra message on a player's first shout.");
@@ -235,11 +235,11 @@ namespace DiscordConnector
             jsonString += "},";
 
             jsonString += $"\"{PLAYER_FIRSTS_TOGGLES}\":{{";
-            jsonString += $"\"announceFirstDeathEnabled\":\"{AnnounceFirstDeathEnabled}\",";
-            jsonString += $"\"announceFirstJoinEnabled\":\"{AnnounceFirstJoinEnabled}\",";
-            jsonString += $"\"announceFirstLeaveEnabled\":\"{AnnounceFirstLeaveEnabled}\",";
-            jsonString += $"\"announceFirstPingEnabled\":\"{AnnounceFirstPingEnabled}\",";
-            jsonString += $"\"announceFirstShoutEnabled\":\"{AnnounceFirstShoutEnabled}\"";
+            jsonString += $"\"announceFirstDeathEnabled\":\"{AnnouncePlayerFirstDeathEnabled}\",";
+            jsonString += $"\"announceFirstJoinEnabled\":\"{AnnouncePlayerFirstJoinEnabled}\",";
+            jsonString += $"\"announceFirstLeaveEnabled\":\"{AnnouncePlayerFirstLeaveEnabled}\",";
+            jsonString += $"\"announceFirstPingEnabled\":\"{AnnouncePlayerFirstPingEnabled}\",";
+            jsonString += $"\"announceFirstShoutEnabled\":\"{AnnouncePlayerFirstShoutEnabled}\"";
             jsonString += "}";
 
             jsonString += "}";
@@ -269,10 +269,10 @@ namespace DiscordConnector
         public bool LeaderboardPingEnabled => sendPingsLeaderboard.Value;
         public bool LeaderboardSessionEnabled => sendSessionLeaderboard.Value;
         public bool LeaderboardShoutEnabled => sendShoutsLeaderboard.Value;
-        public bool AnnounceFirstDeathEnabled => announceFirstDeath.Value;
-        public bool AnnounceFirstJoinEnabled => announceFirstJoin.Value;
-        public bool AnnounceFirstLeaveEnabled => announceFirstLeave.Value;
-        public bool AnnounceFirstPingEnabled => announceFirstPing.Value;
-        public bool AnnounceFirstShoutEnabled => announceFirstShout.Value;
+        public bool AnnouncePlayerFirstDeathEnabled => announcePlayerFirstDeath.Value;
+        public bool AnnouncePlayerFirstJoinEnabled => announcePlayerFirstJoin.Value;
+        public bool AnnouncePlayerFirstLeaveEnabled => announcePlayerFirstLeave.Value;
+        public bool AnnouncePlayerFirstPingEnabled => announcePlayerFirstPing.Value;
+        public bool AnnouncePlayerFirstShoutEnabled => announcePlayerFirstShout.Value;
     }
 }

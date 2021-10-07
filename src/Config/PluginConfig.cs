@@ -74,12 +74,23 @@ namespace DiscordConnector
         public string DeathMessage => messagesConfig.DeathMessage;
         public string PingMessage => messagesConfig.PingMessage;
         public string ShoutMessage => messagesConfig.ShoutMessage;
+        public string PlayerFirstDeathMessage => messagesConfig.PlayerFirstDeathMessage;
+        public string PlayerFirstJoinMessage => messagesConfig.PlayerFirstJoinMessage;
+        public string PlayerFirstLeaveMessage => messagesConfig.PlayerFirstLeaveMessage;
+        public string PlayerFirstPingMessage => messagesConfig.PlayerFirstPingMessage;
+        public string PlayerFirstShoutMessage => messagesConfig.PlayerFirstShoutMessage;
 
 
         public bool LeaderboardDeathEnabled => togglesConfig.LeaderboardDeathEnabled;
         public bool LeaderboardPingEnabled => togglesConfig.LeaderboardDeathEnabled;
         public bool LeaderboardSessionEnabled => togglesConfig.LeaderboardDeathEnabled;
         public bool LeaderboardShoutEnabled => togglesConfig.LeaderboardDeathEnabled;
+
+        public bool AnnouncePlayerFirstDeathEnabled => togglesConfig.AnnouncePlayerFirstDeathEnabled;
+        public bool AnnouncePlayerFirstJoinEnabled => togglesConfig.AnnouncePlayerFirstJoinEnabled;
+        public bool AnnouncePlayerFirstLeaveEnabled => togglesConfig.AnnouncePlayerFirstLeaveEnabled;
+        public bool AnnouncePlayerFirstPingEnabled => togglesConfig.AnnouncePlayerFirstPingEnabled;
+        public bool AnnouncePlayerFirstShoutEnabled => togglesConfig.AnnouncePlayerFirstShoutEnabled;
 
         public string ConfigAsJson()
         {

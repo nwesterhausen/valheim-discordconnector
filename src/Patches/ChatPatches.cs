@@ -35,6 +35,10 @@ namespace DiscordConnector.Patches
                                 DiscordApi.SendMessage(message);
                             }
                         }
+                        if (Plugin.StaticConfig.AnnouncePlayerFirstPingEnabled && Plugin.StaticRecords.Retrieve(Categories.Ping, user) == 0)
+                        {
+                            DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstPingMessage.Replace("%PLAYER_NAME%", user));
+                        }
                         if (Plugin.StaticConfig.StatsPingEnabled)
                         {
                             Plugin.StaticRecords.Store(Categories.Ping, user, 1);
@@ -59,6 +63,10 @@ namespace DiscordConnector.Patches
                                     {
                                         DiscordApi.SendMessage(message);
                                     }
+                                }
+                                if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticRecords.Retrieve(Categories.Join, user) == 0)
+                                {
+                                    DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstJoinMessage.Replace("%PLAYER_NAME%", user));
                                 }
                                 if (Plugin.StaticConfig.StatsJoinEnabled)
                                 {
@@ -85,6 +93,10 @@ namespace DiscordConnector.Patches
                                 {
                                     DiscordApi.SendMessage(message);
                                 }
+                            }
+                            if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && Plugin.StaticRecords.Retrieve(Categories.Shout, user) == 0)
+                            {
+                                DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstShoutMessage.Replace("%PLAYER_NAME%", user));
                             }
                             if (Plugin.StaticConfig.StatsShoutEnabled)
                             {

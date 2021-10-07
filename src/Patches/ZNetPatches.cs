@@ -87,6 +87,10 @@ namespace DiscordConnector.Patches
                             DiscordApi.SendMessage(message);
                         }
                     }
+                    if (Plugin.StaticConfig.AnnouncePlayerFirstDeathEnabled && Plugin.StaticRecords.Retrieve(Categories.Death, peer.m_playerName) == 0)
+                    {
+                        DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstDeathMessage.Replace("%PLAYER_NAME%", peer.m_playerName));
+                    }
                     if (Plugin.StaticConfig.StatsDeathEnabled)
                     {
                         Plugin.StaticRecords.Store(Categories.Death, peer.m_playerName, 1);
@@ -111,6 +115,10 @@ namespace DiscordConnector.Patches
                         {
                             DiscordApi.SendMessage(message);
                         }
+                    }
+                    if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticRecords.Retrieve(Categories.Join, peer.m_playerName) == 0)
+                    {
+                        DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstJoinMessage.Replace("%PLAYER_NAME%", peer.m_playerName));
                     }
                     if (Plugin.StaticConfig.StatsJoinEnabled)
                     {
@@ -144,6 +152,10 @@ namespace DiscordConnector.Patches
                             message
                             );
                         }
+                    }
+                    if (Plugin.StaticConfig.AnnouncePlayerFirstLeaveEnabled && Plugin.StaticRecords.Retrieve(Categories.Leave, peer.m_playerName) == 0)
+                    {
+                        DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstLeaveMessage.Replace("%PLAYER_NAME%", peer.m_playerName));
                     }
                     if (Plugin.StaticConfig.StatsLeaveEnabled)
                     {

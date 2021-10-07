@@ -163,7 +163,7 @@ namespace DiscordConnector
             jsonString += $"\"pingMessage\":\"{playerPingMessage.Value}\",";
             jsonString += $"\"shoutMessage\":\"{playerShoutMessage.Value}\"";
             jsonString += "}";
-            
+
             jsonString += "}";
 
             return jsonString;
