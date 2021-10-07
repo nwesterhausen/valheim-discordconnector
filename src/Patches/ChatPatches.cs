@@ -48,7 +48,7 @@ namespace DiscordConnector.Patches
                                 if (!Plugin.IsHeadless())
                                 {
                                     DiscordApi.SendMessage(
-                    Plugin.StaticConfig.JoinMessage.Replace("%PLAYER_NAME%", user)
+                                        Plugin.StaticConfig.JoinMessage.Replace("%PLAYER_NAME%", user)
                                     );
                                 }
                                 Plugin.StaticLogger.LogDebug(
@@ -76,8 +76,8 @@ namespace DiscordConnector.Patches
                             }
                             break;
                         default:
-                            Plugin.StaticLogger.LogInfo(
-                                $"Ignoring chat message. [{type}] {user}: {text} at {pos}"
+                            Plugin.StaticLogger.LogDebug(
+                                $"Unmatched chat message. [{type}] {user}: {text} at {pos}"
                             );
                             break;
                     }
