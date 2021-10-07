@@ -14,15 +14,16 @@ namespace DiscordConnector
     {
         internal static ManualLogSource StaticLogger;
         internal static PluginConfig StaticConfig;
+        internal static Records StaticRecords;
         private Harmony _harmony;
 
         public Plugin()
         {
           StaticLogger = Logger;
           StaticConfig = new PluginConfig(Config);
+          StaticRecords = new Records(Paths.GameRootPath);
         }
-
-        internal static Records StaticRecords;
+        
         private void Awake()
         {
             // Plugin startup logic
@@ -52,7 +53,7 @@ namespace DiscordConnector
 
         private void OnDestroy()
         {
-          _harmony.UnpatchSelf();
+            _harmony.UnpatchSelf();
         }
 
         private void SendLeaderboardAnnouncement(object sender, ElapsedEventArgs elapsedEventArgs)
