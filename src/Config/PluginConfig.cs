@@ -37,7 +37,6 @@ namespace DiscordConnector
         public bool LaunchMessageEnabled => togglesConfig.LaunchMessageEnabled;
         public bool LoadedMessageEnabled => togglesConfig.LoadedMessageEnabled;
         public bool StopMessageEnabled => togglesConfig.StopMessageEnabled;
-        public bool ChatMessageEnabled => togglesConfig.ChatMessageEnabled;
         public bool ChatShoutEnabled => togglesConfig.ChatShoutEnabled;
         public bool ChatShoutPosEnabled => togglesConfig.ChatShoutPosEnabled;
         public bool ChatPingEnabled => togglesConfig.ChatPingEnabled;
@@ -73,6 +72,13 @@ namespace DiscordConnector
         public string DeathMessage => messagesConfig.DeathMessage;
         public string PingMessage => messagesConfig.PingMessage;
         public string ShoutMessage => messagesConfig.ShoutMessage;
+
+
+        public bool LeaderboardDeathEnabled => togglesConfig.LeaderboardDeathEnabled;
+        public bool LeaderboardPingEnabled => togglesConfig.LeaderboardDeathEnabled;
+        public bool LeaderboardSessionEnabled => togglesConfig.LeaderboardDeathEnabled;
+        public bool LeaderboardShoutEnabled => togglesConfig.LeaderboardDeathEnabled;
+
         public string ConfigAsJson()
         {
             string jsonString = "{";
@@ -84,17 +90,6 @@ namespace DiscordConnector
 
             jsonString += "}";
             return jsonString;
-        }
-
-        private void CreateFileIfNotExist(string filePath)
-        {
-            if (!File.Exists(filePath))
-            {
-                using (StreamWriter sw = File.AppendText(filePath))
-                {
-                    sw.Close();
-                }
-            }
         }
     }
 }

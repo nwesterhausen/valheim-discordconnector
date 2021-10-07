@@ -41,17 +41,16 @@ namespace DiscordConnector
         private static ConfigFile config;
         public static string ConfigExention = "toggles";
 
-
-
-        // config header strings
-        private const string NOTIFICATION_SETTINGS = "Notification Settings";
-        private const string STATISTIC_COLLECTION_SETTINGS = "Statistics Collection Settings and Opt-Outs";
+        // Config Header Strings
+        private const string MESSAGES_TOGGLES = "Toggles.Messages";
+        private const string POSITION_TOGGLES = "Toggles.Position";
+        private const string STATS_TOGGLES = "Toggles.Stats";
+        private const string LEADERBOARD_TOGGLES = "Toggles.Leaderboard";
 
         // Logged Information Toggles
         private ConfigEntry<bool> serverLaunchToggle;
         private ConfigEntry<bool> serverLoadedToggle;
         private ConfigEntry<bool> serverStopToggle;
-        private ConfigEntry<bool> chatToggle;
         private ConfigEntry<bool> chatShoutToggle;
         private ConfigEntry<bool> chatShoutPosToggle;
         private ConfigEntry<bool> chatPingToggle;
@@ -70,6 +69,12 @@ namespace DiscordConnector
         private ConfigEntry<bool> collectStatsShouts;
         private ConfigEntry<bool> collectStatsPings;
 
+        // Send Leaderboard Strings
+        private ConfigEntry<bool> sendSessionLeaderboard;
+        private ConfigEntry<bool> sendPingsLeaderboard;
+        private ConfigEntry<bool> sendDeathsLeaderboard;
+        private ConfigEntry<bool> sendShoutsLeaderboard;
+
         public TogglesConfig(ConfigFile configFile)
         {
             config = configFile;
@@ -81,83 +86,77 @@ namespace DiscordConnector
         {
             // Message Toggles
 
-            serverLaunchToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+            serverLaunchToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Server Launch Notifications",
                 true,
                 "If enabled, this will send a message to Discord when the server launches (and the plugin is loaded)." + Environment.NewLine +
                 "EX: Server has started. | Server has stopped.");
 
-            serverLoadedToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+            serverLoadedToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Server Loaded Notifications",
                 true,
                 "If enabled, this will send a message to Discord when the server has loaded the map and is ready for connections." + Environment.NewLine +
                 "EX: Server has started. | Server has stopped.");
 
-            serverStopToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+            serverStopToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Server Status Notifications",
                 true,
                 "If enabled, this will send a message to Discord when the server shuts down." + Environment.NewLine +
                 "EX: Server has started. | Server has stopped.");
 
-            chatToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
-                "Chat Messages Notifications",
-                true,
-                "If enabled, this will send a message to Discord the server chat has new messages." + Environment.NewLine +
-                "If this is false, no messages will be sent based on the server chat, even if specific notifications are enabled.");
-
-            chatShoutToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+            chatShoutToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Chat Shout Messages Notifications",
                 true,
                 "If enabled, this will send a message to Discord when a player joins the server." + Environment.NewLine +
                 "EX: Nick shouted \"Hey you!\"");
 
-            chatShoutPosToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+            chatShoutPosToggle = config.Bind<bool>(POSITION_TOGGLES,
                 "Chat Shout Messages Position Notifications",
                 true,
                 "If enabled, include a position with the arrival message." + Environment.NewLine +
                 "EX: Nick shouted \"Hey you!\" (at -124, 81.4, -198.9)");
 
-            chatPingToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+            chatPingToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Ping Notifications",
                 true,
                 "If enabled, include a position with the arrival message." + Environment.NewLine +
                 "If the top-level chat notifications are disabled, that will disable these messages." + Environment.NewLine +
                 "EX: Nick pinged the map!");
 
-            chatPingPosToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+            chatPingPosToggle = config.Bind<bool>(POSITION_TOGGLES,
                 "Ping Notificiations Include Position",
                 true,
                 "If enabled, includes the coordinates of the ping.");
 
-            playerJoinToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+            playerJoinToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Player Join Notifications",
                 true,
                 "If enabled, this will send a message to Discord when a player joins the server." + Environment.NewLine +
                 "EX: Player has joined");
 
-            playerJoinPosToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+            playerJoinPosToggle = config.Bind<bool>(POSITION_TOGGLES,
                 "Include POS With Player Join",
                 true,
                 "If enabled, this will include the coordinates of the player when they join.");
 
-            playerDeathToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+            playerDeathToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Player Death Notifications",
                 true,
                 "If enabled, this will send a message to Discord when a player dies on the server." + Environment.NewLine +
                 "EX: Player has died");
 
-            playerDeathPosToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+            playerDeathPosToggle = config.Bind<bool>(POSITION_TOGGLES,
                 "Include POS With Player Death",
                 true,
                 "If enabled, this will include the coordinates of the player when they die.");
 
-            playerLeaveToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+            playerLeaveToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Player Leave Notifications",
                 true,
                 "If enabled, this will send a message to Discord when a player leaves the server." + Environment.NewLine +
                 "EX: Player has left.");
 
-            playerLeavePosToggle = config.Bind<bool>(NOTIFICATION_SETTINGS,
+            playerLeavePosToggle = config.Bind<bool>(POSITION_TOGGLES,
                 "Include POS With Player Leave",
                 true,
                 "If enabled, this will include the coordinates of the player when they leave.");
@@ -165,26 +164,44 @@ namespace DiscordConnector
 
 
             // Statistic Settings
-            collectStatsDeaths = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
+            collectStatsDeaths = config.Bind<bool>(STATS_TOGGLES,
                 "Collect and Send Player Death Stats",
                 true,
                 "If enabled, will collect and enable sending player death statistics.");
-            collectStatsJoins = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
+            collectStatsJoins = config.Bind<bool>(STATS_TOGGLES,
                 "Collect and Send Player Join Stats",
                 true,
                 "If enabled, will collect and enable sending stat announcements for how many times a player has joined the game.");
-            collectStatsLeaves = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
+            collectStatsLeaves = config.Bind<bool>(STATS_TOGGLES,
                 "Collect and Send Player Leave Stats",
                 true,
                 "If enabled, will collect and enable sending stat announcements for how many times a player has left the game.");
-            collectStatsPings = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
+            collectStatsPings = config.Bind<bool>(STATS_TOGGLES,
                 "Collect and Send Player Ping Stats",
                 true,
                 "If enabled, will collect and enable sending stat announcements for number of pings made by a player.");
-            collectStatsShouts = config.Bind<bool>(STATISTIC_COLLECTION_SETTINGS,
+            collectStatsShouts = config.Bind<bool>(STATS_TOGGLES,
                 "Collect and Send Player Shout Stats",
                 true,
                 "If enabled, will collect and enable sending stat announcements for number of times a player has shouted.");
+
+
+            sendDeathsLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
+                "Send Periodic Leaderboard for Player Deaths",
+                true,
+                "If enabled (and leaderboards are enabled), will send a leaderboard for player deaths at the interval.");
+            sendPingsLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
+                "Send Periodic Leaderboard for Player Pings",
+                false,
+                "If enabled (and leaderboards are enabled), will send a leaderboard for player pings at the interval.");
+            sendSessionLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
+                "Send Periodic Leaderboard for Player Sessions",
+                false,
+                "If enabled (and leaderboards are enabled), will send a leaderboard for player sessions at the interval.");
+            sendShoutsLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
+                "Send Periodic Leaderboard for Player Shouts",
+                false,
+                "If enabled (and leaderboards are enabled), will send a leaderboard for player shouts at the interval.");
 
 
             config.Save();
@@ -193,42 +210,47 @@ namespace DiscordConnector
         public string ConfigAsJson()
         {
             string jsonString = "{";
-            // Notification Settings
-            jsonString += "\"notificationToggles\":{";
+            jsonString += $"\"{MESSAGES_TOGGLES}\":{{";
             jsonString += $"\"launchMessageEnabled\":\"{LaunchMessageEnabled}\",";
             jsonString += $"\"loadedMessageEnabled\":\"{LoadedMessageEnabled}\",";
             jsonString += $"\"stopMessageEnabled\":\"{StopMessageEnabled}\",";
-            jsonString += $"\"chatMessageEnabled\":\"{ChatMessageEnabled}\",";
             jsonString += $"\"chatShoutEnabled\":\"{ChatShoutEnabled}\",";
-            jsonString += $"\"chatShoutPosEnabled\":\"{ChatShoutPosEnabled}\",";
             jsonString += $"\"chatPingEnabled\":\"{ChatPingEnabled}\",";
-            jsonString += $"\"chatPingPosEnabled\":\"{ChatPingPosEnabled}\",";
             jsonString += $"\"playerJoinEnabled\":\"{PlayerJoinMessageEnabled}\",";
-            jsonString += $"\"playerJoinPosEnabled\":\"{PlayerJoinPosEnabled}\",";
             jsonString += $"\"playerLeaveEnabled\":\"{PlayerLeaveMessageEnabled}\",";
-            jsonString += $"\"playerLeavePosEnabled\":\"{PlayerLeavePosEnabled}\",";
             jsonString += $"\"playerDeathEnabled\":\"{PlayerDeathMessageEnabled}\",";
+            jsonString += "},";
+
+            jsonString += $"\"{POSITION_TOGGLES}\":{{";
+            jsonString += $"\"chatShoutPosEnabled\":\"{ChatShoutPosEnabled}\",";
+            jsonString += $"\"chatPingPosEnabled\":\"{ChatPingPosEnabled}\",";
+            jsonString += $"\"playerJoinPosEnabled\":\"{PlayerJoinPosEnabled}\",";
+            jsonString += $"\"playerLeavePosEnabled\":\"{PlayerLeavePosEnabled}\",";
             jsonString += $"\"playerDeathPosEnabled\":\"{PlayerDeathPosEnabled}\"";
             jsonString += "},";
 
-            // Stats Collection
-            jsonString += "\"statsCollection\":{";
+            jsonString += $"\"{STATS_TOGGLES}\":{{";
             jsonString += $"\"statsDeathEnabled\":\"{StatsDeathEnabled}\",";
             jsonString += $"\"statsJoinEnabled\":\"{StatsJoinEnabled}\",";
             jsonString += $"\"statsLeaveEnabled\":\"{StatsLeaveEnabled}\",";
             jsonString += $"\"statsPingEnabled\":\"{StatsPingEnabled}\",";
             jsonString += $"\"statsShoutEnabled\":\"{StatsShoutEnabled}\"";
-            jsonString += "}}";
+            jsonString += "},";
+
+            jsonString += $"\"{LEADERBOARD_TOGGLES}\":{{";
+            jsonString += $"\"leaderboardDeathEnabled\":\"{LeaderboardDeathEnabled}\",";
+            jsonString += $"\"leaderboardPingEnabled\":\"{LeaderboardPingEnabled}\",";
+            jsonString += $"\"leaderboardShoutEnabled\":\"{LeaderboardShoutEnabled}\",";
+            jsonString += $"\"leaderboardSessionEnabled\":\"{LeaderboardSessionEnabled}\"";
+            jsonString += "}";
+
+            jsonString += "}";
             return jsonString;
         }
 
-
-
-        // Toggles
         public bool LaunchMessageEnabled => serverLaunchToggle.Value;
         public bool LoadedMessageEnabled => serverLaunchToggle.Value;
         public bool StopMessageEnabled => serverLaunchToggle.Value;
-        public bool ChatMessageEnabled => chatToggle.Value;
         public bool ChatShoutEnabled => chatShoutToggle.Value;
         public bool ChatShoutPosEnabled => chatShoutPosToggle.Value;
         public bool ChatPingEnabled => chatPingToggle.Value;
@@ -244,5 +266,9 @@ namespace DiscordConnector
         public bool StatsLeaveEnabled => collectStatsLeaves.Value;
         public bool StatsPingEnabled => collectStatsPings.Value;
         public bool StatsShoutEnabled => collectStatsShouts.Value;
+        public bool LeaderboardDeathEnabled => sendDeathsLeaderboard.Value;
+        public bool LeaderboardPingEnabled => sendPingsLeaderboard.Value;
+        public bool LeaderboardSessionEnabled => sendSessionLeaderboard.Value;
+        public bool LeaderboardShoutEnabled => sendShoutsLeaderboard.Value;
     }
 }
