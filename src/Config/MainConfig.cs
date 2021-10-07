@@ -18,7 +18,7 @@ namespace DiscordConnector
         private ConfigEntry<int> statsAnnouncementPeriod;
         private ConfigEntry<bool> colectStatsToggle;
         private ConfigEntry<bool> sendPositionsToggle;
-
+        private ConfigEntry<bool> announcePlayerFirsts;
 
 
         public MainConfig(ConfigFile configFile)
@@ -73,6 +73,11 @@ namespace DiscordConnector
                 "Set the number of minutes between a leaderboard announcement sent to discord." + Environment.NewLine +
                 "This time starts when the server is started. Default is set to 10 hours (600 mintues).");
 
+            announcePlayerFirsts = config.Bind<bool>(MAIN_SETTINGS,
+                "Announce Player Firsts",
+                true,
+                "Disable this setting to disable all extra announcements the first time each player does something. (Overwrites any individual setting.)");
+
             config.Save();
         }
 
@@ -87,7 +92,8 @@ namespace DiscordConnector
             jsonString += $"\"periodicLeaderboardEnabled\":\"{StatsAnnouncementEnabled}\",";
             jsonString += $"\"periodicLeaderabordPeriodSeconds\":{StatsAnnouncementPeriod},";
             jsonString += $"\"colectStatsEnabled\":\"{CollectStatsEnabled}\",";
-            jsonString += $"\"sendPositionsEnabled\":\"{SendPositionsEnabled}\"";
+            jsonString += $"\"sendPositionsEnabled\":\"{SendPositionsEnabled}\",";
+            jsonString += $"\"announcePlayerFirsts\":\"{AnnouncePlayerFirsts}\"";
             jsonString += "}";
             return jsonString;
         }
@@ -99,5 +105,6 @@ namespace DiscordConnector
         public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
         public bool SendPositionsEnabled => sendPositionsToggle.Value;
         public List<string> MutedPlayers => mutedPlayers;
+        public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
     }
 }
