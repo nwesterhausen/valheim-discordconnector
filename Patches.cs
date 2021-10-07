@@ -82,7 +82,7 @@ namespace DiscordConnector.Patches
                     {
                         // PLAYER JOINED
                         joinedPlayers.Add(peer.m_uid);
-                        string message = $"{peer.m_playerName} {Plugin.StaticConfig.JoinMessage}";
+                        string message = Plugin.StaticConfig.JoinMessage.Replace("%PLAYER_NAME%", peer.m_playerName);
                         if (Plugin.StaticConfig.PlayerJoinPosEnabled)
                         {
                             DiscordApi.SendMessage(
@@ -113,7 +113,7 @@ namespace DiscordConnector.Patches
                     ZNetPeer peer = ZNet.instance.GetPeer(rpc);
                     if (peer != null && peer.m_uid != 0)
                     {
-                        string message = $"{peer.m_playerName} {Plugin.StaticConfig.LeaveMessage}";
+                      string message = Plugin.StaticConfig.LeaveMessage.Replace("%PLAYER_NAME%", peer.m_playerName);
                         if (Plugin.StaticConfig.PlayerLeavePosEnabled)
                         {
                             DiscordApi.SendMessage(

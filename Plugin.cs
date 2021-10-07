@@ -11,15 +11,17 @@ namespace DiscordConnector
     {
         internal static ManualLogSource StaticLogger;
         internal static PluginConfig StaticConfig;
+        private Harmony _harmony;
+
+        public Plugin()
+        {
+          StaticLogger = Logger;
+          StaticConfig = new PluginConfig(Config);
+        }
+
         internal static Records StaticRecords;
         private void Awake()
         {
-            StaticLogger = base.Logger;
-            StaticConfig = new PluginConfig(base.Config);
-            StaticRecords = new Records(BepInEx.Paths.GameRootPath);
-
-            var harmony = new Harmony(PluginInfo.PLUGIN_ID);
-
             // Plugin startup logic
             StaticLogger.LogDebug($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
             if (!BepInEx.Paths.ProcessName.Equals("valheim_server"))
@@ -42,7 +44,12 @@ namespace DiscordConnector
                 leaderboardTimer.Start();
             }
 
-            harmony.PatchAll();
+            _harmony = Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, PluginInfo.PLUGIN_ID);
+        }
+
+        private void OnDestroy()
+        {
+          _harmony.UnpatchSelf();
         }
 
         private void SendLeaderboardAnnouncement(object sender, System.Timers.ElapsedEventArgs elapsedEventArgs)
