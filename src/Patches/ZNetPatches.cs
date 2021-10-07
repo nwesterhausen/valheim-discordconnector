@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using HarmonyLib;
-using UnityEngine;
 
 namespace DiscordConnector.Patches
 {
@@ -51,12 +50,18 @@ namespace DiscordConnector.Patches
             private static void Postfix(ZRpc rpc, ZDOID characterID)
             {
                 ZNetPeer peer = ZNet.instance.GetPeer(rpc);
-                if (peer == null) return;
+                if (peer == null) 
+                {
+                    return;
+                }
                 if (joinedPlayers.IndexOf(peer.m_uid) >= 0)
                 {
                     // Seems that player is dead if character ZDOID id is 0
                     // m_characterID id=0 means dead, user_id always matches peer.m_uid
-                    if (peer.m_characterID.id != 0 || !Plugin.StaticConfig.PlayerDeathMessageEnabled) return;
+                    if (peer.m_characterID.id != 0 || !Plugin.StaticConfig.PlayerDeathMessageEnabled) 
+                    {
+                        return;
+                    }
                     string message = Plugin.StaticConfig.DeathMessage.Replace("%PLAYER_NAME%", peer.m_playerName);
                     if (Plugin.StaticConfig.PlayerDeathPosEnabled)
                     {
@@ -103,7 +108,10 @@ namespace DiscordConnector.Patches
         {
             private static void Prefix(ZRpc rpc)
             {
-                if (!Plugin.StaticConfig.PlayerLeaveMessageEnabled) return;
+                if (!Plugin.StaticConfig.PlayerLeaveMessageEnabled)
+                {
+                    return;
+                }
                 ZNetPeer peer = ZNet.instance.GetPeer(rpc);
                 if (peer != null && peer.m_uid != 0)
                 {
