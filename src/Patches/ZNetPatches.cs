@@ -50,7 +50,7 @@ namespace DiscordConnector.Patches
             private static void Postfix(ZRpc rpc, ZDOID characterID)
             {
                 ZNetPeer peer = ZNet.instance.GetPeer(rpc);
-                if (peer == null) 
+                if (peer == null)
                 {
                     return;
                 }
@@ -58,7 +58,7 @@ namespace DiscordConnector.Patches
                 {
                     // Seems that player is dead if character ZDOID id is 0
                     // m_characterID id=0 means dead, user_id always matches peer.m_uid
-                    if (peer.m_characterID.id != 0 || !Plugin.StaticConfig.PlayerDeathMessageEnabled) 
+                    if (peer.m_characterID.id != 0 || !Plugin.StaticConfig.PlayerDeathMessageEnabled)
                     {
                         return;
                     }

@@ -21,11 +21,11 @@ namespace DiscordConnector
         private ConfigEntry<string> playerDeathMessage;
         private ConfigEntry<string> playerPingMessage;
         private ConfigEntry<string> playerShoutMessage;
-        private ConfigFile configFile;
 
         public MessagesConfig(ConfigFile configFile)
         {
             config = configFile;
+            LoadConfig();
         }
 
         private void LoadConfig()
@@ -85,6 +85,8 @@ namespace DiscordConnector
                 "%PLAYER_NAME% shouts **%SHOUT%**.",
                 "Set the message that will be sent when a player shouts on the server." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
+
+            config.Save();
         }
 
         public string ConfigAsJson()
