@@ -104,31 +104,31 @@ namespace DiscordConnector
                 "Set the message that will be sent when a player shouts on the server. You can put %SHOUT% anywhere you want the content of the shout to be." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
-            playerJoinMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
+            playerFirstJoinMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
                 "Player First Join Message",
                 "Welcome %PLAYER_NAME%, it's their first time on the server!",
                 "Set the message that will be sent when a player joins the server" + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
-            playerDeathMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
+            playerFirstDeathMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
                 "Player First Death Message",
                 "%PLAYER_NAME% has died for the first time.",
                 "Set the message that will be sent when a player dies." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
-            playerLeaveMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
+            playerFirstLeaveMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
                 "Player First Leave Message",
                 "%PLAYER_NAME% has left for the first time.",
                 "Set the message that will be sent when a player leaves the server." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
-            playerPingMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
+            playerFirstPingMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
                 "Player First Ping Message",
                 "%PLAYER_NAME% pings the map for the first time.",
                 "Set the message that will be sent when a player pings the map." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
-            playerShoutMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
+            playerFirstShoutMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
                 "Player First Shout Message",
                 "%PLAYER_NAME% shouts for the first time.",
                 "Set the message that will be sent when a player shouts on the server." + Environment.NewLine +
