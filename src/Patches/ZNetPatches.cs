@@ -69,6 +69,7 @@ namespace DiscordConnector.Patches
                     // m_characterID id=0 means dead, user_id always matches peer.m_uid
                     if (peer.m_characterID.id != 0)
                     {
+                        Plugin.StaticLogger.LogDebug($"Player \"join\" from someone already on the server: {peer.m_uid} ({peer.m_playerName})");
                         return;
                     }
                     if (Plugin.StaticConfig.PlayerDeathMessageEnabled)
@@ -95,6 +96,7 @@ namespace DiscordConnector.Patches
                 {
                     // PLAYER JOINED
                     joinedPlayers.Add(peer.m_uid);
+                    Plugin.StaticLogger.LogDebug($"Added player {peer.m_uid} ({peer.m_playerName}) to joined player list.");
                     if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
                     {
                         string message = Plugin.StaticConfig.JoinMessage.Replace("%PLAYER_NAME%", peer.m_playerName);
