@@ -233,7 +233,7 @@ namespace DiscordConnector
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
             playerShoutMessage = config.Bind<string>(NOTIFICATION_CONTENT_SETTINGS,
-                "Player Ping Message",
+                "Player Shout Message",
                 "%PLAYER_NAME% shouts **%SHOUT%**.",
                 "Set the message that will be sent when a player shouts on the server." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");

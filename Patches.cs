@@ -183,7 +183,7 @@ namespace DiscordConnector.Patches
                             }
                             else if (Plugin.StaticConfig.ChatShoutEnabled)
                             {
-                                string message = Plugin.StaticConfig.PingMessage.Replace("%PLAYER_NAME%", user).Replace("%SHOUT%", text);
+                                string message = Plugin.StaticConfig.ShoutMessage.Replace("%PLAYER_NAME%", user).Replace("%SHOUT%", text);
                                 if (Plugin.StaticConfig.ChatShoutPosEnabled)
                                 {
                                     DiscordApi.SendMessage(
