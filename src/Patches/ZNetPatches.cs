@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using HarmonyLib;
 
 namespace DiscordConnector.Patches
@@ -24,6 +24,20 @@ namespace DiscordConnector.Patches
                 {
                     DiscordApi.SendMessage(
                         Plugin.StaticConfig.LaunchMessage
+                    );
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(ZNet), nameof(ZNet.SaveWorld))]
+        internal class SaveWorld
+        {
+            private static void Postfix(ref bool sync)
+            {
+                if (Plugin.StaticConfig.WorldSaveMessageEnabled)
+                {
+                    DiscordApi.SendMessage(
+                        Plugin.StaticConfig.SaveMessage
                     );
                 }
             }

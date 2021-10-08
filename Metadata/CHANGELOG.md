@@ -2,9 +2,19 @@
 
 A full changelog for reference.
 
+### Version 1.1.0
+
+Features:
+
+- Send a message when the server saves the world
+
+Fixes:
+
+- Configuration file comments should be clearer/easier to understand
+
 ### Version 1.0.0
 
-Release 1.0.0 is a breaking release since the structure of the configuration files completely changes. When you update you will need to modify the config
+**Release 1.0.0 is a breaking release** since the structure of the configuration files completely changes. When you update you will need to modify the config
 to save your webhook again and to update any message customization you have done!
 
 Features:

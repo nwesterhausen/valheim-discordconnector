@@ -1,9 +1,9 @@
-﻿using BepInEx;
-using BepInEx.Logging;
-using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Timers;
+using BepInEx;
+using BepInEx.Logging;
+using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -35,8 +35,7 @@ namespace DiscordConnector
 
             if (string.IsNullOrEmpty(StaticConfig.WebHookURL))
             {
-                StaticLogger.LogWarning("No value set for WebHookURL");
-                return;
+                StaticLogger.LogWarning("No value set for WebHookURL! Plugin will run without using a main Discord webhook.");
             }
 
             if (StaticConfig.StatsAnnouncementEnabled)

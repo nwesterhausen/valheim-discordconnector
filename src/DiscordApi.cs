@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -75,12 +75,12 @@ namespace DiscordConnector
 
         internal static void SendSerializedJson(string serializedJson)
         {
+            Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
             if (string.IsNullOrEmpty(Plugin.StaticConfig.WebHookURL))
             {
-                Plugin.StaticLogger.LogInfo("Not sending message, no webhook set.");
+                Plugin.StaticLogger.LogInfo("No webhook set, not sending message.");
                 return;
             }
-            Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
             // Responsible for sending a JSON string to the webhook.
             byte[] byteArray = Encoding.UTF8.GetBytes(serializedJson);
 

@@ -1,9 +1,8 @@
-// MAIN CONFIG
-using System;
+﻿using System;
 using System.Collections.Generic;
 using BepInEx.Configuration;
 
-namespace DiscordConnector
+namespace DiscordConnector.Config
 {
     internal class MainConfig
     {
@@ -42,8 +41,7 @@ namespace DiscordConnector
             discordEmbedMessagesToggle = config.Bind<bool>(MAIN_SETTINGS,
                 "Use fancier discord messages",
                 false,
-                "Enable this setting to use embeds in the messages sent to Discord." + Environment.NewLine +
-                "NOTE: Some things may not work as expected with this enabled. Report any weirdness!");
+                "Enable this setting to use embeds in the messages sent to Discord. Currently this will affect the position details for the messages.");
 
             mutedDiscordUserlist = config.Bind<string>(MAIN_SETTINGS,
                 "Ignored Players",
@@ -59,18 +57,18 @@ namespace DiscordConnector
             colectStatsToggle = config.Bind<bool>(MAIN_SETTINGS,
                 "Collect Player Stats",
                 true,
-                "Disable this setting to disable all stat collections and notifications. (Overwrites any individual setting.)");
+                "Disable this setting to disable all stat collection. (Overwrites any individual setting.)");
 
             statsAnnouncementToggle = config.Bind<bool>(MAIN_SETTINGS,
                 "Periodic Player Stats Notifications",
                 false,
-                "If enabled, periodically send a leaderboard or of top player stats to Discord." + Environment.NewLine +
+                "Disable this setting to disable all stat announcements (i.e. leader board messages). (Overwrites any individual setting.)" + Environment.NewLine +
                 "EX: Top Player Deaths: etc etc Top Player Joins: etc etc");
 
             statsAnnouncementPeriod = config.Bind<int>(MAIN_SETTINGS,
                 "Player Stats Notifications Period",
                 600,
-                "Set the number of minutes between a leaderboard announcement sent to discord." + Environment.NewLine +
+                "Set the number of minutes between a leader board announcement sent to discord." + Environment.NewLine +
                 "This time starts when the server is started. Default is set to 10 hours (600 mintues).");
 
             announcePlayerFirsts = config.Bind<bool>(MAIN_SETTINGS,
@@ -90,7 +88,7 @@ namespace DiscordConnector
             jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserlist.Value}\"";
             jsonString += "},";
             jsonString += $"\"periodicLeaderboardEnabled\":\"{StatsAnnouncementEnabled}\",";
-            jsonString += $"\"periodicLeaderabordPeriodSeconds\":{StatsAnnouncementPeriod},";
+            jsonString += $"\"periodicLeaderboardPeriodSeconds\":{StatsAnnouncementPeriod},";
             jsonString += $"\"colectStatsEnabled\":\"{CollectStatsEnabled}\",";
             jsonString += $"\"sendPositionsEnabled\":\"{SendPositionsEnabled}\",";
             jsonString += $"\"announcePlayerFirsts\":\"{AnnouncePlayerFirsts}\"";

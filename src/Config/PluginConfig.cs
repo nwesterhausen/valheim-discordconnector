@@ -1,7 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using BepInEx.Configuration;
+using DiscordConnector.Config;
 
 namespace DiscordConnector
 {
@@ -14,8 +13,8 @@ namespace DiscordConnector
         public PluginConfig(ConfigFile config)
         {
             // Set up the config file paths
-            string messageConfigFilename = $"{PluginInfo.PLUGIN_ID}-{MessagesConfig.ConfigExention}.cfg";
-            string togglesConfigFilename = $"{PluginInfo.PLUGIN_ID}-{TogglesConfig.ConfigExention}.cfg";
+            string messageConfigFilename = $"{PluginInfo.PLUGIN_ID}-{MessagesConfig.ConfigExtension}.cfg";
+            string togglesConfigFilename = $"{PluginInfo.PLUGIN_ID}-{TogglesConfig.ConfigExtension}.cfg";
             string messagesConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, messageConfigFilename);
             string togglesConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, togglesConfigFilename);
 
@@ -38,6 +37,7 @@ namespace DiscordConnector
         public bool LoadedMessageEnabled => togglesConfig.LoadedMessageEnabled;
         public bool StopMessageEnabled => togglesConfig.StopMessageEnabled;
         public bool ShutdownMessageEnabled => togglesConfig.ShutdownMessageEnabled;
+        public bool WorldSaveMessageEnabled => togglesConfig.WorldSaveMessageEnabled;
         public bool ChatShoutEnabled => togglesConfig.ChatShoutEnabled;
         public bool ChatPingEnabled => togglesConfig.ChatPingEnabled;
         public bool PlayerJoinMessageEnabled => togglesConfig.PlayerJoinMessageEnabled;
@@ -74,6 +74,7 @@ namespace DiscordConnector
         public string LoadedMessage => messagesConfig.LoadedMessage;
         public string StopMessage => messagesConfig.StopMessage;
         public string ShutdownMessage => messagesConfig.ShutdownMessage;
+        public string SaveMessage => messagesConfig.SaveMessage;
 
         // Messages.Players
         public string JoinMessage => messagesConfig.JoinMessage;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -159,7 +159,7 @@ namespace DiscordConnector
                     await stream.WriteAsync(jsonString);
                 }
 
-                Plugin.StaticLogger.LogInfo($"Flushed cached stats to {storepath}");
+                Plugin.StaticLogger.LogDebug($"Flushed cached stats to {storepath}");
             }
         }
 
@@ -173,7 +173,7 @@ namespace DiscordConnector
             }
             else
             {
-                Plugin.StaticLogger.LogInfo($"Unable to find existing stats data at {storepath}");
+                Plugin.StaticLogger.LogInfo($"Unable to find existing stats data at {storepath}. Creating new {filename}");
                 recordCache = new List<Record>();
                 foreach (string category in Categories.All)
                 {

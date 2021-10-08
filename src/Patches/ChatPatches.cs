@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using HarmonyLib;
+﻿using HarmonyLib;
 using UnityEngine;
 
 namespace DiscordConnector.Patches
@@ -96,7 +95,7 @@ namespace DiscordConnector.Patches
                             }
                             if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && Plugin.StaticRecords.Retrieve(Categories.Shout, user) == 0)
                             {
-                                DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstShoutMessage.Replace("%PLAYER_NAME%", user));
+                                DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstShoutMessage.Replace("%PLAYER_NAME%", user).Replace("%SHOUT%", text));
                             }
                             if (Plugin.StaticConfig.StatsShoutEnabled)
                             {
