@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DiscordConnector
 {
-    internal static class Categories
+    internal static class RecordCategories
     {
         internal const string Death = "death";
         internal const string Join = "join";
@@ -38,7 +38,10 @@ namespace DiscordConnector
         private static string storepath;
         private List<Record> recordCache;
 
-
+        /// <summary>
+        /// Creates an instance of the record keeper. It will store a json file using the default filename at <paramref name="basepath"/>.
+        /// </summary>
+        /// <param name="basepath">The path for the json store to be saved in</param>
         public Records(string basepath)
         {
             storepath = $"{basepath}{(basepath.EndsWith($"{Path.DirectorySeparatorChar}") ? "" : Path.DirectorySeparatorChar)}{filename}";
@@ -49,11 +52,18 @@ namespace DiscordConnector
             }
         }
 
+        /// <summary>
+        /// Add <paramref name="value"/> to a record for <paramref name="playername"/> under <paramref name="key"/> in the records database. 
+        /// This will not save the record if the <paramref name="key"/> is not one defined in RecordCategories.
+        /// </summary>
+        /// <param name="key">RecordCategories category to store the value under</param>
+        /// <param name="playername">The player's name.</param>
+        /// <param name="value">How much to increase current stored value by.</param>
         public void Store(string key, string playername, int value)
         {
             if (Plugin.StaticConfig.CollectStatsEnabled)
             {
-                if (Array.IndexOf<string>(Categories.All, key) >= 0)
+                if (Array.IndexOf<string>(RecordCategories.All, key) >= 0)
                 {
                     foreach (Record r in recordCache)
                     {
@@ -89,13 +99,19 @@ namespace DiscordConnector
                 }
             }
         }
+        /// <summary>
+        /// Get the value stored under <paramref name="key"/> at <paramref name="playername"/>.
+        /// </summary>
+        /// <param name="key">The RecordCategories category the value is stored under</param>
+        /// <param name="playername">The name of the player</param>
+        /// <returns>This will return 0 if there is no record found for that player. It will return -1 if the category is invalid.</returns>
         public int Retrieve(string key, string playername)
         {
             if (!Plugin.StaticConfig.CollectStatsEnabled)
             {
                 return -1;
             }
-            if (Array.IndexOf<string>(Categories.All, key) >= 0)
+            if (Array.IndexOf<string>(RecordCategories.All, key) >= 0)
             {
                 foreach (Record r in recordCache)
                 {
@@ -115,6 +131,11 @@ namespace DiscordConnector
             return 0;
         }
 
+        /// <summary>
+        /// Retrieve all stored values under <paramref name="key"/>.
+        /// </summary>
+        /// <param name="key">RecordCategories category to retrieve stored values from</param>
+        /// <returns>A list of (playername, value) tuples. The list will have length 0 if there are no stored records.</returns>
         public Tuple<string, int> Retrieve(string key)
         {
             if (!Plugin.StaticConfig.CollectStatsEnabled)
@@ -122,7 +143,7 @@ namespace DiscordConnector
                 return Tuple.Create("not allowed", -1);
             }
 
-            if (Array.IndexOf<string>(Categories.All, key) >= 0)
+            if (Array.IndexOf<string>(RecordCategories.All, key) >= 0)
             {
                 string player = "no result";
                 int records = -1;
@@ -148,6 +169,9 @@ namespace DiscordConnector
             }
         }
 
+        /// <summary>
+        /// (Asynchronous) Writes the in-memory cache of records to disk. 
+        /// </summary>
         private async Task FlushCache()
         {
             if (Plugin.StaticConfig.CollectStatsEnabled)
@@ -163,6 +187,9 @@ namespace DiscordConnector
             }
         }
 
+        /// <summary>
+        /// Builds the in-memory cache by reading from disk.
+        /// </summary>
         private void PopulateCache()
         {
             if (File.Exists(storepath))
@@ -175,7 +202,7 @@ namespace DiscordConnector
             {
                 Plugin.StaticLogger.LogInfo($"Unable to find existing stats data at {storepath}. Creating new {filename}");
                 recordCache = new List<Record>();
-                foreach (string category in Categories.All)
+                foreach (string category in RecordCategories.All)
                 {
                     recordCache.Add(new Record
                     {
