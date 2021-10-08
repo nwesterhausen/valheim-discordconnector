@@ -19,6 +19,7 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> serverLoadedToggle;
         private ConfigEntry<bool> serverStopToggle;
         private ConfigEntry<bool> serverShutdownToggle;
+        private ConfigEntry<bool> serverSaveToggle;
         private ConfigEntry<bool> chatShoutToggle;
         private ConfigEntry<bool> chatShoutPosToggle;
         private ConfigEntry<bool> chatPingToggle;
@@ -76,6 +77,10 @@ namespace DiscordConnector.Config
                 "Server Shutdown Notifications",
                 true,
                 "If enabled, this will send a message to Discord when the server has shut down.");
+            serverSaveToggle = config.Bind<bool>(MESSAGES_TOGGLES,
+                "Server World Save Notifications",
+                true,
+                "If enabled, this will send a message to Discord when the server saves the world.");
             chatShoutToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Chat Shout Messages Notifications",
                 true,
@@ -238,6 +243,7 @@ namespace DiscordConnector.Config
         public bool LoadedMessageEnabled => serverLaunchToggle.Value;
         public bool StopMessageEnabled => serverLaunchToggle.Value;
         public bool ShutdownMessageEnabled => serverShutdownToggle.Value;
+        public bool WorldSaveMessageEnabled => serverSaveToggle.Value;
         public bool ChatShoutEnabled => chatShoutToggle.Value;
         public bool ChatShoutPosEnabled => chatShoutPosToggle.Value;
         public bool ChatPingEnabled => chatPingToggle.Value;
