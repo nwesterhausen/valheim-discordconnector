@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using BepInEx.Configuration;
+using DiscordConnector.Config;
 
 namespace DiscordConnector
 {
@@ -14,8 +13,8 @@ namespace DiscordConnector
         public PluginConfig(ConfigFile config)
         {
             // Set up the config file paths
-            string messageConfigFilename = $"{PluginInfo.PLUGIN_ID}-{MessagesConfig.ConfigExention}.cfg";
-            string togglesConfigFilename = $"{PluginInfo.PLUGIN_ID}-{TogglesConfig.ConfigExention}.cfg";
+            string messageConfigFilename = $"{PluginInfo.PLUGIN_ID}-{MessagesConfig.ConfigExtension}.cfg";
+            string togglesConfigFilename = $"{PluginInfo.PLUGIN_ID}-{TogglesConfig.ConfigExtension}.cfg";
             string messagesConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, messageConfigFilename);
             string togglesConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, togglesConfigFilename);
 
