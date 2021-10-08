@@ -1,13 +1,13 @@
 using System;
 using BepInEx.Configuration;
 
-namespace DiscordConnector
+namespace DiscordConnector.Config
 {
     internal class MessagesConfig
     {
         private static ConfigFile config;
 
-        public static string ConfigExention = "messages";
+        public static string ConfigExtension = "messages";
 
         // config header strings
         private const string SERVER_MESSAGES = "Messages.Server";
@@ -49,25 +49,23 @@ namespace DiscordConnector
                 "Server is starting up.",
                 "Set the message that will be sent when the server starts up." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "Random choice example: 'Server is starting;Server beginning to load'");
+                "Random choice example: Server is starting;Server beginning to load");
 
             serverLoadedMessage = config.Bind<string>(SERVER_MESSAGES,
                 "Server Started Message",
                 "Server has started!",
                 "Set the message that will be sent when the server has loaded the map and is ready for connections." + Environment.NewLine +
-                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "Random choice example: 'Server has started;Server ready!'");
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
             serverStopMessage = config.Bind<string>(SERVER_MESSAGES,
                 "Server Stop Message",
                 "Server is stopping.",
                 "Set the message that will be sent when the server shuts down." + Environment.NewLine +
-                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "Random choice example: 'Server stopping;Valheim signing off!'");
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
             serverShutdownMessage = config.Bind<string>(SERVER_MESSAGES,
                 "Server Shutdown Message",
-                "Server has stoped!",
+                "Server has stopped!",
                 "Set the message that will be sent when the server finishes shutting down." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
@@ -76,21 +74,19 @@ namespace DiscordConnector
                 "%PLAYER_NAME% has joined.",
                 "Set the message that will be sent when a player joins the server" + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "Random choice example: '%PLAYER_NAME% has joined;%PLAYER_NAME% awakens;%PLAYER_NAME% arrives'");
+                "Random choice example: %PLAYER_NAME% has joined;%PLAYER_NAME% awakens;%PLAYER_NAME% arrives");
 
             playerDeathMessage = config.Bind<string>(PLAYER_MESSAGES,
                 "Player Death Message",
                 "%PLAYER_NAME% has died.",
                 "Set the message that will be sent when a player dies." + Environment.NewLine +
-                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "Random choice example: '%PLAYER_NAME% has died;%PLAYER_NAME% passed on'");
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
             playerLeaveMessage = config.Bind<string>(PLAYER_MESSAGES,
                 "Player Leave Message",
                 "%PLAYER_NAME% has left.",
                 "Set the message that will be sent when a player leaves the server." + Environment.NewLine +
-                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "Random choice example: '%PLAYER_NAME% has left;%PLAYER_NAME% has moved on;%PLAYER_NAME% returns to dreams'");
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
             playerPingMessage = config.Bind<string>(PLAYER_MESSAGES,
                 "Player Ping Message",
@@ -131,7 +127,7 @@ namespace DiscordConnector
             playerFirstShoutMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
                 "Player First Shout Message",
                 "%PLAYER_NAME% shouts for the first time.",
-                "Set the message that will be sent when a player shouts on the server." + Environment.NewLine +
+                "Set the message that will be sent when a player shouts on the server. %SHOUT% works in this message to include what was shouted." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
             config.Save();

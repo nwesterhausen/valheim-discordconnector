@@ -1,12 +1,11 @@
-using System;
 using BepInEx.Configuration;
 
-namespace DiscordConnector
+namespace DiscordConnector.Config
 {
     internal class TogglesConfig
     {
         private static ConfigFile config;
-        public static string ConfigExention = "toggles";
+        public static string ConfigExtension = "toggles";
 
         // Config Header Strings
         private const string MESSAGES_TOGGLES = "Toggles.Messages";
@@ -64,49 +63,39 @@ namespace DiscordConnector
             serverLaunchToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Server Launch Notifications",
                 true,
-                "If enabled, this will send a message to Discord when the server launches (and the plugin is loaded)." + Environment.NewLine +
-                "EX: Server has started. | Server has stopped.");
+                "If enabled, this will send a message to Discord when the server launches.");
             serverLoadedToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Server Loaded Notifications",
                 true,
-                "If enabled, this will send a message to Discord when the server has loaded the map and is ready for connections." + Environment.NewLine +
-                "EX: Server has started. | Server has stopped.");
+                "If enabled, this will send a message to Discord when the server has loaded the map and is ready for connections.");
             serverStopToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Server Stopping Notifications",
                 true,
-                "If enabled, this will send a message to Discord when the server begins stopping." + Environment.NewLine +
-                "EX: Server is stopping.");
+                "If enabled, this will send a message to Discord when the server begins shut down.");
             serverShutdownToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Server Shutdown Notifications",
                 true,
-                "If enabled, this will send a message to Discord when the server has shut down." + Environment.NewLine +
-                "EX: Server has stopped.");
+                "If enabled, this will send a message to Discord when the server has shut down.");
             chatShoutToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Chat Shout Messages Notifications",
                 true,
-                "If enabled, this will send a message to Discord when a player joins the server." + Environment.NewLine +
-                "EX: Nick shouted \"Hey you!\"");
+                "If enabled, this will send a message to Discord when a player shouts on the server.");
             chatPingToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Ping Notifications",
                 true,
-                "If enabled, include a position with the arrival message." + Environment.NewLine +
-                "If the top-level chat notifications are disabled, that will disable these messages." + Environment.NewLine +
-                "EX: Nick pinged the map!");
+                "If enabled, this will send a message to Discord when a player pings on the map.");
             playerJoinToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Player Join Notifications",
                 true,
-                "If enabled, this will send a message to Discord when a player joins the server." + Environment.NewLine +
-                "EX: Player has joined");
+                "If enabled, this will send a message to Discord when a player joins the server.");
             playerDeathToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Player Death Notifications",
                 true,
-                "If enabled, this will send a message to Discord when a player dies on the server." + Environment.NewLine +
-                "EX: Player has died");
+                "If enabled, this will send a message to Discord when a player dies on the server.");
             playerLeaveToggle = config.Bind<bool>(MESSAGES_TOGGLES,
                 "Player Leave Notifications",
                 true,
-                "If enabled, this will send a message to Discord when a player leaves the server." + Environment.NewLine +
-                "EX: Player has left.");
+                "If enabled, this will send a message to Discord when a player leaves the server.");
 
             // Position Toggles
             playerJoinPosToggle = config.Bind<bool>(POSITION_TOGGLES,
@@ -122,76 +111,75 @@ namespace DiscordConnector
                 true,
                 "If enabled, this will include the coordinates of the player when they die.");
             chatPingPosToggle = config.Bind<bool>(POSITION_TOGGLES,
-                "Ping Notificiations Include Position",
+                "Ping Notifications Include Position",
                 true,
                 "If enabled, includes the coordinates of the ping.");
             chatShoutPosToggle = config.Bind<bool>(POSITION_TOGGLES,
                 "Chat Shout Messages Position Notifications",
                 false,
-                "If enabled, include a position with the arrival message." + Environment.NewLine +
-                "EX: Nick shouted \"Hey you!\" (at -124, 81.4, -198.9)");
+                "If enabled, this will include the coordinates of the player when they shout.");
 
             // Statistic Settings
             collectStatsDeaths = config.Bind<bool>(STATS_TOGGLES,
                 "Collect and Send Player Death Stats",
                 true,
-                "If enabled, will collect and enable sending player death statistics.");
+                "If enabled, will allow collection of the number of times a player has died.");
             collectStatsJoins = config.Bind<bool>(STATS_TOGGLES,
                 "Collect and Send Player Join Stats",
                 true,
-                "If enabled, will collect and enable sending stat announcements for how many times a player has joined the game.");
+                "If enabled, will allow collection of how many times a player has joined the game.");
             collectStatsLeaves = config.Bind<bool>(STATS_TOGGLES,
                 "Collect and Send Player Leave Stats",
                 true,
-                "If enabled, will collect and enable sending stat announcements for how many times a player has left the game.");
+                "If enabled, will allow collection of how many times a player has left the game.");
             collectStatsPings = config.Bind<bool>(STATS_TOGGLES,
                 "Collect and Send Player Ping Stats",
                 true,
-                "If enabled, will collect and enable sending stat announcements for number of pings made by a player.");
+                "If enabled, will allow collection of the number of pings made by a player.");
             collectStatsShouts = config.Bind<bool>(STATS_TOGGLES,
                 "Collect and Send Player Shout Stats",
                 true,
-                "If enabled, will collect and enable sending stat announcements for number of times a player has shouted.");
+                "If enabled, will allow collection of the number of times a player has shouted.");
 
             // Leaderboard
             sendDeathsLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
                 "Send Periodic Leaderboard for Player Deaths",
                 true,
-                "If enabled (and leaderboards are enabled), will send a leaderboard for player deaths at the interval.");
+                "If enabled, will send a leaderboard for player deaths at the interval.");
             sendPingsLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
                 "Send Periodic Leaderboard for Player Pings",
                 false,
-                "If enabled (and leaderboards are enabled), will send a leaderboard for player pings at the interval.");
+                "If enabled, will send a leaderboard for player pings at the interval.");
             sendSessionLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
                 "Send Periodic Leaderboard for Player Sessions",
                 false,
-                "If enabled (and leaderboards are enabled), will send a leaderboard for player sessions at the interval.");
+                "If enabled, will send a leaderboard for player sessions at the interval.");
             sendShoutsLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
                 "Send Periodic Leaderboard for Player Shouts",
                 false,
-                "If enabled (and leaderboards are enabled), will send a leaderboard for player shouts at the interval.");
+                "If enabled, will send a leaderboard for player shouts at the interval.");
 
             // Player Firsts
             announcePlayerFirstDeath = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
                 "Send a Message for the First Death of a Player",
                 true,
-                "If enabled (and player-first anouncements are enabled), will send an extra message on a player's first death.");
+                "If enabled, this will send an extra message on a player's first death.");
             announcePlayerFirstJoin = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
                 "Send a Message for the First Join of a Player",
                 true,
-                "If enabled (and player-first anouncements are enabled), will send an extra message on a player's first join to the server.");
+                "If enabled, this will send an extra message on a player's first join to the server.");
             announcePlayerFirstLeave = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
                 "Send a Message for the First Leave of a Player",
                 false,
-                "If enabled (and player-first anouncements are enabled), will send an extra message on a player's first leave from the server.");
+                "If enabled, this will send an extra message on a player's first leave from the server.");
             announcePlayerFirstPing = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
                 "Send a Message for the First Ping of a Player",
                 false,
-                "If enabled (and player-first anouncements are enabled), will send an extra message on a player's first ping.");
+                "If enabled, this will send an extra message on a player's first ping.");
             announcePlayerFirstShout = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
                 "Send a Message for the First Shout of a Player",
                 false,
-                "If enabled (and player-first anouncements are enabled), will send an extra message on a player's first shout.");
+                "If enabled, this will send an extra message on a player's first shout.");
 
             config.Save();
         }
