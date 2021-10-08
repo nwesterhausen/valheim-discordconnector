@@ -6,27 +6,37 @@ using System.Threading.Tasks;
 
 namespace DiscordConnector
 {
-    internal static class RecordCategories
+    /// <summary>
+    /// These are categories used when keeping track of values in the record system. It is a simple system
+    /// that currently only supports storing string:integer pairings underneath one of these categories.
+    /// </summary>
+    public static class RecordCategories
     {
-        internal const string Death = "death";
-        internal const string Join = "join";
-        internal const string Leave = "leave";
-        internal const string Ping = "ping";
-        internal const string Shout = "shout";
+        public const string Death = "death";
+        public const string Join = "join";
+        public const string Leave = "leave";
+        public const string Ping = "ping";
+        public const string Shout = "shout";
 
-        internal static string[] All = new string[] {
+        public static string[] All = new string[] {
             Death,
             Join,
-           Leave,
+            Leave,
             Ping,
             Shout
         };
     }
+    /// <summary>
+    /// The individual key:value pairings used in the record system. It supports only string:int pairings.
+    /// </summary>
     internal class RecordValue
     {
-        public string PlayerName { get; set; }
+        public string Key { get; set; }
         public int Value { get; set; }
     }
+    /// <summary>
+    /// A collation of zero to many key:value pairings to a single category. 
+    /// </summary>
     internal class Record
     {
         public string Category { get; set; }
@@ -34,17 +44,25 @@ namespace DiscordConnector
     }
     class Records
     {
-        private static string filename = "records.json";
-        private static string storepath;
+        private static string DEFAULT_FILENAME = "records.json";
+        private string storepath;
+        private bool saveEnabled;
         private List<Record> recordCache;
 
         /// <summary>
-        /// Creates an instance of the record keeper. It will store a json file using the default filename at <paramref name="basepath"/>.
+        /// Creates an instance of the record keeper. It will store a json file using the default filename at <paramref name="basePath"/>.
+        /// Specify <paramref name="fileName"/> to change the name of the json file from the default of "records.json"
         /// </summary>
-        /// <param name="basepath">The path for the json store to be saved in</param>
-        public Records(string basepath)
+        /// <param name="basePath">The directory to store the json file of records in.</param>
+        /// <param name="fileName">The name of the file to use for storage.</param>
+        public Records(string basePath, string fileName = null)
         {
-            storepath = $"{basepath}{(basepath.EndsWith($"{Path.DirectorySeparatorChar}") ? "" : Path.DirectorySeparatorChar)}{filename}";
+            if (fileName == null)
+            {
+                fileName = DEFAULT_FILENAME;
+            }
+            storepath = Path.Combine(basePath, fileName);
+            saveEnabled = true;
             PopulateCache();
             if (!Plugin.StaticConfig.CollectStatsEnabled)
             {
@@ -72,7 +90,7 @@ namespace DiscordConnector
                             bool stored = false;
                             foreach (RecordValue v in r.Values)
                             {
-                                if (v.PlayerName.Equals(playername))
+                                if (v.Key.Equals(playername))
                                 {
                                     v.Value += value;
                                     stored = true;
@@ -82,7 +100,7 @@ namespace DiscordConnector
                             {
                                 r.Values.Add(new RecordValue()
                                 {
-                                    PlayerName = playername,
+                                    Key = playername,
                                     Value = value
                                 });
                             }
@@ -119,7 +137,7 @@ namespace DiscordConnector
                     {
                         foreach (RecordValue v in r.Values)
                         {
-                            if (v.PlayerName.Equals(playername))
+                            if (v.Key.Equals(playername))
                             {
                                 return v.Value;
                             }
@@ -155,7 +173,7 @@ namespace DiscordConnector
                         {
                             if (v.Value > records)
                             {
-                                player = v.PlayerName;
+                                player = v.Key;
                                 records = v.Value;
                             }
                         }
@@ -174,6 +192,11 @@ namespace DiscordConnector
         /// </summary>
         private async Task FlushCache()
         {
+            if (!saveEnabled)
+            {
+                Plugin.StaticLogger.LogDebug("Saving records is disabled due to an error at load time.");
+                return;
+            }
             if (Plugin.StaticConfig.CollectStatsEnabled)
             {
                 string jsonString = JsonSerializer.Serialize(recordCache);
@@ -195,25 +218,45 @@ namespace DiscordConnector
             if (File.Exists(storepath))
             {
                 string jsonString = File.ReadAllText(@storepath);
-                recordCache = JsonSerializer.Deserialize<List<Record>>(jsonString);
-                Plugin.StaticLogger.LogInfo($"Read existing stats from disk {storepath}");
+                try
+                {
+                    recordCache = JsonSerializer.Deserialize<List<Record>>(jsonString);
+                    Plugin.StaticLogger.LogInfo($"Read existing stats from disk {storepath}");
+                }
+                catch (ArgumentNullException)
+                {
+                    Plugin.StaticLogger.LogWarning($"No content found when reading {storepath} to read saved records. We will start with default values for all records.");
+                    Plugin.StaticLogger.LogDebug("File contained null and threw ArgumentNullException");
+                    InitializeEmptyCache();
+                }
+                catch (JsonException)
+                {
+                    Plugin.StaticLogger.LogError($"Unable to parse the contents of {storepath} as JSON.");
+                    Plugin.StaticLogger.LogError("No records will be recorded to disk until existing file is moved, renamed, or deleted.");
+                    saveEnabled = false;
+                }
             }
             else
             {
-                Plugin.StaticLogger.LogInfo($"Unable to find existing stats data at {storepath}. Creating new {filename}");
-                recordCache = new List<Record>();
-                foreach (string category in RecordCategories.All)
-                {
-                    recordCache.Add(new Record
-                    {
-                        Category = category,
-                        Values = new List<RecordValue>()
-                    });
-                }
-                FlushCache().ContinueWith(
-                    t => Plugin.StaticLogger.LogWarning(t.Exception),
-                    TaskContinuationOptions.OnlyOnFaulted);
+                Plugin.StaticLogger.LogInfo($"Unable to find existing stats data at {storepath}. Creating new {DEFAULT_FILENAME}");
+                InitializeEmptyCache();
             }
+        }
+
+        private void InitializeEmptyCache()
+        {
+            recordCache = new List<Record>();
+            foreach (string category in RecordCategories.All)
+            {
+                recordCache.Add(new Record
+                {
+                    Category = category,
+                    Values = new List<RecordValue>()
+                });
+            }
+            FlushCache().ContinueWith(
+                t => Plugin.StaticLogger.LogWarning(t.Exception),
+                TaskContinuationOptions.OnlyOnFaulted);
         }
     }
 }
