@@ -35,8 +35,7 @@ namespace DiscordConnector
 
             if (string.IsNullOrEmpty(StaticConfig.WebHookURL))
             {
-                StaticLogger.LogWarning("No value set for WebHookURL");
-                return;
+                StaticLogger.LogWarning("No value set for WebHookURL! Plugin will run without using a main Discord webhook.");
             }
 
             if (StaticConfig.StatsAnnouncementEnabled)
