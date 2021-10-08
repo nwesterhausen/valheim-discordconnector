@@ -29,6 +29,20 @@ namespace DiscordConnector.Patches
             }
         }
 
+        [HarmonyPatch(typeof(ZNet), nameof(ZNet.SaveWorld))]
+        internal class SaveWorld
+        {
+            private static void Postfix(ref bool sync)
+            {
+                if (Plugin.StaticConfig.WorldSaveMessageEnabled)
+                {
+                    DiscordApi.SendMessage(
+                        Plugin.StaticConfig.SaveMessage
+                    );
+                }
+            }
+        }
+
         [HarmonyPatch(typeof(ZNet), nameof(ZNet.Shutdown))]
         internal class Shutdown
         {
