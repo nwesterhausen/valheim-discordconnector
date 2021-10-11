@@ -2,6 +2,12 @@
 
 A full changelog for reference.
 
+### Version 1.1.1
+
+Fix:
+
+- Stop and Loaded config values were using the same value as launched on the backend and not respecting the actual config.
+
 ### Version 1.1.0
 
 Features:

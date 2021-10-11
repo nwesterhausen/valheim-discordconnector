@@ -290,8 +290,8 @@ namespace DiscordConnector.Config
         }
 
         public bool LaunchMessageEnabled => serverLaunchToggle.Value;
-        public bool LoadedMessageEnabled => serverLaunchToggle.Value;
-        public bool StopMessageEnabled => serverLaunchToggle.Value;
+        public bool LoadedMessageEnabled => serverLoadedToggle.Value;
+        public bool StopMessageEnabled => serverStopToggle.Value;
         public bool ShutdownMessageEnabled => serverShutdownToggle.Value;
         public bool WorldSaveMessageEnabled => serverSaveToggle.Value;
         public bool ChatShoutEnabled => chatShoutToggle.Value;

@@ -33,6 +33,12 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
 
+### Version 1.1.1
+
+Fix:
+
+- Stop and Loaded config values were using the same value as launched on the backend and not respecting the actual config.
+
 ### Version 1.1.0
 
 Features:
