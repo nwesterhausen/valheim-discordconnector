@@ -42,7 +42,9 @@ namespace DiscordConnector.Patches
                 {
                     string message = Plugin.StaticConfig.EventStartMessage
                         .Replace("%EVENT_MSG%", Localization.instance.Localize(__instance.m_startMessage))
-                        .Replace("%PLAYERS%", string.Join(",", involvedPlayers.ToArray()));
+                        .Replace("%PLAYERS%", string.Join(",", involvedPlayers.ToArray()))
+                        .Replace("%EVENT_START_MSG%", Localization.instance.Localize(__instance.m_startMessage))
+                        .Replace("%EVENT_END_MSG%", Localization.instance.Localize(__instance.m_endMessage));
                     if (Plugin.StaticConfig.EventStartPosEnabled)
                     {
                         DiscordApi.SendMessage(message, pos);
@@ -70,13 +72,26 @@ namespace DiscordConnector.Patches
                     $"Random event OnDeactivate {name}: End?{active} for {duration} at {pos}. (time: {time})"
                 );
 
+                List<String> involvedPlayers = new List<string>();
+                foreach (ZNet.PlayerInfo playerInfo in ZNet.instance.GetPlayerList())
+                {
+                    if (RandEventSystem.instance.IsInsideRandomEventArea(__instance, playerInfo.m_position))
+                    {
+                        involvedPlayers.Add(playerInfo.m_name);
+                    }
+                }
+                Plugin.StaticLogger.LogDebug(
+                    $"Involved players in event: {(string.Join(",", involvedPlayers.ToArray()))}"
+                );
+
                 if (!end)
                 {
                     if (Plugin.StaticConfig.EventPausedMessageEnabled)
                     {
                         string message = Plugin.StaticConfig.EventPausedMesssage
-                                .Replace("%EVENT_START_MSG%", Localization.instance.Localize(__instance.m_startMessage))
-                                .Replace("%EVENT_END_MSG%", Localization.instance.Localize(__instance.m_endMessage));
+                            .Replace("%EVENT_START_MSG%", Localization.instance.Localize(__instance.m_startMessage))
+                            .Replace("%EVENT_END_MSG%", Localization.instance.Localize(__instance.m_endMessage))
+                            .Replace("%PLAYERS%", string.Join(",", involvedPlayers.ToArray()));
                         if (Plugin.StaticConfig.EventPausedPosEnabled)
                         {
                             DiscordApi.SendMessage(message, pos);
@@ -91,7 +106,11 @@ namespace DiscordConnector.Patches
                 {
                     if (Plugin.StaticConfig.EventStopMessageEnabled)
                     {
-                        string message = Plugin.StaticConfig.EventStopMesssage.Replace("%EVENT_MSG%", Localization.instance.Localize(__instance.m_endMessage));
+                        string message = Plugin.StaticConfig.EventStopMesssage
+                            .Replace("%EVENT_MSG%", Localization.instance.Localize(__instance.m_endMessage))
+                            .Replace("%EVENT_START_MSG%", Localization.instance.Localize(__instance.m_startMessage))
+                            .Replace("%EVENT_END_MSG%", Localization.instance.Localize(__instance.m_endMessage))
+                            .Replace("%PLAYERS%", string.Join(",", involvedPlayers.ToArray()));
                         if (Plugin.StaticConfig.EventStopPosEnabled)
                         {
 
