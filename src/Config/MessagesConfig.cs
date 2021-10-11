@@ -13,6 +13,7 @@ namespace DiscordConnector.Config
         private const string SERVER_MESSAGES = "Messages.Server";
         private const string PLAYER_MESSAGES = "Messages.Player";
         private const string PLAYER_FIRSTS_MESSAGES = "Messages.PlayerFirsts";
+        private const string EVENT_MESSAGES = "Messages.Events";
 
         // Server Messages
         private ConfigEntry<string> serverLaunchMessage;
@@ -34,6 +35,11 @@ namespace DiscordConnector.Config
         private ConfigEntry<string> playerFirstDeathMessage;
         private ConfigEntry<string> playerFirstPingMessage;
         private ConfigEntry<string> playerFirstShoutMessage;
+
+        // Event Messages
+        private ConfigEntry<string> eventStartMessage;
+        private ConfigEntry<string> eventPausedMessage;
+        private ConfigEntry<string> eventStopMessage;
 
         public MessagesConfig(ConfigFile configFile)
         {
@@ -131,6 +137,28 @@ namespace DiscordConnector.Config
                 "Set the message that will be sent when a player shouts on the server. %SHOUT% works in this message to include what was shouted." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
+            // Messages.Events
+            eventStartMessage = config.Bind<string>(EVENT_MESSAGES,
+                "Event Start Message",
+                "**Event**: %EVENT_MSG% around %PLAYERS%",
+                "Set the message that will be sent when a random event starts on the server. Sending the coordinates is enabled by default in the toggles config." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "The special string %EVENT_MSG% will be replaced with the message that is displayed on the screen when the event starts." + Environment.NewLine +
+                "The special string %PLAYERS% will be replaced with a list of players in the event area.");
+            eventStopMessage = config.Bind<string>(EVENT_MESSAGES,
+                "Event Stop Message",
+                "**Event**: %EVENT_MSG%",
+                "Set the message that will be sent when a random event stops on the server. Sending the coordinates is enabled by default in the toggles config." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "The special string %EVENT_MSG% will be replaced with the message that is displayed on the screen when the event stops.");
+            eventPausedMessage = config.Bind<string>(EVENT_MESSAGES,
+                "Event Paused Message",
+                "**Event**: %EVENT_END_MSG% -- for now! (Currently paused due to no players in the event area.)",
+                "Set the message that will be sent when a random event is paused due to players leaving the area. Sending the coordinates is enabled by default in the toggles config." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "The special string %EVENT_START_MSG% will be replaced with the message that is displayed on the screen when the event starts." + Environment.NewLine +
+                "The special string %EVENT_END_MSG% will be replaced with the message that is displayed on the screen when the event ends.");
+
             config.Save();
         }
 
@@ -160,6 +188,12 @@ namespace DiscordConnector.Config
             jsonString += $"\"leaveMessage\":\"{playerLeaveMessage.Value}\",";
             jsonString += $"\"pingMessage\":\"{playerPingMessage.Value}\",";
             jsonString += $"\"shoutMessage\":\"{playerShoutMessage.Value}\"";
+            jsonString += "},";
+
+            jsonString += $"\"{EVENT_MESSAGES}\":{{";
+            jsonString += $"\"eventStartMessage\":\"{eventStartMessage.Value}\",";
+            jsonString += $"\"eventPausedMessage\":\"{eventPausedMessage.Value}\",";
+            jsonString += $"\"eventStopMessage\":\"{eventStopMessage.Value}\"";
             jsonString += "}";
 
             jsonString += "}";
@@ -198,6 +232,11 @@ namespace DiscordConnector.Config
         public string PlayerFirstDeathMessage => GetRandomStringFromValue(playerFirstDeathMessage);
         public string PlayerFirstPingMessage => GetRandomStringFromValue(playerFirstPingMessage);
         public string PlayerFirstShoutMessage => GetRandomStringFromValue(playerFirstShoutMessage);
+
+        // Messages.Events
+        public string EventStartMesssage => GetRandomStringFromValue(eventStartMessage);
+        public string EventPausedMesssage => GetRandomStringFromValue(eventPausedMessage);
+        public string EventStopMesssage => GetRandomStringFromValue(eventStopMessage);
 
     }
 }

@@ -43,6 +43,9 @@ namespace DiscordConnector
         public bool PlayerJoinMessageEnabled => togglesConfig.PlayerJoinMessageEnabled;
         public bool PlayerDeathMessageEnabled => togglesConfig.PlayerDeathMessageEnabled;
         public bool PlayerLeaveMessageEnabled => togglesConfig.PlayerLeaveMessageEnabled;
+        public bool EventStartMessageEnabled => togglesConfig.EventStartMessageEnabled;
+        public bool EventStopMessageEnabled => togglesConfig.EventStopMessageEnabled;
+        public bool EventPausedMessageEnabled => togglesConfig.EventPausedMessageEnabled;
 
         // Toggles.Stats
         public bool StatsDeathEnabled => mainConfig.CollectStatsEnabled && togglesConfig.StatsDeathEnabled;
@@ -57,6 +60,9 @@ namespace DiscordConnector
         public bool PlayerJoinPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.PlayerJoinPosEnabled;
         public bool PlayerDeathPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.PlayerDeathPosEnabled;
         public bool PlayerLeavePosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.PlayerLeavePosEnabled;
+        public bool EventStartPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.EventStartPosEnabled;
+        public bool EventStopPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.EventStopPosEnabled;
+        public bool EventPausedPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.EventPausedPosEnabled;
 
         // Main Config
         public string WebHookURL => mainConfig.WebHookURL;
@@ -101,6 +107,11 @@ namespace DiscordConnector
         public bool AnnouncePlayerFirstLeaveEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstLeaveEnabled;
         public bool AnnouncePlayerFirstPingEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstPingEnabled;
         public bool AnnouncePlayerFirstShoutEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstShoutEnabled;
+
+        // Messages.Events
+        public string EventStartMessage => messagesConfig.EventStartMesssage;
+        public string EventStopMesssage => messagesConfig.EventStopMesssage;
+        public string EventPausedMesssage => messagesConfig.EventPausedMesssage;
 
         public string ConfigAsJson()
         {
