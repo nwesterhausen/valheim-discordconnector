@@ -15,6 +15,7 @@ namespace DiscordConnector
         internal static ManualLogSource StaticLogger;
         internal static PluginConfig StaticConfig;
         internal static Records StaticRecords;
+        internal static string PublicIpAddress;
         private Harmony _harmony;
 
         public Plugin()
@@ -46,6 +47,8 @@ namespace DiscordConnector
                 leaderboardTimer.Interval = 60 * 1000 * StaticConfig.StatsAnnouncementPeriod;
                 leaderboardTimer.Start();
             }
+
+            PublicIpAddress = IpifyAPI.PublicIpAddress();
 
             _harmony = Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, PluginInfo.PLUGIN_ID);
         }

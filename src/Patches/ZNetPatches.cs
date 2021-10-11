@@ -14,7 +14,7 @@ namespace DiscordConnector.Patches
                 if (Plugin.StaticConfig.LoadedMessageEnabled)
                 {
                     DiscordApi.SendMessage(
-                        Plugin.StaticConfig.LoadedMessage
+                        Plugin.StaticConfig.LoadedMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                     );
                 }
             }
@@ -23,7 +23,7 @@ namespace DiscordConnector.Patches
                 if (Plugin.StaticConfig.LaunchMessageEnabled)
                 {
                     DiscordApi.SendMessage(
-                        Plugin.StaticConfig.LaunchMessage
+                        Plugin.StaticConfig.LaunchMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                     );
                 }
             }
@@ -37,7 +37,7 @@ namespace DiscordConnector.Patches
                 if (Plugin.StaticConfig.WorldSaveMessageEnabled)
                 {
                     DiscordApi.SendMessage(
-                        Plugin.StaticConfig.SaveMessage
+                        Plugin.StaticConfig.SaveMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                     );
                 }
             }
@@ -51,7 +51,7 @@ namespace DiscordConnector.Patches
                 if (Plugin.StaticConfig.StopMessageEnabled)
                 {
                     DiscordApi.SendMessage(
-                        Plugin.StaticConfig.StopMessage
+                        Plugin.StaticConfig.StopMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                         );
                 }
             }
@@ -60,7 +60,7 @@ namespace DiscordConnector.Patches
                 if (Plugin.StaticConfig.ShutdownMessageEnabled)
                 {
                     DiscordApi.SendMessage(
-                        Plugin.StaticConfig.ShutdownMessage
+                        Plugin.StaticConfig.ShutdownMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                         );
                 }
             }
