@@ -2,6 +2,21 @@
 
 A full changelog for reference.
 
+### Version 1.2.0
+
+Features:
+
+- `%PUBLICIP%` message variable available in the server messages
+
+  There is no variable for what port the game is running on since I figured that had to be set manually in the first place (if not default),
+  and you should be able to modify the message to be something like `Join the server on %PUBLICIP%:2457` or similar if you want to.
+
+- Messages for events start/pause/stopping
+
+  A feature that I wanted finally added. This was difficult to test in a server environment and I did the testing running on the client and then
+  the client running as a server. In those instances I verified that the messages were fired when events started, ended, paused or resumed. The
+  resume message is the same as the start message by default because I couldn't think of a way to word it that made sense.
+
 ### Version 1.1.1
 
 Fix:

@@ -21,51 +21,33 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 - Player leave
 - Player shouting
 - Player pinging
+- Player death
+- Random events start/pause/resume/end
 
 ### Roadmap
 
-- Message when events start/end
-- Player death
 - Fancier Discord messages
+- Discord bot integration
 
 ## Changelog
 
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
 
-### Version 1.1.1
-
-Fix:
-
-- Stop and Loaded config values were using the same value as launched on the backend and not respecting the actual config.
-
-### Version 1.1.0
-
-Features:
-
-- Send a message when the server saves the world
-
-Fixes:
-
-- Configuration file comments should be clearer/easier to understand
-
-### Version 1.0.0
-
-**Release 1.0.0 is a breaking release** since the structure of the configuration files completely changes. When you update you will need to modify the config
+**Release 1.0.0+ is a breaking release** since the structure of the configuration files completely changes. When you update you will need to modify the config
 to save your webhook again and to update any message customization you have done!
 
+### Version 1.2.0
+
 Features:
 
-- Send an extra message the first time a player does something (by default only for Join and Death on server)
-- Configuration is "simpler" with other configuration files to consult for full customization
-- Server shutdown message
+- `%PUBLICIP%` message variable available in the server messages
 
-Fixes:
+  There is no variable for what port the game is running on since I figured that had to be set manually in the first place (if not default),
+  and you should be able to modify the message to be something like `Join the server on %PUBLICIP%:2457` or similar if you want to.
 
-- Global toggles weren't being applied
+- Messages for events start/pause/stopping
 
-Other Changes:
-
-- Mention Mod Vault in readme
-
-This version included a source code restructuring which should make it easier to maintain in the future.
+  A feature that I wanted finally added. This was difficult to test in a server environment and I did the testing running on the client and then
+  the client running as a server. In those instances I verified that the messages were fired when events started, ended, paused or resumed. The
+  resume message is the same as the start message by default because I couldn't think of a way to word it that made sense.
