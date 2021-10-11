@@ -5,32 +5,6 @@ using UnityEngine;
 
 namespace DiscordConnector.Patches
 {
-    internal class RandEventSystemPatches
-    {
-
-        [HarmonyPatch(typeof(RandEventSystem), nameof(RandEventSystem.SetRandomEvent))]
-        internal class SetRandomEvent
-        {
-
-            private static void Prefix(ref RandomEvent ev, ref Vector3 pos)
-            {
-                if (ev == null)
-                {
-                    Plugin.StaticLogger.LogDebug(
-                        $"Random event cleared"
-                    );
-                    return;
-                }
-                bool active = ev.m_active;
-                float duration = ev.m_duration;
-                string name = ev.m_name;
-                Plugin.StaticLogger.LogDebug(
-                    $"Random event system SetRandomEvent? {active}: {name} for {duration} at {pos}."
-                );
-            }
-        }
-
-    }
     internal class RandEventPatches
     {
 
@@ -50,9 +24,25 @@ namespace DiscordConnector.Patches
                     $"Random event OnActivate {name}: {active} for {duration} at {pos}. (time: {time})"
                 );
 
+
+
+                List<String> involvedPlayers = new List<string>();
+                foreach (ZNet.PlayerInfo playerInfo in ZNet.instance.GetPlayerList())
+                {
+                    if (RandEventSystem.instance.IsInsideRandomEventArea(__instance, playerInfo.m_position))
+                    {
+                        involvedPlayers.Add(playerInfo.m_name);
+                    }
+                }
+                Plugin.StaticLogger.LogDebug(
+                    $"Involved players in event: {(string.Join(",", involvedPlayers.ToArray()))}"
+                );
+
                 if (Plugin.StaticConfig.EventStartMessageEnabled)
                 {
-                    string message = Plugin.StaticConfig.EventStartMessage.Replace("%EVENT_MSG%", Localization.instance.Localize(__instance.m_startMessage));
+                    string message = Plugin.StaticConfig.EventStartMessage
+                        .Replace("%EVENT_MSG%", Localization.instance.Localize(__instance.m_startMessage))
+                        .Replace("%PLAYERS%", string.Join(",", involvedPlayers.ToArray()));
                     if (Plugin.StaticConfig.EventStartPosEnabled)
                     {
                         DiscordApi.SendMessage(message, pos);

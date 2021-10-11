@@ -135,18 +135,19 @@ namespace DiscordConnector.Config
             // Messages.Events
             eventStartMessage = config.Bind<string>(EVENT_MESSAGES,
                 "Event Start Message",
-                "**Event**: %EVENT_MSG%",
+                "**Event**: %EVENT_MSG% around %PLAYERS%",
                 "Set the message that will be sent when a random event starts on the server. Sending the coordinates is enabled by default in the toggles config." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "The special string %EVENT_MSG% will be replaced with the message that is displayed on the screen when the event starts.");
+                "The special string %EVENT_MSG% will be replaced with the message that is displayed on the screen when the event starts." + Environment.NewLine +
+                "The special string %PLAYERS% will be replaced with a list of players in the event area.");
             eventStopMessage = config.Bind<string>(EVENT_MESSAGES,
-                "Event Start Message",
+                "Event Stop Message",
                 "**Event**: %EVENT_MSG%",
                 "Set the message that will be sent when a random event stops on the server. Sending the coordinates is enabled by default in the toggles config." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
                 "The special string %EVENT_MSG% will be replaced with the message that is displayed on the screen when the event stops.");
             eventPausedMessage = config.Bind<string>(EVENT_MESSAGES,
-                "Event Start Message",
+                "Event Paused Message",
                 "**Event**: %EVENT_END_MSG% -- for now! (Currently paused due to no players in the event area.)",
                 "Set the message that will be sent when a random event is paused due to players leaving the area. Sending the coordinates is enabled by default in the toggles config." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
