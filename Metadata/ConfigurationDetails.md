@@ -36,6 +36,8 @@ Player Death Message = %PLAYER_NAME% has died a beautiful death!;%PLAYER_NAME% w
 
 ### Messages.Server
 
+In the server messages, anywhere in the message you can use the special string `%PUBLICIP%` which will be replaced with the public IP address of the server when sent.
+
 | Option                  | Default                  | Description                                                                                                 |
 | ----------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------- |
 | Server Launch Message   | `Server is starting up.` | The message defined here is sent when the server is starting up.                                            |

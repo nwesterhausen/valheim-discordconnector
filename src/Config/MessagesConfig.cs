@@ -55,27 +55,32 @@ namespace DiscordConnector.Config
                 "Server is starting up.",
                 "Set the message that will be sent when the server starts up." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "Random choice example: Server is starting;Server beginning to load");
+                "Random choice example: Server is starting;Server beginning to load" + Environment.NewLine +
+                "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
             serverLoadedMessage = config.Bind<string>(SERVER_MESSAGES,
                 "Server Started Message",
                 "Server has started!",
                 "Set the message that will be sent when the server has loaded the map and is ready for connections." + Environment.NewLine +
-                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
             serverStopMessage = config.Bind<string>(SERVER_MESSAGES,
                 "Server Stop Message",
                 "Server is stopping.",
                 "Set the message that will be sent when the server shuts down." + Environment.NewLine +
-                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
             serverShutdownMessage = config.Bind<string>(SERVER_MESSAGES,
                 "Server Shutdown Message",
                 "Server has stopped!",
                 "Set the message that will be sent when the server finishes shutting down." + Environment.NewLine +
-                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
             serverSavedMessage = config.Bind<string>(SERVER_MESSAGES,
                 "Server Saved Message",
                 "The world has been saved.",
                 "Set the message that will be sent when the server saves the world data." + Environment.NewLine +
-                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
 
             // Messages.Player
             playerJoinMessage = config.Bind<string>(PLAYER_MESSAGES,

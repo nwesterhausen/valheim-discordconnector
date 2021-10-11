@@ -10,6 +10,11 @@ namespace DiscordConnector
 {
     class DiscordApi
     {
+        /// <summary>
+        /// Send a <paramref name="message"/> and a <paramref name="pos"/> to Discord.
+        /// </summary>
+        /// <param name="message">A string optionally formatted with Discord-approved markdown syntax.</param>
+        /// <param name="pos">A 3-dimensional vector representing a position</param>
         public static void SendMessage(string message, Vector3 pos)
         {
             if (Plugin.StaticConfig.DiscordEmbedsEnabled)
@@ -23,6 +28,10 @@ namespace DiscordConnector
                 SendMessage($"{message} Coords: {pos}");
             }
         }
+        /// <summary>
+        /// Sends a <paramref name="message"/> to Discord.
+        /// </summary>
+        /// <param name="message">A string optionally formatted with Discord-approved markdown syntax.</param>
         public static void SendMessage(string message)
         {
             // A simple string message
@@ -36,6 +45,11 @@ namespace DiscordConnector
             SendSerializedJson(payloadString);
         }
 
+        /// <summary>
+        /// Send a <paramref name="message"/> with <paramref name="fields"/> to Discord.
+        /// </summary>
+        /// <param name="content">A string optionally formatted with Discord-approved markdown syntax.</param>
+        /// <param name="fields">Discord fields as defined in the API, as Tuples (fieldname, value)</param>
         public static void SendMessageWithFields(string content = null, List<Tuple<string, string>> fields = null)
         {
 
@@ -73,14 +87,18 @@ namespace DiscordConnector
             SendSerializedJson(payloadString);
         }
 
+        /// <summary>
+        /// Sends <paramref name="serializedJson"/> to the webhook specified in configuration.
+        /// </summary>
+        /// <param name="serializedJson">Body data for the webhook as JSON serialized into a string</param>
         internal static void SendSerializedJson(string serializedJson)
         {
+            Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
             if (string.IsNullOrEmpty(Plugin.StaticConfig.WebHookURL))
             {
-                Plugin.StaticLogger.LogInfo("Not sending message, no webhook set.");
+                Plugin.StaticLogger.LogInfo("No webhook set, not sending message.");
                 return;
             }
-            Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
             // Responsible for sending a JSON string to the webhook.
             byte[] byteArray = Encoding.UTF8.GetBytes(serializedJson);
 

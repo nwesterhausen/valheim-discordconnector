@@ -34,13 +34,13 @@ namespace DiscordConnector.Patches
                                 DiscordApi.SendMessage(message);
                             }
                         }
-                        if (Plugin.StaticConfig.AnnouncePlayerFirstPingEnabled && Plugin.StaticRecords.Retrieve(Categories.Ping, user) == 0)
+                        if (Plugin.StaticConfig.AnnouncePlayerFirstPingEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Ping, user) == 0)
                         {
                             DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstPingMessage.Replace("%PLAYER_NAME%", user));
                         }
                         if (Plugin.StaticConfig.StatsPingEnabled)
                         {
-                            Plugin.StaticRecords.Store(Categories.Ping, user, 1);
+                            Plugin.StaticRecords.Store(RecordCategories.Ping, user, 1);
                         }
                         break;
                     case Talker.Type.Shout:
@@ -63,13 +63,13 @@ namespace DiscordConnector.Patches
                                         DiscordApi.SendMessage(message);
                                     }
                                 }
-                                if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticRecords.Retrieve(Categories.Join, user) == 0)
+                                if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Join, user) == 0)
                                 {
                                     DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstJoinMessage.Replace("%PLAYER_NAME%", user));
                                 }
                                 if (Plugin.StaticConfig.StatsJoinEnabled)
                                 {
-                                    Plugin.StaticRecords.Store(Categories.Join, user, 1);
+                                    Plugin.StaticRecords.Store(RecordCategories.Join, user, 1);
                                 }
                             }
                             Plugin.StaticLogger.LogDebug(
@@ -93,13 +93,13 @@ namespace DiscordConnector.Patches
                                     DiscordApi.SendMessage(message);
                                 }
                             }
-                            if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && Plugin.StaticRecords.Retrieve(Categories.Shout, user) == 0)
+                            if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Shout, user) == 0)
                             {
                                 DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstShoutMessage.Replace("%PLAYER_NAME%", user).Replace("%SHOUT%", text));
                             }
                             if (Plugin.StaticConfig.StatsShoutEnabled)
                             {
-                                Plugin.StaticRecords.Store(Categories.Shout, user, 1);
+                                Plugin.StaticRecords.Store(RecordCategories.Shout, user, 1);
                             }
                         }
                         break;
