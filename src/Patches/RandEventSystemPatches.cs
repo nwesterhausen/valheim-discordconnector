@@ -23,9 +23,8 @@ namespace DiscordConnector.Patches
                 bool active = ev.m_active;
                 float duration = ev.m_duration;
                 string name = ev.m_name;
-                string message = ev.m_startMessage;
                 Plugin.StaticLogger.LogDebug(
-                    $"Random event system SetRandomEvent? {name}: {active} for {duration} at {pos}. \"{message}\""
+                    $"Random event system SetRandomEvent? {active}: {name} for {duration} at {pos}."
                 );
             }
         }
@@ -43,17 +42,18 @@ namespace DiscordConnector.Patches
                 bool active = __instance.m_active;
                 float duration = __instance.m_duration;
                 string name = __instance.m_name;
-                string message = __instance.m_startMessage;
+                string message = Localization.m_instance.Localize(__instance.m_startMessage);
                 float time = __instance.m_time;
                 float remaining = duration - time;
                 Vector3 pos = __instance.m_pos;
                 Plugin.StaticLogger.LogDebug(
-                    $"Random event OnActivate {name}: {active} for {duration} at {pos}. \"{message}\" (time: {time})"
+                    $"Random event OnActivate {name}: {active} for {duration} at {pos}. (time: {time})"
                 );
 
                 DiscordApi.SendMessage(
-                    $"{name} event is active at {pos} for {(Math.Round((decimal)remaining, 0))} more seconds!"
+                    $"**Event**: {message} at {pos}!"
                 );
+                
             }
         }
 
@@ -61,28 +61,27 @@ namespace DiscordConnector.Patches
         internal class OnDeactivate
         {
 
-            private static void Prefix(ref RandomEvent __instance)
+            private static void Prefix(ref RandomEvent __instance, ref bool end)
             {
                 bool active = __instance.m_active;
                 float duration = __instance.m_duration;
                 string name = __instance.m_name;
-                string message = __instance.m_startMessage;
                 float time = __instance.m_time;
                 Vector3 pos = __instance.m_pos;
                 Plugin.StaticLogger.LogDebug(
-                    $"Random event OnDeactivate {name}: {active} for {duration} at {pos}. \"{message}\" (time: {time})"
+                    $"Random event OnDeactivate {name}: {active} for {duration} at {pos}. (time: {time})"
                 );
 
-                if (time < duration)
+                if (!end)
                 {
                     DiscordApi.SendMessage(
-                        $"{name} event paused at {pos} because no active players are in the area."
+                        $"**Event**: paused, no players in area!"
                     );
                 }
                 else
                 {
                     DiscordApi.SendMessage(
-                        $"{name} event has completed!"
+                        $"**Event**: {Localization.m_instance.Localize(__instance.m_endMessage)}"
                     );
                 }
             }
