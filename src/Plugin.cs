@@ -15,6 +15,7 @@ namespace DiscordConnector
         internal static ManualLogSource StaticLogger;
         internal static PluginConfig StaticConfig;
         internal static Records StaticRecords;
+        internal static string PublicIpAddress;
         private Harmony _harmony;
 
         public Plugin()
@@ -47,6 +48,8 @@ namespace DiscordConnector
                 leaderboardTimer.Start();
             }
 
+            PublicIpAddress = IpifyAPI.PublicIpAddress();
+
             _harmony = Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, PluginInfo.PLUGIN_ID);
         }
 
@@ -55,12 +58,19 @@ namespace DiscordConnector
             _harmony.UnpatchSelf();
         }
 
+        /// <summary>
+        /// Function which is a valid Timer action to provide sending leader board messages on an interval.
+        /// 
+        /// This should be moved to its own class and we should provide separate private functions to handle each
+        /// variety of leader board. This enables greater flexibility when it comes to what kinds of leader boards
+        /// can be supported.
+        /// </summary>
         private void SendLeaderboardAnnouncement(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            var deathLeader = StaticRecords.Retrieve(Categories.Death);
-            var joinLeader = StaticRecords.Retrieve(Categories.Join);
-            var shoutLeader = StaticRecords.Retrieve(Categories.Shout);
-            var pingLeader = StaticRecords.Retrieve(Categories.Ping);
+            var deathLeader = StaticRecords.Retrieve(RecordCategories.Death);
+            var joinLeader = StaticRecords.Retrieve(RecordCategories.Join);
+            var shoutLeader = StaticRecords.Retrieve(RecordCategories.Shout);
+            var pingLeader = StaticRecords.Retrieve(RecordCategories.Ping);
 
             List<Tuple<string, string>> leaderFields = new List<Tuple<string, string>>();
             if (StaticConfig.LeaderboardDeathEnabled && deathLeader.Item2 > 0)

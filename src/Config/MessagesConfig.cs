@@ -13,6 +13,7 @@ namespace DiscordConnector.Config
         private const string SERVER_MESSAGES = "Messages.Server";
         private const string PLAYER_MESSAGES = "Messages.Player";
         private const string PLAYER_FIRSTS_MESSAGES = "Messages.PlayerFirsts";
+        private const string EVENT_MESSAGES = "Messages.Events";
 
         // Server Messages
         private ConfigEntry<string> serverLaunchMessage;
@@ -35,6 +36,12 @@ namespace DiscordConnector.Config
         private ConfigEntry<string> playerFirstPingMessage;
         private ConfigEntry<string> playerFirstShoutMessage;
 
+        // Event Messages
+        private ConfigEntry<string> eventStartMessage;
+        private ConfigEntry<string> eventPausedMessage;
+        private ConfigEntry<string> eventStopMessage;
+        private ConfigEntry<string> eventResumedMessage;
+
         public MessagesConfig(ConfigFile configFile)
         {
             config = configFile;
@@ -49,27 +56,32 @@ namespace DiscordConnector.Config
                 "Server is starting up.",
                 "Set the message that will be sent when the server starts up." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
-                "Random choice example: Server is starting;Server beginning to load");
+                "Random choice example: Server is starting;Server beginning to load" + Environment.NewLine +
+                "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
             serverLoadedMessage = config.Bind<string>(SERVER_MESSAGES,
                 "Server Started Message",
                 "Server has started!",
                 "Set the message that will be sent when the server has loaded the map and is ready for connections." + Environment.NewLine +
-                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
             serverStopMessage = config.Bind<string>(SERVER_MESSAGES,
                 "Server Stop Message",
                 "Server is stopping.",
                 "Set the message that will be sent when the server shuts down." + Environment.NewLine +
-                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
             serverShutdownMessage = config.Bind<string>(SERVER_MESSAGES,
                 "Server Shutdown Message",
                 "Server has stopped!",
                 "Set the message that will be sent when the server finishes shutting down." + Environment.NewLine +
-                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
             serverSavedMessage = config.Bind<string>(SERVER_MESSAGES,
                 "Server Saved Message",
                 "The world has been saved.",
                 "Set the message that will be sent when the server saves the world data." + Environment.NewLine +
-                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
 
             // Messages.Player
             playerJoinMessage = config.Bind<string>(PLAYER_MESSAGES,
@@ -126,6 +138,36 @@ namespace DiscordConnector.Config
                 "Set the message that will be sent when a player shouts on the server. %SHOUT% works in this message to include what was shouted." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
+            // Messages.Events
+            eventStartMessage = config.Bind<string>(EVENT_MESSAGES,
+                "Event Start Message",
+                "**Event**: %EVENT_MSG% around %PLAYERS%",
+                "Set the message that will be sent when a random event starts on the server. Sending the coordinates is enabled by default in the toggles config." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "The special string %EVENT_MSG% will be replaced with the message that is displayed on the screen when the event starts." + Environment.NewLine +
+                "The special string %PLAYERS% will be replaced with a list of players in the event area.");
+            eventStopMessage = config.Bind<string>(EVENT_MESSAGES,
+                "Event Stop Message",
+                "**Event**: %EVENT_MSG%",
+                "Set the message that will be sent when a random event stops on the server. Sending the coordinates is enabled by default in the toggles config." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "The special string %EVENT_MSG% will be replaced with the message that is displayed on the screen when the event stops.");
+            eventPausedMessage = config.Bind<string>(EVENT_MESSAGES,
+                "Event Paused Message",
+                "**Event**: %EVENT_END_MSG% -- for now! (Currently paused due to no players in the event area.)",
+                "Set the message that will be sent when a random event is paused due to players leaving the area. Sending the coordinates is enabled by default in the toggles config." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "The special string %EVENT_START_MSG% will be replaced with the message that is displayed on the screen when the event starts." + Environment.NewLine +
+                "The special string %EVENT_END_MSG% will be replaced with the message that is displayed on the screen when the event ends.");
+            eventResumedMessage = config.Bind<string>(EVENT_MESSAGES,
+                "Event Resumed Message",
+                "**Event**: %EVENT_START_MSG% around %PLAYERS%",
+                "Set the message that will be sent when a random event is resumed due to players re-entering the area. Sending the coordinates is enabled by default in the toggles config." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "The special string %EVENT_START_MSG% will be replaced with the message that is displayed on the screen when the event starts." + Environment.NewLine +
+                "The special string %EVENT_END_MSG% will be replaced with the message that is displayed on the screen when the event ends." + Environment.NewLine +
+                "The special string %PLAYERS% will be replaced with a list of players in the event area.");
+
             config.Save();
         }
 
@@ -155,6 +197,13 @@ namespace DiscordConnector.Config
             jsonString += $"\"leaveMessage\":\"{playerLeaveMessage.Value}\",";
             jsonString += $"\"pingMessage\":\"{playerPingMessage.Value}\",";
             jsonString += $"\"shoutMessage\":\"{playerShoutMessage.Value}\"";
+            jsonString += "},";
+
+            jsonString += $"\"{EVENT_MESSAGES}\":{{";
+            jsonString += $"\"eventStartMessage\":\"{eventStartMessage.Value}\",";
+            jsonString += $"\"eventPausedMessage\":\"{eventPausedMessage.Value}\",";
+            jsonString += $"\"eventResumedMessage\":\"{eventResumedMessage.Value}\",";
+            jsonString += $"\"eventStopMessage\":\"{eventStopMessage.Value}\"";
             jsonString += "}";
 
             jsonString += "}";
@@ -193,6 +242,12 @@ namespace DiscordConnector.Config
         public string PlayerFirstDeathMessage => GetRandomStringFromValue(playerFirstDeathMessage);
         public string PlayerFirstPingMessage => GetRandomStringFromValue(playerFirstPingMessage);
         public string PlayerFirstShoutMessage => GetRandomStringFromValue(playerFirstShoutMessage);
+
+        // Messages.Events
+        public string EventStartMesssage => GetRandomStringFromValue(eventStartMessage);
+        public string EventPausedMesssage => GetRandomStringFromValue(eventPausedMessage);
+        public string EventStopMesssage => GetRandomStringFromValue(eventStopMessage);
+        public string EventResumedMesssage => GetRandomStringFromValue(eventResumedMessage);
 
     }
 }

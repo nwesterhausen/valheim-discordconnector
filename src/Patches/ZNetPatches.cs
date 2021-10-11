@@ -14,7 +14,7 @@ namespace DiscordConnector.Patches
                 if (Plugin.StaticConfig.LoadedMessageEnabled)
                 {
                     DiscordApi.SendMessage(
-                        Plugin.StaticConfig.LoadedMessage
+                        Plugin.StaticConfig.LoadedMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                     );
                 }
             }
@@ -23,7 +23,7 @@ namespace DiscordConnector.Patches
                 if (Plugin.StaticConfig.LaunchMessageEnabled)
                 {
                     DiscordApi.SendMessage(
-                        Plugin.StaticConfig.LaunchMessage
+                        Plugin.StaticConfig.LaunchMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                     );
                 }
             }
@@ -37,7 +37,7 @@ namespace DiscordConnector.Patches
                 if (Plugin.StaticConfig.WorldSaveMessageEnabled)
                 {
                     DiscordApi.SendMessage(
-                        Plugin.StaticConfig.SaveMessage
+                        Plugin.StaticConfig.SaveMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                     );
                 }
             }
@@ -51,7 +51,7 @@ namespace DiscordConnector.Patches
                 if (Plugin.StaticConfig.StopMessageEnabled)
                 {
                     DiscordApi.SendMessage(
-                        Plugin.StaticConfig.StopMessage
+                        Plugin.StaticConfig.StopMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                         );
                 }
             }
@@ -60,7 +60,7 @@ namespace DiscordConnector.Patches
                 if (Plugin.StaticConfig.ShutdownMessageEnabled)
                 {
                     DiscordApi.SendMessage(
-                        Plugin.StaticConfig.ShutdownMessage
+                        Plugin.StaticConfig.ShutdownMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                         );
                 }
             }
@@ -101,13 +101,13 @@ namespace DiscordConnector.Patches
                             DiscordApi.SendMessage(message);
                         }
                     }
-                    if (Plugin.StaticConfig.AnnouncePlayerFirstDeathEnabled && Plugin.StaticRecords.Retrieve(Categories.Death, peer.m_playerName) == 0)
+                    if (Plugin.StaticConfig.AnnouncePlayerFirstDeathEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Death, peer.m_playerName) == 0)
                     {
                         DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstDeathMessage.Replace("%PLAYER_NAME%", peer.m_playerName));
                     }
                     if (Plugin.StaticConfig.StatsDeathEnabled)
                     {
-                        Plugin.StaticRecords.Store(Categories.Death, peer.m_playerName, 1);
+                        Plugin.StaticRecords.Store(RecordCategories.Death, peer.m_playerName, 1);
                     }
                 }
                 else
@@ -130,13 +130,13 @@ namespace DiscordConnector.Patches
                             DiscordApi.SendMessage(message);
                         }
                     }
-                    if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticRecords.Retrieve(Categories.Join, peer.m_playerName) == 0)
+                    if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Join, peer.m_playerName) == 0)
                     {
                         DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstJoinMessage.Replace("%PLAYER_NAME%", peer.m_playerName));
                     }
                     if (Plugin.StaticConfig.StatsJoinEnabled)
                     {
-                        Plugin.StaticRecords.Store(Categories.Join, peer.m_playerName, 1);
+                        Plugin.StaticRecords.Store(RecordCategories.Join, peer.m_playerName, 1);
                     }
                 }
             }
@@ -167,13 +167,13 @@ namespace DiscordConnector.Patches
                             );
                         }
                     }
-                    if (Plugin.StaticConfig.AnnouncePlayerFirstLeaveEnabled && Plugin.StaticRecords.Retrieve(Categories.Leave, peer.m_playerName) == 0)
+                    if (Plugin.StaticConfig.AnnouncePlayerFirstLeaveEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Leave, peer.m_playerName) == 0)
                     {
                         DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstLeaveMessage.Replace("%PLAYER_NAME%", peer.m_playerName));
                     }
                     if (Plugin.StaticConfig.StatsLeaveEnabled)
                     {
-                        Plugin.StaticRecords.Store(Categories.Leave, peer.m_playerName, 1);
+                        Plugin.StaticRecords.Store(RecordCategories.Leave, peer.m_playerName, 1);
                     }
                 }
             }

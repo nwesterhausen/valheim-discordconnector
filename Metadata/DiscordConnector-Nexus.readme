@@ -1,4 +1,4 @@
-DISCORD CONNECTOR - 1.1.0
+DISCORD CONNECTOR - 1.2.0
 Connect your Valheim server to a Discord Webhook. Works for both dedicated and client-hosted servers. (Visit the github repo for a how-to guide.)
 
 :: REQUIREMENTS ::
@@ -24,7 +24,8 @@ Connect your Valheim server to a Discord Webhook. Works for both dedicated and c
 - Player shouting
 - Player pinging
 - Player death
+- Random events start/pause/resume/end
 
 :: ROADMAP ::
-- Message when events start/end
 - (Better) Fancier Discord messages
+- Discord bot integration
