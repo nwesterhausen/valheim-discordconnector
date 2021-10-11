@@ -47,6 +47,8 @@ namespace DiscordConnector
         public bool EventStopMessageEnabled => togglesConfig.EventStopMessageEnabled;
         public bool EventPausedMessageEnabled => togglesConfig.EventPausedMessageEnabled;
 
+        public bool EventResumedMessageEnabled => togglesConfig.EventResumedMessageEnabled;
+
         // Toggles.Stats
         public bool StatsDeathEnabled => mainConfig.CollectStatsEnabled && togglesConfig.StatsDeathEnabled;
         public bool StatsJoinEnabled => mainConfig.CollectStatsEnabled && togglesConfig.StatsJoinEnabled;
@@ -63,6 +65,7 @@ namespace DiscordConnector
         public bool EventStartPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.EventStartPosEnabled;
         public bool EventStopPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.EventStopPosEnabled;
         public bool EventPausedPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.EventPausedPosEnabled;
+        public bool EventResumedPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.EventResumedPosEnabled;
 
         // Main Config
         public string WebHookURL => mainConfig.WebHookURL;
@@ -112,6 +115,7 @@ namespace DiscordConnector
         public string EventStartMessage => messagesConfig.EventStartMesssage;
         public string EventStopMesssage => messagesConfig.EventStopMesssage;
         public string EventPausedMesssage => messagesConfig.EventPausedMesssage;
+        public string EventResumedMesssage => messagesConfig.EventResumedMesssage;
 
         public string ConfigAsJson()
         {

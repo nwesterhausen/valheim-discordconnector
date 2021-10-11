@@ -40,6 +40,7 @@ namespace DiscordConnector.Config
         private ConfigEntry<string> eventStartMessage;
         private ConfigEntry<string> eventPausedMessage;
         private ConfigEntry<string> eventStopMessage;
+        private ConfigEntry<string> eventResumedMessage;
 
         public MessagesConfig(ConfigFile configFile)
         {
@@ -158,6 +159,14 @@ namespace DiscordConnector.Config
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
                 "The special string %EVENT_START_MSG% will be replaced with the message that is displayed on the screen when the event starts." + Environment.NewLine +
                 "The special string %EVENT_END_MSG% will be replaced with the message that is displayed on the screen when the event ends.");
+            eventResumedMessage = config.Bind<string>(EVENT_MESSAGES,
+                "Event Resumed Message",
+                "**Event**: %EVENT_START_MSG% around %PLAYERS%",
+                "Set the message that will be sent when a random event is resumed due to players re-entering the area. Sending the coordinates is enabled by default in the toggles config." + Environment.NewLine +
+                "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
+                "The special string %EVENT_START_MSG% will be replaced with the message that is displayed on the screen when the event starts." + Environment.NewLine +
+                "The special string %EVENT_END_MSG% will be replaced with the message that is displayed on the screen when the event ends." + Environment.NewLine +
+                "The special string %PLAYERS% will be replaced with a list of players in the event area.");
 
             config.Save();
         }
@@ -193,6 +202,7 @@ namespace DiscordConnector.Config
             jsonString += $"\"{EVENT_MESSAGES}\":{{";
             jsonString += $"\"eventStartMessage\":\"{eventStartMessage.Value}\",";
             jsonString += $"\"eventPausedMessage\":\"{eventPausedMessage.Value}\",";
+            jsonString += $"\"eventResumedMessage\":\"{eventResumedMessage.Value}\",";
             jsonString += $"\"eventStopMessage\":\"{eventStopMessage.Value}\"";
             jsonString += "}";
 
@@ -237,6 +247,7 @@ namespace DiscordConnector.Config
         public string EventStartMesssage => GetRandomStringFromValue(eventStartMessage);
         public string EventPausedMesssage => GetRandomStringFromValue(eventPausedMessage);
         public string EventStopMesssage => GetRandomStringFromValue(eventStopMessage);
+        public string EventResumedMesssage => GetRandomStringFromValue(eventResumedMessage);
 
     }
 }

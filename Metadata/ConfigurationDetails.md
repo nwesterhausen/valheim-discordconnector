@@ -73,11 +73,12 @@ In the player messages, anywhere in the message you put `%PLAYER_NAME%`, when th
 
 In the event messages, anywhere in the message you can use the string vars `%EVENT_START_MSG%` and `%EVENT_END_MSG%` (or `%EVENT_MSG%` which is uses the start message when the event starts and the end message when the event ends.) You can use `%PLAYERS%` to include a comma separated list of players who are in the event area (this likely will be empty if you include it when the event is paused).
 
-| Option               | Default                                                                                          | Description                                                               |
-| -------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| Event Start Message  | `**Event**: %EVENT_MSG% around %PLAYERS%`                                                        | Message sent when a random event starts.                                  |
-| Event Stop Message   | `**Event**: %EVENT_MSG%`                                                                         | Message sent when a random event stops or ends.                           |
-| Event Paused Message | `**Event**: %EVENT_END_MSG% -- for now! (Currently paused due to no players in the event area.)` | Message sent when a random event is paused because players left the area. |
+| Option                | Default                                                                                          | Description                                                               |
+| --------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| Event Start Message   | `**Event**: %EVENT_MSG% around %PLAYERS%`                                                        | Message sent when a random event starts.                                  |
+| Event Stop Message    | `**Event**: %EVENT_MSG%`                                                                         | Message sent when a random event stops or ends.                           |
+| Event Paused Message  | `**Event**: %EVENT_END_MSG% -- for now! (Currently paused due to no players in the event area.)` | Message sent when a random event is paused because players left the area. |
+| Event Resumed Message | `**Event**: %EVENT_START_MSG% around %PLAYERS%`                                                  | Message sent when a random event resumes after being paused.              |
 
 ## Toggles
 
@@ -85,32 +86,34 @@ The toggle configuration is a collection of on/off switches for all the message 
 
 ### Toggles.Messages
 
-| Option                     | Default | Description                                                                                |
-| -------------------------- | ------- | ------------------------------------------------------------------------------------------ |
-| Send Launch Messages       | true    | If true, a message will be sent to Discord when the server launches                        |
-| Send Loaded Messages       | true    | If true, a message will be sent to Discord when the server is online and ready for players |
-| Send Shutdown Messages     | true    | If true, a message will be sent to Discord when the server shuts down                      |
-| Send Player Join Messages  | true    | Set to true to send a message when a player joins the world                                |
-| Send Player Leave Messages | true    | Set to true to send a message when a player leaves the world                               |
-| Send Player Death Messages | true    | Set to true to send a message when a player dies                                           |
-| Send Player Shout Messages | true    | Set to true to send a message when a player shouts                                         |
-| Send Player Ping Messages  | true    | Set to true to send a message when a player pings the map                                  |
-| Event Start Notifications  | true    | Set to true to send a message when and event starts                                        |
-| Event Stop Notifications   | true    | Set to true to send a message when and event stops                                         |
-| Event Paused Notifications | true    | Set to true to send a message when and event is paused                                     |
+| Option                      | Default | Description                                                                                |
+| --------------------------- | ------- | ------------------------------------------------------------------------------------------ |
+| Send Launch Messages        | true    | If true, a message will be sent to Discord when the server launches                        |
+| Send Loaded Messages        | true    | If true, a message will be sent to Discord when the server is online and ready for players |
+| Send Shutdown Messages      | true    | If true, a message will be sent to Discord when the server shuts down                      |
+| Send Player Join Messages   | true    | Set to true to send a message when a player joins the world                                |
+| Send Player Leave Messages  | true    | Set to true to send a message when a player leaves the world                               |
+| Send Player Death Messages  | true    | Set to true to send a message when a player dies                                           |
+| Send Player Shout Messages  | true    | Set to true to send a message when a player shouts                                         |
+| Send Player Ping Messages   | true    | Set to true to send a message when a player pings the map                                  |
+| Event Start Notifications   | true    | Set to true to send a message when and event starts                                        |
+| Event Stop Notifications    | true    | Set to true to send a message when and event stops                                         |
+| Event Paused Notifications  | true    | Set to true to send a message when and event is paused                                     |
+| Event Resumed Notifications | true    | Set to true to send a message when and event is resumed                                    |
 
 ### Toggles.Position
 
-| Option                                       | Default | Description                                                          |
-| -------------------------------------------- | ------- | -------------------------------------------------------------------- |
-| Send Position with Player Joins              | false   | Set to true to send a player's coordinates when they join the world  |
-| Send Position with Player Leaves             | false   | Set to true to send a player's coordinates when they leave the world |
-| Send Position with Player Pings              | true    | Set to true to send a player's coordinates when they ping on the map |
-| Send Position with Player Shouts             | false   | Set to true to send a player's coordinates when they shout in game   |
-| Send Position with Player Deaths             | true    | Set to true to send a player's coordinates when they die             |
-| Event Start Messages Position Notifications  | true    | Set to true to send the event coordinates when the event starts      |
-| Event Stop Messages Position Notifications   | true    | Set to true to send the event coordinates when the event stops       |
-| Event Paused Messages Position Notifications | true    | Set to true to send the event coordinates when the event is paused   |
+| Option                                        | Default | Description                                                          |
+| --------------------------------------------- | ------- | -------------------------------------------------------------------- |
+| Send Position with Player Joins               | false   | Set to true to send a player's coordinates when they join the world  |
+| Send Position with Player Leaves              | false   | Set to true to send a player's coordinates when they leave the world |
+| Send Position with Player Pings               | true    | Set to true to send a player's coordinates when they ping on the map |
+| Send Position with Player Shouts              | false   | Set to true to send a player's coordinates when they shout in game   |
+| Send Position with Player Deaths              | true    | Set to true to send a player's coordinates when they die             |
+| Event Start Messages Position Notifications   | true    | Set to true to send the event coordinates when the event starts      |
+| Event Stop Messages Position Notifications    | true    | Set to true to send the event coordinates when the event stops       |
+| Event Paused Messages Position Notifications  | true    | Set to true to send the event coordinates when the event is paused   |
+| Event Resumed Messages Position Notifications | true    | Set to true to send the event coordinates when the event is resumed  |
 
 ### Toggles.Stats
 

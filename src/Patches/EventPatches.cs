@@ -38,20 +38,42 @@ namespace DiscordConnector.Patches
                     $"Involved players in event: {(string.Join(",", involvedPlayers.ToArray()))}"
                 );
 
-                if (Plugin.StaticConfig.EventStartMessageEnabled)
+                if (__instance.m_time > 0)
                 {
-                    string message = Plugin.StaticConfig.EventStartMessage
-                        .Replace("%EVENT_MSG%", Localization.instance.Localize(__instance.m_startMessage))
-                        .Replace("%PLAYERS%", string.Join(",", involvedPlayers.ToArray()))
-                        .Replace("%EVENT_START_MSG%", Localization.instance.Localize(__instance.m_startMessage))
-                        .Replace("%EVENT_END_MSG%", Localization.instance.Localize(__instance.m_endMessage));
-                    if (Plugin.StaticConfig.EventStartPosEnabled)
+
+                    if (Plugin.StaticConfig.EventResumedMessageEnabled)
                     {
-                        DiscordApi.SendMessage(message, pos);
+                        string message = Plugin.StaticConfig.EventResumedMesssage
+                            .Replace("%PLAYERS%", string.Join(",", involvedPlayers.ToArray()))
+                            .Replace("%EVENT_START_MSG%", Localization.instance.Localize(__instance.m_startMessage))
+                            .Replace("%EVENT_END_MSG%", Localization.instance.Localize(__instance.m_endMessage));
+                        if (Plugin.StaticConfig.EventResumedPosEnabled)
+                        {
+                            DiscordApi.SendMessage(message, pos);
+                        }
+                        else
+                        {
+                            DiscordApi.SendMessage(message);
+                        }
                     }
-                    else
+                }
+                else
+                {
+                    if (Plugin.StaticConfig.EventStartMessageEnabled)
                     {
-                        DiscordApi.SendMessage(message);
+                        string message = Plugin.StaticConfig.EventStartMessage
+                            .Replace("%EVENT_MSG%", Localization.instance.Localize(__instance.m_startMessage))
+                            .Replace("%PLAYERS%", string.Join(",", involvedPlayers.ToArray()))
+                            .Replace("%EVENT_START_MSG%", Localization.instance.Localize(__instance.m_startMessage))
+                            .Replace("%EVENT_END_MSG%", Localization.instance.Localize(__instance.m_endMessage));
+                        if (Plugin.StaticConfig.EventStartPosEnabled)
+                        {
+                            DiscordApi.SendMessage(message, pos);
+                        }
+                        else
+                        {
+                            DiscordApi.SendMessage(message);
+                        }
                     }
                 }
             }

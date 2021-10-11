@@ -28,6 +28,7 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> eventStartMessageToggle;
         private ConfigEntry<bool> eventPausedMessageToggle;
         private ConfigEntry<bool> eventStopMessageToggle;
+        private ConfigEntry<bool> eventResumedMessageToggle;
 
         // Position Coordinates Toggles
         private ConfigEntry<bool> playerLeavePosToggle;
@@ -38,6 +39,7 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> eventStartPosToggle;
         private ConfigEntry<bool> eventPausedPosToggle;
         private ConfigEntry<bool> eventStopPosToggle;
+        private ConfigEntry<bool> eventResumedPosToggle;
 
         // Statistic collection settings
         private ConfigEntry<bool> collectStatsJoins;
@@ -121,6 +123,10 @@ namespace DiscordConnector.Config
                 "Event Paused Notifications",
                 true,
                 "If enabled, this will send a message to Discord when a random event is paused due to players leaving the area.");
+            eventResumedMessageToggle = config.Bind<bool>(MESSAGES_TOGGLES,
+                "Event Resumed Notifications",
+                true,
+                "If enabled, this will send a message to Discord when a random event is resumed.");
 
             // Position Toggles
             playerJoinPosToggle = config.Bind<bool>(POSITION_TOGGLES,
@@ -155,6 +161,10 @@ namespace DiscordConnector.Config
                 "Event Paused Messages Position Notifications",
                 true,
                 "If enabled, this will include the coordinates of the random event when the paused message is sent.");
+            eventResumedPosToggle = config.Bind<bool>(POSITION_TOGGLES,
+                "Event Resumed Messages Position Notifications",
+                true,
+                "If enabled, this will include the coordinates of the random event when the resumed message is sent.");
 
             // Statistic Settings
             collectStatsDeaths = config.Bind<bool>(STATS_TOGGLES,
@@ -235,8 +245,9 @@ namespace DiscordConnector.Config
             jsonString += $"\"playerLeaveEnabled\":\"{PlayerLeaveMessageEnabled}\",";
             jsonString += $"\"playerDeathEnabled\":\"{PlayerDeathMessageEnabled}\",";
             jsonString += $"\"eventStartEnabled\":\"{EventStartMessageEnabled}\",";
-            jsonString += $"\"eventPausedEnabled\":\"{EventPausedMessageEnabled}\",";
-            jsonString += $"\"eventStoppedEnabled\":\"{EventStopMessageEnabled}\"";
+            jsonString += $"\"eventPausedEnabled\":\"{EventStopMessageEnabled}\",";
+            jsonString += $"\"eventStoppedEnabled\":\"{EventPausedMessageEnabled}\",";
+            jsonString += $"\"eventStoppedEnabled\":\"{EventResumedMessageEnabled}\"";
             jsonString += "},";
 
             jsonString += $"\"{POSITION_TOGGLES}\":{{";
@@ -247,7 +258,8 @@ namespace DiscordConnector.Config
             jsonString += $"\"playerDeathPosEnabled\":\"{PlayerDeathPosEnabled}\",";
             jsonString += $"\"eventStartPosEnabled\":\"{EventStartPosEnabled}\",";
             jsonString += $"\"eventStopPosEnabled\":\"{EventStopPosEnabled}\",";
-            jsonString += $"\"eventPausedPosEnabled\":\"{EventPausedPosEnabled}\"";
+            jsonString += $"\"eventPausedPosEnabled\":\"{EventPausedPosEnabled}\",";
+            jsonString += $"\"eventPausedPosEnabled\":\"{EventResumedPosEnabled}\"";
             jsonString += "},";
 
             jsonString += $"\"{STATS_TOGGLES}\":{{";
@@ -308,9 +320,11 @@ namespace DiscordConnector.Config
         public bool AnnouncePlayerFirstShoutEnabled => announcePlayerFirstShout.Value;
         public bool EventStartMessageEnabled => eventStartMessageToggle.Value;
         public bool EventPausedMessageEnabled => eventPausedMessageToggle.Value;
+        public bool EventResumedMessageEnabled => eventResumedMessageToggle.Value;
         public bool EventStopMessageEnabled => eventStopMessageToggle.Value;
         public bool EventStartPosEnabled => eventStartPosToggle.Value;
         public bool EventPausedPosEnabled => eventPausedPosToggle.Value;
         public bool EventStopPosEnabled => eventStopPosToggle.Value;
+        public bool EventResumedPosEnabled => eventResumedPosToggle.Value;
     }
 }
