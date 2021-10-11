@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
 
@@ -42,7 +43,6 @@ namespace DiscordConnector.Patches
                 bool active = __instance.m_active;
                 float duration = __instance.m_duration;
                 string name = __instance.m_name;
-                string message = Localization.m_instance.Localize(__instance.m_startMessage);
                 float time = __instance.m_time;
                 float remaining = duration - time;
                 Vector3 pos = __instance.m_pos;
@@ -50,10 +50,18 @@ namespace DiscordConnector.Patches
                     $"Random event OnActivate {name}: {active} for {duration} at {pos}. (time: {time})"
                 );
 
-                DiscordApi.SendMessage(
-                    $"**Event**: {message} at {pos}!"
-                );
-                
+                if (Plugin.StaticConfig.EventStartMessageEnabled)
+                {
+                    string message = Plugin.StaticConfig.EventStartMessage.Replace("%EVENT_MSG%", Localization.instance.Localize(__instance.m_startMessage));
+                    if (Plugin.StaticConfig.EventStartPosEnabled)
+                    {
+                        DiscordApi.SendMessage(message, pos);
+                    }
+                    else
+                    {
+                        DiscordApi.SendMessage(message);
+                    }
+                }
             }
         }
 
@@ -69,20 +77,41 @@ namespace DiscordConnector.Patches
                 float time = __instance.m_time;
                 Vector3 pos = __instance.m_pos;
                 Plugin.StaticLogger.LogDebug(
-                    $"Random event OnDeactivate {name}: {active} for {duration} at {pos}. (time: {time})"
+                    $"Random event OnDeactivate {name}: End?{active} for {duration} at {pos}. (time: {time})"
                 );
 
                 if (!end)
                 {
-                    DiscordApi.SendMessage(
-                        $"**Event**: paused, no players in area!"
-                    );
+                    if (Plugin.StaticConfig.EventPausedMessageEnabled)
+                    {
+                        string message = Plugin.StaticConfig.EventPausedMesssage
+                                .Replace("%EVENT_START_MSG%", Localization.instance.Localize(__instance.m_startMessage))
+                                .Replace("%EVENT_END_MSG%", Localization.instance.Localize(__instance.m_endMessage));
+                        if (Plugin.StaticConfig.EventPausedPosEnabled)
+                        {
+                            DiscordApi.SendMessage(message, pos);
+                        }
+                        else
+                        {
+                            DiscordApi.SendMessage(message);
+                        }
+                    }
                 }
                 else
                 {
-                    DiscordApi.SendMessage(
-                        $"**Event**: {Localization.m_instance.Localize(__instance.m_endMessage)}"
-                    );
+                    if (Plugin.StaticConfig.EventStopMessageEnabled)
+                    {
+                        string message = Plugin.StaticConfig.EventStopMesssage.Replace("%EVENT_MSG%", Localization.instance.Localize(__instance.m_endMessage));
+                        if (Plugin.StaticConfig.EventStopPosEnabled)
+                        {
+
+                            DiscordApi.SendMessage(message, pos);
+                        }
+                        else
+                        {
+                            DiscordApi.SendMessage(message);
+                        }
+                    }
                 }
             }
         }

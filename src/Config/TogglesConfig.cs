@@ -21,15 +21,23 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> serverShutdownToggle;
         private ConfigEntry<bool> serverSaveToggle;
         private ConfigEntry<bool> chatShoutToggle;
-        private ConfigEntry<bool> chatShoutPosToggle;
         private ConfigEntry<bool> chatPingToggle;
-        private ConfigEntry<bool> chatPingPosToggle;
-        private ConfigEntry<bool> playerJoinToggle;
-        private ConfigEntry<bool> playerJoinPosToggle;
         private ConfigEntry<bool> playerDeathToggle;
-        private ConfigEntry<bool> playerDeathPosToggle;
+        private ConfigEntry<bool> playerJoinToggle;
         private ConfigEntry<bool> playerLeaveToggle;
+        private ConfigEntry<bool> eventStartMessageToggle;
+        private ConfigEntry<bool> eventPausedMessageToggle;
+        private ConfigEntry<bool> eventStopMessageToggle;
+
+        // Position Coordinates Toggles
         private ConfigEntry<bool> playerLeavePosToggle;
+        private ConfigEntry<bool> playerJoinPosToggle;
+        private ConfigEntry<bool> playerDeathPosToggle;
+        private ConfigEntry<bool> chatPingPosToggle;
+        private ConfigEntry<bool> chatShoutPosToggle;
+        private ConfigEntry<bool> eventStartPosToggle;
+        private ConfigEntry<bool> eventPausedPosToggle;
+        private ConfigEntry<bool> eventStopPosToggle;
 
         // Statistic collection settings
         private ConfigEntry<bool> collectStatsJoins;
@@ -101,6 +109,18 @@ namespace DiscordConnector.Config
                 "Player Leave Notifications",
                 true,
                 "If enabled, this will send a message to Discord when a player leaves the server.");
+            eventStartMessageToggle = config.Bind<bool>(MESSAGES_TOGGLES,
+                "Event Start Notifications",
+                true,
+                "If enabled, this will send a message to Discord when a random event starts on the server.");
+            eventStopMessageToggle = config.Bind<bool>(MESSAGES_TOGGLES,
+                "Event Stop Notifications",
+                true,
+                "If enabled, this will send a message to Discord when a random event stops on the server.");
+            eventPausedMessageToggle = config.Bind<bool>(MESSAGES_TOGGLES,
+                "Event Paused Notifications",
+                true,
+                "If enabled, this will send a message to Discord when a random event is paused due to players leaving the area.");
 
             // Position Toggles
             playerJoinPosToggle = config.Bind<bool>(POSITION_TOGGLES,
@@ -123,6 +143,18 @@ namespace DiscordConnector.Config
                 "Chat Shout Messages Position Notifications",
                 false,
                 "If enabled, this will include the coordinates of the player when they shout.");
+            eventStartPosToggle = config.Bind<bool>(POSITION_TOGGLES,
+                "Event Start Messages Position Notifications",
+                true,
+                "If enabled, this will include the coordinates of the random event when the start message is sent.");
+            eventStopPosToggle = config.Bind<bool>(POSITION_TOGGLES,
+                "Event Stop Messages Position Notifications",
+                true,
+                "If enabled, this will include the coordinates of the random event when the stop message is sent.");
+            eventPausedPosToggle = config.Bind<bool>(POSITION_TOGGLES,
+                "Event Paused Messages Position Notifications",
+                true,
+                "If enabled, this will include the coordinates of the random event when the paused message is sent.");
 
             // Statistic Settings
             collectStatsDeaths = config.Bind<bool>(STATS_TOGGLES,
@@ -201,7 +233,10 @@ namespace DiscordConnector.Config
             jsonString += $"\"chatPingEnabled\":\"{ChatPingEnabled}\",";
             jsonString += $"\"playerJoinEnabled\":\"{PlayerJoinMessageEnabled}\",";
             jsonString += $"\"playerLeaveEnabled\":\"{PlayerLeaveMessageEnabled}\",";
-            jsonString += $"\"playerDeathEnabled\":\"{PlayerDeathMessageEnabled}\"";
+            jsonString += $"\"playerDeathEnabled\":\"{PlayerDeathMessageEnabled}\",";
+            jsonString += $"\"eventStartEnabled\":\"{EventStartMessageEnabled}\",";
+            jsonString += $"\"eventPausedEnabled\":\"{EventPausedMessageEnabled}\",";
+            jsonString += $"\"eventStoppedEnabled\":\"{EventStopMessageEnabled}\"";
             jsonString += "},";
 
             jsonString += $"\"{POSITION_TOGGLES}\":{{";
@@ -209,7 +244,10 @@ namespace DiscordConnector.Config
             jsonString += $"\"chatPingPosEnabled\":\"{ChatPingPosEnabled}\",";
             jsonString += $"\"playerJoinPosEnabled\":\"{PlayerJoinPosEnabled}\",";
             jsonString += $"\"playerLeavePosEnabled\":\"{PlayerLeavePosEnabled}\",";
-            jsonString += $"\"playerDeathPosEnabled\":\"{PlayerDeathPosEnabled}\"";
+            jsonString += $"\"playerDeathPosEnabled\":\"{PlayerDeathPosEnabled}\",";
+            jsonString += $"\"eventStartPosEnabled\":\"{EventStartPosEnabled}\",";
+            jsonString += $"\"eventStopPosEnabled\":\"{EventStopPosEnabled}\",";
+            jsonString += $"\"eventPausedPosEnabled\":\"{EventPausedPosEnabled}\"";
             jsonString += "},";
 
             jsonString += $"\"{STATS_TOGGLES}\":{{";
@@ -268,5 +306,11 @@ namespace DiscordConnector.Config
         public bool AnnouncePlayerFirstLeaveEnabled => announcePlayerFirstLeave.Value;
         public bool AnnouncePlayerFirstPingEnabled => announcePlayerFirstPing.Value;
         public bool AnnouncePlayerFirstShoutEnabled => announcePlayerFirstShout.Value;
+        public bool EventStartMessageEnabled => eventStartMessageToggle.Value;
+        public bool EventPausedMessageEnabled => eventPausedMessageToggle.Value;
+        public bool EventStopMessageEnabled => eventStopMessageToggle.Value;
+        public bool EventStartPosEnabled => eventStartPosToggle.Value;
+        public bool EventPausedPosEnabled => eventPausedPosToggle.Value;
+        public bool EventStopPosEnabled => eventStopPosToggle.Value;
     }
 }
