@@ -6,7 +6,7 @@ on:
       - feature/documentation-site
 
 jobs: 
-  "Build and Publish Documentation": 
+  Build-Publish_Documentation: 
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v2
