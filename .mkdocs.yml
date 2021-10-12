@@ -20,8 +20,6 @@ markdown_extensions:
 
 plugins:
   - search
-  - git-authors
-  - git-revision-date-localized
   - codeinclude
   - markdownextradata
   - img2fig
