@@ -6,7 +6,7 @@ on:
       - feature/documentation-site
 
 jobs: 
-  upload: 
+  "Build and Publish Documentation": 
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v2
@@ -15,8 +15,6 @@ jobs:
           with:
             # path to requirements.txt
             requirements: docs/.requirements.txt
-            # path to mkdocs.yml
-            configfile: '.mkdocs.yml'
       # Upload
       - uses: bacongobbler/azure-blob-storage-upload@v1.2.0
         with: 
