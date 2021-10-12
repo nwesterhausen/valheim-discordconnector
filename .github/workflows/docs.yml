@@ -11,10 +11,7 @@ jobs:
     steps: 
       - uses: actions/checkout@v2
       # Build
-      -   uses: Tiryoh/actions-mkdocs@v0.7.0
-          with:
-            # path to requirements.txt
-            requirements: docs/.requirements.txt
+      - uses: Tiryoh/actions-mkdocs@v0.7.0
       # Upload
       - uses: bacongobbler/azure-blob-storage-upload@v1.2.0
         with: 
