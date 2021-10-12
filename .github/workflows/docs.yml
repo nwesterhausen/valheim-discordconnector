@@ -16,13 +16,13 @@ jobs:
             # path to requirements.txt
             requirements: docs/.requirements.txt
             # path to mkdocs.yml
-            configfile: docs/.mkdocs.yml
+            configfile: '.mkdocs.yml'
       # Upload
       - uses: bacongobbler/azure-blob-storage-upload@v1.2.0
         with: 
           container_name: $web
           extra_args: "--destination-path discordconnector.valheim.nwest.games/"
           sas_token: "${{ secrets.AZURE_SAS_TOKEN }}"
-          source_dir: docs/dist
+          source_dir: bin/mkdocs
           sync: true
 

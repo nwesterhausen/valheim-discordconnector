@@ -1,10 +1,10 @@
 site_name: Valheim Discord Connector
-repo: https://github.com/nwesterhausen/valheim-discordconnector
+repo_url: https://github.com/nwesterhausen/valheim-discordconnector
 theme:
   name: "material"
   locale: "en"
-docs_dir: '.'
-site_dir: 'dist'
+docs_dir: docs
+site_dir: bin/mkdocs
 strict: true
 
 markdown_extensions:
@@ -20,17 +20,14 @@ markdown_extensions:
 
 plugins:
   - search
-  - tags
   - git-authors
   - git-revision-date-localized
   - codeinclude
   - markdownextradata
   - img2fig
   - mermaid2
-  - awesome-pages
   - navtitles
   - mkdocs_safe_text
-  - mkdocs_redirects
 
 extra_javascript:
   - https://unpkg.com/mermaid/dist/mermaid.min.js
