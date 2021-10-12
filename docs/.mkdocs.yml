@@ -1,7 +1,10 @@
 site_name: Valheim Discord Connector
+repo: https://github.com/nwesterhausen/valheim-discordconnector
 theme:
   name: "material"
-
+  locale: "en"
+docs_dir: '.'
+site_dir: 'dist'
 strict: true
 
 markdown_extensions:

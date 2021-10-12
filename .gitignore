@@ -392,3 +392,6 @@ FodyWeavers.xsd
 
 # Test Files
 rundev.ps1
+
+# Documentation Artifacts
+docs/dist
