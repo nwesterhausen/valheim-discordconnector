@@ -1,5 +1,5 @@
-name: "Upload To Azure Blob Storage"
-true: 
+name: "Upload Docs to Azure Blob Storage"
+on: 
   push: 
     branches: 
       - main
@@ -10,10 +10,12 @@ jobs:
     steps: 
       - uses: actions/checkout@v2
       # Build
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-      - run: npx @11ty/eleventy --input=docs
+      -   uses: Tiryoh/actions-mkdocs@v0.7.0
+          with:
+            # path to requirements.txt
+            requirements: docs/.requirements.txt
+            # path to mkdocs.yml
+            configfile: docs/.mkdocs.yml
       # Upload
       - uses: bacongobbler/azure-blob-storage-upload@v1.2.0
         with: 
