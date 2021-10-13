@@ -16,7 +16,7 @@ jobs:
       - uses: bacongobbler/azure-blob-storage-upload@v1.2.0
         with: 
           container_name: $web
-          extra_args: "--destination-path discordconnector.valheim.nwest.games/ --debug"
+          extra_args: "--destination-path discordconnector.valheim.nwest.games/"
           connection_string: "${{ secrets.AZURE_CONNECTION_STRING }}"
           source_dir: bin/mkdocs
           sync: true
