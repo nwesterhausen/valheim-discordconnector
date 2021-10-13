@@ -18,6 +18,7 @@ jobs:
           container_name: $web
           extra_args: "--destination-path discordconnector.valheim.nwest.games/"
           sas_token: "${{ secrets.AZURE_SAS_TOKEN }}"
+          account_name: "${{ secrets.AZURE_ACCOUNT_NAME }}"
           source_dir: bin/mkdocs
           sync: true
 
