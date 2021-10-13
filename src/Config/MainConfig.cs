@@ -18,7 +18,7 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> colectStatsToggle;
         private ConfigEntry<bool> sendPositionsToggle;
         private ConfigEntry<bool> announcePlayerFirsts;
-
+        private ConfigEntry<bool> discordBotToggle;
 
         public MainConfig(ConfigFile configFile)
         {
@@ -76,6 +76,12 @@ namespace DiscordConnector.Config
                 true,
                 "Disable this setting to disable all extra announcements the first time each player does something. (Overwrites any individual setting.)");
 
+            discordBotToggle = config.Bind<bool>(MAIN_SETTINGS,
+                "Enable Discord Bot Integration",
+                false,
+                "Enable this setting to allow Discord Bot integration with this plugin. See the -bot.cfg file for all the config options related to this integration." + Environment.NewLine +
+                "When this is turned on, a listening HTTP webhook opens on a port specified in the config. This enables the Discord bot to communicate with this plugin (and the server).");
+
             config.Save();
         }
 
@@ -85,7 +91,8 @@ namespace DiscordConnector.Config
             jsonString += "\"discord\":{";
             jsonString += $"\"webhook\":\"{(string.IsNullOrEmpty(WebHookURL) ? "unset" : "REDACTED")}\",";
             jsonString += $"\"fancierMessages\":\"{DiscordEmbedsEnabled}\",";
-            jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserlist.Value}\"";
+            jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserlist.Value}\",";
+            jsonString += $"\"botWebhookEnabled\":\"{DiscordBotEnabled}\"";
             jsonString += "},";
             jsonString += $"\"periodicLeaderboardEnabled\":\"{StatsAnnouncementEnabled}\",";
             jsonString += $"\"periodicLeaderboardPeriodSeconds\":{StatsAnnouncementPeriod},";
@@ -104,5 +111,6 @@ namespace DiscordConnector.Config
         public bool SendPositionsEnabled => sendPositionsToggle.Value;
         public List<string> MutedPlayers => mutedPlayers;
         public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
+        public bool DiscordBotEnabled => discordBotToggle.Value;
     }
 }

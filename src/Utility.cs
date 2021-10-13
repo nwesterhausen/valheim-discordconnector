@@ -44,7 +44,7 @@ namespace DiscordConnector
 
     }
 
-    internal static class Utiltity
+    internal static class Utility
     {
         /// <summary>
         /// Generate a random string <paramref name="length"/> characters long. Characters will be chosen randomly from
@@ -55,10 +55,12 @@ namespace DiscordConnector
         public static string RandomAlphanumericString(int length)
         {
             const string allowed_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
+            Plugin.StaticLogger.LogDebug("Random string generation start.");
             var random = new CryptoRandom();
             string randomString = new string(Enumerable.Repeat(allowed_chars, length)
                                                     .Select(s => s[random.Next(s.Length)]).ToArray());
 
+            Plugin.StaticLogger.LogDebug("Random string generation complete.");
             return randomString;
         }
         /// <summary>

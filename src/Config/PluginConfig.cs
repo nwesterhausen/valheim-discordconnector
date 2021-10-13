@@ -9,21 +9,26 @@ namespace DiscordConnector
         private MainConfig mainConfig;
         private MessagesConfig messagesConfig;
         private TogglesConfig togglesConfig;
+        private BotConfig botConfig;
 
         public PluginConfig(ConfigFile config)
         {
             // Set up the config file paths
             string messageConfigFilename = $"{PluginInfo.PLUGIN_ID}-{MessagesConfig.ConfigExtension}.cfg";
             string togglesConfigFilename = $"{PluginInfo.PLUGIN_ID}-{TogglesConfig.ConfigExtension}.cfg";
+            string botConfigFilename = $"{PluginInfo.PLUGIN_ID}-{BotConfig.ConfigExtension}.cfg";
             string messagesConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, messageConfigFilename);
             string togglesConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, togglesConfigFilename);
+            string botConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, botConfigFilename);
 
             Plugin.StaticLogger.LogDebug($"Messages config: {messagesConfigPath}");
             Plugin.StaticLogger.LogDebug($"Toggles config: {togglesConfigPath}");
+            Plugin.StaticLogger.LogDebug($"Bot config: {botConfigPath}");
 
             mainConfig = new MainConfig(config);
             messagesConfig = new MessagesConfig(new BepInEx.Configuration.ConfigFile(messagesConfigPath, true));
             togglesConfig = new TogglesConfig(new BepInEx.Configuration.ConfigFile(togglesConfigPath, true));
+            botConfig = new BotConfig(new BepInEx.Configuration.ConfigFile(botConfigPath, true));
 
             Plugin.StaticLogger.LogDebug("Configuration Loaded");
             Plugin.StaticLogger.LogDebug(ConfigAsJson());
@@ -76,6 +81,7 @@ namespace DiscordConnector
         public bool SendPositionsEnabled => mainConfig.SendPositionsEnabled;
         public bool AnnouncePlayerFirsts => mainConfig.AnnouncePlayerFirsts;
         public List<string> MutedPlayers => mainConfig.MutedPlayers;
+        public bool DiscordBotEnabled => mainConfig.DiscordBotEnabled;
 
 
         // Messages.Server
@@ -117,6 +123,10 @@ namespace DiscordConnector
         public string EventPausedMesssage => messagesConfig.EventPausedMesssage;
         public string EventResumedMesssage => messagesConfig.EventResumedMesssage;
 
+        // Discord Bot Integration
+        public string DiscordBotAuthorization => botConfig.DiscordBotAuthorization;
+        public int DiscordBotPort => botConfig.DiscordBotPort;
+
         public string ConfigAsJson()
         {
             string jsonString = "{";
@@ -124,7 +134,8 @@ namespace DiscordConnector
             // Discord Settings
             jsonString += $"\"Config.Main\":{mainConfig.ConfigAsJson()},";
             jsonString += $"\"Config.Messages\":{messagesConfig.ConfigAsJson()},";
-            jsonString += $"\"Config.Toggles\":{togglesConfig.ConfigAsJson()}";
+            jsonString += $"\"Config.Toggles\":{togglesConfig.ConfigAsJson()},";
+            jsonString += $"\"Config.Bot\":{botConfig.ConfigAsJson()}";
 
             jsonString += "}";
             return jsonString;
