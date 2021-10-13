@@ -1,5 +1,5 @@
 @hostname = localhost
-@port = 20518
+@port = 20736
 @host = {{hostname}}:{{port}}
 @path = discord/
 @contentType = application/json
