@@ -1,0 +1,45 @@
+@hostname = localhost
+@port = 20518
+@host = {{hostname}}:{{port}}
+@path = discord/
+@contentType = application/json
+@authToken = A super secret auth header.
+
+### Sample POST with authorization
+
+POST http://{{host}}/{{path}} HTTP/1.1
+Authorization: {{authToken}}
+
+{
+   "command": "shutdown",
+   "data": ""
+}
+
+### Sample POST without authorization
+
+POST http://{{host}}/{{path}} HTTP/1.1
+
+{
+   "command": "event",
+   "data": "army_eikthyr"
+}
+
+### Sample POST with invalid authorization
+
+POST http://{{host}}/{{path}} HTTP/1.1
+Authorization: Not exactly authorized..
+
+{
+   "command": "save",
+   "data": "A much longer value here la la l ala l1203902930f f0239 df"
+}
+
+### Sample POST with invalid JSON body
+
+POST http://{{host}}/{{path}} HTTP/1.1
+Authorization: {{authToken}}
+
+{
+   "command": "save",
+   data: "something value"
+}

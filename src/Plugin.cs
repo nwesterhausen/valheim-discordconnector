@@ -16,6 +16,7 @@ namespace DiscordConnector
         internal static PluginConfig StaticConfig;
         internal static Records StaticRecords;
         internal static string PublicIpAddress;
+        private static Webhook.Listener _listener;
         private Harmony _harmony;
 
         public Plugin()
@@ -50,12 +51,15 @@ namespace DiscordConnector
 
             PublicIpAddress = IpifyAPI.PublicIpAddress();
 
+            _listener = new Webhook.Listener();
+
             _harmony = Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, PluginInfo.PLUGIN_ID);
         }
 
         private void OnDestroy()
         {
             _harmony.UnpatchSelf();
+            _listener.Dispose();
         }
 
         /// <summary>
