@@ -51,7 +51,10 @@ namespace DiscordConnector
 
             PublicIpAddress = IpifyAPI.PublicIpAddress();
 
-            _listener = new Webhook.Listener();
+            if (StaticConfig.DiscordBotEnabled)
+            {
+                _listener = new Webhook.Listener();
+            }
 
             _harmony = Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, PluginInfo.PLUGIN_ID);
         }
@@ -59,7 +62,10 @@ namespace DiscordConnector
         private void OnDestroy()
         {
             _harmony.UnpatchSelf();
-            _listener.Dispose();
+            if (StaticConfig.DiscordBotEnabled)
+            {
+                _listener.Dispose();
+            }
         }
 
         /// <summary>

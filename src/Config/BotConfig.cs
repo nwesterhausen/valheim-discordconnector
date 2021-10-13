@@ -27,7 +27,7 @@ namespace DiscordConnector.Config
                 _generated_authHeader,
                 "This is the required authorization header needed to allow the Discord bot to execute commands with this server." + Environment.NewLine +
                 "The default value for this is randomly generated when the plugin is loaded.");
-            
+
             discordBotPort = config.Bind<int>(BOT_SETTINGS,
                 "Listening Port",
                 20736,

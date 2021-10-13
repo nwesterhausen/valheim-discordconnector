@@ -32,13 +32,15 @@ namespace DiscordConnector.Webhook
 
         public Listener()
         {
-            //! Expected Auth Header should be random and printed to console OR taken from config (if set)
-            //! (or can it just be randomly defaulted in the configuration file? Maybe good idea.)
-            _expectAuthHeader = "A super secret auth header.";
-            //! Port should be from config w/ a default set there
-            _port = 20518;
-            //! Host should be configurable w/ a null default
-            //host = Plugin.StaticIpAddres;
+            if (!Plugin.StaticConfig.DiscordBotEnabled)
+            {
+                return;
+            }
+
+            _expectAuthHeader = Plugin.StaticConfig.DiscordBotAuthorization;
+            _port = Plugin.StaticConfig.DiscordBotPort;
+            
+            // Right now, host just matches all IPs on server.
             _host = "+";
 
             _prefix = $"http://{_host}:{_port}/discord/";
