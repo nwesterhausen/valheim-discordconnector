@@ -1,7 +1,7 @@
 # Discord Connector
 
-Connect your Valheim server (dedicated or served from the game itself) to a Discord Webhook. 
-([How to get a webhook](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md#how-to-get-a-discord-webhook) or [Short FAQ Guide for this mod](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/HowtoGuide.md)) There's also [configuration documentation](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/ConfigurationDetails.md).
+Connect your Valheim server (dedicated or served from the game itself) to a Discord Webhook.
+(Find mod documentation on [the official website](https://discordconnector.valheim.nwest.games/).)
 
 ## Features
 
