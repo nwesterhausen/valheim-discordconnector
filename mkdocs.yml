@@ -36,6 +36,8 @@ nav:
     - randomized-messages.md
     - configuration-details.md
   - API:
+    - bot-overview.md
+    - bot-configuration.md
     - bot-commands.md
 
 markdown_extensions:
