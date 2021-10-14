@@ -8,6 +8,20 @@ theme:
     code: IBM Plex Mono
   features:
     - navigation.sections
+  palette:
+    - media: "(prefers-color-scheme: light)" 
+      scheme: default
+      accent: blue
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)" 
+      scheme: slate
+      accent: blue
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+
 docs_dir: docs
 site_dir: bin/mkdocs
 strict: true
@@ -33,7 +47,10 @@ markdown_extensions:
   - attr_list
   - def_list
   - footnotes
-  - codehilite
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.snippets
 
 plugins:
   - search
@@ -41,6 +58,7 @@ plugins:
   - git-revision-date-localized
   - img2fig
   - navtitles
+  - mermaid2
 
 extra_javascript:
   - https://unpkg.com/mermaid/dist/mermaid.min.js
