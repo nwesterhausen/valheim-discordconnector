@@ -1,0 +1,41 @@
+site_name: Valheim Discord Connector
+repo_url: https://github.com/nwesterhausen/valheim-discordconnector
+theme:
+  name: "material"
+  locale: "en"
+  features:
+    - navigation.sections
+docs_dir: docs
+site_dir: bin/mkdocs
+strict: true
+
+nav:
+  - index.md
+  - changelog.md
+  - Installation:
+    - webhook-instructions.md
+  - Configuration:
+    - editing-configuration.md
+    - randomized-messages.md
+    - configuration-details.md
+
+markdown_extensions:
+  - smarty
+  - toc:
+      permalink: True
+  - sane_lists
+  - abbr
+  - attr_list
+  - def_list
+  - footnotes
+  - codehilite
+
+plugins:
+  - search
+  - git-authors
+  - git-revision-date-localized
+  - img2fig
+  - navtitles
+
+extra_javascript:
+  - https://unpkg.com/mermaid/dist/mermaid.min.js

@@ -1,0 +1,25 @@
+name: "Upload Docs to Azure Blob Storage"
+on: 
+  push: 
+    branches: 
+      - main
+      - feature/documentation-site
+
+jobs: 
+  Build-Publish_Documentation: 
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v2
+      # Build
+      - uses: Tiryoh/actions-mkdocs@v0.8.0
+        with:
+          requirements: 'docs/.requirements.txt'
+      # Upload
+      - uses: bacongobbler/azure-blob-storage-upload@v1.2.0
+        with: 
+          container_name: $web
+          extra_args: "--destination-path discordconnector.valheim.nwest.games/"
+          connection_string: "${{ secrets.AZURE_CONNECTION_STRING }}"
+          source_dir: bin/mkdocs
+          sync: true
+

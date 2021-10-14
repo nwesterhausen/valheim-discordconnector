@@ -389,6 +389,3 @@ FodyWeavers.xsd
 
 # Solution ignoring
 *.sln
-
-# Test Files
-rundev.ps1

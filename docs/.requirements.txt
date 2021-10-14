@@ -1,0 +1,15 @@
+mkdocs 
+pygments 
+mkdocs-material 
+mkdocs-safe-text-plugin 
+git+https://github.com/jldiaz/mkdocs-plugin-tags.git 
+mkdocs-markdownextradata-plugin 
+mkdocs-codeinclude-plugin 
+mkdocs-git-revision-date-localized-plugin 
+mkdocs-git-authors-plugin 
+mkdocs-blog-plugin 
+mkdocs-img2fig-plugin 
+mkdocs-mermaid2-plugin 
+mkdocs-awesome-pages-plugin 
+git+https://github.com/andyoakley/mkdocs-navtitles 
+mkdocs-redirects 
