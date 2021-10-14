@@ -25,5 +25,9 @@ A plugin to connect your Valheim server to Discord.
 
 ### Roadmap
 
+See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnector/projects/1) as a Github project.
+
 - Fancier Discord messages
 - Discord bot integration
+- Multiple webhook support
+- More statistics able to be sent
