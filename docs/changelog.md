@@ -2,6 +2,29 @@
 
 A full changelog
 
+### Version 1.2.1
+
+Fixes:
+
+- The leaderboard toggles were not working properly, behind the scenes they were all following the death leaderboard toggle
+
+A breaking change was found with the records.json in 1.2.0. The records.json file needs to have all `PlayerName` changed to `Key`.
+If you are seeing an error message in your logs from Discord Connector, this is the likely culprit (should see something about
+JsonException I believe). For example:
+
+records.json pre 1.2.0:
+
+```json
+[{"Category":"death","Values":[{"PlayerName":"Xithyr","Value":13} ...
+```
+
+records.json 1.2.0+ (PlayerName changed to Key)
+
+```json
+[{"Category":"death","Values":[{"Key":"Xithyr","Value":13} ...
+```
+
+
 ### Version 1.2.0
 
 Features:
