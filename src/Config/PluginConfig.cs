@@ -101,9 +101,9 @@ namespace DiscordConnector
 
         // Toggles.Leaderboard
         public bool LeaderboardDeathEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardDeathEnabled;
-        public bool LeaderboardPingEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardDeathEnabled;
-        public bool LeaderboardSessionEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardDeathEnabled;
-        public bool LeaderboardShoutEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardDeathEnabled;
+        public bool LeaderboardPingEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardPingEnabled;
+        public bool LeaderboardSessionEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardSessionEnabled;
+        public bool LeaderboardShoutEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardShoutEnabled;
 
         public bool AnnouncePlayerFirstDeathEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstDeathEnabled;
         public bool AnnouncePlayerFirstJoinEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstJoinEnabled;
