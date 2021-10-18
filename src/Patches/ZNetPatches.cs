@@ -3,10 +3,11 @@ using HarmonyLib;
 
 namespace DiscordConnector.Patches
 {
+    [HarmonyPatch(typeof(ZNet))]
     internal class ZNetPatches
     {
 
-        [HarmonyPatch(typeof(ZNet), nameof(ZNet.LoadWorld))]
+        [HarmonyPatch(nameof(ZNet.LoadWorld))]
         internal class LoadWorld
         {
             private static void Postfix(ref ZNet __instance)
@@ -29,7 +30,7 @@ namespace DiscordConnector.Patches
             }
         }
 
-        [HarmonyPatch(typeof(ZNet), nameof(ZNet.SaveWorld))]
+        [HarmonyPatch(nameof(ZNet.SaveWorld))]
         internal class SaveWorld
         {
             private static void Postfix(ref bool sync)
@@ -43,9 +44,10 @@ namespace DiscordConnector.Patches
             }
         }
 
-        [HarmonyPatch(typeof(ZNet), nameof(ZNet.Shutdown))]
+        [HarmonyPatch(nameof(ZNet.Shutdown))]
         internal class Shutdown
         {
+            [HarmonyBefore(new string[] { "HackShardGaming.WorldofValheimServerSideCharacters" })]
             private static void Prefix(ref ZNet __instance)
             {
                 if (Plugin.StaticConfig.StopMessageEnabled)
@@ -66,7 +68,7 @@ namespace DiscordConnector.Patches
             }
         }
 
-        [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_CharacterID))]
+        [HarmonyPatch(nameof(ZNet.RPC_CharacterID))]
         internal class RPC_CharacterID
         {
             private static List<long> joinedPlayers = new List<long>();
@@ -142,7 +144,7 @@ namespace DiscordConnector.Patches
             }
         }
 
-        [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_Disconnect))]
+        [HarmonyPatch(nameof(ZNet.RPC_Disconnect))]
         internal class RPC_Disconnect
         {
             private static void Prefix(ZRpc rpc)
