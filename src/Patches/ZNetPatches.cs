@@ -9,21 +9,12 @@ namespace DiscordConnector.Patches
         [HarmonyPatch(typeof(ZNet), nameof(ZNet.LoadWorld))]
         internal class LoadWorld
         {
-            private static void Postfix(ref ZNet __instance)
+            private static void Postfix()
             {
                 if (Plugin.StaticConfig.LoadedMessageEnabled)
                 {
                     DiscordApi.SendMessage(
                         Plugin.StaticConfig.LoadedMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
-                    );
-                }
-            }
-            private static void Prefix(ref ZNet __instance)
-            {
-                if (Plugin.StaticConfig.LaunchMessageEnabled)
-                {
-                    DiscordApi.SendMessage(
-                        Plugin.StaticConfig.LaunchMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                     );
                 }
             }
@@ -39,29 +30,6 @@ namespace DiscordConnector.Patches
                     DiscordApi.SendMessage(
                         Plugin.StaticConfig.SaveMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                     );
-                }
-            }
-        }
-
-        [HarmonyPatch(typeof(ZNet), nameof(ZNet.Shutdown))]
-        internal class Shutdown
-        {
-            private static void Prefix(ref ZNet __instance)
-            {
-                if (Plugin.StaticConfig.StopMessageEnabled)
-                {
-                    DiscordApi.SendMessage(
-                        Plugin.StaticConfig.StopMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
-                        );
-                }
-            }
-            private static void Postfix(ref ZNet __instance)
-            {
-                if (Plugin.StaticConfig.ShutdownMessageEnabled)
-                {
-                    DiscordApi.SendMessage(
-                        Plugin.StaticConfig.ShutdownMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
-                        );
                 }
             }
         }

@@ -41,6 +41,16 @@ Full changelog history available on the
 **Release 1.0.0+ is a breaking release** since the structure of the configuration files completely changes. When you update you will need to modify the config
 to save your webhook again and to update any message customization you have done!
 
+### Version 1.2.2
+
+Fixes:
+
+- No shutdown message when some other mods are loaded (Like World of Valheim suite)
+
+Also this update modifies when the startup, shutting down, and shut down messages are sent. There now will likely be a bit
+of a pause because the startup message gets sent when the game is initialized instead of when the loading of the map starts
+for the server.
+
 ### Version 1.2.1
 
 Fixes:
