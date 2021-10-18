@@ -16,7 +16,9 @@ namespace DiscordConnector
         internal static PluginConfig StaticConfig;
         internal static Records StaticRecords;
         internal static string PublicIpAddress;
+#if !NoBotSupport
         private static Webhook.Listener _listener;
+#endif
         private Harmony _harmony;
 
         public Plugin()
@@ -51,10 +53,14 @@ namespace DiscordConnector
 
             PublicIpAddress = IpifyAPI.PublicIpAddress();
 
+#if !NoBotSupport
             if (StaticConfig.DiscordBotEnabled)
             {
                 _listener = new Webhook.Listener();
             }
+#else
+            StaticLogger.LogInfo("This version of the plugin compile without any Discord Bot support.");
+#endif
 
             _harmony = Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, PluginInfo.PLUGIN_ID);
         }
@@ -62,10 +68,12 @@ namespace DiscordConnector
         private void OnDestroy()
         {
             _harmony.UnpatchSelf();
+#if !NoBotSupport
             if (StaticConfig.DiscordBotEnabled)
             {
                 _listener.Dispose();
             }
+#endif
         }
 
         /// <summary>

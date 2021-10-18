@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !NoBotSupport
+
+using System;
 using System.Net;
 using System.Text.Json;
 using System.Threading;
@@ -39,7 +41,7 @@ namespace DiscordConnector.Webhook
 
             _expectAuthHeader = Plugin.StaticConfig.DiscordBotAuthorization;
             _port = Plugin.StaticConfig.DiscordBotPort;
-            
+
             // Right now, host just matches all IPs on server.
             _host = "+";
 
@@ -180,3 +182,4 @@ namespace DiscordConnector.Webhook
         }
     }
 }
+#endif

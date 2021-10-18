@@ -28,6 +28,22 @@ that folder into `$(GameDir)/BepinEx/plugins` for testing.
 
 The compiled plugin will be in a zip ready for upload at `bin/DiscordConnector.zip`.
 
+#### Building without the Discord Bot Webhook
+
+When compiling, you can set the property 'NoBotSupport' to 1 to compile a version without any
+listening webhook code (and therefore won't support the Discord Bot).
+
+`dotnet build /p:NoBotSupport=1`
+
+This completely skips compiling the webhook listener code, removes any webhook listener properties
+in the plugin, and changes the assembly details. Instead of having a GUID of `games.nwest.valheim.discordconnector`
+it will use `games.nwest.valheim.discordconnector-nobotsupport` and the name of the assembly will
+include '(No Discord Bot Support)'. It also will log a message when loaded by BepInEx that says this
+version doesn't include the bot support.
+
+When you build with this property set, the destination is `bin/DiscordConnector-NoBotSupport` and
+a zipped version at `bin/DiscordConnector-NoBotSupport.zip`.
+
 ### Dependencies
 
 For JSON serialization, I chose to use the System.Text.Json library which is part of

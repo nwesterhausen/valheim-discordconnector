@@ -10,6 +10,12 @@
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants Condition=" '$(NoBotSupport)' == '1' ">$(DefineConstants);NoBotSupport</DefineConstants>
+    <!-- Different destination directory if we compile WITH or WITHOUT Discord Bot Support -->
+    <DestinationDir  Condition=" '$(NoBotSupport)' == '' ">$(ProjectDir)bin/DiscordConnector/</DestinationDir>
+    <DestinationDir  Condition=" '$(NoBotSupport)' == '1' ">$(ProjectDir)bin/DiscordConnector-NoBotSupport/</DestinationDir>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.4" PrivateAssets="all" />
@@ -25,11 +31,11 @@
 
    <Target Name="CreatePluginDir" AfterTargets="PrepareForBuild">
     <MakeDir 
-      Directories="$(ProjectDir)bin/DiscordConnector" 
-      Condition="!Exists('$(ProjectDir)bin/DiscordConnector')"  />
+      Directories="$(DestinationDir)" 
+      Condition="!Exists('$(DestinationDir)')"  />
     <MakeDir 
-      Directories="$(ProjectDir)bin/DiscordConnector/plugins" 
-      Condition="!Exists('$(ProjectDir)bin/DiscordConnector/plugins')"  />
+      Directories="$(DestinationDir)plugins" 
+      Condition="!Exists('$(DestinationDir)plugins')"  />
   </Target>
 
   <Target Name="CopyPluginFiles" AfterTargets="Build">
@@ -52,22 +58,32 @@
     <!-- Plugin files go into a 'plugins' subdirectory -->
     <Copy 
       SourceFiles="@(BuiltLibraryAndDeps)"
-      DestinationFolder="$(ProjectDir)bin/DiscordConnector/plugins"
+      DestinationFolder="$(DestinationDir)plugins"
       SkipUnchangedFiles="true" />
     <!-- Metadata files go into the base directory -->
     <Copy 
       SourceFiles="@(ThunderstoreMetadata)"
-      DestinationFolder="$(ProjectDir)bin/DiscordConnector"
+      DestinationFolder="$(DestinationDir)"
       SkipUnchangedFiles="true" />
   </Target>
 
-  <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles">
+  <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles"  Condition=" '$(NoBotSupport)' == '1' ">
+    <!-- Remove the zip file if it exists, so that we can create a new one. -->
+    <Delete 
+      Files="$(ProjectDir)bin/DiscordConnector-NoBotSupport.zip" 
+      Condition="!Exists('$(ProjectDir)bin/bin/DiscordConnector-NoBotSupport.zip')"  />
+    <ZipDirectory
+      SourceDirectory="$(DestinationDir)"
+      DestinationFile="$(ProjectDir)bin/DiscordConnector-NoBotSupport.zip" />
+  </Target>
+
+  <Target Name="ZipPluginNoBotSupport" AfterTargets="CopyPluginFiles"  Condition=" '$(NoBotSupport)' == '' ">
     <!-- Remove the zip file if it exists, so that we can create a new one. -->
     <Delete 
       Files="$(ProjectDir)bin/DiscordConnector.zip" 
       Condition="!Exists('$(ProjectDir)bin/bin/DiscordConnector.zip')"  />
     <ZipDirectory
-      SourceDirectory="$(ProjectDir)bin/DiscordConnector"
+      SourceDirectory="$(DestinationDir)"
       DestinationFile="$(ProjectDir)bin/DiscordConnector.zip" />
   </Target>
 </Project>

@@ -15,8 +15,13 @@ namespace DiscordConnector
 {
     internal static class PluginInfo
     {
+#if NoBotSupport
+        public const string PLUGIN_ID = "games.nwest.valheim.discordconnector-nobotsupport";
+        public const string PLUGIN_NAME = "Valheim Discord Connector (No Discord Bot Support)";
+#else
         public const string PLUGIN_ID = "games.nwest.valheim.discordconnector";
         public const string PLUGIN_NAME = "Valheim Discord Connector";
+#endif
         public const string PLUGIN_VERSION = "1.2.0";
         public const string PLUGIN_REPO_SHORT = "github: nwesterhausen/valheim-discordconnector";
         public const string PLUGIN_AUTHOR = "Nicholas Westerhausen";
