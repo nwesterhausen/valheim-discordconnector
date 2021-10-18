@@ -5,11 +5,10 @@ using UnityEngine;
 
 namespace DiscordConnector.Patches
 {
-    [HarmonyPatch(typeof(RandomEvent))]
-    internal class RandomEventPatches
+    internal class RandEventPatches
     {
 
-        [HarmonyPatch(nameof(RandomEvent.OnActivate))]
+        [HarmonyPatch(typeof(RandomEvent), nameof(RandomEvent.OnActivate))]
         internal class OnActivate
         {
 
@@ -80,7 +79,7 @@ namespace DiscordConnector.Patches
             }
         }
 
-        [HarmonyPatch(nameof(RandomEvent.OnDeactivate))]
+        [HarmonyPatch(typeof(RandomEvent), nameof(RandomEvent.OnDeactivate))]
         internal class OnDeactivate
         {
 

@@ -3,11 +3,10 @@ using UnityEngine;
 
 namespace DiscordConnector.Patches
 {
-    [HarmonyPatch(typeof(Chat))]
     internal class ChatPatches
     {
 
-        [HarmonyPatch(nameof(Chat.OnNewChatMessage))]
+        [HarmonyPatch(typeof(Chat), nameof(Chat.OnNewChatMessage))]
         internal class OnNewChatMessage
         {
             private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type, ref string user, ref string text)
