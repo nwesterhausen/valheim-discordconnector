@@ -42,6 +42,8 @@ namespace DiscordConnector
             {
                 System.Timers.Timer leaderboardTimer = new System.Timers.Timer();
                 leaderboardTimer.Elapsed += StaticLeaderboards.OverallHighest.SendLeaderboardOnTimer;
+                leaderboardTimer.Elapsed += StaticLeaderboards.OverallLowest.SendLeaderboardOnTimer;
+                leaderboardTimer.Elapsed += StaticLeaderboards.TopPlayers.SendLeaderboardOnTimer;
                 // Interval is learned from config file in minutes
                 leaderboardTimer.Interval = 60 * 1000 * StaticConfig.StatsAnnouncementPeriod;
                 leaderboardTimer.Start();

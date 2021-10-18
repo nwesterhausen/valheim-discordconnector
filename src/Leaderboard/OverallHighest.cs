@@ -7,10 +7,10 @@ namespace DiscordConnector.Leaderboards
     {
         public override void SendLeaderboard()
         {
-            var deathLeader = Plugin.StaticRecords.Retrieve(RecordCategories.Death);
-            var joinLeader = Plugin.StaticRecords.Retrieve(RecordCategories.Join);
-            var shoutLeader = Plugin.StaticRecords.Retrieve(RecordCategories.Shout);
-            var pingLeader = Plugin.StaticRecords.Retrieve(RecordCategories.Ping);
+            var deathLeader = Plugin.StaticRecords.RetrieveHighest(RecordCategories.Death);
+            var joinLeader = Plugin.StaticRecords.RetrieveHighest(RecordCategories.Join);
+            var shoutLeader = Plugin.StaticRecords.RetrieveHighest(RecordCategories.Shout);
+            var pingLeader = Plugin.StaticRecords.RetrieveHighest(RecordCategories.Ping);
 
             List<Tuple<string, string>> leaderFields = new List<Tuple<string, string>>();
             if (Plugin.StaticConfig.LeaderboardDeathEnabled && deathLeader.Item2 > 0)
@@ -31,7 +31,7 @@ namespace DiscordConnector.Leaderboards
             }
             if (leaderFields.Count > 0)
             {
-                DiscordApi.SendMessageWithFields("Current leader board for tracked stats:", leaderFields);
+                DiscordApi.SendMessageWithFields("Current Highest stat leader board:", leaderFields);
             }
             else
             {
