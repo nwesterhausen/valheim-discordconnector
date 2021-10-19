@@ -2,6 +2,14 @@
 
 Valheim Discord Connector has an API which may allow Discord Bots to interact with the Valheim server.
 
+!!! tip "Beta-version download"
+
+    The bot integration is not in the live release version of Valheim Discord Connector.
+
+    <a href="/DiscordConnector.zip" class="md-button md-button--primary">Download Beta Plugin</a>
+
+    Built on: 2:17pm Oct 19th, 2021
+
 ## Overview
 
 ### Endpoint/url
@@ -21,7 +29,7 @@ You will find the authorization token in `games.nwest.valheim.discordconnector-b
 
 ### Possible Responses
 
-For all commands, the following responses are possible. Every non-error response will include the version of Valheim Discord Connector that responded to your command.
+For all commands, the following responses are possible. Every response will include the version of Valheim Discord Connector that responded to your command.
 
 === "200"
 
@@ -30,7 +38,7 @@ For all commands, the following responses are possible. Every non-error response
     ```json
     {
         "status": "accepted",
-        "version": "2.0.0"
+        "version": "games.nwest.valheim.discordconnector-2.0.0"
     }
     ```
 
@@ -42,7 +50,7 @@ For all commands, the following responses are possible. Every non-error response
     {
         "status": "error",
         "message": "bad request",
-        "version": "2.0.0"
+        "version": "games.nwest.valheim.discordconnector-2.0.0"
     }
     ```
 
@@ -57,7 +65,7 @@ For all commands, the following responses are possible. Every non-error response
     ```json
     {
         "status": "unauthorized",
-        "version": "2.0.0"
+        "version": "games.nwest.valheim.discordconnector-2.0.0"
     }
     ```
 
@@ -68,7 +76,8 @@ For all commands, the following responses are possible. Every non-error response
     ```json
     {
         "status": "error",
-        "message": "command failed to execute"
+        "message": "command failed to execute",
+        "version": "games.nwest.valheim.discordconnector-2.0.0"
     }
     ```
 
@@ -83,7 +92,8 @@ For all commands, the following responses are possible. Every non-error response
     ```json
     {
         "status": "error",
-        "message": "command is not fully implemented yet"
+        "message": "command is not fully implemented yet",
+        "version": "games.nwest.valheim.discordconnector-2.0.0"
     }
     ```
 

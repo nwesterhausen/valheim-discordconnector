@@ -6,10 +6,11 @@
     internal class Response
     {
         public string status { get; set; }
+        public string version => $"{PluginInfo.PLUGIN_ID}-{PluginInfo.PLUGIN_VERSION}";
     }
 
-    internal class StringResponse : Response
+    internal class MessageResponse : Response
     {
-        public string data { get; set; }
+        public string message { get; set; }
     }
 }

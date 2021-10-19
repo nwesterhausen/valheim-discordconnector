@@ -66,70 +66,75 @@ namespace DiscordConnector.Webhook
                 authHeader = "";
             }
 
-            if (method.Equals("POST"))
+            if (!method.Equals("POST"))
             {
-                string body = GetRequestPostData(request);
+                return;
+            }
+            string body = GetRequestPostData(request);
 
-                Plugin.StaticLogger.LogDebug($"Webhook Request: {method} {contentType}\nAuthorization: {authHeader}\n{body}");
+            Plugin.StaticLogger.LogDebug($"Webhook Request: {method} {contentType}\nAuthorization: {authHeader}\n{body}");
 
 
-                try
+            try
+            {
+                JObject parsedResponse = JObject.Parse(body);
+                bool isAuthorized = authHeader.Equals(_expectAuthHeader);
+                if (!isAuthorized)
                 {
-                    JObject parsedResponse = JObject.Parse(body);
-                    bool isAuthorized = authHeader.Equals(_expectAuthHeader);
-                    string command = (string)parsedResponse["command"];
-
-                    switch (command)
+                    Responder.SendResponse401(context.Response, new Response
                     {
-                        case "Status":
-                        case "status":
-                            if (isAuthorized)
-                            {
-                                Responder.SendResponse200(context.Response, new Response
-                                {
-                                    status = "accepted"
-                                });
-
-                            }
-                            else
-                            {
-                                Responder.SendResponse401(context.Response, new Response
-                                {
-                                    status = "unauthorized"
-                                });
-                            }
-                            break;
-                        case "SendChat":
-                        case "chat":
-                            if (isAuthorized)
-                            {
-                                SpeakerCommand fullCommand = parsedResponse.ToObject<SpeakerCommand>();
-                                Responder.SendResponse200(context.Response, new StringResponse
-                                {
-                                    status = "accepted",
-                                    data = $"Send chat with {fullCommand.data.username} saying {fullCommand.data.content}."
-                                });
-                            }
-                            break;
-                        default:
-                            Plugin.StaticLogger.LogDebug($"Unknown command: ${command}");
-                            Responder.SendResponse400(context.Response, new StringResponse
-                            {
-                                status = isAuthorized ? "accepted" : "unauthorized",
-                                data = $"unknown command {command}"
-                            });
-                            break;
-                    }
-                }
-                catch (JsonSerializationException e)
-                {
-                    Plugin.StaticLogger.LogError(e);
-                    Responder.SendResponse415(context.Response, new StringResponse
-                    {
-                        status = "error",
-                        data = "invalid JSON body"
+                        status = "unauthorized"
                     });
+                    return;
                 }
+                string command = (string)parsedResponse["command"];
+
+                switch (command)
+                {
+                    case "status":
+                        Responder.SendResponse200(context.Response, new Response
+                        {
+                            status = "accepted"
+                        });
+
+                        break;
+                    case "chat":
+                        SpeakerCommand fullCommand = parsedResponse.ToObject<SpeakerCommand>();
+                        Responder.SendResponse501(context.Response, new MessageResponse
+                        {
+                            status = "accepted",
+                            message = $"Not fully implemented. {fullCommand.data.username} shouts: {fullCommand.data.content}"
+                        });
+                        break;
+                    case "leaderboard":
+                    case "reload":
+                    case "save":
+                    case "shutdown":
+                        Responder.SendResponse501(context.Response, new MessageResponse
+                        {
+                            status = "error",
+                            message = $"{command} not yet implemented"
+                        });
+                        break;
+                    default:
+                        Plugin.StaticLogger.LogDebug($"Unknown command: ${command}");
+                        Responder.SendResponse400(context.Response, new MessageResponse
+                        {
+                            status = "error",
+                            message = $"unknown command {command}"
+                        });
+                        break;
+                }
+            }
+            catch (JsonSerializationException e)
+            {
+                Plugin.StaticLogger.LogError(e);
+                Responder.SendResponse400(context.Response, new MessageResponse
+                {
+                    status = "error",
+                    message = "invalid JSON body"
+                });
+
             }
             listener.BeginGetContext(ListenerCallback, listener);
         }

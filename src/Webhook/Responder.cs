@@ -27,9 +27,9 @@ namespace DiscordConnector.Webhook
             output.Close();
         }
 
-        public static void SendResponse401(HttpListenerResponse httpResponse, Response response)
+        public static void SendResponse200(HttpListenerResponse httpResponse, Response response)
         {
-            httpResponse.StatusCode = 401;
+            httpResponse.StatusCode = 200;
             SendResponse(httpResponse, response);
         }
         public static void SendResponse400(HttpListenerResponse httpResponse, Response response)
@@ -37,14 +37,19 @@ namespace DiscordConnector.Webhook
             httpResponse.StatusCode = 400;
             SendResponse(httpResponse, response);
         }
-        public static void SendResponse415(HttpListenerResponse httpResponse, Response response)
+        public static void SendResponse401(HttpListenerResponse httpResponse, Response response)
         {
-            httpResponse.StatusCode = 415;
+            httpResponse.StatusCode = 401;
             SendResponse(httpResponse, response);
         }
-        public static void SendResponse200(HttpListenerResponse httpResponse, Response response)
+        public static void SendResponse500(HttpListenerResponse httpResponse, Response response)
         {
-            httpResponse.StatusCode = 200;
+            httpResponse.StatusCode = 500;
+            SendResponse(httpResponse, response);
+        }
+        public static void SendResponse501(HttpListenerResponse httpResponse, Response response)
+        {
+            httpResponse.StatusCode = 501;
             SendResponse(httpResponse, response);
         }
     }

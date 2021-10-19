@@ -5,15 +5,6 @@
 @contentType = application/json
 @authToken = EZr7BmzOkypM3aRZSY9FHTTXo5QvhxLW
 
-### Sample POST with authorization
-
-POST http://{{host}}/{{path}} HTTP/1.1
-Authorization: {{authToken}}
-
-{
-   "command": "status"
-}
-
 ### Sample POST without authorization
 
 POST http://{{host}}/{{path}} HTTP/1.1
@@ -41,6 +32,15 @@ Authorization: {{authToken}}
    data: "something value"
 }
 
+### Sample POST for Status
+
+POST http://{{host}}/{{path}} HTTP/1.1
+Authorization: {{authToken}}
+
+{
+   "command": "status"
+}
+
 ### Sample POST for chat command
 
 POST http://{{host}}/{{path}} HTTP/1.1
@@ -52,4 +52,45 @@ Authorization: {{authToken}}
        "username": "Chad",
        "content": "Hello world!"
    }
+}
+
+### Sample POST for reload
+
+POST http://{{host}}/{{path}} HTTP/1.1
+Authorization: {{authToken}}
+
+{
+   "command": "reload"
+}
+
+### Sample POST for save
+
+POST http://{{host}}/{{path}} HTTP/1.1
+Authorization: {{authToken}}
+
+{
+   "command": "save"
+}
+
+### Sample POST for stop
+
+POST http://{{host}}/{{path}} HTTP/1.1
+Authorization: {{authToken}}
+
+{
+   "command": "shutdown"
+}
+
+### Sample POST for leaderboard
+
+POST http://{{host}}/{{path}} HTTP/1.1
+Authorization: {{authToken}}
+
+{
+    "command": "leaderboard",
+    "data": {
+        "type": "ranking",
+        "number": "5",
+        "category": "death"
+    }
 }
