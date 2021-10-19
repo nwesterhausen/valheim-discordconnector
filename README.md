@@ -1,6 +1,6 @@
 # Discord Connector
 
-Connect your Valheim server to Discord. ([See website for installation or configuration instructions](https://discordconnector.valheim.nwest.games/)). This plugin is largely based on [valheim-discord-notifier](https://github.com/aequasi/valheim-discord-notifier), but this plugin supports randomized messages, muting players, and Discord message embeds.
+Connect your Valheim server to Discord. ([See website for installation or configuration instructions](https://discordconnector.valheim.nwest.games/)). This plugin has its core idea from [valheim-discord-notifier](https://github.com/aequasi/valheim-discord-notifier), but this plugin supports randomized messages, muting players, Discord message embeds, and has Discord Bot Integration support.
 
 Plugin available on [Thunderstore.io](https://valheim.thunderstore.io/package/nwesterhausen/DiscordConnector/), [NexusMods](https://www.nexusmods.com/valheim/mods/1551/), and [Mod Vault](https://modvault.xyz/viewmod/132).
 
@@ -46,8 +46,7 @@ a zipped version at `bin/DiscordConnector-NoBotSupport.zip`.
 
 ### Dependencies
 
-For JSON serialization, I chose to use the System.Text.Json library which is part of
-the most recent .NET but can be used with .NET 4.8 which is used in this project.
+For JSON serialization, I chose to use Newtonsoft.Json, the library files are included in this repository in `lib/Newtonsoft.Json`.
 
 ### Contributors
 
