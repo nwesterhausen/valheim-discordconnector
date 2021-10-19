@@ -45,6 +45,11 @@ namespace DiscordConnector.Config
         public MessagesConfig(ConfigFile configFile)
         {
             config = configFile;
+            ReloadConfig();
+        }
+
+        public void ReloadConfig()
+        {
             LoadConfig();
         }
 
