@@ -18,12 +18,18 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> colectStatsToggle;
         private ConfigEntry<bool> sendPositionsToggle;
         private ConfigEntry<bool> announcePlayerFirsts;
+        private ConfigEntry<int> numberRankingsListed;
+
 
 
         public MainConfig(ConfigFile configFile)
         {
             config = configFile;
+            ReloadConfig();
+        }
 
+        public void ReloadConfig()
+        {
             LoadConfig();
 
             mutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(';'));
@@ -76,6 +82,11 @@ namespace DiscordConnector.Config
                 true,
                 "Disable this setting to disable all extra announcements the first time each player does something. (Overwrites any individual setting.)");
 
+            numberRankingsListed = config.Bind<int>(MAIN_SETTINGS,
+                "How many places to list in the top ranking leaderboards",
+                3,
+                "Set how many places (1st, 2nd, 3rd by default) to display when sending the ranked leaderboard.");
+
             config.Save();
         }
 
@@ -91,7 +102,8 @@ namespace DiscordConnector.Config
             jsonString += $"\"periodicLeaderboardPeriodSeconds\":{StatsAnnouncementPeriod},";
             jsonString += $"\"colectStatsEnabled\":\"{CollectStatsEnabled}\",";
             jsonString += $"\"sendPositionsEnabled\":\"{SendPositionsEnabled}\",";
-            jsonString += $"\"announcePlayerFirsts\":\"{AnnouncePlayerFirsts}\"";
+            jsonString += $"\"announcePlayerFirsts\":\"{AnnouncePlayerFirsts}\",";
+            jsonString += $"\"numberRankingsListed\":\"{IncludedNumberOfRankings}\"";
             jsonString += "}";
             return jsonString;
         }
@@ -104,5 +116,6 @@ namespace DiscordConnector.Config
         public bool SendPositionsEnabled => sendPositionsToggle.Value;
         public List<string> MutedPlayers => mutedPlayers;
         public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
+        public int IncludedNumberOfRankings => numberRankingsListed.Value;
     }
 }
