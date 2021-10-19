@@ -226,37 +226,37 @@ namespace DiscordConnector.Config
                 "If enabled, will send a ranked leaderboard for player shouts at the interval.");
 
             // Leaderboard for Highest
-            sendMostDeathLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
+            sendMostDeathLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_HIGHEST,
                 "Include Most Deaths in Periodic Leaderboard",
                 true,
                 "If enabled, will include player with the most deaths at the interval.");
-            sendMostPingLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
+            sendMostPingLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_HIGHEST,
                 "Include Most Pings in Periodic Leaderboard",
                 false,
                 "If enabled, will include player with the most pings at the interval.");
-            sendMostSessionLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
+            sendMostSessionLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_HIGHEST,
                 "Include Most Sessions in Periodic Leaderboard",
                 false,
                 "If enabled, will include player with the most sessions at the interval.");
-            sendMostShoutLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
+            sendMostShoutLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_HIGHEST,
                 "Include Most Shouts in Periodic Leaderboard",
                 false,
                 "If enabled, will include player with the most shouts at the interval.");
 
             // Leaderboard for Lowest
-            sendLeastDeathLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
+            sendLeastDeathLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_LOWEST,
                 "Include Least Deaths in Periodic Leaderboard",
                 true,
-                "If enabled, will include player with the least shouts at the interval.");
-            sendLeastPingLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
+                "If enabled, will include player with the least deaths at the interval.");
+            sendLeastPingLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_LOWEST,
                 "Include Least Pings in Periodic Leaderboard",
                 false,
-                "If enabled, will include player with the least shouts at the interval.");
-            sendLeastSessionLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
+                "If enabled, will include player with the least pings at the interval.");
+            sendLeastSessionLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_LOWEST,
                 "Include Least Sessions in Periodic Leaderboard",
                 false,
-                "If enabled, will include player with the least shouts at the interval.");
-            sendLeastShoutLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
+                "If enabled, will include player with the least sessions at the interval.");
+            sendLeastShoutLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_LOWEST,
                 "Include Least Shouts in Periodic Leaderboard",
                 false,
                 "If enabled, will include player with the least shouts at the interval.");
