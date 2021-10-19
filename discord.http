@@ -3,7 +3,7 @@
 @host = {{hostname}}:{{port}}
 @path = discord/
 @contentType = application/json
-@authToken = A super secret auth header.
+@authToken = EZr7BmzOkypM3aRZSY9FHTTXo5QvhxLW
 
 ### Sample POST with authorization
 
@@ -11,8 +11,7 @@ POST http://{{host}}/{{path}} HTTP/1.1
 Authorization: {{authToken}}
 
 {
-   "command": "shutdown",
-   "data": ""
+   "command": "status"
 }
 
 ### Sample POST without authorization
@@ -20,8 +19,7 @@ Authorization: {{authToken}}
 POST http://{{host}}/{{path}} HTTP/1.1
 
 {
-   "command": "event",
-   "data": "army_eikthyr"
+   "command": "status"
 }
 
 ### Sample POST with invalid authorization
@@ -30,8 +28,7 @@ POST http://{{host}}/{{path}} HTTP/1.1
 Authorization: Not exactly authorized..
 
 {
-   "command": "save",
-   "data": "A much longer value here la la l ala l1203902930f f0239 df"
+   "command": "status"
 }
 
 ### Sample POST with invalid JSON body
@@ -40,6 +37,19 @@ POST http://{{host}}/{{path}} HTTP/1.1
 Authorization: {{authToken}}
 
 {
-   "command": "save",
+   "command": "chat",
    data: "something value"
+}
+
+### Sample POST for chat command
+
+POST http://{{host}}/{{path}} HTTP/1.1
+Authorization: {{authToken}}
+
+{
+   "command": "chat",
+   "data": {
+       "username": "Chad",
+       "content": "Hello world!"
+   }
 }

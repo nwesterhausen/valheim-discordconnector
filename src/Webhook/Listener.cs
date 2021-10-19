@@ -4,18 +4,10 @@ using System;
 using System.Net;
 using System.Threading;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DiscordConnector.Webhook
 {
-
-    /// <summary>
-    /// Helper class definition which defines the structure of (valid) outgoing JSON
-    /// </summary>
-    internal class Response
-    {
-        public string status { get; set; }
-        public string data { get; set; }
-    }
     internal class Listener
     {
         private static int _port;
@@ -79,61 +71,67 @@ namespace DiscordConnector.Webhook
                 string body = GetRequestPostData(request);
 
                 Plugin.StaticLogger.LogDebug($"Webhook Request: {method} {contentType}\nAuthorization: {authHeader}\n{body}");
-                StringCommand command;
+
+
                 try
                 {
-                    command = JsonConvert.DeserializeObject<StringCommand>(body);
-                    Plugin.StaticLogger.LogDebug($"Parsed a command of '{command.command}' with data '{command.data}'");
+                    JObject parsedResponse = JObject.Parse(body);
+                    bool isAuthorized = authHeader.Equals(_expectAuthHeader);
+                    string command = (string)parsedResponse["command"];
 
-                    if (authHeader.Equals(_expectAuthHeader))
+                    switch (command)
                     {
-                        Plugin.StaticLogger.LogDebug("Authorization accepted.");
-                        SendResponse(context.Response, new Response
-                        {
-                            status = "accepted",
-                            data = ""
-                        });
-                    }
-                    else
-                    {
-                        Plugin.StaticLogger.LogDebug("Authorization rejected (doesn't match).");
-                        SendResponse(context.Response, new Response
-                        {
-                            status = "unauthorized",
-                            data = ""
-                        });
+                        case "Status":
+                        case "status":
+                            if (isAuthorized)
+                            {
+                                Responder.SendResponse200(context.Response, new Response
+                                {
+                                    status = "accepted"
+                                });
+
+                            }
+                            else
+                            {
+                                Responder.SendResponse401(context.Response, new Response
+                                {
+                                    status = "unauthorized"
+                                });
+                            }
+                            break;
+                        case "SendChat":
+                        case "chat":
+                            if (isAuthorized)
+                            {
+                                SpeakerCommand fullCommand = parsedResponse.ToObject<SpeakerCommand>();
+                                Responder.SendResponse200(context.Response, new StringResponse
+                                {
+                                    status = "accepted",
+                                    data = $"Send chat with {fullCommand.data.username} saying {fullCommand.data.content}."
+                                });
+                            }
+                            break;
+                        default:
+                            Plugin.StaticLogger.LogDebug($"Unknown command: ${command}");
+                            Responder.SendResponse400(context.Response, new StringResponse
+                            {
+                                status = isAuthorized ? "accepted" : "unauthorized",
+                                data = $"unknown command {command}"
+                            });
+                            break;
                     }
                 }
-                catch (JsonException e)
+                catch (JsonSerializationException e)
                 {
                     Plugin.StaticLogger.LogError(e);
-                    SendResponse(context.Response, new Response
+                    Responder.SendResponse415(context.Response, new StringResponse
                     {
                         status = "error",
-                        data = $"Unable to parse request. {e.Message}"
+                        data = "invalid JSON body"
                     });
                 }
             }
             listener.BeginGetContext(ListenerCallback, listener);
-        }
-
-        /// <summary>
-        /// Send a JSON <paramref name="response"/> to the provided <paramref name="httpResponse"/> object.
-        /// Automatically converts the <paramref name="response"/> into a JSON string and sends it in a body.
-        /// </summary>
-        /// <param name="httpResponse">The response from the HttpListenerContext.</param>
-        /// <param name="response">The response to provide to the client.</param>
-        private static void SendResponse(HttpListenerResponse httpResponse, Response response)
-        {
-            string responseString = JsonConvert.SerializeObject(response);
-
-            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-            // Get a response stream and write the response to it.
-            httpResponse.ContentLength64 = buffer.Length;
-            System.IO.Stream output = httpResponse.OutputStream;
-            output.Write(buffer, 0, buffer.Length);
-            // You must close the output stream.
-            output.Close();
         }
 
         /// <summary>
