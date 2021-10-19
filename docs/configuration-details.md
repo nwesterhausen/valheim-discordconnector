@@ -173,16 +173,3 @@ For the ranked leadboards, you choose how many ranks to calculate and display wi
 | Send Player Death Messages | true    | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first death."                |
 | Send Player Shout Messages | false   | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first ping.                  |
 | Send Player Ping Messages  | false   | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first shout.                 |
-
-## Bot
-
-Filename `games.nwest.valheim.discordconnector-bot.cfg`
-
-The bot integration file contains sections for configuration of the connection details as well as limiting/enabling the bot to do more things using the integration.
-
-### Discord Bot Integration
-
-| Option               | Default                                  | Description                                                                                                                                                       |
-| -------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Authorization Header | _randomly generated 32 character string_ | This is the required authorization header needed to allow the Discord bot to execute commands with this server.                                                   |
-| Listening Port       | 20736                                    | The port that the integration will listen on for communication from the Discord bot. If you are behind a firewall, this port needs to be forwarded appropriately. |

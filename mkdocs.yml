@@ -29,6 +29,9 @@ markdown_extensions:
   - def_list
   - footnotes
   - codehilite
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
 
 plugins:
   - search
