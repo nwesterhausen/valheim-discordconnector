@@ -107,10 +107,10 @@ namespace DiscordConnector
         public string PlayerFirstShoutMessage => messagesConfig.PlayerFirstShoutMessage;
 
         // Toggles.Leaderboard
-        public bool LeaderboardDeathEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedDeathLeaderboardEnabled;
-        public bool LeaderboardPingEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedPingLeaderboardEnabled;
-        public bool LeaderboardSessionEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedSessionLeaderboardEnabled;
-        public bool LeaderboardShoutEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedShoutLeaderboardEnabled;
+        public bool RankedDeathLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedDeathLeaderboardEnabled;
+        public bool RankedPingLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedPingLeaderboardEnabled;
+        public bool RankedSessionLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedSessionLeaderboardEnabled;
+        public bool RankedShoutLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedShoutLeaderboardEnabled;
 
 
         public int IncludedNumberOfRankings => mainConfig.IncludedNumberOfRankings;

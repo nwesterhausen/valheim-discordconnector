@@ -13,22 +13,22 @@ namespace DiscordConnector.Leaderboards
             var pings = Plugin.StaticRecords.RetrieveAll(RecordCategories.Ping);
 
             List<Tuple<string, string>> leaderFields = new List<Tuple<string, string>>();
-            if (Plugin.StaticConfig.LeaderboardDeathEnabled && deaths.Count > 0)
+            if (Plugin.StaticConfig.RankedDeathLeaderboardEnabled && deaths.Count > 0)
             {
                 deaths.Sort(Plugin.StaticRecords.HighToLowSort);
                 leaderFields.Add(Tuple.Create("Top Deaths", TopPlayersFormater(deaths.ToArray())));
             }
-            if (Plugin.StaticConfig.LeaderboardSessionEnabled && sessions.Count > 0)
+            if (Plugin.StaticConfig.RankedSessionLeaderboardEnabled && sessions.Count > 0)
             {
                 sessions.Sort(Plugin.StaticRecords.HighToLowSort);
                 leaderFields.Add(Tuple.Create("Top Sessions", TopPlayersFormater(sessions.ToArray())));
             }
-            if (Plugin.StaticConfig.LeaderboardShoutEnabled && shouts.Count > 0)
+            if (Plugin.StaticConfig.RankedShoutLeaderboardEnabled && shouts.Count > 0)
             {
                 shouts.Sort(Plugin.StaticRecords.HighToLowSort);
                 leaderFields.Add(Tuple.Create("Top Shouts", TopPlayersFormater(shouts.ToArray())));
             }
-            if (Plugin.StaticConfig.LeaderboardPingEnabled && pings.Count > 0)
+            if (Plugin.StaticConfig.RankedPingLeaderboardEnabled && pings.Count > 0)
             {
                 pings.Sort(Plugin.StaticRecords.HighToLowSort);
                 leaderFields.Add(Tuple.Create("Top Pings", TopPlayersFormater(pings.ToArray())));
@@ -51,9 +51,7 @@ namespace DiscordConnector.Leaderboards
         private string TopPlayersFormater(Tuple<string, int>[] sortedTopPlayers)
         {
             string result = "";
-            //! Could limit number returned like this
-            int numresults = 3;
-            for (int i = 1; i < numresults; i++)
+            for (int i = 1; i < Plugin.StaticConfig.IncludedNumberOfRankings; i++)
             {
                 if (i - 1 < sortedTopPlayers.Length)
                 {

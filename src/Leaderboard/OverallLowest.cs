@@ -13,21 +13,21 @@ namespace DiscordConnector.Leaderboards
             var pingLeader = Plugin.StaticRecords.RetrieveLowest(RecordCategories.Ping);
 
             List<Tuple<string, string>> leaderFields = new List<Tuple<string, string>>();
-            if (Plugin.StaticConfig.LeaderboardDeathEnabled && deathLeader.Item2 > 0)
+            if (Plugin.StaticConfig.RankedDeathLeaderboardEnabled && deathLeader.Item2 > 0)
             {
-                leaderFields.Add(Tuple.Create("Most Deaths", $"{deathLeader.Item1} ({deathLeader.Item2})"));
+                leaderFields.Add(Tuple.Create("Least Deaths", $"{deathLeader.Item1} ({deathLeader.Item2})"));
             }
-            if (Plugin.StaticConfig.LeaderboardSessionEnabled && joinLeader.Item2 > 0)
+            if (Plugin.StaticConfig.LeastSessionLeaderboardEnabled && joinLeader.Item2 > 0)
             {
-                leaderFields.Add(Tuple.Create("Most Sessions", $"{joinLeader.Item1} ({joinLeader.Item2})"));
+                leaderFields.Add(Tuple.Create("Least Sessions", $"{joinLeader.Item1} ({joinLeader.Item2})"));
             }
-            if (Plugin.StaticConfig.LeaderboardShoutEnabled && shoutLeader.Item2 > 0)
+            if (Plugin.StaticConfig.LeastShoutLeaderboardEnabled && shoutLeader.Item2 > 0)
             {
-                leaderFields.Add(Tuple.Create("Most Shouts", $"{shoutLeader.Item1} ({shoutLeader.Item2})"));
+                leaderFields.Add(Tuple.Create("Least Shouts", $"{shoutLeader.Item1} ({shoutLeader.Item2})"));
             }
-            if (Plugin.StaticConfig.LeaderboardPingEnabled && pingLeader.Item2 > 0)
+            if (Plugin.StaticConfig.LeastPingLeaderboardEnabled && pingLeader.Item2 > 0)
             {
-                leaderFields.Add(Tuple.Create("Most Pings", $"{pingLeader.Item1} ({pingLeader.Item2})"));
+                leaderFields.Add(Tuple.Create("Least Pings", $"{pingLeader.Item1} ({pingLeader.Item2})"));
             }
             if (leaderFields.Count > 0)
             {
