@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace DiscordConnector
 {
@@ -199,7 +199,7 @@ namespace DiscordConnector
             }
             if (Plugin.StaticConfig.CollectStatsEnabled)
             {
-                string jsonString = JsonSerializer.Serialize(recordCache);
+                string jsonString = JsonConvert.SerializeObject(recordCache);
 
                 using (var stream = new StreamWriter(@storepath, false))
                 {
@@ -220,7 +220,7 @@ namespace DiscordConnector
                 string jsonString = File.ReadAllText(@storepath);
                 try
                 {
-                    recordCache = JsonSerializer.Deserialize<List<Record>>(jsonString);
+                    recordCache = JsonConvert.DeserializeObject<List<Record>>(jsonString);
                     Plugin.StaticLogger.LogInfo($"Read existing stats from disk {storepath}");
                 }
                 catch (ArgumentNullException)

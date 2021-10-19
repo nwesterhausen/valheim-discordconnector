@@ -13,14 +13,14 @@
   <PropertyGroup>
     <DefineConstants Condition=" '$(NoBotSupport)' == '1' ">$(DefineConstants);NoBotSupport</DefineConstants>
     <!-- Different destination directory if we compile WITH or WITHOUT Discord Bot Support -->
-    <DestinationDir  Condition=" '$(NoBotSupport)' == '' ">$(ProjectDir)bin/DiscordConnector/</DestinationDir>
-    <DestinationDir  Condition=" '$(NoBotSupport)' == '1' ">$(ProjectDir)bin/DiscordConnector-NoBotSupport/</DestinationDir>
+    <DestinationDir Condition=" '$(NoBotSupport)' == '' ">$(ProjectDir)bin/DiscordConnector/</DestinationDir>
+    <DestinationDir Condition=" '$(NoBotSupport)' == '1' ">$(ProjectDir)bin/DiscordConnector-NoBotSupport/</DestinationDir>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.4" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
-    <PackageReference Include="System.Text.Json" Version="5.0.*" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.*" />
     <PackageReference Include="UnityEngine.Modules" Version="2019.4.24" IncludeAssets="compile" />
     <PackageReference Include="Valheim.GameLibs" Version="*-*" />
   </ItemGroup>
@@ -30,60 +30,35 @@
   </ItemGroup>
 
    <Target Name="CreatePluginDir" AfterTargets="PrepareForBuild">
-    <MakeDir 
-      Directories="$(DestinationDir)" 
-      Condition="!Exists('$(DestinationDir)')"  />
-    <MakeDir 
-      Directories="$(DestinationDir)plugins" 
-      Condition="!Exists('$(DestinationDir)plugins')"  />
+    <MakeDir Directories="$(DestinationDir)" Condition="!Exists('$(DestinationDir)')" />
+    <MakeDir Directories="$(DestinationDir)plugins" Condition="!Exists('$(DestinationDir)plugins')" />
   </Target>
 
   <Target Name="CopyPluginFiles" AfterTargets="Build">
     <ItemGroup>
-      <BuiltLibraryAndDeps 
-        Include="$(ProjectDir)bin/Debug/net48/DiscordConnector.dll" />
-      <!-- Include System.Text.Json dependency -->
-      <BuiltLibraryAndDeps
-        Include="$(ProjectDir)bin/Debug/net48/System.*.dll" />
-      <BuiltLibraryAndDeps
-        Include="$(ProjectDir)bin/Debug/net48/Microsoft.Bcl.AsyncInterfaces.dll" />
+      <BuiltLibraryAndDeps Include="$(ProjectDir)bin/Debug/net48/DiscordConnector.dll" />
+      <!-- Include Newtonsoft.Json dependency -->
+      <BuiltLibraryAndDeps Include="$(ProjectDir)lib/Newtonsoft.Json/*.dll" />
       <!-- Metadata files for Thunderstore -->
-      <ThunderstoreMetadata
-        Include="$(ProjectDir)Metadata/manifest.json" />
-      <ThunderstoreMetadata
-        Include="$(ProjectDir)Metadata/icon.png" />
-      <ThunderstoreMetadata
-        Include="$(ProjectDir)Metadata/README.md" />
+      <ThunderstoreMetadata Include="$(ProjectDir)Metadata/manifest.json" />
+      <ThunderstoreMetadata Include="$(ProjectDir)Metadata/icon.png" />
+      <ThunderstoreMetadata Include="$(ProjectDir)Metadata/README.md" />
     </ItemGroup>
     <!-- Plugin files go into a 'plugins' subdirectory -->
-    <Copy 
-      SourceFiles="@(BuiltLibraryAndDeps)"
-      DestinationFolder="$(DestinationDir)plugins"
-      SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(BuiltLibraryAndDeps)" DestinationFolder="$(DestinationDir)plugins" SkipUnchangedFiles="true" />
     <!-- Metadata files go into the base directory -->
-    <Copy 
-      SourceFiles="@(ThunderstoreMetadata)"
-      DestinationFolder="$(DestinationDir)"
-      SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ThunderstoreMetadata)" DestinationFolder="$(DestinationDir)" SkipUnchangedFiles="true" />
   </Target>
 
-  <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles"  Condition=" '$(NoBotSupport)' == '1' ">
+  <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles" Condition=" '$(NoBotSupport)' == '1' ">
     <!-- Remove the zip file if it exists, so that we can create a new one. -->
-    <Delete 
-      Files="$(ProjectDir)bin/DiscordConnector-NoBotSupport.zip" 
-      Condition="!Exists('$(ProjectDir)bin/bin/DiscordConnector-NoBotSupport.zip')"  />
-    <ZipDirectory
-      SourceDirectory="$(DestinationDir)"
-      DestinationFile="$(ProjectDir)bin/DiscordConnector-NoBotSupport.zip" />
+    <Delete Files="$(ProjectDir)bin/DiscordConnector-NoBotSupport.zip" Condition="!Exists('$(ProjectDir)bin/bin/DiscordConnector-NoBotSupport.zip')" />
+    <ZipDirectory SourceDirectory="$(DestinationDir)" DestinationFile="$(ProjectDir)bin/DiscordConnector-NoBotSupport.zip" />
   </Target>
 
-  <Target Name="ZipPluginNoBotSupport" AfterTargets="CopyPluginFiles"  Condition=" '$(NoBotSupport)' == '' ">
+  <Target Name="ZipPluginNoBotSupport" AfterTargets="CopyPluginFiles" Condition=" '$(NoBotSupport)' == '' ">
     <!-- Remove the zip file if it exists, so that we can create a new one. -->
-    <Delete 
-      Files="$(ProjectDir)bin/DiscordConnector.zip" 
-      Condition="!Exists('$(ProjectDir)bin/bin/DiscordConnector.zip')"  />
-    <ZipDirectory
-      SourceDirectory="$(DestinationDir)"
-      DestinationFile="$(ProjectDir)bin/DiscordConnector.zip" />
+    <Delete Files="$(ProjectDir)bin/DiscordConnector.zip" Condition="!Exists('$(ProjectDir)bin/bin/DiscordConnector.zip')" />
+    <ZipDirectory SourceDirectory="$(DestinationDir)" DestinationFile="$(ProjectDir)bin/DiscordConnector.zip" />
   </Target>
 </Project>

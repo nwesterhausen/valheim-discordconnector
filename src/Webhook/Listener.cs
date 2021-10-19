@@ -2,19 +2,12 @@
 
 using System;
 using System.Net;
-using System.Text.Json;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace DiscordConnector.Webhook
 {
-    /// <summary>
-    /// Helper class definition which defines the structure of (valid) incoming JSON
-    /// </summary>
-    internal class Command
-    {
-        public string command { get; set; }
-        public string data { get; set; }
-    }
+
     /// <summary>
     /// Helper class definition which defines the structure of (valid) outgoing JSON
     /// </summary>
@@ -86,10 +79,10 @@ namespace DiscordConnector.Webhook
                 string body = GetRequestPostData(request);
 
                 Plugin.StaticLogger.LogDebug($"Webhook Request: {method} {contentType}\nAuthorization: {authHeader}\n{body}");
-                Command command;
+                StringCommand command;
                 try
                 {
-                    command = JsonSerializer.Deserialize<Command>(body);
+                    command = JsonConvert.DeserializeObject<StringCommand>(body);
                     Plugin.StaticLogger.LogDebug($"Parsed a command of '{command.command}' with data '{command.data}'");
 
                     if (authHeader.Equals(_expectAuthHeader))
@@ -132,7 +125,7 @@ namespace DiscordConnector.Webhook
         /// <param name="response">The response to provide to the client.</param>
         private static void SendResponse(HttpListenerResponse httpResponse, Response response)
         {
-            string responseString = JsonSerializer.Serialize(response);
+            string responseString = JsonConvert.SerializeObject(response);
 
             byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
             // Get a response stream and write the response to it.
