@@ -14,7 +14,7 @@ namespace DiscordConnector.Patches
                 if (Plugin.StaticConfig.LoadedMessageEnabled)
                 {
                     DiscordApi.SendMessage(
-                        Plugin.StaticConfig.LoadedMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
+                        MessageTransformer.FormatServerMessage(Plugin.StaticConfig.LoadedMessage)
                     );
                 }
             }
@@ -28,7 +28,7 @@ namespace DiscordConnector.Patches
                 if (Plugin.StaticConfig.WorldSaveMessageEnabled)
                 {
                     DiscordApi.SendMessage(
-                        Plugin.StaticConfig.SaveMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
+                        MessageTransformer.FormatServerMessage(Plugin.StaticConfig.SaveMessage)
                     );
                 }
             }
@@ -56,13 +56,18 @@ namespace DiscordConnector.Patches
                     }
                     if (Plugin.StaticConfig.PlayerDeathMessageEnabled)
                     {
-                        string message = Plugin.StaticConfig.DeathMessage.Replace("%PLAYER_NAME%", peer.m_playerName);
+                        string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.DeathMessage, peer.m_playerName);
                         if (Plugin.StaticConfig.PlayerDeathPosEnabled)
                         {
-                            DiscordApi.SendMessage(
-                            message,
-                            peer.m_refPos
-                            );
+                            if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+                            {
+                                DiscordApi.SendMessage(
+                                    message,
+                                    peer.m_refPos
+                                );
+                            }
+                            message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.DeathMessage, peer.m_playerName, peer.m_refPos);
+                            DiscordApi.SendMessage(message);
                         }
                         else
                         {
@@ -71,7 +76,9 @@ namespace DiscordConnector.Patches
                     }
                     if (Plugin.StaticConfig.AnnouncePlayerFirstDeathEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Death, peer.m_playerName) == 0)
                     {
-                        DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstDeathMessage.Replace("%PLAYER_NAME%", peer.m_playerName));
+                        DiscordApi.SendMessage(
+                            MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstDeathMessage, peer.m_playerName)
+                        );
                     }
                     if (Plugin.StaticConfig.StatsDeathEnabled)
                     {
@@ -85,13 +92,18 @@ namespace DiscordConnector.Patches
                     Plugin.StaticLogger.LogDebug($"Added player {peer.m_uid} ({peer.m_playerName}) to joined player list.");
                     if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
                     {
-                        string message = Plugin.StaticConfig.JoinMessage.Replace("%PLAYER_NAME%", peer.m_playerName);
+                        string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, peer.m_playerName);
                         if (Plugin.StaticConfig.PlayerJoinPosEnabled)
                         {
-                            DiscordApi.SendMessage(
-                            message,
-                            peer.m_refPos
-                            );
+                            if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+                            {
+                                DiscordApi.SendMessage(
+                                    message,
+                                    peer.m_refPos
+                                );
+                            }
+                            message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, peer.m_playerName, peer.m_refPos);
+                            DiscordApi.SendMessage(message);
                         }
                         else
                         {
@@ -100,7 +112,9 @@ namespace DiscordConnector.Patches
                     }
                     if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Join, peer.m_playerName) == 0)
                     {
-                        DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstJoinMessage.Replace("%PLAYER_NAME%", peer.m_playerName));
+                        DiscordApi.SendMessage(
+                            MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstJoinMessage, peer.m_playerName)
+                        );
                     }
                     if (Plugin.StaticConfig.StatsJoinEnabled)
                     {
@@ -120,24 +134,29 @@ namespace DiscordConnector.Patches
                 {
                     if (Plugin.StaticConfig.PlayerLeaveMessageEnabled)
                     {
-                        string message = Plugin.StaticConfig.LeaveMessage.Replace("%PLAYER_NAME%", peer.m_playerName);
+                        string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.LeaveMessage, peer.m_playerName);
                         if (Plugin.StaticConfig.PlayerLeavePosEnabled)
                         {
-                            DiscordApi.SendMessage(
-                            message,
-                            peer.m_refPos
-                            );
+                            if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+                            {
+                                DiscordApi.SendMessage(
+                                    message,
+                                    peer.m_refPos
+                                );
+                            }
+                            message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.LeaveMessage, peer.m_playerName, peer.m_refPos);
+                            DiscordApi.SendMessage(message);
                         }
                         else
                         {
-                            DiscordApi.SendMessage(
-                            message
-                            );
+                            DiscordApi.SendMessage(message);
                         }
                     }
                     if (Plugin.StaticConfig.AnnouncePlayerFirstLeaveEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Leave, peer.m_playerName) == 0)
                     {
-                        DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstLeaveMessage.Replace("%PLAYER_NAME%", peer.m_playerName));
+                        DiscordApi.SendMessage(
+                            MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstLeaveMessage, peer.m_playerName)
+                        );
                     }
                     if (Plugin.StaticConfig.StatsLeaveEnabled)
                     {

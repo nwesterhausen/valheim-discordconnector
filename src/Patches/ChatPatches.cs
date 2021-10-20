@@ -19,28 +19,36 @@ namespace DiscordConnector.Patches
                 switch (type)
                 {
                     case Talker.Type.Ping:
-                        if (Plugin.StaticConfig.ChatPingEnabled)
-                        {
-                            string message = Plugin.StaticConfig.PingMessage.Replace("%PLAYER_NAME%", user);
-                            if (Plugin.StaticConfig.ChatPingPosEnabled)
-                            {
-                                DiscordApi.SendMessage(
-                                    message,
-                                    pos
-                                );
-                            }
-                            else
-                            {
-                                DiscordApi.SendMessage(message);
-                            }
-                        }
                         if (Plugin.StaticConfig.AnnouncePlayerFirstPingEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Ping, user) == 0)
                         {
-                            DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstPingMessage.Replace("%PLAYER_NAME%", user));
+                            DiscordApi.SendMessage(
+                                MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstPingMessage, user)
+                            );
                         }
                         if (Plugin.StaticConfig.StatsPingEnabled)
                         {
                             Plugin.StaticRecords.Store(RecordCategories.Ping, user, 1);
+                        }
+                        if (Plugin.StaticConfig.ChatPingEnabled)
+                        {
+                            string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PingMessage, user);
+                            if (Plugin.StaticConfig.ChatPingPosEnabled)
+                            {
+                                if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+                                {
+                                    DiscordApi.SendMessage(
+                                        message,
+                                        pos
+                                    );
+                                    break;
+                                }
+                                message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PingMessage, user, pos);
+                            }
+                            if (message.Contains("%POS%"))
+                            {
+                                message.Replace("%POS%", "");
+                            }
+                            DiscordApi.SendMessage(message);
                         }
                         break;
                     case Talker.Type.Shout:
@@ -48,58 +56,71 @@ namespace DiscordConnector.Patches
                         {
                             if (!Plugin.IsHeadless())
                             {
-                                if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
-                                {
-                                    string message = Plugin.StaticConfig.JoinMessage.Replace("%PLAYER_NAME%", user);
-                                    if (Plugin.StaticConfig.PlayerJoinPosEnabled)
-                                    {
-                                        DiscordApi.SendMessage(
-                                        message,
-                                        pos
-                                        );
-                                    }
-                                    else
-                                    {
-                                        DiscordApi.SendMessage(message);
-                                    }
-                                }
                                 if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Join, user) == 0)
                                 {
-                                    DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstJoinMessage.Replace("%PLAYER_NAME%", user));
+                                    DiscordApi.SendMessage(
+                                        MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstJoinMessage, user)
+                                    );
                                 }
                                 if (Plugin.StaticConfig.StatsJoinEnabled)
                                 {
                                     Plugin.StaticRecords.Store(RecordCategories.Join, user, 1);
                                 }
-                            }
-                            Plugin.StaticLogger.LogDebug(
-                                $"{user} shouts 'I have arrived!'"
-                            );
-                        }
-                        else
-                        {
-                            if (Plugin.StaticConfig.ChatShoutEnabled)
-                            {
-                                string message = Plugin.StaticConfig.ShoutMessage.Replace("%PLAYER_NAME%", user).Replace("%SHOUT%", text);
-                                if (Plugin.StaticConfig.ChatShoutPosEnabled)
+                                if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
                                 {
-                                    DiscordApi.SendMessage(
-                                        message,
-                                        pos
-                                    );
-                                }
-                                else
-                                {
+                                    string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, user);
+                                    if (Plugin.StaticConfig.PlayerJoinPosEnabled)
+                                    {
+                                        if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+                                        {
+                                            DiscordApi.SendMessage(
+                                                message,
+                                                pos
+                                            );
+                                            break;
+                                        }
+                                        message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, user, pos);
+                                    }
+                                    if (message.Contains("%POS%"))
+                                    {
+                                        message.Replace("%POS%", "");
+                                    }
                                     DiscordApi.SendMessage(message);
                                 }
                             }
+                        }
+                        else
+                        {
                             if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Shout, user) == 0)
                             {
-                                DiscordApi.SendMessage(Plugin.StaticConfig.PlayerFirstShoutMessage.Replace("%PLAYER_NAME%", user).Replace("%SHOUT%", text));
+                                DiscordApi.SendMessage(
+                                    MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstShoutMessage, user, text)
+                                );
                             }
                             if (Plugin.StaticConfig.StatsShoutEnabled)
                             {
                                 Plugin.StaticRecords.Store(RecordCategories.Shout, user, 1);
+                            }
+                            if (Plugin.StaticConfig.ChatShoutEnabled)
+                            {
+                                string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.ShoutMessage, user, text);
+                                if (Plugin.StaticConfig.ChatShoutPosEnabled)
+                                {
+                                    if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+                                    {
+                                        DiscordApi.SendMessage(
+                                            message,
+                                            pos
+                                        );
+                                        break;
+                                    }
+                                    message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.ShoutMessage, user, text, pos);
+                                }
+                                if (message.Contains("%POS%"))
+                                {
+                                    message.Replace("%POS%", "");
+                                }
+                                DiscordApi.SendMessage(message);
                             }
                         }
                         break;
