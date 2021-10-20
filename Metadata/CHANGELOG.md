@@ -2,6 +2,13 @@
 
 A full changelog for reference.
 
+### Version 1.3.0
+
+Features:
+
+- Additional leaderboard options. The existing leaerboard option will now default to sending top 3 players for what is enabled. 
+You can enable a highest and lowest leaderboard for each tracked stat now. All leaderboards get sent on the same interval.
+
 ### Version 1.2.2
 
 Fixes:

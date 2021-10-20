@@ -41,25 +41,7 @@ Full changelog history available on the
 **Release 1.0.0+ is a breaking release** since the structure of the configuration files completely changes. When you update you will need to modify the config
 to save your webhook again and to update any message customization you have done!
 
-### Version 1.2.2
-
-Fixes:
-
-- No shutdown message when some other mods are loaded (Like World of Valheim suite)
-
-Also this update modifies when the startup, shutting down, and shut down messages are sent. There now will likely be a bit
-of a pause because the startup message gets sent when the game is initialized instead of when the loading of the map starts
-for the server.
-
-### Version 1.2.1
-
-Fixes:
-
-- The leaderboard toggles were not working properly, behind the scenes they were all following the death leaderboard toggle
-
-A breaking change was found with the records.json in 1.2.0. The records.json file needs to have all `PlayerName` changed to `Key`.
-If you are seeing an error message in your logs from Discord Connector, this is the likely culprit (should see something about
-JsonException I believe). For example:
+**Release 1.2.0 affected the records.json file** so if you update and notice that your recorded stats aren't changing, it's a simple fix.
 
 records.json pre 1.2.0:
 
@@ -73,17 +55,9 @@ records.json 1.2.0+ (PlayerName changed to Key)
 [{"Category":"death","Values":[{"Key":"Xithyr","Value":13} ...
 ```
 
-### Version 1.2.0
+### Version 1.3.0
 
 Features:
 
-- `%PUBLICIP%` message variable available in the server messages
-
-  There is no variable for what port the game is running on since I figured that had to be set manually in the first place (if not default),
-  and you should be able to modify the message to be something like `Join the server on %PUBLICIP%:2457` or similar if you want to.
-
-- Messages for events start/pause/stopping
-
-  A feature that I wanted finally added. This was difficult to test in a server environment and I did the testing running on the client and then
-  the client running as a server. In those instances I verified that the messages were fired when events started, ended, paused or resumed. The
-  resume message is the same as the start message by default because I couldn't think of a way to word it that made sense.
+- Additional leaderboard options. The existing leaerboard option will now default to sending top 3 players for what is enabled. 
+You can enable a highest and lowest leaderboard for each tracked stat now. All leaderboards get sent on the same interval.
