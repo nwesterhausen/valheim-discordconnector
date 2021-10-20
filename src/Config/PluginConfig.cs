@@ -29,6 +29,13 @@ namespace DiscordConnector
             Plugin.StaticLogger.LogDebug(ConfigAsJson());
         }
 
+        public void ReloadConfig()
+        {
+            mainConfig.ReloadConfig();
+            messagesConfig.ReloadConfig();
+            togglesConfig.ReloadConfig();
+        }
+
         // Exposed Config Values
 
 
@@ -100,10 +107,21 @@ namespace DiscordConnector
         public string PlayerFirstShoutMessage => messagesConfig.PlayerFirstShoutMessage;
 
         // Toggles.Leaderboard
-        public bool LeaderboardDeathEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardDeathEnabled;
-        public bool LeaderboardPingEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardPingEnabled;
-        public bool LeaderboardSessionEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardSessionEnabled;
-        public bool LeaderboardShoutEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardShoutEnabled;
+        public bool RankedDeathLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedDeathLeaderboardEnabled;
+        public bool RankedPingLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedPingLeaderboardEnabled;
+        public bool RankedSessionLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedSessionLeaderboardEnabled;
+        public bool RankedShoutLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedShoutLeaderboardEnabled;
+
+
+        public int IncludedNumberOfRankings => mainConfig.IncludedNumberOfRankings;
+        public bool MostSessionLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.MostSessionLeaderboardEnabled;
+        public bool MostPingLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.MostPingLeaderboardEnabled;
+        public bool MostDeathLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.MostDeathLeaderboardEnabled;
+        public bool MostShoutLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.MostShoutLeaderboardEnabled;
+        public bool LeastSessionLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeastSessionLeaderboardEnabled;
+        public bool LeastPingLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeastPingLeaderboardEnabled;
+        public bool LeastDeathLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeastDeathLeaderboardEnabled;
+        public bool LeastShoutLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeastShoutLeaderboardEnabled;
 
         public bool AnnouncePlayerFirstDeathEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstDeathEnabled;
         public bool AnnouncePlayerFirstJoinEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstJoinEnabled;
