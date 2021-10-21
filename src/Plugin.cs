@@ -15,6 +15,7 @@ namespace DiscordConnector
         internal static ManualLogSource StaticLogger;
         internal static PluginConfig StaticConfig;
         internal static Records StaticRecords;
+        internal static EventWatcher StaticEventWatcher;
         internal static string PublicIpAddress;
 #if !NoBotSupport
         private static Webhook.Listener _listener;
@@ -26,6 +27,7 @@ namespace DiscordConnector
             StaticLogger = Logger;
             StaticConfig = new PluginConfig(Config);
             StaticRecords = new Records(Paths.GameRootPath);
+            StaticEventWatcher = new EventWatcher();
         }
 
         private void Awake()
@@ -61,11 +63,6 @@ namespace DiscordConnector
 #else
             StaticLogger.LogInfo("This version of the plugin compile without any Discord Bot support.");
 #endif
-
-            var randEventTimer = new System.Timers.Timer();
-            randEventTimer.Elapsed += EventWatcher.CheckRandomEvent;
-            randEventTimer.Interval = 5 * 1000; // 5 seconds
-            randEventTimer.Start();
 
             _harmony = Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, PluginInfo.PLUGIN_ID);
         }

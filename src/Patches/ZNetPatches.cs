@@ -17,6 +17,7 @@ namespace DiscordConnector.Patches
                         Plugin.StaticConfig.LoadedMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                     );
                 }
+                Plugin.StaticEventWatcher.Activate();
             }
             private static void Prefix(ref ZNet __instance)
             {
@@ -54,6 +55,7 @@ namespace DiscordConnector.Patches
                         Plugin.StaticConfig.StopMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                         );
                 }
+                Plugin.StaticEventWatcher.Dispose();
             }
             private static void Postfix(ref ZNet __instance)
             {
