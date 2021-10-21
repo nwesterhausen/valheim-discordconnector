@@ -63,7 +63,7 @@ namespace DiscordConnector
 #endif
 
             var randEventTimer = new System.Timers.Timer();
-            randEventTimer.Elapsed += CheckRandomEvent;
+            randEventTimer.Elapsed += EventWatcher.CheckRandomEvent;
             randEventTimer.Interval = 5 * 1000; // 5 seconds
             randEventTimer.Start();
 
@@ -79,27 +79,6 @@ namespace DiscordConnector
                 _listener.Dispose();
             }
 #endif
-        }
-        private void CheckRandomEvent(object sender, ElapsedEventArgs elapsedEventArgs)
-        {
-            var res = RandEventSystem.instance;
-            var re = res.GetCurrentRandomEvent();
-            string re_name = "no existing random event";
-            if (re != null)
-            {
-                re_name = re.m_name;
-            }
-            var ae = res.GetActiveEvent();
-            string ae_name = "no active event";
-            if (ae != null)
-            {
-                ae_name = ae.m_name;
-            }
-            string message = "random event check:" + Environment.NewLine +
-            $"GetActiveEvent(): {ae_name}, GetCurrentRandomEvent(): {re_name}" + Environment.NewLine +
-            $"[static] HaveActiveEvent(): {RandEventSystem.HaveActiveEvent()}, GetForcedEvent(): {res.GetForcedEvent()}, [static] InEvent(): {RandEventSystem.InEvent()}";
-
-            StaticLogger.LogDebug(message);
         }
 
         /// <summary>
