@@ -2,6 +2,28 @@
 
 A full changelog for reference.
 
+### Version 1.4.0
+
+Features:
+
+- 10 user defined variables that can be used an any messages (%VAR1% thru %VAR10%). These are set in their own configuration file, 
+`games.nwest.valheim.discordconnector-variables.cfg` which will get generated first time 1.4.0 is run.
+- The position of where the player/ping/event coordinates are inserted into messages is configurable using the `%POS%` variable in
+the messages config. It won't be replaced if the "send coordinates" toggle is off for that message. If you don't include a `%POS%`
+variable, it will append the coordinates as happens with previous versions.
+
+Fixes:
+
+- Fixed an off-by-one error in the Top Players leaderboard (the default leaderboard) (Thanks @thedefside)
+- Fixed configuration not referencing proper settings (Thanks @thedefside)
+- Fixed event messages (now properly functioning on dedicated servers)
+
+Breaking Changes:
+
+- If you used `%PLAYERS%` in any of the event messages, you need to remove it. With the changes required for the event messages
+functionality, it is not supportable at this time.
+
+
 ### Version 1.3.0
 
 Features:

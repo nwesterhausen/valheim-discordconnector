@@ -39,5 +39,6 @@ Thanks for the helpful contributions!
 
 - @Digitalroot
 - @nwesterhausen
+- @thedefside
 
 Thanks for an excellent original plugin @aequasi!
