@@ -33,6 +33,10 @@ namespace DiscordConnector.Patches
                         MessageTransformer.FormatServerMessage(Plugin.StaticConfig.StopMessage)
                     );
                 }
+                if (Plugin.IsHeadless())
+                {
+                    Plugin.StaticEventWatcher.Dispose();
+                }
             }
             private static void Postfix()
             {

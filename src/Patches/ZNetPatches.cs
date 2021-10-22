@@ -17,6 +17,11 @@ namespace DiscordConnector.Patches
                         MessageTransformer.FormatServerMessage(Plugin.StaticConfig.LoadedMessage)
                     );
                 }
+
+                if (Plugin.IsHeadless())
+                {
+                    Plugin.StaticEventWatcher.Activate();
+                }
             }
         }
 

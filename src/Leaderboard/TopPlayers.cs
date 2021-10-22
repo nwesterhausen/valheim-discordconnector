@@ -51,12 +51,12 @@ namespace DiscordConnector.Leaderboards
         private string TopPlayersFormater(Tuple<string, int>[] sortedTopPlayers)
         {
             string result = "";
-            for (int i = 1; i < Plugin.StaticConfig.IncludedNumberOfRankings; i++)
+            for (int i = 0; i < Plugin.StaticConfig.IncludedNumberOfRankings; i++)
             {
-                if (i - 1 < sortedTopPlayers.Length)
+                if (i < sortedTopPlayers.Length)
                 {
-                    Tuple<string, int> player = sortedTopPlayers[i - 1];
-                    result += $"{i}: {player.Item1}: {player.Item2}{Environment.NewLine}";
+                    Tuple<string, int> player = sortedTopPlayers[i];
+                    result += $"{i + 1}: {player.Item1}: {player.Item2}{Environment.NewLine}";
                 }
             }
             return result;
