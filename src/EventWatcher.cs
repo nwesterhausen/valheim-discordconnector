@@ -170,18 +170,29 @@ namespace DiscordConnector
         {
             if (Plugin.StaticConfig.EventStartMessageEnabled)
             {
-                string message = Plugin.StaticConfig.EventStartMessage
-                    .Replace("%EVENT_MSG%", Status.StartMessage)
-                    // .Replace("%PLAYERS%", Status.InvolvedPlayersList().Length == 0 ? "players" : string.Join(",", Status.InvolvedPlayersList()))
-                    .Replace("%PLAYERS%", "") //! Removed because of unreliability for now
-                    .Replace("%EVENT_START_MSG%", Status.StartMessage)
-                    .Replace("%EVENT_END_MSG%", Status.EndMessage);
-                if (Plugin.StaticConfig.EventStartPosEnabled)
+                string message = MessageTransformer.FormatEventStartMessage(
+                    Plugin.StaticConfig.EventResumedMesssage,
+                    Status.EndMessage,
+                    Status.StartMessage
+                // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
+                );
+                if (!Plugin.StaticConfig.EventStartPosEnabled)
+                {
+                    DiscordApi.SendMessage(message);
+                }
+                if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                 {
                     DiscordApi.SendMessage(message, Status.Pos);
                 }
                 else
                 {
+                    message = MessageTransformer.FormatEventStartMessage(
+                        Plugin.StaticConfig.EventResumedMesssage,
+                        Status.EndMessage,
+                        Status.StartMessage,
+                        // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
+                        Status.Pos
+                    );
                     DiscordApi.SendMessage(message);
                 }
             }
@@ -190,17 +201,29 @@ namespace DiscordConnector
         {
             if (Plugin.StaticConfig.EventPausedMessageEnabled)
             {
-                string message = Plugin.StaticConfig.EventPausedMesssage
-                    // .Replace("%PLAYERS%", Status.InvolvedPlayersList().Length == 0 ? "players" : string.Join(",", Status.InvolvedPlayersList()))
-                    .Replace("%PLAYERS%", "") //! Removed because of unreliability for now
-                    .Replace("%EVENT_START_MSG%", Status.StartMessage)
-                    .Replace("%EVENT_END_MSG%", Status.EndMessage);
-                if (Plugin.StaticConfig.EventPausedPosEnabled)
+                string message = MessageTransformer.FormatEventMessage(
+                    Plugin.StaticConfig.EventPausedMesssage,
+                    Status.EndMessage,
+                    Status.StartMessage
+                // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
+                );
+                if (!Plugin.StaticConfig.EventPausedPosEnabled)
+                {
+                    DiscordApi.SendMessage(message);
+                }
+                if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                 {
                     DiscordApi.SendMessage(message, Status.Pos);
                 }
                 else
                 {
+                    message = MessageTransformer.FormatEventMessage(
+                        Plugin.StaticConfig.EventPausedMesssage,
+                        Status.EndMessage,
+                        Status.StartMessage,
+                        // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
+                        Status.Pos
+                    );
                     DiscordApi.SendMessage(message);
                 }
             }
@@ -209,17 +232,29 @@ namespace DiscordConnector
         {
             if (Plugin.StaticConfig.EventResumedMessageEnabled)
             {
-                string message = Plugin.StaticConfig.EventResumedMesssage
-                    // .Replace("%PLAYERS%", Status.InvolvedPlayersList().Length == 0 ? "players" : string.Join(",", Status.InvolvedPlayersList()))
-                    .Replace("%PLAYERS%", "") //! Removed because of unreliability for now
-                    .Replace("%EVENT_START_MSG%", Status.StartMessage)
-                    .Replace("%EVENT_END_MSG%", Status.EndMessage);
-                if (Plugin.StaticConfig.EventResumedPosEnabled)
+                string message = MessageTransformer.FormatEventMessage(
+                    Plugin.StaticConfig.EventResumedMesssage,
+                    Status.EndMessage,
+                    Status.StartMessage
+                // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
+                );
+                if (!Plugin.StaticConfig.EventResumedPosEnabled)
+                {
+                    DiscordApi.SendMessage(message);
+                }
+                if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                 {
                     DiscordApi.SendMessage(message, Status.Pos);
                 }
                 else
                 {
+                    message = MessageTransformer.FormatEventMessage(
+                        Plugin.StaticConfig.EventResumedMesssage,
+                        Status.EndMessage,
+                        Status.StartMessage,
+                        // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
+                        Status.Pos
+                    );
                     DiscordApi.SendMessage(message);
                 }
             }
@@ -228,19 +263,29 @@ namespace DiscordConnector
         {
             if (Plugin.StaticConfig.EventStopMessageEnabled)
             {
-                string message = Plugin.StaticConfig.EventStopMesssage
-                    .Replace("%EVENT_MSG%", Status.EndMessage)
-                    // .Replace("%PLAYERS%", Status.InvolvedPlayersList().Length == 0 ? "players" : string.Join(",", Status.InvolvedPlayersList()))
-                    .Replace("%PLAYERS%", "") //! Removed because of unreliability for now
-                    .Replace("%EVENT_START_MSG%", Status.StartMessage)
-                    .Replace("%EVENT_END_MSG%", Status.EndMessage);
-                if (Plugin.StaticConfig.EventStopPosEnabled)
+                string message = MessageTransformer.FormatEventEndMessage(
+                    Plugin.StaticConfig.EventStopMesssage,
+                    Status.EndMessage,
+                    Status.StartMessage
+                // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
+                );
+                if (!Plugin.StaticConfig.EventStopPosEnabled)
                 {
-
+                    DiscordApi.SendMessage(message);
+                }
+                if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+                {
                     DiscordApi.SendMessage(message, Status.Pos);
                 }
                 else
                 {
+                    message = MessageTransformer.FormatEventEndMessage(
+                        Plugin.StaticConfig.EventStopMesssage,
+                        Status.EndMessage,
+                        Status.StartMessage,
+                        // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
+                        Status.Pos
+                    );
                     DiscordApi.SendMessage(message);
                 }
             }

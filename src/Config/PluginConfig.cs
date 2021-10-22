@@ -9,21 +9,26 @@ namespace DiscordConnector
         private MainConfig mainConfig;
         private MessagesConfig messagesConfig;
         private TogglesConfig togglesConfig;
+        private VariableConfig variableConfig;
 
         public PluginConfig(ConfigFile config)
         {
             // Set up the config file paths
             string messageConfigFilename = $"{PluginInfo.PLUGIN_ID}-{MessagesConfig.ConfigExtension}.cfg";
             string togglesConfigFilename = $"{PluginInfo.PLUGIN_ID}-{TogglesConfig.ConfigExtension}.cfg";
+            string variableConfigFilename = $"{PluginInfo.PLUGIN_ID}-{VariableConfig.ConfigExtension}.cfg";
             string messagesConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, messageConfigFilename);
             string togglesConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, togglesConfigFilename);
+            string variableConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, variableConfigFilename);
 
             Plugin.StaticLogger.LogDebug($"Messages config: {messagesConfigPath}");
             Plugin.StaticLogger.LogDebug($"Toggles config: {togglesConfigPath}");
+            Plugin.StaticLogger.LogDebug($"Variable config: {variableConfigPath}");
 
             mainConfig = new MainConfig(config);
             messagesConfig = new MessagesConfig(new BepInEx.Configuration.ConfigFile(messagesConfigPath, true));
             togglesConfig = new TogglesConfig(new BepInEx.Configuration.ConfigFile(togglesConfigPath, true));
+            variableConfig = new VariableConfig(new BepInEx.Configuration.ConfigFile(variableConfigPath, true));
 
             Plugin.StaticLogger.LogDebug("Configuration Loaded");
             Plugin.StaticLogger.LogDebug(ConfigAsJson());
@@ -135,14 +140,26 @@ namespace DiscordConnector
         public string EventPausedMesssage => messagesConfig.EventPausedMesssage;
         public string EventResumedMesssage => messagesConfig.EventResumedMesssage;
 
+        // Variable Definition
+        public string UserVariable => variableConfig.UserVariable;
+        public string UserVariable1 => variableConfig.UserVariable1;
+        public string UserVariable2 => variableConfig.UserVariable2;
+        public string UserVariable3 => variableConfig.UserVariable3;
+        public string UserVariable4 => variableConfig.UserVariable4;
+        public string UserVariable5 => variableConfig.UserVariable5;
+        public string UserVariable6 => variableConfig.UserVariable6;
+        public string UserVariable7 => variableConfig.UserVariable7;
+        public string UserVariable8 => variableConfig.UserVariable8;
+        public string UserVariable9 => variableConfig.UserVariable9;
+
         public string ConfigAsJson()
         {
             string jsonString = "{";
 
-            // Discord Settings
             jsonString += $"\"Config.Main\":{mainConfig.ConfigAsJson()},";
             jsonString += $"\"Config.Messages\":{messagesConfig.ConfigAsJson()},";
             jsonString += $"\"Config.Toggles\":{togglesConfig.ConfigAsJson()}";
+            jsonString += $"\"Config.Variables\":{variableConfig.ConfigAsJson()}";
 
             jsonString += "}";
             return jsonString;

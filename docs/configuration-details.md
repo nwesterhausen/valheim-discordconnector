@@ -4,27 +4,52 @@ The details on where configuration settings are and what they do: how to fine-tu
 
 DiscordConnector uses multiple configuration files to make find the setting you want to change faster, and hopefully easier. The configuration is divided into the following files:
 
-| Configuration File                                  | Details                 | Purpose                                                      |
-| --------------------------------------------------- | ----------------------- | ------------------------------------------------------------ |
-| `games.nwest.valheim.discordconnector.cfg`          | [Details](#main-config) | Master settings, including the main webhook and turning settings on or off globally |
-| `games.nwest.valheim.discordconnector-messages.cfg` | [Details](#messages)    | The messages used/chosen from when DiscordConnector sends messages to Discord |
+| Configuration File                                  | Details                 | Purpose                                                                              |
+| --------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------ |
+| `games.nwest.valheim.discordconnector.cfg`          | [Details](#main-config) | Master settings, including the main webhook and turning settings on or off globally  |
+| `games.nwest.valheim.discordconnector-messages.cfg` | [Details](#messages)    | The messages used/chosen from when DiscordConnector sends messages to Discord        |
 | `games.nwest.valheim.discordconnector-toggles.cfg`  | [Details](#toggles)     | Used to turn individual notifications and/or their included extra details on or off. |
 
 ## Main Config
 
 Filename `games.nwest.valheim.discordconnector.cfg`
 
-| Option                                                  | Default | Description                                                  |
-| ------------------------------------------------------- | ------- | ------------------------------------------------------------ |
-| Webhook URL                                             | (none)  | The main Discord webhook URL to send notifications/messages to. |
-| Use fancier discord messages                            | false   | Set to true to enable using embeds in the Discord messages. If left false, all messages will remain plain strings (except for the leaderboard). |
-| Allow positions to be sent                              | true    | Set to false to prevent any positions/coordinates from being sent, even if you have enabled some in toggles. If this is true, it can be overridden per message in the toggles config file. |
-| Ignored players                                         | (none)  | List of playernames to never send a discord message for (they also won't be tracked in stats). This list should be semicolon (`;`) separated. |
-| Collect stats                                           | true    | When this setting is enabled, DiscordConnector will create a file in the game root directory "records.json" where it will record the number of times each player joins, leaves, dies, shouts or pings. If this is set to false, DiscordConnector will not keep a record of number of times each player does something it alerts to. If this is false, it takes precendent over the "Send leaderboard updates" setting and no leaderboards will get sent. |
-| Send leaderboard updates                                | false   | If you set this to true, that will enable DiscordConnector to send a leaderboard for stats to Discord on the set interval |
-| Leaderboard update interval                             | 600     | Time in minutes between each leaderboard update sent to Discord. |
-| Announce Player Firsts                                  | true    | Disable this setting to disable all extra announcements the first time each player does something. (Overwrites any individual setting.) |
-| How many places to list in the top ranking leaderboards | 3       | Set how many places (1st, 2nd, 3rd by default) to display when sending the ranked leaderboard. |
+| Option                                                  | Default | Description                                                                                                                                      |
+| ------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Webhook URL                                             | (none)  | The main Discord webhook URL to send notifications/messages to.                                                                                  |
+| Use fancier discord messages                            | false   | Set to true to enable using embeds in the Discord messages. If left false, all messages will remain plain strings (except for the leaderboard).  |
+| Allow positions to be sent                              | true    | Set to false to prevent any positions/coordinates from being sent. If this is true, it can be overridden per message in the toggles config file. |
+| Ignored players                                         | (none)  | List of playernames to never send a discord message for (they also won't be tracked in stats). This list should be semicolon (`;`) separated.    |
+| Collect stats                                           | true    | When this setting is enabled, DiscordConnector will record basic stats (leave, join, ping, shout, death) about players.                          |
+| Send leaderboard updates                                | false   | If you set this to true, that will enable DiscordConnector to send a leaderboard for stats to Discord on the set interval                        |
+| Leaderboard update interval                             | 600     | Time in minutes between each leaderboard update sent to Discord.                                                                                 |
+| Announce Player Firsts                                  | true    | Disable this setting to disable all extra announcements the first time each player does something. (Overwrites any individual setting.)          |
+| How many places to list in the top ranking leaderboards | 3       | Set how many places (1st, 2nd, 3rd by default) to display when sending the ranked leaderboard.                                                   |
+
+!!! info "Stat Collection Details"
+
+     Stat collection will create a file in the game root directory "records.json" where it will record the number of times each player joins, leaves, dies, shouts or pings.
+     If this is set to false, DiscordConnector will not keep a record of number of times each player does something it alerts to.
+     If this is false, it takes precedent over the "Send leaderboard updates" setting and no leaderboards will get sent.
+
+## Variable Definitions
+
+Filename `games.nwest.valheim.discordconnector-variables.cfg`
+
+You may assign strings to these variables to reference them in any messages.
+
+| Option              | Default | Description                                                                        |
+| ------------------- | ------- | ---------------------------------------------------------------------------------- |
+| Defined Variable 1  | (none)  | This variable can be reference in any of the message content settings with %VAR1%  |
+| Defined Variable 2  | (none)  | This variable can be reference in any of the message content settings with %VAR2%  |
+| Defined Variable 3  | (none)  | This variable can be reference in any of the message content settings with %VAR3%  |
+| Defined Variable 4  | (none)  | This variable can be reference in any of the message content settings with %VAR4%  |
+| Defined Variable 5  | (none)  | This variable can be reference in any of the message content settings with %VAR5%  |
+| Defined Variable 6  | (none)  | This variable can be reference in any of the message content settings with %VAR6%  |
+| Defined Variable 7  | (none)  | This variable can be reference in any of the message content settings with %VAR7%  |
+| Defined Variable 8  | (none)  | This variable can be reference in any of the message content settings with %VAR8%  |
+| Defined Variable 9  | (none)  | This variable can be reference in any of the message content settings with %VAR9%  |
+| Defined Variable 10 | (none)  | This variable can be reference in any of the message content settings with %VAR10% |
 
 ## Messages
 
@@ -37,6 +62,10 @@ If you wanted to have a couple different messages for when a player dies (always
 ```
 Player Death Message = %PLAYER_NAME% has died a beautiful death!;%PLAYER_NAME% went to their end with honor!;%PLAYER_NAME% died.
 ```
+
+!!! Tip
+
+    Any of the variables in [Variable Definitions](#variable-definitions) from the variables config file can be referenced in any message.
 
 ### Messages.Server
 
@@ -51,7 +80,7 @@ In the server messages, anywhere in the message you can use the special string `
 
 ### Messages.Players
 
-In the player messages, anywhere in the message you put `%PLAYER_NAME%`, when the message is sent it will be replaced with that player's name.
+In the player messages, anywhere in the message you put `%PLAYER_NAME%`, when the message is sent it will be replaced with that player's name. You can also use `%POS%` which will be replaced with their position if the position toggle is enabled,  (otherwise it will be added at the end).
 
 | Option               | Default                            | Description                                                                                                                                  |
 | -------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -139,35 +168,34 @@ The toggle configuration is a collection of on/off switches for all the message 
 ### Toggles.Leaderboard
 
 !!! Info
-	All leaderboard toggles are restricted by the `Send leaderboard updates` toggle in the [Main config](#main-config). 
+All leaderboard toggles are restricted by the `Send leaderboard updates` toggle in the [Main config](#main-config).
 
 For the ranked leadboards, you choose how many ranks to calculate and display with the `How many places to list in the top ranking leaderboards` setting in the [Main Config](#main-config).
 
-| Option                                        | Default | Description                                                  |
-| --------------------------------------------- | ------- | ------------------------------------------------------------ |
-| Send Periodic Leaderboard for Player Deaths   | true    | If enabled, will send a ranked leaderboard for player deaths at the interval. |
-| Send Periodic Leaderboard for Player Pings    | false   | If enabled, will send a ranked leaderboard for player pings at the interval. |
+| Option                                        | Default | Description                                                                     |
+| --------------------------------------------- | ------- | ------------------------------------------------------------------------------- |
+| Send Periodic Leaderboard for Player Deaths   | true    | If enabled, will send a ranked leaderboard for player deaths at the interval.   |
+| Send Periodic Leaderboard for Player Pings    | false   | If enabled, will send a ranked leaderboard for player pings at the interval.    |
 | Send Periodic Leaderboard for Player Sessions | false   | If enabled, will send a ranked leaderboard for player sessions at the interval. |
-| Send Periodic Leaderboard for Player Shouts   | false   | If enabled, will send a ranked leaderboard for player shouts at the interval. |
-
+| Send Periodic Leaderboard for Player Shouts   | false   | If enabled, will send a ranked leaderboard for player shouts at the interval.   |
 
 ### Toggles.Leaderboard.Lowest
 
-| Option                                         | Default | Description                                                  |
-| ---------------------------------------------- | ------- | ------------------------------------------------------------ |
-| Include Least Deaths in Periodic Leaderboard   | true    | If enabled, will include player with the least deaths at the interval. |
-| Include Least Pings in Periodic Leaderboard    | false   | If enabled, will include player with the least pings at the interval. |
+| Option                                         | Default | Description                                                              |
+| ---------------------------------------------- | ------- | ------------------------------------------------------------------------ |
+| Include Least Deaths in Periodic Leaderboard   | true    | If enabled, will include player with the least deaths at the interval.   |
+| Include Least Pings in Periodic Leaderboard    | false   | If enabled, will include player with the least pings at the interval.    |
 | Include Least Sessions in Periodic Leaderboard | false   | If enabled, will include player with the least sessions at the interval. |
-| Include Least Shouts in Periodic Leaderboard   | false   | If enabled, will include player with the least shouts at the interval. |
+| Include Least Shouts in Periodic Leaderboard   | false   | If enabled, will include player with the least shouts at the interval.   |
 
 ### Toggles.Leaderboard.Highest
 
-| Option                                        | Default | Description                                                  |
-| --------------------------------------------- | ------- | ------------------------------------------------------------ |
-| Include Most Deaths in Periodic Leaderboard   | true    | If enabled, will include player with the most deaths at the interval. |
-| Include Most Pings in Periodic Leaderboard    | false   | If enabled, will include player with the most pings at the interval. |
+| Option                                        | Default | Description                                                             |
+| --------------------------------------------- | ------- | ----------------------------------------------------------------------- |
+| Include Most Deaths in Periodic Leaderboard   | true    | If enabled, will include player with the most deaths at the interval.   |
+| Include Most Pings in Periodic Leaderboard    | false   | If enabled, will include player with the most pings at the interval.    |
 | Include Most Sessions in Periodic Leaderboard | false   | If enabled, will include player with the most sessions at the interval. |
-| Include Most Shouts in Periodic Leaderboard   | false   | If enabled, will include player with the most shouts at the interval. |
+| Include Most Shouts in Periodic Leaderboard   | false   | If enabled, will include player with the most shouts at the interval.   |
 
 ### Toggles.PlayerFirsts
 
