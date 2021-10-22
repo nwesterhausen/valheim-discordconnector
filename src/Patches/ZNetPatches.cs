@@ -17,6 +17,11 @@ namespace DiscordConnector.Patches
                         Plugin.StaticConfig.LoadedMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                     );
                 }
+                
+                if (Plugin.IsHeadless())
+                {
+                    Plugin.StaticEventWatcher.Activate();
+                }
             }
         }
 
