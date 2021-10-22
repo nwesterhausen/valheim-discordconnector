@@ -13,6 +13,7 @@ namespace DiscordConnector
         internal static PluginConfig StaticConfig;
         internal static Records StaticRecords;
         internal static Leaderboard StaticLeaderboards;
+        internal static EventWatcher StaticEventWatcher;
         internal static string PublicIpAddress;
         private Harmony _harmony;
 
@@ -31,6 +32,10 @@ namespace DiscordConnector
             if (!IsHeadless())
             {
                 StaticLogger.LogInfo("Not running on a dedicated server, some features may break -- please report them!");
+            }
+            else
+            {
+                StaticEventWatcher = new EventWatcher();
             }
 
             if (string.IsNullOrEmpty(StaticConfig.WebHookURL))

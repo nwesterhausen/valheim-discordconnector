@@ -75,14 +75,19 @@ In the player messages, anywhere in the message you put `%PLAYER_NAME%`, when th
 
 ### Messages.Events
 
-In the event messages, anywhere in the message you can use the string vars `%EVENT_START_MSG%` and `%EVENT_END_MSG%` (or `%EVENT_MSG%` which is uses the start message when the event starts and the end message when the event ends.) You can use `%PLAYERS%` to include a comma separated list of players who are in the event area (this likely will be empty if you include it when the event is paused).
+In the event messages, anywhere in the message you can use the string vars `%EVENT_START_MSG%` and `%EVENT_END_MSG%` (or `%EVENT_MSG%` which is uses the start message when the event starts and the end message when the event ends.) ~~You can use `%PLAYERS%` to include a comma separated list of players who are in the event area (this likely will be empty if you include it when the event is paused).~~
+
+!!! warning "%PLAYERS% variable removed in 1.4.0"
+
+    Due to how the server keeps track of where players are (only if they are sharing location), the `%PLAYERS%` variable has been disabled indefinitely until a reliable way to gather player positions is developed.
+
 
 | Option                | Default                                                                                          | Description                                                               |
 | --------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| Event Start Message   | `**Event**: %EVENT_MSG% around %PLAYERS%`                                                        | Message sent when a random event starts.                                  |
+| Event Start Message   | `**Event**: %EVENT_MSG%`                                                        | Message sent when a random event starts.                                  |
 | Event Stop Message    | `**Event**: %EVENT_MSG%`                                                                         | Message sent when a random event stops or ends.                           |
 | Event Paused Message  | `**Event**: %EVENT_END_MSG% -- for now! (Currently paused due to no players in the event area.)` | Message sent when a random event is paused because players left the area. |
-| Event Resumed Message | `**Event**: %EVENT_START_MSG% around %PLAYERS%`                                                  | Message sent when a random event resumes after being paused.              |
+| Event Resumed Message | `**Event**: %EVENT_START_MSG%`                                                  | Message sent when a random event resumes after being paused.              |
 
 ## Toggles
 

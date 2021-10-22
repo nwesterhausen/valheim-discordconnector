@@ -33,6 +33,10 @@ namespace DiscordConnector.Patches
                         Plugin.StaticConfig.StopMessage.Replace("%PUBLICIP%", Plugin.PublicIpAddress)
                         );
                 }
+                if (Plugin.IsHeadless())
+                {
+                    Plugin.StaticEventWatcher.Dispose();
+                }
             }
             private static void Postfix()
             {
