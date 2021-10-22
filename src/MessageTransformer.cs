@@ -4,17 +4,17 @@ namespace DiscordConnector
 {
     internal static class MessageTransformer
     {
-        private const string PUBLIC_IP = "%PUBLICIP";
-        private const string VAR = "%VAR1";
-        private const string VAR_1 = "%VAR2";
-        private const string VAR_2 = "%VAR3";
-        private const string VAR_3 = "%VAR4";
-        private const string VAR_4 = "%VAR5";
-        private const string VAR_5 = "%VAR6";
-        private const string VAR_6 = "%VAR7";
-        private const string VAR_7 = "%VAR8";
-        private const string VAR_8 = "%VAR9";
-        private const string VAR_9 = "%VAR10";
+        private const string PUBLIC_IP = "%PUBLICIP%";
+        private const string VAR = "%VAR1%";
+        private const string VAR_1 = "%VAR2%";
+        private const string VAR_2 = "%VAR3%";
+        private const string VAR_3 = "%VAR4%";
+        private const string VAR_4 = "%VAR5%";
+        private const string VAR_5 = "%VAR6%";
+        private const string VAR_6 = "%VAR7%";
+        private const string VAR_7 = "%VAR8%";
+        private const string VAR_8 = "%VAR9%";
+        private const string VAR_9 = "%VAR10%";
         private const string PLAYER_NAME = "%PLAYER_NAME%";
         private const string SHOUT = "%SHOUT%";
         private const string POS = "%POS%";
@@ -63,36 +63,36 @@ namespace DiscordConnector
             return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, pos)
                 .Replace(SHOUT, shout);
         }
-        public static string FormatEventMessage(string rawMessage, string eventStartMsg, string eventEndMsg, string players)
+        public static string FormatEventMessage(string rawMessage, string eventStartMsg, string eventEndMsg)
         {
             return MessageTransformer.ReplaceVariables(rawMessage)
                 .Replace(EVENT_START_MSG, eventStartMsg)
-                .Replace(EVENT_END_MSG, eventEndMsg)
-                .Replace(EVENT_PLAYERS, players);
+                .Replace(EVENT_END_MSG, eventEndMsg);
+            //.Replace(EVENT_PLAYERS, players); //! Removed until re can reliably poll player locations
         }
-        public static string FormatEventMessage(string rawMessage, string eventStartMsg, string eventEndMsg, string players, Vector3 pos)
+        public static string FormatEventMessage(string rawMessage, string eventStartMsg, string eventEndMsg, Vector3 pos)
         {
-            return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, players)
+            return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg)
                 .Replace(POS, $"{pos}");
         }
-        public static string FormatEventStartMessage(string rawMessage, string eventStartMsg, string eventEndMsg, string players)
+        public static string FormatEventStartMessage(string rawMessage, string eventStartMsg, string eventEndMsg)
         {
-            return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, players)
+            return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg)
                 .Replace(EVENT_MSG, eventStartMsg);
         }
-        public static string FormatEventEndMessage(string rawMessage, string eventStartMsg, string eventEndMsg, string players)
+        public static string FormatEventEndMessage(string rawMessage, string eventStartMsg, string eventEndMsg)
         {
-            return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, players)
+            return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg)
                 .Replace(EVENT_MSG, eventEndMsg);
         }
-        public static string FormatEventStartMessage(string rawMessage, string eventStartMsg, string eventEndMsg, string players, Vector3 pos)
+        public static string FormatEventStartMessage(string rawMessage, string eventStartMsg, string eventEndMsg, Vector3 pos)
         {
-            return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, players, pos)
+            return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, pos)
                 .Replace(EVENT_MSG, eventStartMsg);
         }
-        public static string FormatEventEndMessage(string rawMessage, string eventStartMsg, string eventEndMsg, string players, Vector3 pos)
+        public static string FormatEventEndMessage(string rawMessage, string eventStartMsg, string eventEndMsg, Vector3 pos)
         {
-            return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, players, pos)
+            return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, pos)
                 .Replace(EVENT_MSG, eventEndMsg);
         }
     }

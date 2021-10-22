@@ -46,8 +46,8 @@ namespace DiscordConnector.Patches
                         string message = MessageTransformer.FormatEventMessage(
                             Plugin.StaticConfig.EventResumedMesssage,
                             Localization.instance.Localize(__instance.m_endMessage),
-                            Localization.instance.Localize(__instance.m_startMessage),
-                            string.Join(",", involvedPlayers.ToArray())
+                            Localization.instance.Localize(__instance.m_startMessage)
+                        // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
                         );
                         if (!Plugin.StaticConfig.EventResumedPosEnabled)
                         {
@@ -63,7 +63,7 @@ namespace DiscordConnector.Patches
                                 Plugin.StaticConfig.EventResumedMesssage,
                                 Localization.instance.Localize(__instance.m_endMessage),
                                 Localization.instance.Localize(__instance.m_startMessage),
-                                string.Join(",", involvedPlayers.ToArray()),
+                                // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
                                 pos
                             );
                             DiscordApi.SendMessage(message);
@@ -77,8 +77,8 @@ namespace DiscordConnector.Patches
                         string message = MessageTransformer.FormatEventStartMessage(
                             Plugin.StaticConfig.EventResumedMesssage,
                             Localization.instance.Localize(__instance.m_endMessage),
-                            Localization.instance.Localize(__instance.m_startMessage),
-                            string.Join(",", involvedPlayers.ToArray())
+                            Localization.instance.Localize(__instance.m_startMessage)
+                        // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
                         );
                         if (!Plugin.StaticConfig.EventStartPosEnabled)
                         {
@@ -94,7 +94,7 @@ namespace DiscordConnector.Patches
                                 Plugin.StaticConfig.EventResumedMesssage,
                                 Localization.instance.Localize(__instance.m_endMessage),
                                 Localization.instance.Localize(__instance.m_startMessage),
-                                string.Join(",", involvedPlayers.ToArray()),
+                                // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
                                 pos
                             );
                             DiscordApi.SendMessage(message);
@@ -138,8 +138,8 @@ namespace DiscordConnector.Patches
                         string message = MessageTransformer.FormatEventMessage(
                             Plugin.StaticConfig.EventPausedMesssage,
                             Localization.instance.Localize(__instance.m_endMessage),
-                            Localization.instance.Localize(__instance.m_startMessage),
-                            string.Join(",", involvedPlayers.ToArray())
+                            Localization.instance.Localize(__instance.m_startMessage)
+                        // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
                         );
                         if (!Plugin.StaticConfig.EventPausedPosEnabled)
                         {
@@ -155,7 +155,7 @@ namespace DiscordConnector.Patches
                                 Plugin.StaticConfig.EventPausedMesssage,
                                 Localization.instance.Localize(__instance.m_endMessage),
                                 Localization.instance.Localize(__instance.m_startMessage),
-                                string.Join(",", involvedPlayers.ToArray()),
+                                // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
                                 pos
                             );
                             DiscordApi.SendMessage(message);
@@ -169,8 +169,8 @@ namespace DiscordConnector.Patches
                         string message = MessageTransformer.FormatEventEndMessage(
                             Plugin.StaticConfig.EventStopMesssage,
                             Localization.instance.Localize(__instance.m_endMessage),
-                            Localization.instance.Localize(__instance.m_startMessage),
-                            string.Join(",", involvedPlayers.ToArray())
+                            Localization.instance.Localize(__instance.m_startMessage)
+                        // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
                         );
                         if (!Plugin.StaticConfig.EventStopPosEnabled)
                         {
@@ -186,7 +186,7 @@ namespace DiscordConnector.Patches
                                 Plugin.StaticConfig.EventStopMesssage,
                                 Localization.instance.Localize(__instance.m_endMessage),
                                 Localization.instance.Localize(__instance.m_startMessage),
-                                string.Join(",", involvedPlayers.ToArray()),
+                                // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
                                 pos
                             );
                             DiscordApi.SendMessage(message);
