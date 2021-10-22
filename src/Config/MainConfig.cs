@@ -10,6 +10,7 @@ namespace DiscordConnector.Config
         private static List<String> mutedPlayers;
         private const string MAIN_SETTINGS = "Main Settings";
 
+        // Main Settings
         private ConfigEntry<string> webhookUrl;
         private ConfigEntry<bool> discordEmbedMessagesToggle;
         private ConfigEntry<string> mutedDiscordUserlist;
@@ -19,8 +20,6 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> sendPositionsToggle;
         private ConfigEntry<bool> announcePlayerFirsts;
         private ConfigEntry<int> numberRankingsListed;
-
-
 
         public MainConfig(ConfigFile configFile)
         {
@@ -87,6 +86,7 @@ namespace DiscordConnector.Config
                 3,
                 "Set how many places (1st, 2nd, 3rd by default) to display when sending the ranked leaderboard.");
 
+
             config.Save();
         }
 
@@ -117,5 +117,6 @@ namespace DiscordConnector.Config
         public List<string> MutedPlayers => mutedPlayers;
         public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
         public int IncludedNumberOfRankings => numberRankingsListed.Value;
+
     }
 }
