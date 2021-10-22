@@ -147,7 +147,7 @@ namespace DiscordConnector
             }
             else
             {
-                Plugin.StaticLogger.LogDebug("Event check ran, no current events (or world isn't loaded yet).");
+                // Plugin.StaticLogger.LogDebug("Event check ran, no current events (or world isn't loaded yet).");
 
                 /// <summary>
                 /// This checks for what has changed from the last time we checked the Random Event status.
