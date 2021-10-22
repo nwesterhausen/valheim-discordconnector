@@ -150,7 +150,7 @@ namespace DiscordConnector.Config
                 "Set the message that will be sent when a random event starts on the server. Sending the coordinates is enabled by default in the toggles config." + Environment.NewLine +
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
                 "The special string %EVENT_MSG% will be replaced with the message that is displayed on the screen when the event starts."); // + Environment.NewLine +
-                // "The special string %PLAYERS% will be replaced with a list of players in the event area."); //! Removed due to unreliability
+                                                                                                                                            // "The special string %PLAYERS% will be replaced with a list of players in the event area."); //! Removed due to unreliability
             eventStopMessage = config.Bind<string>(EVENT_MESSAGES,
                 "Event Stop Message",
                 "**Event**: %EVENT_MSG%",
@@ -171,7 +171,7 @@ namespace DiscordConnector.Config
                 "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
                 "The special string %EVENT_START_MSG% will be replaced with the message that is displayed on the screen when the event starts." + Environment.NewLine +
                 "The special string %EVENT_END_MSG% will be replaced with the message that is displayed on the screen when the event ends."); // + Environment.NewLine +
-                // "The special string %PLAYERS% will be replaced with a list of players in the event area."); //! Removed due to unreliability
+                                                                                                                                              // "The special string %PLAYERS% will be replaced with a list of players in the event area."); //! Removed due to unreliability
 
             config.Save();
         }
