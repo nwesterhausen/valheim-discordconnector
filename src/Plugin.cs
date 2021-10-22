@@ -27,7 +27,6 @@ namespace DiscordConnector
             StaticLogger = Logger;
             StaticConfig = new PluginConfig(Config);
             StaticRecords = new Records(Paths.GameRootPath);
-            StaticEventWatcher = new EventWatcher();
         }
 
         private void Awake()
@@ -37,6 +36,10 @@ namespace DiscordConnector
             if (!IsHeadless())
             {
                 StaticLogger.LogInfo("Not running on a dedicated server, some features may break -- please report them!");
+            }
+            else
+            {
+                StaticEventWatcher = new EventWatcher();
             }
 
             if (string.IsNullOrEmpty(StaticConfig.WebHookURL))

@@ -54,7 +54,7 @@ namespace DiscordConnector
             }
         }
 
-        private bool WasRunning, HadActiveEvent, FirstRun;
+        private bool WasRunning, HadActiveEvent;
         private float PreviousElapsed;
         private System.Timers.Timer randEventTimer;
 
@@ -63,13 +63,16 @@ namespace DiscordConnector
             WasRunning = false;
             HadActiveEvent = false;
             PreviousElapsed = 0;
-            FirstRun = true;
 
 
             randEventTimer = new System.Timers.Timer();
             randEventTimer.Elapsed += CheckRandomEvent;
             randEventTimer.Interval = 1 * 1000; // 1 seconds
         }
+
+        /// <summary>
+        /// Activate the EventWatcher after the Event System has loaded! Otherwise it will provide false-positives.
+        /// </summary>
         public void Activate()
         {
             randEventTimer.Start();
@@ -86,19 +89,9 @@ namespace DiscordConnector
                 /// Printing a detailed debug message with all the pieces we gather from Status.
                 /// </summary>
                 string message = $"Currently an event: {Status.HaveActiveEvent}. {Status.StartMessage} | {Status.EndMessage}" + Environment.NewLine +
-                $"Event: {Status.Name} at {Status.Pos}. Status.IsRunning: {Status.IsRunning}. FirstRun: {FirstRun}. {Status.Elapsed} of {Status.Duration} seconds completed." + Environment.NewLine +
+                $"Event: {Status.Name} at {Status.Pos}. Status.IsRunning: {Status.IsRunning}. {Status.Elapsed} of {Status.Duration} seconds completed." + Environment.NewLine +
                 $"Involved Players: {string.Join(",", Status.InvolvedPlayersList())}";
                 Plugin.StaticLogger.LogDebug(message);
-
-                /// <summary>
-                /// On the first run of this check, it will always be when the world has finished loading (or at most delays the first event notification by 1s)
-                /// </summary>
-                if (FirstRun)
-                {
-                    TriggerEventPaused();
-                    FirstRun = false;
-                    return;
-                }
 
                 if (Status.IsRunning)
                 {
@@ -179,7 +172,8 @@ namespace DiscordConnector
             {
                 string message = Plugin.StaticConfig.EventStartMessage
                     .Replace("%EVENT_MSG%", Status.StartMessage)
-                    .Replace("%PLAYERS%", Status.InvolvedPlayersList().Length == 0 ? "players" : string.Join(",", Status.InvolvedPlayersList()))
+                    // .Replace("%PLAYERS%", Status.InvolvedPlayersList().Length == 0 ? "players" : string.Join(",", Status.InvolvedPlayersList()))
+                    .Replace("%PLAYERS%", "") //! Removed because of unreliability for now
                     .Replace("%EVENT_START_MSG%", Status.StartMessage)
                     .Replace("%EVENT_END_MSG%", Status.EndMessage);
                 if (Plugin.StaticConfig.EventStartPosEnabled)
@@ -197,9 +191,10 @@ namespace DiscordConnector
             if (Plugin.StaticConfig.EventPausedMessageEnabled)
             {
                 string message = Plugin.StaticConfig.EventPausedMesssage
+                    // .Replace("%PLAYERS%", Status.InvolvedPlayersList().Length == 0 ? "players" : string.Join(",", Status.InvolvedPlayersList()))
+                    .Replace("%PLAYERS%", "") //! Removed because of unreliability for now
                     .Replace("%EVENT_START_MSG%", Status.StartMessage)
-                    .Replace("%EVENT_END_MSG%", Status.EndMessage)
-                    .Replace("%PLAYERS%", Status.InvolvedPlayersList().Length == 0 ? "players" : string.Join(",", Status.InvolvedPlayersList()));
+                    .Replace("%EVENT_END_MSG%", Status.EndMessage);
                 if (Plugin.StaticConfig.EventPausedPosEnabled)
                 {
                     DiscordApi.SendMessage(message, Status.Pos);
@@ -215,7 +210,8 @@ namespace DiscordConnector
             if (Plugin.StaticConfig.EventResumedMessageEnabled)
             {
                 string message = Plugin.StaticConfig.EventResumedMesssage
-                    .Replace("%PLAYERS%", Status.InvolvedPlayersList().Length == 0 ? "players" : string.Join(",", Status.InvolvedPlayersList()))
+                    // .Replace("%PLAYERS%", Status.InvolvedPlayersList().Length == 0 ? "players" : string.Join(",", Status.InvolvedPlayersList()))
+                    .Replace("%PLAYERS%", "") //! Removed because of unreliability for now
                     .Replace("%EVENT_START_MSG%", Status.StartMessage)
                     .Replace("%EVENT_END_MSG%", Status.EndMessage);
                 if (Plugin.StaticConfig.EventResumedPosEnabled)
@@ -234,7 +230,8 @@ namespace DiscordConnector
             {
                 string message = Plugin.StaticConfig.EventStopMesssage
                     .Replace("%EVENT_MSG%", Status.EndMessage)
-                    .Replace("%PLAYERS%", Status.InvolvedPlayersList().Length == 0 ? "players" : string.Join(",", Status.InvolvedPlayersList()))
+                    // .Replace("%PLAYERS%", Status.InvolvedPlayersList().Length == 0 ? "players" : string.Join(",", Status.InvolvedPlayersList()))
+                    .Replace("%PLAYERS%", "") //! Removed because of unreliability for now
                     .Replace("%EVENT_START_MSG%", Status.StartMessage)
                     .Replace("%EVENT_END_MSG%", Status.EndMessage);
                 if (Plugin.StaticConfig.EventStopPosEnabled)
