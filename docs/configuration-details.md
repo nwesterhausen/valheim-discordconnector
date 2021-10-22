@@ -4,11 +4,12 @@ The details on where configuration settings are and what they do: how to fine-tu
 
 DiscordConnector uses multiple configuration files to make find the setting you want to change faster, and hopefully easier. The configuration is divided into the following files:
 
-| Configuration File                                  | Details                 | Purpose                                                                              |
-| --------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------ |
-| `games.nwest.valheim.discordconnector.cfg`          | [Details](#main-config) | Master settings, including the main webhook and turning settings on or off globally  |
-| `games.nwest.valheim.discordconnector-messages.cfg` | [Details](#messages)    | The messages used/chosen from when DiscordConnector sends messages to Discord        |
-| `games.nwest.valheim.discordconnector-toggles.cfg`  | [Details](#toggles)     | Used to turn individual notifications and/or their included extra details on or off. |
+| Configuration File                                   | Details                          | Purpose                                                                              |
+| ---------------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------ |
+| `games.nwest.valheim.discordconnector.cfg`           | [Details](#main-config)          | Master settings, including the main webhook and turning settings on or off globally  |
+| `games.nwest.valheim.discordconnector-messages.cfg`  | [Details](#messages)             | The messages used/chosen from when DiscordConnector sends messages to Discord        |
+| `games.nwest.valheim.discordconnector-toggles.cfg`   | [Details](#toggles)              | Used to turn individual notifications and/or their included extra details on or off. |
+| `games.nwest.valheim.discordconnector-variables.cfg` | [Details](#variable-definitions) | Used to assign strings to variables which can be referenced any messages             |
 
 ## Main Config
 
@@ -80,7 +81,11 @@ In the server messages, anywhere in the message you can use the special string `
 
 ### Messages.Players
 
-In the player messages, anywhere in the message you put `%PLAYER_NAME%`, when the message is sent it will be replaced with that player's name. You can also use `%POS%` which will be replaced with their position if the position toggle is enabled,  (otherwise it will be added at the end).
+In the player messages, anywhere in the message you put `%PLAYER_NAME%`, when the message is sent it will be replaced with that player's name. You can also use `%POS%` which will be replaced with their position if the position toggle is enabled.
+
+!!! Tip
+
+    When using the `%POS%` variable, in a Ping message it will reflect the location that was pinged, not the player's location. If you enabled the position toggle is enabled for these messages but you do not include the `%POS%` variable, the position will be appended to the message (the default behavior before the addition of `%POS%`).
 
 | Option               | Default                            | Description                                                                                                                                  |
 | -------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -104,19 +109,22 @@ In the player messages, anywhere in the message you put `%PLAYER_NAME%`, when th
 
 ### Messages.Events
 
-In the event messages, anywhere in the message you can use the string vars `%EVENT_START_MSG%` and `%EVENT_END_MSG%` (or `%EVENT_MSG%` which is uses the start message when the event starts and the end message when the event ends.) ~~You can use `%PLAYERS%` to include a comma separated list of players who are in the event area (this likely will be empty if you include it when the event is paused).~~
+In the event messages, anywhere in the message you can use the string vars `%EVENT_START_MSG%` and `%EVENT_END_MSG%` (or `%EVENT_MSG%` which is uses the start message when the event starts and the end message when the event ends.) You can also use `%POS%` which will be replaced with their position if the position toggle is enabled.
 
-!!! warning "%PLAYERS% variable removed in 1.4.0"
+!!! Tip
+
+    If you enabled the position toggle is enabled for these messages but you do not include the `%POS%` variable, the position will be appended to the message (the default behavior before the addition of `%POS%`).
+
+!!! warning "`%PLAYERS%` variable removed in 1.4.0"
 
     Due to how the server keeps track of where players are (only if they are sharing location), the `%PLAYERS%` variable has been disabled indefinitely until a reliable way to gather player positions is developed.
 
-
 | Option                | Default                                                                                          | Description                                                               |
 | --------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| Event Start Message   | `**Event**: %EVENT_MSG%`                                                        | Message sent when a random event starts.                                  |
+| Event Start Message   | `**Event**: %EVENT_MSG%`                                                                         | Message sent when a random event starts.                                  |
 | Event Stop Message    | `**Event**: %EVENT_MSG%`                                                                         | Message sent when a random event stops or ends.                           |
 | Event Paused Message  | `**Event**: %EVENT_END_MSG% -- for now! (Currently paused due to no players in the event area.)` | Message sent when a random event is paused because players left the area. |
-| Event Resumed Message | `**Event**: %EVENT_START_MSG%`                                                  | Message sent when a random event resumes after being paused.              |
+| Event Resumed Message | `**Event**: %EVENT_START_MSG%`                                                                   | Message sent when a random event resumes after being paused.              |
 
 ## Toggles
 
