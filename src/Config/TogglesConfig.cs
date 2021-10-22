@@ -369,8 +369,8 @@ namespace DiscordConnector.Config
         public bool ChatPingPosEnabled => chatPingPosToggle.Value;
         public bool PlayerJoinMessageEnabled => playerJoinToggle.Value;
         public bool PlayerJoinPosEnabled => playerJoinPosToggle.Value;
-        public bool PlayerDeathMessageEnabled => playerJoinToggle.Value;
-        public bool PlayerDeathPosEnabled => playerJoinPosToggle.Value;
+        public bool PlayerDeathMessageEnabled => playerDeathToggle.Value;
+        public bool PlayerDeathPosEnabled => playerDeathPosToggle.Value;
         public bool PlayerLeaveMessageEnabled => playerLeaveToggle.Value;
         public bool PlayerLeavePosEnabled => playerLeavePosToggle.Value;
         public bool StatsDeathEnabled => collectStatsDeaths.Value;
