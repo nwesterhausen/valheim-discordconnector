@@ -91,7 +91,7 @@ namespace DiscordConnector
                 string message = $"Currently an event: {Status.HaveActiveEvent}. {Status.StartMessage} | {Status.EndMessage}" + Environment.NewLine +
                 $"Event: {Status.Name} at {Status.Pos}. Status.IsRunning: {Status.IsRunning}. {Status.Elapsed} of {Status.Duration} seconds completed." + Environment.NewLine +
                 $"Involved Players: {string.Join(",", Status.InvolvedPlayersList())}";
-                Plugin.StaticLogger.LogDebug(message);
+                // Plugin.StaticLogger.LogDebug(message);
 
                 if (Status.IsRunning)
                 {
