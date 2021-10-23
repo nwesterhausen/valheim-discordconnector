@@ -55,6 +55,12 @@ records.json 1.2.0+ (PlayerName changed to Key)
 [{"Category":"death","Values":[{"Key":"Xithyr","Value":13} ...
 ```
 
+### Version 1.4.1
+
+Fixes:
+
+- Removed the two debug logging calls for events -- sorry for the log spam!
+
 ### Version 1.4.0
 
 Features:
