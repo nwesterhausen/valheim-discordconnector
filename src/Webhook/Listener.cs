@@ -75,6 +75,7 @@ namespace DiscordConnector.Webhook
             Plugin.StaticLogger.LogDebug($"Webhook Request: {method} {contentType}\nAuthorization: {authHeader}\n{body}");
 
 
+            listener.BeginGetContext(ListenerCallback, listener);
             try
             {
                 JObject parsedResponse = JObject.Parse(body);
@@ -96,7 +97,6 @@ namespace DiscordConnector.Webhook
                         {
                             status = "accepted"
                         });
-
                         break;
                     case "chat":
                         SpeakerCommand fullCommand = parsedResponse.ToObject<SpeakerCommand>();
@@ -108,7 +108,23 @@ namespace DiscordConnector.Webhook
                         break;
                     case "leaderboard":
                     case "reload":
+                        Plugin.StaticLogger.LogDebug("Received command on /discord to reload the configuration");
+                        Plugin.StaticConfig.ReloadConfig();
+                        Responder.SendResponse200(context.Response, new MessageResponse
+                        {
+                            status = "accepted",
+                            message = "Configuration reload command executed."
+                        });
+                        break;
                     case "save":
+                        Plugin.StaticLogger.LogDebug("Received command on /discord to save the game. Attempting ZNet.instance.SaveWorld(true)");
+                        ZNet.instance.SaveWorld(true);
+                        Responder.SendResponse200(context.Response, new MessageResponse
+                        {
+                            status = "accepted",
+                            message = "SaveWorld command called."
+                        });
+                        break;
                     case "shutdown":
                         Responder.SendResponse501(context.Response, new MessageResponse
                         {
@@ -136,7 +152,6 @@ namespace DiscordConnector.Webhook
                 });
 
             }
-            listener.BeginGetContext(ListenerCallback, listener);
         }
 
         /// <summary>
