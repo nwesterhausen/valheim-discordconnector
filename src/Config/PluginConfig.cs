@@ -45,6 +45,8 @@ namespace DiscordConnector
             mainConfig.ReloadConfig();
             messagesConfig.ReloadConfig();
             togglesConfig.ReloadConfig();
+            variableConfig.ReloadConfig();
+            botConfig.ReloadConfig();
         }
 
         // Exposed Config Values

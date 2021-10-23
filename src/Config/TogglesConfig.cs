@@ -78,13 +78,13 @@ namespace DiscordConnector.Config
         public TogglesConfig(ConfigFile configFile)
         {
             config = configFile;
-
-            ReloadConfig();
+            LoadConfig();
         }
 
         public void ReloadConfig()
         {
-            LoadConfig();
+            config.Reload();
+            config.Save();
         }
 
         private void LoadConfig()

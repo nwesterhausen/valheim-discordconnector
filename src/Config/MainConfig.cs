@@ -25,15 +25,19 @@ namespace DiscordConnector.Config
         public MainConfig(ConfigFile configFile)
         {
             config = configFile;
-            ReloadConfig();
-        }
-
-        public void ReloadConfig()
-        {
             LoadConfig();
 
             mutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(';'));
         }
+
+        public void ReloadConfig()
+        {
+            config.Reload();
+            config.Save();
+            mutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(';'));
+
+        }
+
 
         private void LoadConfig()
         {

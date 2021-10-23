@@ -20,6 +20,13 @@ namespace DiscordConnector.Config
 
             LoadConfig();
         }
+
+        public void ReloadConfig()
+        {
+            config.Reload();
+            config.Save();
+        }
+
         private void LoadConfig()
         {
             discordBotAuthorization = config.Bind<string>(BOT_SETTINGS,
