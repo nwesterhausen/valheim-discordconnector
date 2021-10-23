@@ -2,6 +2,12 @@
 
 A full changelog for reference.
 
+### Version 1.4.1
+
+Fixes:
+
+- Removed the two debug logging calls for events -- sorry for the log spam!
+
 ### Version 1.4.0
 
 Features:

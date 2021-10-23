@@ -91,7 +91,7 @@ namespace DiscordConnector
                 string message = $"Currently an event: {Status.HaveActiveEvent}. {Status.StartMessage} | {Status.EndMessage}" + Environment.NewLine +
                 $"Event: {Status.Name} at {Status.Pos}. Status.IsRunning: {Status.IsRunning}. {Status.Elapsed} of {Status.Duration} seconds completed." + Environment.NewLine +
                 $"Involved Players: {string.Join(",", Status.InvolvedPlayersList())}";
-                Plugin.StaticLogger.LogDebug(message);
+                // Plugin.StaticLogger.LogDebug(message);
 
                 if (Status.IsRunning)
                 {
@@ -147,7 +147,7 @@ namespace DiscordConnector
             }
             else
             {
-                Plugin.StaticLogger.LogDebug("Event check ran, no current events (or world isn't loaded yet).");
+                // Plugin.StaticLogger.LogDebug("Event check ran, no current events (or world isn't loaded yet).");
 
                 /// <summary>
                 /// This checks for what has changed from the last time we checked the Random Event status.
