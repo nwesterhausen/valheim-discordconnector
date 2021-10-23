@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Text.Json;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace DiscordConnector
@@ -40,7 +40,7 @@ namespace DiscordConnector
                 content = message
             };
 
-            string payloadString = JsonSerializer.Serialize(payload);
+            string payloadString = JsonConvert.SerializeObject(payload);
 
             SendSerializedJson(payloadString);
         }
@@ -65,7 +65,7 @@ namespace DiscordConnector
                 List<string> fieldStrings = new List<string>();
                 foreach (Tuple<string, string> t in fields)
                 {
-                    fieldStrings.Add(JsonSerializer.Serialize(new DiscordField
+                    fieldStrings.Add(JsonConvert.SerializeObject(new DiscordField
                     {
                         name = t.Item1,
                         value = t.Item2
