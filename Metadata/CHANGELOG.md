@@ -2,6 +2,12 @@
 
 A full changelog for reference.
 
+### Version 1.4.2
+
+Fixes:
+
+- Least deaths leaderboard wasn't respecting the correct config entry. (THanks @thedefside)
+
 ### Version 1.4.1
 
 Fixes:

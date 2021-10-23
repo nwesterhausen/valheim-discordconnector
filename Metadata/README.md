@@ -55,6 +55,12 @@ records.json 1.2.0+ (PlayerName changed to Key)
 [{"Category":"death","Values":[{"Key":"Xithyr","Value":13} ...
 ```
 
+### Version 1.4.2
+
+Fixes:
+
+- Least deaths leaderboard wasn't respecting the correct config entry. (THanks @thedefside)
+
 ### Version 1.4.1
 
 Fixes:
