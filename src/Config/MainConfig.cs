@@ -87,7 +87,7 @@ namespace DiscordConnector.Config
                 false,
                 "Enable this setting to allow Discord Bot integration with this plugin. See the -bot.cfg file for all the config options related to this integration." + Environment.NewLine +
                 "When this is turned on, a listening HTTP webhook opens on a port specified in the config. This enables the Discord bot to communicate with this plugin (and the server).");
-            
+
             numberRankingsListed = config.Bind<int>(MAIN_SETTINGS,
                 "How many places to list in the top ranking leaderboards",
                 3,

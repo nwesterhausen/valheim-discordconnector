@@ -19,7 +19,7 @@ namespace DiscordConnector
             string togglesConfigFilename = $"{PluginInfo.PLUGIN_ID}-{TogglesConfig.ConfigExtension}.cfg";
             string botConfigFilename = $"{PluginInfo.PLUGIN_ID}-{BotConfig.ConfigExtension}.cfg";
             string variableConfigFilename = $"{PluginInfo.PLUGIN_ID}-{VariableConfig.ConfigExtension}.cfg";
-            
+
             string messagesConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, messageConfigFilename);
             string togglesConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, togglesConfigFilename);
             string botConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, botConfigFilename);

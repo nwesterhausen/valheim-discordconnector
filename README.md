@@ -44,6 +44,20 @@ version doesn't include the bot support.
 When you build with this property set, the destination is `bin/DiscordConnector-NoBotSupport` and
 a zipped version at `bin/DiscordConnector-NoBotSupport.zip`.
 
+#### Build Script
+
+I put a script in the bin directory (so it isn't tracked by git) to run the following commands to keep builds consistent and clean.
+
+```ps1
+dotnet format
+dotnet clean
+Remove-Item -Path "./bin/DiscordConnector/" -Recurse -ErrorAction Continue
+Remove-Item -Path "./bin/DiscordConnector-NoBotSupport" -Recurse -ErrorAction Continue
+dotnet build
+dotnet build /p:NoBotSupport=1
+# Removed line that copies a finished build into my local valheim server plugins for testing.
+```
+
 ### Dependencies
 
 For JSON serialization, I chose to use Newtonsoft.Json, the library files are included in this repository in `lib/Newtonsoft.Json`.
