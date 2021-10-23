@@ -10,6 +10,7 @@ namespace DiscordConnector.Config
         private static List<String> mutedPlayers;
         private const string MAIN_SETTINGS = "Main Settings";
 
+        // Main Settings
         private ConfigEntry<string> webhookUrl;
         private ConfigEntry<bool> discordEmbedMessagesToggle;
         private ConfigEntry<string> mutedDiscordUserlist;
@@ -19,11 +20,16 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> sendPositionsToggle;
         private ConfigEntry<bool> announcePlayerFirsts;
         private ConfigEntry<bool> discordBotToggle;
+        private ConfigEntry<int> numberRankingsListed;
 
         public MainConfig(ConfigFile configFile)
         {
             config = configFile;
+            ReloadConfig();
+        }
 
+        public void ReloadConfig()
+        {
             LoadConfig();
 
             mutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(';'));
@@ -81,6 +87,12 @@ namespace DiscordConnector.Config
                 false,
                 "Enable this setting to allow Discord Bot integration with this plugin. See the -bot.cfg file for all the config options related to this integration." + Environment.NewLine +
                 "When this is turned on, a listening HTTP webhook opens on a port specified in the config. This enables the Discord bot to communicate with this plugin (and the server).");
+            
+            numberRankingsListed = config.Bind<int>(MAIN_SETTINGS,
+                "How many places to list in the top ranking leaderboards",
+                3,
+                "Set how many places (1st, 2nd, 3rd by default) to display when sending the ranked leaderboard.");
+
 
             config.Save();
         }
@@ -98,7 +110,8 @@ namespace DiscordConnector.Config
             jsonString += $"\"periodicLeaderboardPeriodSeconds\":{StatsAnnouncementPeriod},";
             jsonString += $"\"colectStatsEnabled\":\"{CollectStatsEnabled}\",";
             jsonString += $"\"sendPositionsEnabled\":\"{SendPositionsEnabled}\",";
-            jsonString += $"\"announcePlayerFirsts\":\"{AnnouncePlayerFirsts}\"";
+            jsonString += $"\"announcePlayerFirsts\":\"{AnnouncePlayerFirsts}\",";
+            jsonString += $"\"numberRankingsListed\":\"{IncludedNumberOfRankings}\"";
             jsonString += "}";
             return jsonString;
         }
@@ -112,5 +125,7 @@ namespace DiscordConnector.Config
         public List<string> MutedPlayers => mutedPlayers;
         public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
         public bool DiscordBotEnabled => discordBotToggle.Value;
+        public int IncludedNumberOfRankings => numberRankingsListed.Value;
+
     }
 }

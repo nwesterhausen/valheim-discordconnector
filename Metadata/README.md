@@ -41,17 +41,49 @@ Full changelog history available on the
 **Release 1.0.0+ is a breaking release** since the structure of the configuration files completely changes. When you update you will need to modify the config
 to save your webhook again and to update any message customization you have done!
 
-### Version 1.2.0
+**Release 1.2.0 affected the records.json file** so if you update and notice that your recorded stats aren't changing, it's a simple fix.
+
+records.json pre 1.2.0:
+
+```json
+[{"Category":"death","Values":[{"PlayerName":"Xithyr","Value":13} ...
+```
+
+records.json 1.2.0+ (PlayerName changed to Key)
+
+```json
+[{"Category":"death","Values":[{"Key":"Xithyr","Value":13} ...
+```
+
+### Version 1.4.2
+
+Fixes:
+
+- Least deaths leaderboard wasn't respecting the correct config entry. (THanks @thedefside)
+
+### Version 1.4.1
+
+Fixes:
+
+- Removed the two debug logging calls for events -- sorry for the log spam!
+
+### Version 1.4.0
 
 Features:
 
-- `%PUBLICIP%` message variable available in the server messages
+- 10 user defined variables that can be used an any messages (%VAR1% thru %VAR10%). These are set in their own configuration file, 
+`games.nwest.valheim.discordconnector-variables.cfg` which will get generated first time 1.4.0 is run.
+- The position of where the player/ping/event coordinates are inserted into messages is configurable using the `%POS%` variable in
+the messages config. It won't be replaced if the "send coordinates" toggle is off for that message. If you don't include a `%POS%`
+variable, it will append the coordinates as happens with previous versions.
 
-  There is no variable for what port the game is running on since I figured that had to be set manually in the first place (if not default),
-  and you should be able to modify the message to be something like `Join the server on %PUBLICIP%:2457` or similar if you want to.
+Fixes:
 
-- Messages for events start/pause/stopping
+- Fixed an off-by-one error in the Top Players leaderboard (the default leaderboard) (Thanks @thedefside)
+- Fixed configuration not referencing proper settings (Thanks @thedefside)
+- Fixed event messages (now properly functioning on dedicated servers)
 
-  A feature that I wanted finally added. This was difficult to test in a server environment and I did the testing running on the client and then
-  the client running as a server. In those instances I verified that the messages were fired when events started, ended, paused or resumed. The
-  resume message is the same as the start message by default because I couldn't think of a way to word it that made sense.
+Breaking Changes:
+
+- If you used `%PLAYERS%` in any of the event messages, you need to remove it. With the changes required for the event messages
+functionality, it is not supportable at this time.

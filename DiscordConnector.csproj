@@ -20,7 +20,8 @@
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.4" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.*" />
+    <PackageReference Include="LiteDB" Version="5.*" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.*" />
     <PackageReference Include="UnityEngine.Modules" Version="2019.4.24" IncludeAssets="compile" />
     <PackageReference Include="Valheim.GameLibs" Version="*-*" />
   </ItemGroup>
@@ -39,6 +40,8 @@
       <BuiltLibraryAndDeps Include="$(ProjectDir)bin/Debug/net48/DiscordConnector.dll" />
       <!-- Include Newtonsoft.Json dependency -->
       <BuiltLibraryAndDeps Include="$(ProjectDir)lib/Newtonsoft.Json/*.dll" />
+      <!-- Include LiteDB dependency -->
+      <!-- <BuiltLibraryAndDeps Include="$(ProjectDir)bin/Debug/net48/LiteDB.dll" /> -->
       <!-- Metadata files for Thunderstore -->
       <ThunderstoreMetadata Include="$(ProjectDir)Metadata/manifest.json" />
       <ThunderstoreMetadata Include="$(ProjectDir)Metadata/icon.png" />
@@ -50,13 +53,13 @@
     <Copy SourceFiles="@(ThunderstoreMetadata)" DestinationFolder="$(DestinationDir)" SkipUnchangedFiles="true" />
   </Target>
 
-  <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles" Condition=" '$(NoBotSupport)' == '1' ">
+  <Target Name="ZipPluginNoBotSupport" AfterTargets="CopyPluginFiles" Condition=" '$(NoBotSupport)' == '1' ">
     <!-- Remove the zip file if it exists, so that we can create a new one. -->
     <Delete Files="$(ProjectDir)bin/DiscordConnector-NoBotSupport.zip" Condition="!Exists('$(ProjectDir)bin/bin/DiscordConnector-NoBotSupport.zip')" />
     <ZipDirectory SourceDirectory="$(DestinationDir)" DestinationFile="$(ProjectDir)bin/DiscordConnector-NoBotSupport.zip" />
   </Target>
 
-  <Target Name="ZipPluginNoBotSupport" AfterTargets="CopyPluginFiles" Condition=" '$(NoBotSupport)' == '' ">
+  <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles" Condition=" '$(NoBotSupport)' == '' ">
     <!-- Remove the zip file if it exists, so that we can create a new one. -->
     <Delete Files="$(ProjectDir)bin/DiscordConnector.zip" Condition="!Exists('$(ProjectDir)bin/bin/DiscordConnector.zip')" />
     <ZipDirectory SourceDirectory="$(DestinationDir)" DestinationFile="$(ProjectDir)bin/DiscordConnector.zip" />

@@ -2,6 +2,79 @@
 
 A full changelog for reference.
 
+### Version 1.4.2
+
+Fixes:
+
+- Least deaths leaderboard wasn't respecting the correct config entry. (THanks @thedefside)
+
+### Version 1.4.1
+
+Fixes:
+
+- Removed the two debug logging calls for events -- sorry for the log spam!
+
+### Version 1.4.0
+
+Features:
+
+- 10 user defined variables that can be used an any messages (%VAR1% thru %VAR10%). These are set in their own configuration file, 
+`games.nwest.valheim.discordconnector-variables.cfg` which will get generated first time 1.4.0 is run.
+- The position of where the player/ping/event coordinates are inserted into messages is configurable using the `%POS%` variable in
+the messages config. It won't be replaced if the "send coordinates" toggle is off for that message. If you don't include a `%POS%`
+variable, it will append the coordinates as happens with previous versions.
+
+Fixes:
+
+- Fixed an off-by-one error in the Top Players leaderboard (the default leaderboard) (Thanks @thedefside)
+- Fixed configuration not referencing proper settings (Thanks @thedefside)
+- Fixed event messages (now properly functioning on dedicated servers)
+
+Breaking Changes:
+
+- If you used `%PLAYERS%` in any of the event messages, you need to remove it. With the changes required for the event messages
+functionality, it is not supportable at this time.
+
+
+### Version 1.3.0
+
+Features:
+
+- Additional leaderboard options. The existing leaerboard option will now default to sending top 3 players for what is enabled. 
+You can enable a highest and lowest leaderboard for each tracked stat now. All leaderboards get sent on the same interval.
+
+### Version 1.2.2
+
+Fixes:
+
+- No shutdown message when some other mods are loaded (Like World of Valheim suite)
+
+Also this update modifies when the startup, shutting down, and shut down messages are sent. There now will likely be a bit
+of a pause because the startup message gets sent when the game is initialized instead of when the loading of the map starts
+for the server.
+
+### Version 1.2.1
+
+Fixes:
+
+- The leaderboard toggles were not working properly, behind the scenes they were all following the death leaderboard toggle
+
+A breaking change was found with the records.json in 1.2.0. The records.json file needs to have all `PlayerName` changed to `Key`.
+If you are seeing an error message in your logs from Discord Connector, this is the likely culprit (should see something about
+JsonException I believe). For example:
+
+records.json pre 1.2.0:
+
+```json
+[{"Category":"death","Values":[{"PlayerName":"Xithyr","Value":13} ...
+```
+
+records.json 1.2.0+ (PlayerName changed to Key)
+
+```json
+[{"Category":"death","Values":[{"Key":"Xithyr","Value":13} ...
+```
+
 ### Version 1.2.0
 
 Features:

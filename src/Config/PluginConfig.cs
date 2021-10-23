@@ -10,6 +10,7 @@ namespace DiscordConnector
         private MessagesConfig messagesConfig;
         private TogglesConfig togglesConfig;
         private BotConfig botConfig;
+        private VariableConfig variableConfig;
 
         public PluginConfig(ConfigFile config)
         {
@@ -17,21 +18,33 @@ namespace DiscordConnector
             string messageConfigFilename = $"{PluginInfo.PLUGIN_ID}-{MessagesConfig.ConfigExtension}.cfg";
             string togglesConfigFilename = $"{PluginInfo.PLUGIN_ID}-{TogglesConfig.ConfigExtension}.cfg";
             string botConfigFilename = $"{PluginInfo.PLUGIN_ID}-{BotConfig.ConfigExtension}.cfg";
+            string variableConfigFilename = $"{PluginInfo.PLUGIN_ID}-{VariableConfig.ConfigExtension}.cfg";
+            
             string messagesConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, messageConfigFilename);
             string togglesConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, togglesConfigFilename);
             string botConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, botConfigFilename);
+            string variableConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, variableConfigFilename);
 
             Plugin.StaticLogger.LogDebug($"Messages config: {messagesConfigPath}");
             Plugin.StaticLogger.LogDebug($"Toggles config: {togglesConfigPath}");
             Plugin.StaticLogger.LogDebug($"Bot config: {botConfigPath}");
+            Plugin.StaticLogger.LogDebug($"Variable config: {variableConfigPath}");
 
             mainConfig = new MainConfig(config);
             messagesConfig = new MessagesConfig(new BepInEx.Configuration.ConfigFile(messagesConfigPath, true));
             togglesConfig = new TogglesConfig(new BepInEx.Configuration.ConfigFile(togglesConfigPath, true));
             botConfig = new BotConfig(new BepInEx.Configuration.ConfigFile(botConfigPath, true));
+            variableConfig = new VariableConfig(new BepInEx.Configuration.ConfigFile(variableConfigPath, true));
 
             Plugin.StaticLogger.LogDebug("Configuration Loaded");
             Plugin.StaticLogger.LogDebug(ConfigAsJson());
+        }
+
+        public void ReloadConfig()
+        {
+            mainConfig.ReloadConfig();
+            messagesConfig.ReloadConfig();
+            togglesConfig.ReloadConfig();
         }
 
         // Exposed Config Values
@@ -106,10 +119,21 @@ namespace DiscordConnector
         public string PlayerFirstShoutMessage => messagesConfig.PlayerFirstShoutMessage;
 
         // Toggles.Leaderboard
-        public bool LeaderboardDeathEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardDeathEnabled;
-        public bool LeaderboardPingEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardDeathEnabled;
-        public bool LeaderboardSessionEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardDeathEnabled;
-        public bool LeaderboardShoutEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeaderboardDeathEnabled;
+        public bool RankedDeathLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedDeathLeaderboardEnabled;
+        public bool RankedPingLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedPingLeaderboardEnabled;
+        public bool RankedSessionLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedSessionLeaderboardEnabled;
+        public bool RankedShoutLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedShoutLeaderboardEnabled;
+
+
+        public int IncludedNumberOfRankings => mainConfig.IncludedNumberOfRankings;
+        public bool MostSessionLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.MostSessionLeaderboardEnabled;
+        public bool MostPingLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.MostPingLeaderboardEnabled;
+        public bool MostDeathLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.MostDeathLeaderboardEnabled;
+        public bool MostShoutLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.MostShoutLeaderboardEnabled;
+        public bool LeastSessionLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeastSessionLeaderboardEnabled;
+        public bool LeastPingLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeastPingLeaderboardEnabled;
+        public bool LeastDeathLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeastDeathLeaderboardEnabled;
+        public bool LeastShoutLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.LeastShoutLeaderboardEnabled;
 
         public bool AnnouncePlayerFirstDeathEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstDeathEnabled;
         public bool AnnouncePlayerFirstJoinEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstJoinEnabled;
@@ -126,16 +150,27 @@ namespace DiscordConnector
         // Discord Bot Integration
         public string DiscordBotAuthorization => botConfig.DiscordBotAuthorization;
         public int DiscordBotPort => botConfig.DiscordBotPort;
+        // Variable Definition
+        public string UserVariable => variableConfig.UserVariable;
+        public string UserVariable1 => variableConfig.UserVariable1;
+        public string UserVariable2 => variableConfig.UserVariable2;
+        public string UserVariable3 => variableConfig.UserVariable3;
+        public string UserVariable4 => variableConfig.UserVariable4;
+        public string UserVariable5 => variableConfig.UserVariable5;
+        public string UserVariable6 => variableConfig.UserVariable6;
+        public string UserVariable7 => variableConfig.UserVariable7;
+        public string UserVariable8 => variableConfig.UserVariable8;
+        public string UserVariable9 => variableConfig.UserVariable9;
 
         public string ConfigAsJson()
         {
             string jsonString = "{";
 
-            // Discord Settings
             jsonString += $"\"Config.Main\":{mainConfig.ConfigAsJson()},";
             jsonString += $"\"Config.Messages\":{messagesConfig.ConfigAsJson()},";
             jsonString += $"\"Config.Toggles\":{togglesConfig.ConfigAsJson()},";
             jsonString += $"\"Config.Bot\":{botConfig.ConfigAsJson()}";
+            jsonString += $"\"Config.Variables\":{variableConfig.ConfigAsJson()}";
 
             jsonString += "}";
             return jsonString;

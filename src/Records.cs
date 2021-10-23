@@ -154,7 +154,39 @@ namespace DiscordConnector
         /// </summary>
         /// <param name="key">RecordCategories category to retrieve stored values from</param>
         /// <returns>A list of (playername, value) tuples. The list will have length 0 if there are no stored records.</returns>
-        public Tuple<string, int> Retrieve(string key)
+        public List<Tuple<string, int>> RetrieveAll(string key)
+        {
+            List<Tuple<string, int>> results = new List<Tuple<string, int>>();
+            if (!Plugin.StaticConfig.CollectStatsEnabled)
+            {
+                return results;
+            }
+
+            if (Array.IndexOf<string>(RecordCategories.All, key) >= 0)
+            {
+                foreach (Record r in recordCache)
+                {
+                    if (r.Category.Equals(key))
+                    {
+                        foreach (RecordValue v in r.Values)
+                        {
+                            results.Add(Tuple.Create(
+                                v.Key, v.Value
+                            ));
+                        }
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// Retrieve the highest stored value under <paramref name="key"/>.
+        /// </summary>
+        /// <param name="key">RecordCategories category to retrieve stored values from</param>
+        /// <returns>A single (playername, value) tuple.</returns>
+        public Tuple<string, int> RetrieveHighest(string key)
         {
             if (!Plugin.StaticConfig.CollectStatsEnabled)
             {
@@ -176,6 +208,48 @@ namespace DiscordConnector
                                 player = v.Key;
                                 records = v.Value;
                             }
+                        }
+                    }
+                }
+                return Tuple.Create(player, records);
+            }
+            else
+            {
+                return Tuple.Create($"not recording for {key}", -1);
+            }
+        }
+
+        /// <summary>
+        /// Retrieve the lowest stored value under <paramref name="key"/>.
+        /// </summary>
+        /// <param name="key">RecordCategories category to retrieve stored values from</param>
+        /// <returns>A single (playername, value) tuple.</returns>
+        public Tuple<string, int> RetrieveLowest(string key)
+        {
+            if (!Plugin.StaticConfig.CollectStatsEnabled)
+            {
+                return Tuple.Create("not allowed", -1);
+            }
+
+            if (Array.IndexOf<string>(RecordCategories.All, key) >= 0)
+            {
+                string player = "no result";
+                int records = int.MaxValue;
+                foreach (Record r in recordCache)
+                {
+                    if (r.Category.Equals(key))
+                    {
+                        foreach (RecordValue v in r.Values)
+                        {
+                            if (v.Value < records)
+                            {
+                                player = v.Key;
+                                records = v.Value;
+                            }
+                        }
+                        if (r.Values.Count == 0)
+                        {
+                            records = -1;
                         }
                     }
                 }
@@ -258,5 +332,7 @@ namespace DiscordConnector
                 t => Plugin.StaticLogger.LogWarning(t.Exception),
                 TaskContinuationOptions.OnlyOnFaulted);
         }
+
+        public Comparison<Tuple<string, int>> HighToLowSort = (x, y) => y.Item2.CompareTo(x.Item2);
     }
 }
