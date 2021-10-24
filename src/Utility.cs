@@ -1,16 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
-using System.Text;
-using System.Text.Json;
-using UnityEngine;
+using System.Security.Cryptography;
 
 namespace DiscordConnector
 {
-    static class IpifyAPI
+    internal static class IpifyAPI
     {
         private const string ENDPOINT = "https://api64.ipify.org";
+
+        /// <summary>
+        /// Get your public IP address (either IPv4 or IPv6, preferring IPv4) according to https://api64.ipify.org
+        /// </summary>
+        /// <returns>Your public IP address</returns>
         public static string PublicIpAddress()
         {
             string ipAddress = "";
