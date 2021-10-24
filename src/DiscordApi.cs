@@ -113,7 +113,10 @@ namespace DiscordConnector
             dataStream.Close();
 
             WebResponse response = request.GetResponse();
-            Plugin.StaticLogger.LogDebug($"Request Response Short Code: {((HttpWebResponse)response).StatusDescription}");
+            if (Plugin.StaticConfig.DebugHttpRequestResponse)
+            {
+                Plugin.StaticLogger.LogDebug($"Request Response Short Code: {((HttpWebResponse)response).StatusDescription}");
+            }
 
             // Get the stream containing content returned by the server.
             // The using block ensures the stream is automatically closed.
@@ -124,7 +127,10 @@ namespace DiscordConnector
                 // Read the content.
                 string responseFromServer = reader.ReadToEnd();
                 // Display the content.
-                Plugin.StaticLogger.LogDebug($"Full response: {responseFromServer}");
+                if (Plugin.StaticConfig.DebugHttpRequestResponse)
+                {
+                    Plugin.StaticLogger.LogDebug($"Full response: {responseFromServer}");
+                }
             }
 
             // Close the response.
