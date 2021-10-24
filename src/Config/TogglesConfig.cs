@@ -1,4 +1,5 @@
-﻿using BepInEx.Configuration;
+﻿using System;
+using BepInEx.Configuration;
 
 namespace DiscordConnector.Config
 {
@@ -15,6 +16,7 @@ namespace DiscordConnector.Config
         private const string LEADERBOARD_TOGGLES_HIGHEST = "Toggles.Leaderboard.Highest";
         private const string LEADERBOARD_TOGGLES_LOWEST = "Toggles.Leaderboard.Lowest";
         private const string PLAYER_FIRSTS_TOGGLES = "Toggles.PlayerFirsts";
+        private const string DEBUG_TOGGLES = "Toggles.DebugMessages";
 
         // Logged Information Toggles
         private ConfigEntry<bool> serverLaunchToggle;
@@ -74,6 +76,11 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> announcePlayerFirstLeave;
         private ConfigEntry<bool> announcePlayerFirstShout;
         private ConfigEntry<bool> announcePlayerFirstPing;
+
+        // Debug Message Toggles
+        private ConfigEntry<bool> debugEveryEventCheck;
+        private ConfigEntry<bool> debugEventChanges;
+        private ConfigEntry<bool> debugHttpRequestResponses;
 
         public TogglesConfig(ConfigFile configFile)
         {
@@ -283,6 +290,21 @@ namespace DiscordConnector.Config
                 false,
                 "If enabled, this will send an extra message on a player's first shout.");
 
+            debugEveryEventCheck = config.Bind<bool>(DEBUG_TOGGLES,
+                    "Debug Message for Every Event Check",
+                    false,
+                    "If enabled, this will write a log message at the DEBUG level every time it checks for an event (every 1s).");
+            debugEventChanges = config.Bind<bool>(DEBUG_TOGGLES,
+                    "Debug Message for Every Event Change",
+                    false,
+                    "If enabled, this will write a log message at the DEBUG level when a change in event status is detected."); ;
+            debugHttpRequestResponses = config.Bind<bool>(DEBUG_TOGGLES,
+                    "Debug Message for HTTP Request Responses",
+                    false,
+                    "If enabled, this will write a log message at the DEBUG level with the content of HTTP request responses." + Environment.NewLine +
+                    "Nearly all of these requests are when data is sent to the Discord Webhook.");
+
+
             config.Save();
         }
 
@@ -352,6 +374,12 @@ namespace DiscordConnector.Config
             jsonString += $"\"announceFirstLeaveEnabled\":\"{AnnouncePlayerFirstLeaveEnabled}\",";
             jsonString += $"\"announceFirstPingEnabled\":\"{AnnouncePlayerFirstPingEnabled}\",";
             jsonString += $"\"announceFirstShoutEnabled\":\"{AnnouncePlayerFirstShoutEnabled}\"";
+            jsonString += "},";
+
+            jsonString += $"\"{DEBUG_TOGGLES}\":{{";
+            jsonString += $"\"debugEveryEventCheck\":\"{DebugEveryEventCheck}\",";
+            jsonString += $"\"debugEventChanges\":\"{DebugEveryEventChange}\",";
+            jsonString += $"\"debugHttpRequestResponses\":\"{DebugHttpRequestResponse}\"";
             jsonString += "}";
 
             jsonString += "}";
@@ -403,5 +431,9 @@ namespace DiscordConnector.Config
         public bool EventPausedPosEnabled => eventPausedPosToggle.Value;
         public bool EventStopPosEnabled => eventStopPosToggle.Value;
         public bool EventResumedPosEnabled => eventResumedPosToggle.Value;
+
+        public bool DebugEveryEventCheck => debugEveryEventCheck.Value;
+        public bool DebugEveryEventChange => debugEventChanges.Value;
+        public bool DebugHttpRequestResponse => debugHttpRequestResponses.Value;
     }
 }
