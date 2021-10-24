@@ -33,7 +33,7 @@ namespace DiscordConnector.Patches
                         MessageTransformer.FormatServerMessage(Plugin.StaticConfig.StopMessage)
                     );
                 }
-                if (Plugin.IsHeadless())
+                if (Plugin.RunningHeadless)
                 {
                     Plugin.StaticEventWatcher.Dispose();
                 }

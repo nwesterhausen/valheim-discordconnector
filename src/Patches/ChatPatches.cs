@@ -54,7 +54,7 @@ namespace DiscordConnector.Patches
                     case Talker.Type.Shout:
                         if (text.Equals("I have arrived!"))
                         {
-                            if (!Plugin.IsHeadless())
+                            if (!Plugin.RunningHeadless)
                             {
                                 if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Join, user) == 0)
                                 {

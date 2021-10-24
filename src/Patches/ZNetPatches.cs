@@ -18,7 +18,7 @@ namespace DiscordConnector.Patches
                     );
                 }
 
-                if (Plugin.IsHeadless())
+                if (Plugin.RunningHeadless)
                 {
                     Plugin.StaticEventWatcher.Activate();
                 }

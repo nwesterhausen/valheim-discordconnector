@@ -14,6 +14,7 @@ namespace DiscordConnector
         internal static Records StaticRecords;
         internal static Leaderboard StaticLeaderboards;
         internal static EventWatcher StaticEventWatcher;
+        public static bool RunningHeadless;
         internal static string PublicIpAddress;
 #if !NoBotSupport
         private static Webhook.Listener _listener;
@@ -31,8 +32,9 @@ namespace DiscordConnector
         private void Awake()
         {
             // Plugin startup logic
-            StaticLogger.LogDebug($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
-            if (!IsHeadless())
+            RunningHeadless = IsHeadless();
+
+            if (!RunningHeadless)
             {
                 StaticLogger.LogInfo("Not running on a dedicated server, some features may break -- please report them!");
             }
