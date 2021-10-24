@@ -79,6 +79,7 @@ namespace DiscordConnector.Config
 
         // Debug Message Toggles
         private ConfigEntry<bool> debugEveryEventCheck;
+        private ConfigEntry<bool> debugEveryEventPlayerPosCheck;
         private ConfigEntry<bool> debugEventChanges;
         private ConfigEntry<bool> debugHttpRequestResponses;
 
@@ -294,6 +295,10 @@ namespace DiscordConnector.Config
                     "Debug Message for Every Event Check",
                     false,
                     "If enabled, this will write a log message at the DEBUG level every time it checks for an event (every 1s).");
+            debugEveryEventPlayerPosCheck = config.Bind<bool>(DEBUG_TOGGLES,
+                    "Debug Message for Every Event Player Location Check",
+                    false,
+                    "If enabled, this will write a log message at the DEBUG level every time the EventWatcher checks players' locations.");
             debugEventChanges = config.Bind<bool>(DEBUG_TOGGLES,
                     "Debug Message for Every Event Change",
                     false,
@@ -377,6 +382,7 @@ namespace DiscordConnector.Config
             jsonString += "},";
 
             jsonString += $"\"{DEBUG_TOGGLES}\":{{";
+            jsonString += $"\"debugEveryPlayerPosCheck\":\"{DebugEveryPlayerPosCheck}\",";
             jsonString += $"\"debugEveryEventCheck\":\"{DebugEveryEventCheck}\",";
             jsonString += $"\"debugEventChanges\":\"{DebugEveryEventChange}\",";
             jsonString += $"\"debugHttpRequestResponses\":\"{DebugHttpRequestResponse}\"";
@@ -431,7 +437,7 @@ namespace DiscordConnector.Config
         public bool EventPausedPosEnabled => eventPausedPosToggle.Value;
         public bool EventStopPosEnabled => eventStopPosToggle.Value;
         public bool EventResumedPosEnabled => eventResumedPosToggle.Value;
-
+        public bool DebugEveryPlayerPosCheck => debugEveryEventPlayerPosCheck.Value;
         public bool DebugEveryEventCheck => debugEveryEventCheck.Value;
         public bool DebugEveryEventChange => debugEventChanges.Value;
         public bool DebugHttpRequestResponse => debugHttpRequestResponses.Value;

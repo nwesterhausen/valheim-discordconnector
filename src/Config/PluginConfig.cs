@@ -153,6 +153,7 @@ namespace DiscordConnector
         public string UserVariable9 => variableConfig.UserVariable9;
 
         // Debug Toggles
+        public bool DebugEveryPlayerPosCheck => togglesConfig.DebugEveryPlayerPosCheck;
         public bool DebugEveryEventCheck => togglesConfig.DebugEveryEventCheck;
         public bool DebugEveryEventChange => togglesConfig.DebugEveryEventChange;
         public bool DebugHttpRequestResponse => togglesConfig.DebugHttpRequestResponse;
