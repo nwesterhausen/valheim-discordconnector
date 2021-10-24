@@ -43,11 +43,18 @@ namespace DiscordConnector
                 {
                     if (!playerInfo.m_publicPosition)
                     {
-                        Plugin.StaticLogger.LogDebug($"Unable to check location for {playerInfo.m_name} because their location is not public.");
+                        if (Plugin.StaticConfig.DebugEveryPlayerPosCheck)
+                        {
+                            Plugin.StaticLogger.LogDebug($"Unable to check location for {playerInfo.m_name} because their location is not public.");
+                        }
                     }
                     else if (RandEventSystem.instance.IsInsideRandomEventArea(Event, playerInfo.m_position))
                     {
                         playerList.Add(playerInfo.m_name);
+                        if (Plugin.StaticConfig.DebugEveryPlayerPosCheck)
+                        {
+                            Plugin.StaticLogger.LogDebug($"{playerInfo.m_name} is at {playerInfo.m_position}");
+                        }
                     }
                 }
                 return playerList.ToArray();
@@ -56,6 +63,8 @@ namespace DiscordConnector
 
         private bool WasRunning, HadActiveEvent;
         private float PreviousElapsed;
+        private string PreviousEventStartMessage, PreviousEventEndMessage;
+        private Vector3 PreviousEventPos;
         private System.Timers.Timer randEventTimer;
 
         public EventWatcher()
@@ -63,6 +72,9 @@ namespace DiscordConnector
             WasRunning = false;
             HadActiveEvent = false;
             PreviousElapsed = 0;
+            PreviousEventStartMessage = "";
+            PreviousEventEndMessage = "";
+            PreviousEventPos = new Vector3();
 
 
             randEventTimer = new System.Timers.Timer();
@@ -90,8 +102,12 @@ namespace DiscordConnector
                 /// </summary>
                 string message = $"Currently an event: {Status.HaveActiveEvent}. {Status.StartMessage} | {Status.EndMessage}" + Environment.NewLine +
                 $"Event: {Status.Name} at {Status.Pos}. Status.IsRunning: {Status.IsRunning}. {Status.Elapsed} of {Status.Duration} seconds completed." + Environment.NewLine +
+                $"PreviousEventStartMsg: {PreviousEventStartMessage}, PreviousEventEndMsg: {PreviousEventEndMessage}, PreviousEventPos: {PreviousEventPos}" + Environment.NewLine +
                 $"Involved Players: {string.Join(",", Status.InvolvedPlayersList())}";
-                // Plugin.StaticLogger.LogDebug(message);
+                if (Plugin.StaticConfig.DebugEveryEventCheck)
+                {
+                    Plugin.StaticLogger.LogDebug(message);
+                }
 
                 if (Status.IsRunning)
                 {
@@ -107,6 +123,10 @@ namespace DiscordConnector
                     if (!HadActiveEvent)
                     {
                         TriggerEventStart();
+                        if (Plugin.StaticConfig.DebugEveryEventChange)
+                        {
+                            Plugin.StaticLogger.LogDebug(message);
+                        }
                     }
 
                     /// <summary>
@@ -121,6 +141,10 @@ namespace DiscordConnector
                     if (HadActiveEvent && !WasRunning)
                     {
                         TriggerEventResumed();
+                        if (Plugin.StaticConfig.DebugEveryEventChange)
+                        {
+                            Plugin.StaticLogger.LogDebug(message);
+                        }
                     }
                 }
                 else
@@ -142,12 +166,29 @@ namespace DiscordConnector
                         || (HadActiveEvent && WasRunning))
                     {
                         TriggerEventPaused();
+                        if (Plugin.StaticConfig.DebugEveryEventChange)
+                        {
+                            Plugin.StaticLogger.LogDebug(message);
+                        }
                     }
+                }
+
+                if (Status.Pos != Vector3.zeroVector)
+                {
+                    PreviousEventStartMessage = Status.StartMessage;
+                    PreviousEventEndMessage = Status.EndMessage;
+                    PreviousEventPos = Status.Pos;
                 }
             }
             else
             {
-                // Plugin.StaticLogger.LogDebug("Event check ran, no current events (or world isn't loaded yet).");
+                if (Plugin.StaticConfig.DebugEveryEventCheck)
+                {
+                    Plugin.StaticLogger.LogDebug(
+                        $"PreviousEventStartMsg: {PreviousEventStartMessage}, PreviousEventEndMsg: {PreviousEventEndMessage}, PreviousEventPos: {PreviousEventPos}" + Environment.NewLine +
+                        "Event check ran, no current events (or world isn't loaded yet)."
+                    );
+                }
 
                 /// <summary>
                 /// This checks for what has changed from the last time we checked the Random Event status.
@@ -159,6 +200,10 @@ namespace DiscordConnector
                 if (HadActiveEvent)
                 {
                     TriggerEventStop();
+                    if (Plugin.StaticConfig.DebugEveryEventChange)
+                    {
+                        Plugin.StaticLogger.LogDebug("Event stopped!");
+                    }
                 }
             }
             HadActiveEvent = Status.HaveActiveEvent;
@@ -172,8 +217,8 @@ namespace DiscordConnector
             {
                 string message = MessageTransformer.FormatEventStartMessage(
                     Plugin.StaticConfig.EventResumedMesssage,
-                    Status.EndMessage,
-                    Status.StartMessage
+                    Status.StartMessage,
+                    Status.EndMessage
                 // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
                 );
                 if (!Plugin.StaticConfig.EventStartPosEnabled)
@@ -203,8 +248,8 @@ namespace DiscordConnector
             {
                 string message = MessageTransformer.FormatEventMessage(
                     Plugin.StaticConfig.EventPausedMesssage,
-                    Status.EndMessage,
-                    Status.StartMessage
+                    Status.StartMessage,
+                    Status.EndMessage
                 // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
                 );
                 if (!Plugin.StaticConfig.EventPausedPosEnabled)
@@ -219,8 +264,8 @@ namespace DiscordConnector
                 {
                     message = MessageTransformer.FormatEventMessage(
                         Plugin.StaticConfig.EventPausedMesssage,
-                        Status.EndMessage,
                         Status.StartMessage,
+                        Status.EndMessage,
                         // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
                         Status.Pos
                     );
@@ -234,8 +279,8 @@ namespace DiscordConnector
             {
                 string message = MessageTransformer.FormatEventMessage(
                     Plugin.StaticConfig.EventResumedMesssage,
-                    Status.EndMessage,
-                    Status.StartMessage
+                    Status.StartMessage,
+                    Status.EndMessage
                 // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
                 );
                 if (!Plugin.StaticConfig.EventResumedPosEnabled)
@@ -250,8 +295,8 @@ namespace DiscordConnector
                 {
                     message = MessageTransformer.FormatEventMessage(
                         Plugin.StaticConfig.EventResumedMesssage,
-                        Status.EndMessage,
                         Status.StartMessage,
+                        Status.EndMessage,
                         // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
                         Status.Pos
                     );
@@ -265,8 +310,8 @@ namespace DiscordConnector
             {
                 string message = MessageTransformer.FormatEventEndMessage(
                     Plugin.StaticConfig.EventStopMesssage,
-                    Status.EndMessage,
-                    Status.StartMessage
+                    PreviousEventStartMessage,
+                    PreviousEventEndMessage
                 // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
                 );
                 if (!Plugin.StaticConfig.EventStopPosEnabled)
@@ -275,16 +320,16 @@ namespace DiscordConnector
                 }
                 if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                 {
-                    DiscordApi.SendMessage(message, Status.Pos);
+                    DiscordApi.SendMessage(message, PreviousEventPos);
                 }
                 else
                 {
                     message = MessageTransformer.FormatEventEndMessage(
                         Plugin.StaticConfig.EventStopMesssage,
-                        Status.EndMessage,
-                        Status.StartMessage,
+                        PreviousEventStartMessage,
+                        PreviousEventEndMessage,
                         // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
-                        Status.Pos
+                        PreviousEventPos
                     );
                     DiscordApi.SendMessage(message);
                 }

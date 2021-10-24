@@ -2,6 +2,21 @@
 
 A full changelog
 
+### Version 1.4.3
+
+Fixes:
+
+- Event messages were sending the wrong message (start instead of end and vice-versa)
+- Event Stop messages were sending zero coordinates
+- If you had enabled first death message and death message (this is default settings), you would
+get two messages. This has been changed to merge the messages into one if both settings are on
+and it's a player's first death.
+
+Features:
+
+- Added toggles to enable/disable some event debug messages (all disabled by default)
+- Added a toggle to enable/disable a debug message with responses from the webhook (disabled by default)
+
 ### Version 1.4.2
 
 Fixes:

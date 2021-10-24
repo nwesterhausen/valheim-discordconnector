@@ -164,6 +164,12 @@ namespace DiscordConnector
         public string UserVariable8 => variableConfig.UserVariable8;
         public string UserVariable9 => variableConfig.UserVariable9;
 
+        // Debug Toggles
+        public bool DebugEveryPlayerPosCheck => togglesConfig.DebugEveryPlayerPosCheck;
+        public bool DebugEveryEventCheck => togglesConfig.DebugEveryEventCheck;
+        public bool DebugEveryEventChange => togglesConfig.DebugEveryEventChange;
+        public bool DebugHttpRequestResponse => togglesConfig.DebugHttpRequestResponse;
+
         public string ConfigAsJson()
         {
             string jsonString = "{";
