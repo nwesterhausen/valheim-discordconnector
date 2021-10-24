@@ -5,7 +5,7 @@ namespace DiscordConnector.Config
 {
     internal class BotConfig
     {
-        private ConfigFile config;
+        private static ConfigFile config;
         private const string BOT_SETTINGS = "Discord Bot Integration";
         public static string ConfigExtension = "bot";
         private ConfigEntry<string> discordBotAuthorization;

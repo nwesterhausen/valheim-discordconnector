@@ -6,7 +6,7 @@ namespace DiscordConnector.Config
 {
     internal class MainConfig
     {
-        private ConfigFile config;
+        private static ConfigFile config;
         private static List<String> mutedPlayers;
         private const string MAIN_SETTINGS = "Main Settings";
 
