@@ -15,7 +15,8 @@ namespace DiscordConnector
         internal static Leaderboard StaticLeaderboards;
         internal static EventWatcher StaticEventWatcher;
         public static bool RunningHeadless;
-        internal static string PublicIpAddress;
+        internal static string ServerStatus => $"{(RunningHeadless ? "Dedicated Server" : "Client-run Server")}; {ServerState}; {PublicIpAddress}; {ServerWorld}";
+        internal static string PublicIpAddress, ServerState, ServerWorld;
 #if !NoBotSupport
         private static Webhook.Listener _listener;
 #endif
@@ -27,6 +28,9 @@ namespace DiscordConnector
             StaticConfig = new PluginConfig(Config);
             StaticRecords = new Records(Paths.GameRootPath);
             StaticLeaderboards = new Leaderboard();
+            ServerState = "not started";
+            ServerWorld = "";
+            PublicIpAddress = "";
         }
 
         private void Awake()
@@ -71,6 +75,7 @@ namespace DiscordConnector
 #endif
 
             _harmony = Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, PluginInfo.PLUGIN_ID);
+            ServerState = "awake";
         }
 
         private void OnDestroy()

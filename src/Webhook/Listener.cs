@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 namespace DiscordConnector.Webhook
 {
@@ -82,10 +83,7 @@ namespace DiscordConnector.Webhook
                 bool isAuthorized = authHeader.Equals(_expectAuthHeader);
                 if (!isAuthorized)
                 {
-                    Responder.SendResponse401(context.Response, new Response
-                    {
-                        status = "unauthorized"
-                    });
+                    Responder.SendResponse401(context.Response, new UnauthorizedResponse());
                     return;
                 }
                 string command = (string)parsedResponse["command"];
@@ -93,26 +91,26 @@ namespace DiscordConnector.Webhook
                 switch (command)
                 {
                     case "status":
-                        Responder.SendResponse200(context.Response, new Response
-                        {
-                            status = "accepted"
-                        });
+                        Responder.SendResponse200(context.Response, new Response());
                         break;
                     case "chat":
-                        SpeakerCommand fullCommand = parsedResponse.ToObject<SpeakerCommand>();
                         Responder.SendResponse501(context.Response, new MessageResponse
                         {
-                            status = "accepted",
-                            message = $"Not fully implemented. {fullCommand.data.username} shouts: {fullCommand.data.content}"
+                            message = $"Unable to implement atm."
                         });
                         break;
                     case "leaderboard":
+                        // StringCommand leaderboardCommand = parsedResponse.ToObject<StringCommand>();
+                        Responder.SendResponse501(context.Response, new MessageResponse
+                        {
+                            message = "Haven't devised a proper way to refer to the leaderboards yet."
+                        });
+                        break;
                     case "reload":
                         Plugin.StaticLogger.LogDebug("Received command on /discord to reload the configuration");
                         Plugin.StaticConfig.ReloadConfig();
                         Responder.SendResponse200(context.Response, new MessageResponse
                         {
-                            status = "accepted",
                             message = "Configuration reload command executed."
                         });
                         break;
@@ -121,14 +119,12 @@ namespace DiscordConnector.Webhook
                         ZNet.instance.SaveWorld(true);
                         Responder.SendResponse200(context.Response, new MessageResponse
                         {
-                            status = "accepted",
                             message = "SaveWorld command called."
                         });
                         break;
                     case "shutdown":
                         Responder.SendResponse501(context.Response, new MessageResponse
                         {
-                            status = "error",
                             message = $"{command} not yet implemented"
                         });
                         break;
@@ -136,7 +132,6 @@ namespace DiscordConnector.Webhook
                         Plugin.StaticLogger.LogDebug($"Unknown command: ${command}");
                         Responder.SendResponse400(context.Response, new MessageResponse
                         {
-                            status = "error",
                             message = $"unknown command {command}"
                         });
                         break;
@@ -147,7 +142,6 @@ namespace DiscordConnector.Webhook
                 Plugin.StaticLogger.LogError(e);
                 Responder.SendResponse400(context.Response, new MessageResponse
                 {
-                    status = "error",
                     message = "invalid JSON body"
                 });
 

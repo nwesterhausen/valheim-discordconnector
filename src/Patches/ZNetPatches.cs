@@ -22,6 +22,9 @@ namespace DiscordConnector.Patches
                 {
                     Plugin.StaticEventWatcher.Activate();
                 }
+
+                Plugin.ServerState = "running";
+                Plugin.ServerWorld = ZNet.instance.GetWorldName();
             }
         }
 

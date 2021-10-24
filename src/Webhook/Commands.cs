@@ -32,4 +32,13 @@
         public string username { get; set; }
         public string content { get; set; }
     }
+
+    internal class LeaderboardData
+    {
+
+        public string type { get; set; }
+        public int number { get; set; } = -1;
+        public string category { get; set; }
+
+    }
 }
