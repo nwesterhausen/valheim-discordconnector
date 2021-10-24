@@ -35,9 +35,6 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
-Full changelog history available on the
-[Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md).
-
 **Release 1.0.0+ is a breaking release** since the structure of the configuration files completely changes. When you update you will need to modify the config
 to save your webhook again and to update any message customization you have done!
 
@@ -54,6 +51,12 @@ records.json 1.2.0+ (PlayerName changed to Key)
 ```json
 [{"Category":"death","Values":[{"Key":"Xithyr","Value":13} ...
 ```
+
+### Version 1.4.2
+
+Fixes:
+
+- Least deaths leaderboard wasn't respecting the correct config entry. (THanks @thedefside)
 
 ### Version 1.4.1
 
@@ -81,3 +84,7 @@ Breaking Changes:
 
 - If you used `%PLAYERS%` in any of the event messages, you need to remove it. With the changes required for the event messages
 functionality, it is not supportable at this time.
+
+Full changelog history available on the
+[Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md)
+or [discordconnector.valheim.nwest.games](https://discordconnector.valheim.nwest.games/changelog).

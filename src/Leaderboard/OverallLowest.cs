@@ -13,7 +13,7 @@ namespace DiscordConnector.Leaderboards
             var pingLeader = Plugin.StaticRecords.RetrieveLowest(RecordCategories.Ping);
 
             List<Tuple<string, string>> leaderFields = new List<Tuple<string, string>>();
-            if (Plugin.StaticConfig.RankedDeathLeaderboardEnabled && deathLeader.Item2 > 0)
+            if (Plugin.StaticConfig.LeastDeathLeaderboardEnabled && deathLeader.Item2 > 0)
             {
                 leaderFields.Add(Tuple.Create("Least Deaths", $"{deathLeader.Item1} ({deathLeader.Item2})"));
             }
