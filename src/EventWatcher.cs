@@ -56,6 +56,8 @@ namespace DiscordConnector
 
         private bool WasRunning, HadActiveEvent;
         private float PreviousElapsed;
+        private string PreviousEventStartMessage, PreviousEventEndMessage;
+        private Vector3 PreviousEventPos;
         private System.Timers.Timer randEventTimer;
 
         public EventWatcher()
@@ -63,6 +65,9 @@ namespace DiscordConnector
             WasRunning = false;
             HadActiveEvent = false;
             PreviousElapsed = 0;
+            PreviousEventStartMessage = "";
+            PreviousEventEndMessage = "";
+            PreviousEventPos = new Vector3();
 
 
             randEventTimer = new System.Timers.Timer();
@@ -91,7 +96,10 @@ namespace DiscordConnector
                 string message = $"Currently an event: {Status.HaveActiveEvent}. {Status.StartMessage} | {Status.EndMessage}" + Environment.NewLine +
                 $"Event: {Status.Name} at {Status.Pos}. Status.IsRunning: {Status.IsRunning}. {Status.Elapsed} of {Status.Duration} seconds completed." + Environment.NewLine +
                 $"Involved Players: {string.Join(",", Status.InvolvedPlayersList())}";
-                // Plugin.StaticLogger.LogDebug(message);
+                if (Plugin.StaticConfig.DebugEveryEventCheck)
+                {
+                    Plugin.StaticLogger.LogDebug(message);
+                }
 
                 if (Status.IsRunning)
                 {
@@ -107,6 +115,10 @@ namespace DiscordConnector
                     if (!HadActiveEvent)
                     {
                         TriggerEventStart();
+                        if (Plugin.StaticConfig.DebugEveryEventChange)
+                        {
+                            Plugin.StaticLogger.LogDebug(message);
+                        }
                     }
 
                     /// <summary>
@@ -121,6 +133,10 @@ namespace DiscordConnector
                     if (HadActiveEvent && !WasRunning)
                     {
                         TriggerEventResumed();
+                        if (Plugin.StaticConfig.DebugEveryEventChange)
+                        {
+                            Plugin.StaticLogger.LogDebug(message);
+                        }
                     }
                 }
                 else
@@ -142,12 +158,19 @@ namespace DiscordConnector
                         || (HadActiveEvent && WasRunning))
                     {
                         TriggerEventPaused();
+                        if (Plugin.StaticConfig.DebugEveryEventChange)
+                        {
+                            Plugin.StaticLogger.LogDebug(message);
+                        }
                     }
                 }
             }
             else
             {
-                // Plugin.StaticLogger.LogDebug("Event check ran, no current events (or world isn't loaded yet).");
+                if (Plugin.StaticConfig.DebugEveryEventCheck)
+                {
+                    Plugin.StaticLogger.LogDebug("Event check ran, no current events (or world isn't loaded yet).");
+                }
 
                 /// <summary>
                 /// This checks for what has changed from the last time we checked the Random Event status.
@@ -159,11 +182,18 @@ namespace DiscordConnector
                 if (HadActiveEvent)
                 {
                     TriggerEventStop();
+                    if (Plugin.StaticConfig.DebugEveryEventChange)
+                    {
+                        Plugin.StaticLogger.LogDebug("Event stopped!");
+                    }
                 }
             }
             HadActiveEvent = Status.HaveActiveEvent;
             WasRunning = Status.IsRunning;
             PreviousElapsed = Status.Elapsed;
+            PreviousEventStartMessage = Status.StartMessage;
+            PreviousEventEndMessage = Status.EndMessage;
+            PreviousEventPos = Status.Pos;
         }
 
         private void TriggerEventStart()
@@ -265,8 +295,8 @@ namespace DiscordConnector
             {
                 string message = MessageTransformer.FormatEventEndMessage(
                     Plugin.StaticConfig.EventStopMesssage,
-                    Status.EndMessage,
-                    Status.StartMessage
+                    PreviousEventEndMessage,
+                    PreviousEventStartMessage
                 // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
                 );
                 if (!Plugin.StaticConfig.EventStopPosEnabled)
