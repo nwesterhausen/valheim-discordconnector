@@ -101,7 +101,7 @@ namespace DiscordConnector.Patches
                             }
                         }
                     }
-                    
+
                     if (Plugin.StaticConfig.StatsDeathEnabled)
                     {
                         Plugin.StaticRecords.Store(RecordCategories.Death, peer.m_playerName, 1);
@@ -133,7 +133,7 @@ namespace DiscordConnector.Patches
                             {
                                 DiscordApi.SendMessage(
                                 MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstJoinMessage, peer.m_playerName));
-                            }                            
+                            }
                         }
                         string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, peer.m_playerName);
                         if (Plugin.StaticConfig.PlayerJoinPosEnabled)
@@ -146,14 +146,14 @@ namespace DiscordConnector.Patches
                             {
                                 message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, peer.m_playerName, peer.m_refPos);
                                 DiscordApi.SendMessage(message);
-                            }                            
+                            }
                         }
                         else
                         {
                             DiscordApi.SendMessage(message);
                         }
                     }
-                    
+
                     if (Plugin.StaticConfig.StatsJoinEnabled)
                     {
                         Plugin.StaticRecords.Store(RecordCategories.Join, peer.m_playerName, 1);
@@ -185,12 +185,12 @@ namespace DiscordConnector.Patches
                                 {
                                     firstLeaveMessage = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstLeaveMessage, peer.m_playerName, peer.m_refPos);
                                     DiscordApi.SendMessage(firstLeaveMessage);
-                                } 
+                                }
                             }
                             else
                             {
                                 DiscordApi.SendMessage(firstLeaveMessage);
-                            }                            
+                            }
                         }
 
                         string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.LeaveMessage, peer.m_playerName);
@@ -205,14 +205,14 @@ namespace DiscordConnector.Patches
                                 message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.LeaveMessage, peer.m_playerName, peer.m_refPos);
                                 DiscordApi.SendMessage(message);
                             }
-                            
+
                         }
                         else
                         {
                             DiscordApi.SendMessage(message);
                         }
                     }
-                    
+
                     if (Plugin.StaticConfig.StatsLeaveEnabled)
                     {
                         Plugin.StaticRecords.Store(RecordCategories.Leave, peer.m_playerName, 1);
