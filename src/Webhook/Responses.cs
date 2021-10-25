@@ -7,6 +7,7 @@
     {
         public string status => $"{Plugin.ServerStatus}";
         public string version => $"{PluginInfo.PLUGIN_ID}-{PluginInfo.PLUGIN_VERSION}";
+        public int statusCode = 200;
     }
 
     internal class MessageResponse : Response
@@ -18,5 +19,6 @@
     {
         public new string status => "check your authorization";
         public new string version => $"{PluginInfo.PLUGIN_ID}-{PluginInfo.PLUGIN_VERSION}";
+        public new int statusCode = 401;
     }
 }

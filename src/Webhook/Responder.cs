@@ -6,16 +6,17 @@ namespace DiscordConnector.Webhook
 {
     internal static class Responder
     {
-
-
         /// <summary>
         /// Send a JSON <paramref name="response"/> to the provided <paramref name="httpResponse"/> object.
         /// Automatically converts the <paramref name="response"/> into a JSON string and sends it in a body.
         /// </summary>
         /// <param name="httpResponse">The response from the HttpListenerContext.</param>
         /// <param name="response">The response to provide to the client.</param>
-        private static void SendResponse(HttpListenerResponse httpResponse, Response response)
+        public static void SendResponse(HttpListenerResponse httpResponse, Response response)
         {
+            // set the status code 
+            httpResponse.StatusCode = response.statusCode;
+            // serialize the response for adding to the body
             string responseString = JsonConvert.SerializeObject(response);
 
             byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
@@ -25,32 +26,6 @@ namespace DiscordConnector.Webhook
             output.Write(buffer, 0, buffer.Length);
             // You must close the output stream.
             output.Close();
-        }
-
-        public static void SendResponse200(HttpListenerResponse httpResponse, Response response)
-        {
-            httpResponse.StatusCode = 200;
-            SendResponse(httpResponse, response);
-        }
-        public static void SendResponse400(HttpListenerResponse httpResponse, Response response)
-        {
-            httpResponse.StatusCode = 400;
-            SendResponse(httpResponse, response);
-        }
-        public static void SendResponse401(HttpListenerResponse httpResponse, Response response)
-        {
-            httpResponse.StatusCode = 401;
-            SendResponse(httpResponse, response);
-        }
-        public static void SendResponse500(HttpListenerResponse httpResponse, Response response)
-        {
-            httpResponse.StatusCode = 500;
-            SendResponse(httpResponse, response);
-        }
-        public static void SendResponse501(HttpListenerResponse httpResponse, Response response)
-        {
-            httpResponse.StatusCode = 501;
-            SendResponse(httpResponse, response);
         }
     }
 }

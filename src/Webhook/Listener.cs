@@ -83,7 +83,7 @@ namespace DiscordConnector.Webhook
                 bool isAuthorized = authHeader.Equals(_expectAuthHeader);
                 if (!isAuthorized)
                 {
-                    Responder.SendResponse401(context.Response, new UnauthorizedResponse());
+                    Responder.SendResponse(context.Response, new UnauthorizedResponse());
                     return;
                 }
                 string command = (string)parsedResponse["command"];
@@ -91,25 +91,27 @@ namespace DiscordConnector.Webhook
                 switch (command)
                 {
                     case "status":
-                        Responder.SendResponse200(context.Response, new Response());
+                        Responder.SendResponse(context.Response, new Response());
                         break;
                     case "chat":
-                        Responder.SendResponse501(context.Response, new MessageResponse
+                        Responder.SendResponse(context.Response, new MessageResponse
                         {
-                            message = $"Unable to implement atm."
+                            message = $"Unable to implement atm.",
+                            statusCode = 501
                         });
                         break;
                     case "leaderboard":
                         // StringCommand leaderboardCommand = parsedResponse.ToObject<StringCommand>();
-                        Responder.SendResponse501(context.Response, new MessageResponse
+                        Responder.SendResponse(context.Response, new MessageResponse
                         {
-                            message = "Haven't devised a proper way to refer to the leaderboards yet."
+                            message = "Haven't devised a proper way to refer to the leaderboards yet.",
+                            statusCode = 501
                         });
                         break;
                     case "reload":
                         Plugin.StaticLogger.LogDebug("Received command on /discord to reload the configuration");
                         Plugin.StaticConfig.ReloadConfig();
-                        Responder.SendResponse200(context.Response, new MessageResponse
+                        Responder.SendResponse(context.Response, new MessageResponse
                         {
                             message = "Configuration reload command executed."
                         });
@@ -117,22 +119,24 @@ namespace DiscordConnector.Webhook
                     case "save":
                         Plugin.StaticLogger.LogDebug("Received command on /discord to save the game. Attempting ZNet.instance.SaveWorld(true)");
                         ZNet.instance.SaveWorld(true);
-                        Responder.SendResponse200(context.Response, new MessageResponse
+                        Responder.SendResponse(context.Response, new MessageResponse
                         {
                             message = "SaveWorld command called."
                         });
                         break;
                     case "shutdown":
-                        Responder.SendResponse501(context.Response, new MessageResponse
+                        Responder.SendResponse(context.Response, new MessageResponse
                         {
-                            message = $"{command} not yet implemented"
+                            message = $"{command} not yet implemented",
+                            statusCode = 501
                         });
                         break;
                     default:
                         Plugin.StaticLogger.LogDebug($"Unknown command: ${command}");
-                        Responder.SendResponse400(context.Response, new MessageResponse
+                        Responder.SendResponse(context.Response, new MessageResponse
                         {
-                            message = $"unknown command {command}"
+                            message = $"unknown command {command}",
+                            statusCode = 400
                         });
                         break;
                 }
@@ -140,9 +144,10 @@ namespace DiscordConnector.Webhook
             catch (JsonSerializationException e)
             {
                 Plugin.StaticLogger.LogError(e);
-                Responder.SendResponse400(context.Response, new MessageResponse
+                Responder.SendResponse(context.Response, new MessageResponse
                 {
-                    message = "invalid JSON body"
+                    message = "invalid JSON body",
+                    statusCode = 400
                 });
 
             }
