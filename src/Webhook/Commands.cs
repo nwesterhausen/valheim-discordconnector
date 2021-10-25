@@ -1,4 +1,5 @@
-﻿namespace DiscordConnector.Webhook
+﻿#if !NoBotSupport
+namespace DiscordConnector.Webhook
 {
     /// <summary>
     /// Base command class, all command objects will include a command string.
@@ -25,6 +26,14 @@
     }
 
     /// <summary>
+    /// Command which has request details for a leaderboard
+    /// </summary>
+    internal class LeaderboardCommand : Command
+    {
+        public LeaderboardData data { get; set; }
+    }
+
+    /// <summary>
     /// Object reference for a chat message. Has a username and the content of the message.
     /// </summary>
     internal class SpeakerData
@@ -38,7 +47,8 @@
 
         public string type { get; set; }
         public int number { get; set; } = -1;
-        public string category { get; set; }
+        public string category { get; set; } = "";
 
     }
 }
+#endif

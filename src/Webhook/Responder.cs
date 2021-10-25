@@ -1,4 +1,5 @@
-﻿
+﻿#if !NoBotSupport
+
 using System.Net;
 using Newtonsoft.Json;
 
@@ -14,8 +15,11 @@ namespace DiscordConnector.Webhook
         /// <param name="response">The response to provide to the client.</param>
         public static void SendResponse(HttpListenerResponse httpResponse, Response response)
         {
+            Plugin.StaticLogger.LogDebug($"Trying to send a {response.statusCode} {nameof(response)}");
+
             // set the status code 
             httpResponse.StatusCode = response.statusCode;
+
             // serialize the response for adding to the body
             string responseString = JsonConvert.SerializeObject(response);
 
@@ -29,3 +33,4 @@ namespace DiscordConnector.Webhook
         }
     }
 }
+#endif

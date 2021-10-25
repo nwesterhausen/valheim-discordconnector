@@ -46,7 +46,7 @@ namespace DiscordConnector.Webhook
         private static void ChildListener()
         {
             _httpListener.Start();
-            Plugin.StaticLogger.LogDebug($"Listening for incoming requests from Discord on {_httpListener.Prefixes.Count} endpoints.");
+            Plugin.StaticLogger.LogInfo($"Listening for incoming requests from Discord on {_httpListener.Prefixes.Count} endpoints.");
 
             _httpListener.BeginGetContext(ListenerCallback, _httpListener);
         }
@@ -73,9 +73,12 @@ namespace DiscordConnector.Webhook
             }
             string body = GetRequestPostData(request);
 
-            Plugin.StaticLogger.LogDebug($"Webhook Request: {method} {contentType}\nAuthorization: {authHeader}\n{body}");
+            if (Plugin.StaticConfig.DebugIncomingHttpRequest)
+            {
+                Plugin.StaticLogger.LogDebug($"Webhook Request: {method} {contentType}\nAuthorization: {authHeader}\n{body}");
+            }
 
-
+            // Register the listener again to handle the next request. We don't need to hold it up while we process the current request.
             listener.BeginGetContext(ListenerCallback, listener);
             try
             {
@@ -87,6 +90,15 @@ namespace DiscordConnector.Webhook
                     return;
                 }
                 string command = (string)parsedResponse["command"];
+                if (!CommandCanBeRun(command))
+                {
+                    Responder.SendResponse(context.Response, new MessageResponse
+                    {
+                        message = "command not available until the server is running",
+                        statusCode = 405
+                    });
+                    return;
+                }
 
                 switch (command)
                 {
@@ -101,19 +113,16 @@ namespace DiscordConnector.Webhook
                         });
                         break;
                     case "leaderboard":
-                        // StringCommand leaderboardCommand = parsedResponse.ToObject<StringCommand>();
-                        Responder.SendResponse(context.Response, new MessageResponse
-                        {
-                            message = "Haven't devised a proper way to refer to the leaderboards yet.",
-                            statusCode = 501
-                        });
+                        LeaderboardCommand leaderboardCommand = parsedResponse.ToObject<LeaderboardCommand>();
+                        MessageResponse response = Plugin.StaticLeaderboards.ExecuteCommand(leaderboardCommand.data);
+                        Responder.SendResponse(context.Response, response);
                         break;
                     case "reload":
                         Plugin.StaticLogger.LogDebug("Received command on /discord to reload the configuration");
                         Plugin.StaticConfig.ReloadConfig();
                         Responder.SendResponse(context.Response, new MessageResponse
                         {
-                            message = "Configuration reload command executed."
+                            message = "configuration reloaded"
                         });
                         break;
                     case "save":
@@ -121,14 +130,21 @@ namespace DiscordConnector.Webhook
                         ZNet.instance.SaveWorld(true);
                         Responder.SendResponse(context.Response, new MessageResponse
                         {
-                            message = "SaveWorld command called."
+                            message = "game saved"
                         });
                         break;
                     case "shutdown":
                         Responder.SendResponse(context.Response, new MessageResponse
                         {
-                            message = $"{command} not yet implemented",
+                            message = "not implemented yet",
                             statusCode = 501
+                        });
+                        break;
+                    case "config":
+                        JObject configObj = JObject.Parse(Plugin.StaticConfig.ConfigAsJson());
+                        Responder.SendResponse(context.Response, new JObjectResponse
+                        {
+                            data = configObj
                         });
                         break;
                     default:
@@ -150,6 +166,18 @@ namespace DiscordConnector.Webhook
                     statusCode = 400
                 });
 
+            }
+        }
+
+        private static bool CommandCanBeRun(string command)
+        {
+            switch (command)
+            {
+                case "config":
+                case "status":
+                    return Plugin.ServerState.Equals("awake") || Plugin.ServerState.Equals("running");
+                default:
+                    return Plugin.ServerState.Equals("running");
             }
         }
 
