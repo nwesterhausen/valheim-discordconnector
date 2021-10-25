@@ -82,6 +82,7 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> debugEveryEventPlayerPosCheck;
         private ConfigEntry<bool> debugEventChanges;
         private ConfigEntry<bool> debugHttpRequestResponses;
+        private ConfigEntry<bool> debugIncomingHttpRequests;
 
         public TogglesConfig(ConfigFile configFile)
         {
@@ -306,8 +307,13 @@ namespace DiscordConnector.Config
             debugHttpRequestResponses = config.Bind<bool>(DEBUG_TOGGLES,
                     "Debug Message for HTTP Request Responses",
                     false,
-                    "If enabled, this will write a log message at the DEBUG level with the content of HTTP request responses." + Environment.NewLine +
+                    "If enabled, this will write a log message at the DEBUG level with the content of outgoing HTTP request responses." + Environment.NewLine +
                     "Nearly all of these requests are when data is sent to the Discord Webhook.");
+            debugIncomingHttpRequests = config.Bind<bool>(DEBUG_TOGGLES,
+                    "Debug Message for Incoming HTTP Requests",
+                    false,
+                    "If enabled, this will write a log message at the DEBUG level with the content of incoming HTTP requests." + Environment.NewLine +
+                    "These incoming requests only happen if the bot integration is enabled.");
 
 
             config.Save();
@@ -385,7 +391,8 @@ namespace DiscordConnector.Config
             jsonString += $"\"debugEveryPlayerPosCheck\":\"{DebugEveryPlayerPosCheck}\",";
             jsonString += $"\"debugEveryEventCheck\":\"{DebugEveryEventCheck}\",";
             jsonString += $"\"debugEventChanges\":\"{DebugEveryEventChange}\",";
-            jsonString += $"\"debugHttpRequestResponses\":\"{DebugHttpRequestResponse}\"";
+            jsonString += $"\"debugHttpRequestResponses\":\"{DebugHttpRequestResponse}\",";
+            jsonString += $"\"debugIncomingHttpRequests\":\"{DebugIncomingHttpRequest}\"";
             jsonString += "}";
 
             jsonString += "}";
@@ -441,5 +448,6 @@ namespace DiscordConnector.Config
         public bool DebugEveryEventCheck => debugEveryEventCheck.Value;
         public bool DebugEveryEventChange => debugEventChanges.Value;
         public bool DebugHttpRequestResponse => debugHttpRequestResponses.Value;
+        public bool DebugIncomingHttpRequest => debugIncomingHttpRequests.Value;
     }
 }

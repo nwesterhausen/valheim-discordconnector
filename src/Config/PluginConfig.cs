@@ -169,6 +169,7 @@ namespace DiscordConnector
         public bool DebugEveryEventCheck => togglesConfig.DebugEveryEventCheck;
         public bool DebugEveryEventChange => togglesConfig.DebugEveryEventChange;
         public bool DebugHttpRequestResponse => togglesConfig.DebugHttpRequestResponse;
+        public bool DebugIncomingHttpRequest => togglesConfig.DebugIncomingHttpRequest;
 
         public string ConfigAsJson()
         {
