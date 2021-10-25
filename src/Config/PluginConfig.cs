@@ -177,7 +177,7 @@ namespace DiscordConnector
             jsonString += $"\"Config.Main\":{mainConfig.ConfigAsJson()},";
             jsonString += $"\"Config.Messages\":{messagesConfig.ConfigAsJson()},";
             jsonString += $"\"Config.Toggles\":{togglesConfig.ConfigAsJson()},";
-            jsonString += $"\"Config.Bot\":{botConfig.ConfigAsJson()}";
+            jsonString += $"\"Config.Bot\":{botConfig.ConfigAsJson()},";
             jsonString += $"\"Config.Variables\":{variableConfig.ConfigAsJson()}";
 
             jsonString += "}";
