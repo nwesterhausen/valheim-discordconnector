@@ -15,7 +15,7 @@ namespace DiscordConnector
         internal static Leaderboard StaticLeaderboards;
         internal static EventWatcher StaticEventWatcher;
         public static bool RunningHeadless;
-        internal static string ServerStatus => $"{(RunningHeadless ? "Dedicated Server" : "Client-run Server")}; {ServerState}; {PublicIpAddress}; {ServerWorld}";
+        internal static string ServerStatus => $"{(RunningHeadless ? "Dedicated Server" : "Client-run Server")}; {ServerState}; {ServerWorld}";
         internal static string PublicIpAddress, ServerState, ServerWorld;
 #if !NoBotSupport
         private static Webhook.Listener _listener;
