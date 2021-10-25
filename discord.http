@@ -5,33 +5,6 @@
 @contentType = application/json
 @authToken = EZr7BmzOkypM3aRZSY9FHTTXo5QvhxLW
 
-### Sample POST without authorization
-
-POST http://{{host}}/{{path}} HTTP/1.1
-
-{
-   "command": "status"
-}
-
-### Sample POST with invalid authorization
-
-POST http://{{host}}/{{path}} HTTP/1.1
-Authorization: Not exactly authorized..
-
-{
-   "command": "status"
-}
-
-### Sample POST with invalid JSON body
-
-POST http://{{host}}/{{path}} HTTP/1.1
-Authorization: {{authToken}}
-
-{
-   "command": "chat",
-   data: "something value"
-}
-
 ### Sample POST for Status
 
 POST http://{{host}}/{{path}} HTTP/1.1
@@ -61,6 +34,15 @@ Authorization: {{authToken}}
 
 {
    "command": "reload"
+}
+
+### Sample POST for config
+
+POST http://{{host}}/{{path}} HTTP/1.1
+Authorization: {{authToken}}
+
+{
+   "command": "config"
 }
 
 ### Sample POST for save
@@ -93,4 +75,36 @@ Authorization: {{authToken}}
         "number": "5",
         "category": "death"
     }
+}
+
+############################
+#### BAD REQUESTS #########
+# These requests will provide error responses
+
+
+### Sample POST without authorization
+
+POST http://{{host}}/{{path}} HTTP/1.1
+
+{
+   "command": "status"
+}
+
+### Sample POST with invalid authorization
+
+POST http://{{host}}/{{path}} HTTP/1.1
+Authorization: Not exactly authorized..
+
+{
+   "command": "status"
+}
+
+### Sample POST with invalid JSON body
+
+POST http://{{host}}/{{path}} HTTP/1.1
+Authorization: {{authToken}}
+
+{
+   "command": "chat",
+   data: "something value"
 }
