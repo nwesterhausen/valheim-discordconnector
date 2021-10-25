@@ -49,13 +49,20 @@ a zipped version at `bin/DiscordConnector-NoBotSupport.zip`.
 I put a script in the bin directory (so it isn't tracked by git) to run the following commands to keep builds consistent and clean.
 
 ```ps1
+# Delete Previous Builds
+Remove-Item -Path "./bin/DiscordConnector.zip" -ErrorAction SilentlyContinue
+Remove-Item -Path "./bin/DiscordConnector-NoBotSupport.zip" -ErrorAction SilentlyContinue
+Remove-Item -Path "./bin/DiscordConnector/" -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Path "./bin/DiscordConnector-NoBotSupport/" -Recurse -ErrorAction SilentlyContinue
+Write-Host "Previous builds cleaned."
+
+# Build new builds
 dotnet format
 dotnet clean
-Remove-Item -Path "./bin/DiscordConnector/" -Recurse -ErrorAction Continue
-Remove-Item -Path "./bin/DiscordConnector-NoBotSupport" -Recurse -ErrorAction Continue
 dotnet build
 dotnet build /p:NoBotSupport=1
-# Removed line that copies a finished build into my local valheim server plugins for testing.
+
+# Optional copy files to test server location.
 ```
 
 ### Dependencies
