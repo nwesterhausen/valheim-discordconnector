@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace DiscordConnector
 {
@@ -42,7 +43,7 @@ namespace DiscordConnector
         public string Category { get; set; }
         public List<RecordValue> Values { get; set; }
     }
-    class Records
+    class RecordsOld
     {
         private static string DEFAULT_FILENAME = "records.json";
         private string storepath;
@@ -55,7 +56,7 @@ namespace DiscordConnector
         /// </summary>
         /// <param name="basePath">The directory to store the json file of records in.</param>
         /// <param name="fileName">The name of the file to use for storage.</param>
-        public Records(string basePath, string fileName = null)
+        public RecordsOld(string basePath, string fileName = null)
         {
             if (fileName == null)
             {
@@ -70,6 +71,82 @@ namespace DiscordConnector
             }
         }
 
+        public void Store(string key, string playername, long steamId, Vector3 pos)
+        {
+            switch (key)
+            {
+                case RecordCategories.Death:
+                    Plugin.StaticDatabase.InsertDeathRecord(playername, steamId, pos);
+                    break;
+                case RecordCategories.Join:
+                    Plugin.StaticDatabase.InsertJoinRecord(playername, steamId, pos);
+                    break;
+                case RecordCategories.Leave:
+                    Plugin.StaticDatabase.InsertLeaveRecord(playername, steamId, pos);
+                    break;
+                case RecordCategories.Ping:
+                    Plugin.StaticDatabase.InsertPingRecord(playername, steamId, pos);
+                    break;
+                case RecordCategories.Shout:
+                    Plugin.StaticDatabase.InsertShoutRecord(playername, steamId, pos);
+                    break;
+                default:
+                    Plugin.StaticLogger.LogDebug($"Unable to store record, invalid key '{key}'");
+                    break;
+            }
+        }
+        public void Store(string key, string playername, long steamId)
+        {
+            Store(key, playername, steamId, Vector3.zero);
+        }
+
+        public int Retrieve(string key, string playername)
+        {
+            if (!Plugin.StaticConfig.CollectStatsEnabled)
+            {
+                return -1;
+            }
+            switch (key)
+            {
+                case RecordCategories.Death:
+                    return Plugin.StaticDatabase.GetNumberDeaths(playername);
+                case RecordCategories.Join:
+                    return Plugin.StaticDatabase.GetNumberJoins(playername);
+                case RecordCategories.Leave:
+                    return Plugin.StaticDatabase.GetNumberLeaves(playername);
+                case RecordCategories.Ping:
+                    return Plugin.StaticDatabase.GetNumberPings(playername);
+                case RecordCategories.Shout:
+                    return Plugin.StaticDatabase.GetNumberShouts(playername);
+                default:
+                    Plugin.StaticLogger.LogDebug($"Unable to retrieve record, invalid key '{key}'");
+                    return -2;
+            }
+        }
+        public int Retrieve(string key, long steamId)
+        {
+            if (!Plugin.StaticConfig.CollectStatsEnabled)
+            {
+                return -1;
+            }
+            switch (key)
+            {
+                case RecordCategories.Death:
+                    return Plugin.StaticDatabase.GetNumberDeaths(steamId);
+                case RecordCategories.Join:
+                    return Plugin.StaticDatabase.GetNumberJoins(steamId);
+                case RecordCategories.Leave:
+                    return Plugin.StaticDatabase.GetNumberLeaves(steamId);
+                case RecordCategories.Ping:
+                    return Plugin.StaticDatabase.GetNumberPings(steamId);
+                case RecordCategories.Shout:
+                    return Plugin.StaticDatabase.GetNumberShouts(steamId);
+                default:
+                    Plugin.StaticLogger.LogDebug($"Unable to retrieve record, invalid key '{key}'");
+                    return -2;
+            }
+        }
+
         /// <summary>
         /// Add <paramref name="value"/> to a record for <paramref name="playername"/> under <paramref name="key"/> in the records database. 
         /// This will not save the record if the <paramref name="key"/> is not one defined in RecordCategories.
@@ -77,77 +154,77 @@ namespace DiscordConnector
         /// <param name="key">RecordCategories category to store the value under</param>
         /// <param name="playername">The player's name.</param>
         /// <param name="value">How much to increase current stored value by.</param>
-        public void Store(string key, string playername, int value)
-        {
-            if (Plugin.StaticConfig.CollectStatsEnabled)
-            {
-                if (Array.IndexOf<string>(RecordCategories.All, key) >= 0)
-                {
-                    foreach (Record r in recordCache)
-                    {
-                        if (r.Category.Equals(key))
-                        {
-                            bool stored = false;
-                            foreach (RecordValue v in r.Values)
-                            {
-                                if (v.Key.Equals(playername))
-                                {
-                                    v.Value += value;
-                                    stored = true;
-                                }
-                            }
-                            if (!stored)
-                            {
-                                r.Values.Add(new RecordValue()
-                                {
-                                    Key = playername,
-                                    Value = value
-                                });
-                            }
-                        }
-                    }
-                    // After adding new data, flush data to disk.
-                    FlushCache().ContinueWith(
-                        t => Plugin.StaticLogger.LogWarning(t.Exception),
-                        TaskContinuationOptions.OnlyOnFaulted);
-                }
-                else
-                {
-                    Plugin.StaticLogger.LogWarning($"Unable to store record of {key} for player {playername} - not considered a valid category.");
-                }
-            }
-        }
+        // public void Store(string key, string playername, int value)
+        // {
+        //     if (Plugin.StaticConfig.CollectStatsEnabled)
+        //     {
+        //         if (Array.IndexOf<string>(RecordCategories.All, key) >= 0)
+        //         {
+        //             foreach (Record r in recordCache)
+        //             {
+        //                 if (r.Category.Equals(key))
+        //                 {
+        //                     bool stored = false;
+        //                     foreach (RecordValue v in r.Values)
+        //                     {
+        //                         if (v.Key.Equals(playername))
+        //                         {
+        //                             v.Value += value;
+        //                             stored = true;
+        //                         }
+        //                     }
+        //                     if (!stored)
+        //                     {
+        //                         r.Values.Add(new RecordValue()
+        //                         {
+        //                             Key = playername,
+        //                             Value = value
+        //                         });
+        //                     }
+        //                 }
+        //             }
+        //             // After adding new data, flush data to disk.
+        //             FlushCache().ContinueWith(
+        //                 t => Plugin.StaticLogger.LogWarning(t.Exception),
+        //                 TaskContinuationOptions.OnlyOnFaulted);
+        //         }
+        //         else
+        //         {
+        //             Plugin.StaticLogger.LogWarning($"Unable to store record of {key} for player {playername} - not considered a valid category.");
+        //         }
+        //     }
+        // }
         /// <summary>
         /// Get the value stored under <paramref name="key"/> at <paramref name="playername"/>.
         /// </summary>
         /// <param name="key">The RecordCategories category the value is stored under</param>
         /// <param name="playername">The name of the player</param>
         /// <returns>This will return 0 if there is no record found for that player. It will return -1 if the category is invalid.</returns>
-        public int Retrieve(string key, string playername)
-        {
-            if (!Plugin.StaticConfig.CollectStatsEnabled)
-            {
-                return -1;
-            }
-            if (Array.IndexOf<string>(RecordCategories.All, key) >= 0)
-            {
-                foreach (Record r in recordCache)
-                {
-                    if (r.Category.Equals(key))
-                    {
-                        foreach (RecordValue v in r.Values)
-                        {
-                            if (v.Key.Equals(playername))
-                            {
-                                return v.Value;
-                            }
-                        }
-                    }
-                }
-            }
-            Plugin.StaticLogger.LogWarning($"No stored record for player {playername} under {key}, returning default of 0.");
-            return 0;
-        }
+        // public int Retrieve(string key, string playername)
+        // {
+        //     if (!Plugin.StaticConfig.CollectStatsEnabled)
+        //     {
+        //         return -1;
+        //     }
+        //     if (Array.IndexOf<string>(RecordCategories.All, key) >= 0)
+        //     {
+        //         foreach (Record r in recordCache)
+        //         {
+        //             if (r.Category.Equals(key))
+        //             {
+        //                 foreach (RecordValue v in r.Values)
+        //                 {
+        //                     if (v.Key.Equals(playername))
+        //                     {
+        //                         return v.Value;
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     Plugin.StaticLogger.LogWarning($"No stored record for player {playername} under {key}, returning default of 0.");
+        //     return 0;
+        // }
 
         /// <summary>
         /// Retrieve all stored values under <paramref name="key"/>.

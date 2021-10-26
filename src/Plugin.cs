@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using DiscordConnector.Records;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -11,7 +12,8 @@ namespace DiscordConnector
     {
         internal static ManualLogSource StaticLogger;
         internal static PluginConfig StaticConfig;
-        internal static Records StaticRecords;
+        internal static RecordsOld StaticRecords;
+        internal static Database StaticDatabase;
         internal static Leaderboard StaticLeaderboards;
         internal static EventWatcher StaticEventWatcher;
         internal static string PublicIpAddress;
@@ -21,7 +23,8 @@ namespace DiscordConnector
         {
             StaticLogger = Logger;
             StaticConfig = new PluginConfig(Config);
-            StaticRecords = new Records(Paths.GameRootPath);
+            StaticRecords = new RecordsOld(Paths.GameRootPath);
+            StaticDatabase = new Records.Database(Paths.GameRootPath);
             StaticLeaderboards = new Leaderboard();
         }
 
@@ -62,6 +65,7 @@ namespace DiscordConnector
         private void OnDestroy()
         {
             _harmony.UnpatchSelf();
+            StaticDatabase.Dispose();
         }
 
         /// <summary>

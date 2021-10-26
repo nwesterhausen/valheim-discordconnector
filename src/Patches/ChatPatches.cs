@@ -27,7 +27,7 @@ namespace DiscordConnector.Patches
                         }
                         if (Plugin.StaticConfig.StatsPingEnabled)
                         {
-                            Plugin.StaticRecords.Store(RecordCategories.Ping, user, 1);
+                            Plugin.StaticDatabase.InsertPingRecord(user, senderID, pos);
                         }
                         if (Plugin.StaticConfig.ChatPingEnabled)
                         {
@@ -64,7 +64,7 @@ namespace DiscordConnector.Patches
                                 }
                                 if (Plugin.StaticConfig.StatsJoinEnabled)
                                 {
-                                    Plugin.StaticRecords.Store(RecordCategories.Join, user, 1);
+                                    Plugin.StaticDatabase.InsertJoinRecord(user, senderID, pos);
                                 }
                                 if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
                                 {
@@ -99,7 +99,7 @@ namespace DiscordConnector.Patches
                             }
                             if (Plugin.StaticConfig.StatsShoutEnabled)
                             {
-                                Plugin.StaticRecords.Store(RecordCategories.Shout, user, 1);
+                                Plugin.StaticDatabase.InsertShoutRecord(user, senderID, pos);
                             }
                             if (Plugin.StaticConfig.ChatShoutEnabled)
                             {

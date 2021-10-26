@@ -104,7 +104,7 @@ namespace DiscordConnector.Patches
 
                     if (Plugin.StaticConfig.StatsDeathEnabled)
                     {
-                        Plugin.StaticRecords.Store(RecordCategories.Death, peer.m_playerName, 1);
+                        Plugin.StaticDatabase.InsertDeathRecord(peer.m_playerName, peer.m_uid, peer.m_refPos);
                     }
                 }
                 else
@@ -156,7 +156,7 @@ namespace DiscordConnector.Patches
 
                     if (Plugin.StaticConfig.StatsJoinEnabled)
                     {
-                        Plugin.StaticRecords.Store(RecordCategories.Join, peer.m_playerName, 1);
+                        Plugin.StaticDatabase.InsertJoinRecord(peer.m_playerName, peer.m_uid, peer.m_refPos);
                     }
                 }
             }
@@ -215,7 +215,7 @@ namespace DiscordConnector.Patches
 
                     if (Plugin.StaticConfig.StatsLeaveEnabled)
                     {
-                        Plugin.StaticRecords.Store(RecordCategories.Leave, peer.m_playerName, 1);
+                        Plugin.StaticDatabase.InsertLeaveRecord(peer.m_playerName, peer.m_uid, peer.m_refPos);
                     }
                 }
             }
