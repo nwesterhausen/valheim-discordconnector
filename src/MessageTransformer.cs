@@ -22,6 +22,7 @@ namespace DiscordConnector
         private const string EVENT_END_MSG = "%EVENT_END_MSG%";
         private const string EVENT_MSG = "%EVENT_MSG%";
         private const string EVENT_PLAYERS = "%PLAYERS%";
+        private const string N = "%N%";
         private static string ReplaceVariables(string rawMessage)
         {
             return rawMessage
@@ -34,12 +35,12 @@ namespace DiscordConnector
                 .Replace(VAR_6, Plugin.StaticConfig.UserVariable6)
                 .Replace(VAR_7, Plugin.StaticConfig.UserVariable7)
                 .Replace(VAR_8, Plugin.StaticConfig.UserVariable8)
-                .Replace(VAR_9, Plugin.StaticConfig.UserVariable9);
+                .Replace(VAR_9, Plugin.StaticConfig.UserVariable9)
+                .Replace(PUBLIC_IP, Plugin.PublicIpAddress);
         }
         public static string FormatServerMessage(string rawMessage)
         {
-            return MessageTransformer.ReplaceVariables(rawMessage)
-                .Replace(PUBLIC_IP, Plugin.PublicIpAddress);
+            return MessageTransformer.ReplaceVariables(rawMessage);
         }
 
         public static string FormatPlayerMessage(string rawMessage, string playerName)
@@ -94,6 +95,16 @@ namespace DiscordConnector
         {
             return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, pos)
                 .Replace(EVENT_MSG, eventEndMsg);
+        }
+        public static string FormatLeaderboardHeader(string rawMessage)
+        {
+            return MessageTransformer.ReplaceVariables(rawMessage);
+        }
+
+        public static string FormatLeaderboardHeader(string rawMessage, int n)
+        {
+            return MessageTransformer.ReplaceVariables(rawMessage)
+                .Replace(N, n.ToString());
         }
     }
 }

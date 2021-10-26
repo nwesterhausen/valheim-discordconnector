@@ -50,6 +50,7 @@ namespace DiscordConnector.Patches
                 {
                     return;
                 }
+                ulong peerSteamID = ((ZSteamSocket)peer.m_socket).GetPeerID().m_SteamID; // Get the SteamID from peer.
                 if (joinedPlayers.IndexOf(peer.m_uid) >= 0)
                 {
                     // Seems that player is dead if character ZDOID id is 0
@@ -61,7 +62,7 @@ namespace DiscordConnector.Patches
                     }
                     if (Plugin.StaticConfig.PlayerDeathMessageEnabled)
                     {
-                        if (Plugin.StaticConfig.AnnouncePlayerFirstDeathEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Death, peer.m_playerName) == 0)
+                        if (Plugin.StaticConfig.AnnouncePlayerFirstDeathEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Death, peer.m_playerName) == 0)
                         {
                             string firstDeathMessage = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstDeathMessage, peer.m_playerName);
                             if (Plugin.StaticConfig.PlayerDeathPosEnabled)
@@ -104,7 +105,7 @@ namespace DiscordConnector.Patches
 
                     if (Plugin.StaticConfig.StatsDeathEnabled)
                     {
-                        Plugin.StaticRecords.Store(RecordCategories.Death, peer.m_playerName, 1);
+                        Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Death, peer.m_playerName, peerSteamID, peer.m_refPos);
                     }
                 }
                 else
@@ -114,7 +115,7 @@ namespace DiscordConnector.Patches
                     Plugin.StaticLogger.LogDebug($"Added player {peer.m_uid} ({peer.m_playerName}) to joined player list.");
                     if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
                     {
-                        if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Join, peer.m_playerName) == 0)
+                        if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Join, peer.m_playerName) == 0)
                         {
                             string firstJoinMessage = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstJoinMessage, peer.m_playerName);
                             if (Plugin.StaticConfig.PlayerJoinPosEnabled)
@@ -156,7 +157,7 @@ namespace DiscordConnector.Patches
 
                     if (Plugin.StaticConfig.StatsJoinEnabled)
                     {
-                        Plugin.StaticRecords.Store(RecordCategories.Join, peer.m_playerName, 1);
+                        Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Join, peer.m_playerName, peerSteamID, peer.m_refPos);
                     }
                 }
             }
@@ -172,7 +173,7 @@ namespace DiscordConnector.Patches
                 {
                     if (Plugin.StaticConfig.PlayerLeaveMessageEnabled)
                     {
-                        if (Plugin.StaticConfig.AnnouncePlayerFirstLeaveEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Leave, peer.m_playerName) == 0)
+                        if (Plugin.StaticConfig.AnnouncePlayerFirstLeaveEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Leave, peer.m_playerName) == 0)
                         {
                             string firstLeaveMessage = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstLeaveMessage, peer.m_playerName);
                             if (Plugin.StaticConfig.PlayerLeavePosEnabled)
@@ -215,7 +216,8 @@ namespace DiscordConnector.Patches
 
                     if (Plugin.StaticConfig.StatsLeaveEnabled)
                     {
-                        Plugin.StaticRecords.Store(RecordCategories.Leave, peer.m_playerName, 1);
+                        ulong peerSteamID = ((ZSteamSocket)peer.m_socket).GetPeerID().m_SteamID; // Get the SteamID from peer.
+                        Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Leave, peer.m_playerName, peerSteamID, peer.m_refPos);
                     }
                 }
             }
