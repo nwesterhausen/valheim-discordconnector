@@ -16,6 +16,8 @@ namespace DiscordConnector.Patches
                     Plugin.StaticLogger.LogInfo($"Ignored shout from user on muted list. User: {user} Shout: {text}. Index {Plugin.StaticConfig.MutedPlayers.IndexOf(user)}");
                     return;
                 }
+
+                ulong peerSteamID = ((ZSteamSocket)ZNet.instance.GetPeerByPlayerName(user).m_socket).GetPeerID().m_SteamID; // Get the SteamID from peer.
                 switch (type)
                 {
                     case Talker.Type.Ping:
@@ -27,7 +29,7 @@ namespace DiscordConnector.Patches
                         }
                         if (Plugin.StaticConfig.StatsPingEnabled)
                         {
-                            Plugin.StaticDatabase.InsertPingRecord(user, senderID, pos);
+                            Plugin.StaticDatabase.InsertPingRecord(user, peerSteamID, pos);
                         }
                         if (Plugin.StaticConfig.ChatPingEnabled)
                         {
@@ -64,7 +66,7 @@ namespace DiscordConnector.Patches
                                 }
                                 if (Plugin.StaticConfig.StatsJoinEnabled)
                                 {
-                                    Plugin.StaticDatabase.InsertJoinRecord(user, senderID, pos);
+                                    Plugin.StaticDatabase.InsertJoinRecord(user, peerSteamID, pos);
                                 }
                                 if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
                                 {
@@ -99,7 +101,7 @@ namespace DiscordConnector.Patches
                             }
                             if (Plugin.StaticConfig.StatsShoutEnabled)
                             {
-                                Plugin.StaticDatabase.InsertShoutRecord(user, senderID, pos);
+                                Plugin.StaticDatabase.InsertShoutRecord(user, peerSteamID, pos);
                             }
                             if (Plugin.StaticConfig.ChatShoutEnabled)
                             {

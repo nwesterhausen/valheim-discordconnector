@@ -71,7 +71,7 @@ namespace DiscordConnector
             }
         }
 
-        public void Store(string key, string playername, long steamId, Vector3 pos)
+        public void Store(string key, string playername, ulong steamId, Vector3 pos)
         {
             switch (key)
             {
@@ -95,7 +95,7 @@ namespace DiscordConnector
                     break;
             }
         }
-        public void Store(string key, string playername, long steamId)
+        public void Store(string key, string playername, ulong steamId)
         {
             Store(key, playername, steamId, Vector3.zero);
         }
@@ -123,7 +123,7 @@ namespace DiscordConnector
                     return -2;
             }
         }
-        public int Retrieve(string key, long steamId)
+        public int Retrieve(string key, ulong steamId)
         {
             if (!Plugin.StaticConfig.CollectStatsEnabled)
             {

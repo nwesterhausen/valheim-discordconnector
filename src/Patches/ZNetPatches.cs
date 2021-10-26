@@ -50,6 +50,7 @@ namespace DiscordConnector.Patches
                 {
                     return;
                 }
+                ulong peerSteamID = ((ZSteamSocket)peer.m_socket).GetPeerID().m_SteamID; // Get the SteamID from peer.
                 if (joinedPlayers.IndexOf(peer.m_uid) >= 0)
                 {
                     // Seems that player is dead if character ZDOID id is 0
@@ -104,7 +105,7 @@ namespace DiscordConnector.Patches
 
                     if (Plugin.StaticConfig.StatsDeathEnabled)
                     {
-                        Plugin.StaticDatabase.InsertDeathRecord(peer.m_playerName, peer.m_uid, peer.m_refPos);
+                        Plugin.StaticDatabase.InsertDeathRecord(peer.m_playerName, peerSteamID, peer.m_refPos);
                     }
                 }
                 else
@@ -156,7 +157,7 @@ namespace DiscordConnector.Patches
 
                     if (Plugin.StaticConfig.StatsJoinEnabled)
                     {
-                        Plugin.StaticDatabase.InsertJoinRecord(peer.m_playerName, peer.m_uid, peer.m_refPos);
+                        Plugin.StaticDatabase.InsertJoinRecord(peer.m_playerName, peerSteamID, peer.m_refPos);
                     }
                 }
             }
@@ -215,7 +216,8 @@ namespace DiscordConnector.Patches
 
                     if (Plugin.StaticConfig.StatsLeaveEnabled)
                     {
-                        Plugin.StaticDatabase.InsertLeaveRecord(peer.m_playerName, peer.m_uid, peer.m_refPos);
+                        ulong peerSteamID = ((ZSteamSocket)peer.m_socket).GetPeerID().m_SteamID; // Get the SteamID from peer.
+                        Plugin.StaticDatabase.InsertLeaveRecord(peer.m_playerName, peerSteamID, peer.m_refPos);
                     }
                 }
             }

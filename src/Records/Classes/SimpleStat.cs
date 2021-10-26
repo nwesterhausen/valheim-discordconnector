@@ -32,10 +32,10 @@ namespace DiscordConnector.Records
         public ObjectId StatId { get; }
         public string Name { get; }
         public System.DateTime Date { get; }
-        public long SteamId { get; }
+        public ulong SteamId { get; }
         public Position Pos { get; }
 
-        public SimpleStat(string name, long steamId)
+        public SimpleStat(string name, ulong steamId)
         {
             StatId = ObjectId.NewObjectId();
             Name = name;
@@ -44,7 +44,7 @@ namespace DiscordConnector.Records
             Pos = new Position();
         }
 
-        public SimpleStat(string name, long steamId, float x, float y, float z)
+        public SimpleStat(string name, ulong steamId, float x, float y, float z)
         {
             StatId = ObjectId.NewObjectId();
             Name = name;
@@ -54,7 +54,7 @@ namespace DiscordConnector.Records
         }
 
         [BsonCtor]
-        public SimpleStat(ObjectId _id, string name, System.DateTime date, long steamId, Position pos)
+        public SimpleStat(ObjectId _id, string name, System.DateTime date, ulong steamId, Position pos)
         {
             StatId = _id;
             Name = name;

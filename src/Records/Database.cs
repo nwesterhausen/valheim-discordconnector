@@ -38,43 +38,43 @@ namespace DiscordConnector.Records
             db.Dispose();
         }
 
-        public void InsertDeathRecord(string playerName, long steamId, Vector3 pos)
+        public void InsertDeathRecord(string playerName, ulong steamId, Vector3 pos)
         {
             InsertSimpleStatRecord(DeathCollection, playerName, steamId, pos);
         }
-        public void InsertJoinRecord(string playerName, long steamId, Vector3 pos)
+        public void InsertJoinRecord(string playerName, ulong steamId, Vector3 pos)
         {
             InsertSimpleStatRecord(JoinCollection, playerName, steamId, pos);
         }
-        public void InsertLeaveRecord(string playerName, long steamId, Vector3 pos)
+        public void InsertLeaveRecord(string playerName, ulong steamId, Vector3 pos)
         {
             InsertSimpleStatRecord(LeaveCollection, playerName, steamId, pos);
         }
-        public void InsertShoutRecord(string playerName, long steamId, Vector3 pos)
+        public void InsertShoutRecord(string playerName, ulong steamId, Vector3 pos)
         {
             InsertSimpleStatRecord(ShoutCollection, playerName, steamId, pos);
         }
-        public void InsertPingRecord(string playerName, long steamId, Vector3 pos)
+        public void InsertPingRecord(string playerName, ulong steamId, Vector3 pos)
         {
             InsertSimpleStatRecord(PingCollection, playerName, steamId, pos);
         }
-        public void InsertDeathRecord(string playerName, long steamId)
+        public void InsertDeathRecord(string playerName, ulong steamId)
         {
             InsertSimpleStatRecord(DeathCollection, playerName, steamId);
         }
-        public void InsertJoinRecord(string playerName, long steamId)
+        public void InsertJoinRecord(string playerName, ulong steamId)
         {
             InsertSimpleStatRecord(JoinCollection, playerName, steamId);
         }
-        public void InsertLeaveRecord(string playerName, long steamId)
+        public void InsertLeaveRecord(string playerName, ulong steamId)
         {
             InsertSimpleStatRecord(LeaveCollection, playerName, steamId);
         }
-        public void InsertShoutRecord(string playerName, long steamId)
+        public void InsertShoutRecord(string playerName, ulong steamId)
         {
             InsertSimpleStatRecord(ShoutCollection, playerName, steamId);
         }
-        public void InsertPingRecord(string playerName, long steamId)
+        public void InsertPingRecord(string playerName, ulong steamId)
         {
             InsertSimpleStatRecord(PingCollection, playerName, steamId);
         }
@@ -83,7 +83,7 @@ namespace DiscordConnector.Records
         {
             return CountOfRecordsByName(DeathCollection, playerName);
         }
-        public int GetNumberDeaths(long steamId)
+        public int GetNumberDeaths(ulong steamId)
         {
             return CountOfRecordsBySteamId(DeathCollection, steamId);
         }
@@ -91,7 +91,7 @@ namespace DiscordConnector.Records
         {
             return CountOfRecordsByName(JoinCollection, playerName);
         }
-        public int GetNumberJoins(long steamId)
+        public int GetNumberJoins(ulong steamId)
         {
             return CountOfRecordsBySteamId(JoinCollection, steamId);
         }
@@ -99,7 +99,7 @@ namespace DiscordConnector.Records
         {
             return CountOfRecordsByName(LeaveCollection, playerName);
         }
-        public int GetNumberLeaves(long steamId)
+        public int GetNumberLeaves(ulong steamId)
         {
             return CountOfRecordsBySteamId(LeaveCollection, steamId);
         }
@@ -107,7 +107,7 @@ namespace DiscordConnector.Records
         {
             return CountOfRecordsByName(ShoutCollection, playerName);
         }
-        public int GetNumberShouts(long steamId)
+        public int GetNumberShouts(ulong steamId)
         {
             return CountOfRecordsBySteamId(ShoutCollection, steamId);
         }
@@ -115,12 +115,12 @@ namespace DiscordConnector.Records
         {
             return CountOfRecordsByName(PingCollection, playerName);
         }
-        public int GetNumberPings(long steamId)
+        public int GetNumberPings(ulong steamId)
         {
             return CountOfRecordsBySteamId(PingCollection, steamId);
         }
 
-        private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, long steamId, Vector3 pos)
+        private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, ulong steamId, Vector3 pos)
         {
             var newRecord = new SimpleStat(
                 playerName,
@@ -132,7 +132,7 @@ namespace DiscordConnector.Records
             collection.EnsureIndex(x => x.Name);
             collection.EnsureIndex(x => x.SteamId);
         }
-        private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, long steamId)
+        private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, ulong steamId)
         {
             InsertSimpleStatRecord(collection, playerName, steamId, Vector3.zero);
         }
@@ -144,7 +144,7 @@ namespace DiscordConnector.Records
                 .Count();
         }
 
-        private int CountOfRecordsBySteamId(ILiteCollection<SimpleStat> collection, long steamId)
+        private int CountOfRecordsBySteamId(ILiteCollection<SimpleStat> collection, ulong steamId)
         {
             return DeathCollection.Query()
                 .Where(x => x.SteamId == steamId)
