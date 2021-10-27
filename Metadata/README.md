@@ -52,6 +52,12 @@ records.json 1.2.0+ (PlayerName changed to Key)
 [{"Category":"death","Values":[{"Key":"Xithyr","Value":13} ...
 ```
 
+### Version 1.4.4
+
+Fixes:
+
+- Position being sent with event messages even if event position was disabled in config
+
 ### Version 1.4.3
 
 Fixes:
