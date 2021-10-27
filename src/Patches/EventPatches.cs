@@ -40,7 +40,6 @@ namespace DiscordConnector.Patches
 
                 if (__instance.m_time > 0)
                 {
-
                     if (Plugin.StaticConfig.EventResumedMessageEnabled)
                     {
                         string message = MessageTransformer.FormatEventMessage(
@@ -52,6 +51,7 @@ namespace DiscordConnector.Patches
                         if (!Plugin.StaticConfig.EventResumedPosEnabled)
                         {
                             DiscordApi.SendMessage(message);
+                            return;
                         }
                         if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                         {
@@ -83,6 +83,7 @@ namespace DiscordConnector.Patches
                         if (!Plugin.StaticConfig.EventStartPosEnabled)
                         {
                             DiscordApi.SendMessage(message);
+                            return;
                         }
                         if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                         {
@@ -144,6 +145,7 @@ namespace DiscordConnector.Patches
                         if (!Plugin.StaticConfig.EventPausedPosEnabled)
                         {
                             DiscordApi.SendMessage(message);
+                            return;
                         }
                         if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                         {
@@ -175,6 +177,7 @@ namespace DiscordConnector.Patches
                         if (!Plugin.StaticConfig.EventStopPosEnabled)
                         {
                             DiscordApi.SendMessage(message);
+                            return;
                         }
                         if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                         {

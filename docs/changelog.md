@@ -2,6 +2,12 @@
 
 A full changelog
 
+### Version 1.4.4
+
+Fixes:
+
+- Position being sent with event messages even if event position was disabled in config
+
 ### Version 1.4.3
 
 Fixes:

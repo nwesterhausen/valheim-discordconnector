@@ -211,7 +211,7 @@ namespace DiscordConnector
             PreviousElapsed = Status.Elapsed;
         }
 
-        private void TriggerEventStart()
+        internal void TriggerEventStart()
         {
             if (Plugin.StaticConfig.EventStartMessageEnabled)
             {
@@ -224,6 +224,7 @@ namespace DiscordConnector
                 if (!Plugin.StaticConfig.EventStartPosEnabled)
                 {
                     DiscordApi.SendMessage(message);
+                    return;
                 }
                 if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                 {
@@ -242,7 +243,7 @@ namespace DiscordConnector
                 }
             }
         }
-        private void TriggerEventPaused()
+        internal void TriggerEventPaused()
         {
             if (Plugin.StaticConfig.EventPausedMessageEnabled)
             {
@@ -255,6 +256,7 @@ namespace DiscordConnector
                 if (!Plugin.StaticConfig.EventPausedPosEnabled)
                 {
                     DiscordApi.SendMessage(message);
+                    return;
                 }
                 if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                 {
@@ -273,7 +275,7 @@ namespace DiscordConnector
                 }
             }
         }
-        private void TriggerEventResumed()
+        internal void TriggerEventResumed()
         {
             if (Plugin.StaticConfig.EventResumedMessageEnabled)
             {
@@ -286,6 +288,7 @@ namespace DiscordConnector
                 if (!Plugin.StaticConfig.EventResumedPosEnabled)
                 {
                     DiscordApi.SendMessage(message);
+                    return;
                 }
                 if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                 {
@@ -304,7 +307,7 @@ namespace DiscordConnector
                 }
             }
         }
-        private void TriggerEventStop()
+        internal void TriggerEventStop()
         {
             if (Plugin.StaticConfig.EventStopMessageEnabled)
             {
@@ -317,6 +320,7 @@ namespace DiscordConnector
                 if (!Plugin.StaticConfig.EventStopPosEnabled)
                 {
                     DiscordApi.SendMessage(message);
+                    return;
                 }
                 if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                 {
