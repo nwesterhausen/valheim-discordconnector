@@ -22,6 +22,7 @@ namespace DiscordConnector
         private const string EVENT_END_MSG = "%EVENT_END_MSG%";
         private const string EVENT_MSG = "%EVENT_MSG%";
         private const string EVENT_PLAYERS = "%PLAYERS%";
+        private const string N = "%N%";
         private static string ReplaceVariables(string rawMessage)
         {
             return rawMessage
@@ -94,6 +95,16 @@ namespace DiscordConnector
         {
             return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, pos)
                 .Replace(EVENT_MSG, eventEndMsg);
+        }
+        public static string FormatLeaderboardHeader(string rawMessage)
+        {
+            return MessageTransformer.ReplaceVariables(rawMessage);
+        }
+
+        public static string FormatLeaderboardHeader(string rawMessage, int n)
+        {
+            return MessageTransformer.ReplaceVariables(rawMessage)
+                .Replace(N, n.ToString());
         }
     }
 }

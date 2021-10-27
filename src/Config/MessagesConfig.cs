@@ -14,6 +14,7 @@ namespace DiscordConnector.Config
         private const string PLAYER_MESSAGES = "Messages.Player";
         private const string PLAYER_FIRSTS_MESSAGES = "Messages.PlayerFirsts";
         private const string EVENT_MESSAGES = "Messages.Events";
+        private const string BOARD_MESSAGES = "Messages.Leaderbaords";
 
         // Server Messages
         private ConfigEntry<string> serverLaunchMessage;
@@ -41,6 +42,12 @@ namespace DiscordConnector.Config
         private ConfigEntry<string> eventPausedMessage;
         private ConfigEntry<string> eventStopMessage;
         private ConfigEntry<string> eventResumedMessage;
+
+        // Board Messages
+        private ConfigEntry<string> leaderboardTopPlayersMessage;
+        private ConfigEntry<string> leaderboardBottomPlayersMessage;
+        private ConfigEntry<string> leaderboardHighestPlayerMessage;
+        private ConfigEntry<string> leaderboardLowestPlayerMessage;
 
         public MessagesConfig(ConfigFile configFile)
         {
@@ -173,6 +180,28 @@ namespace DiscordConnector.Config
                 "The special string %EVENT_END_MSG% will be replaced with the message that is displayed on the screen when the event ends."); // + Environment.NewLine +
                                                                                                                                               // "The special string %PLAYERS% will be replaced with a list of players in the event area."); //! Removed due to unreliability
 
+            // Board Messages
+            leaderboardTopPlayersMessage = config.Bind<string>(BOARD_MESSAGES,
+                "Leaderboard Heading for Top N Players",
+                "Top %N% Player Leaderboards:",
+                "Set the message that is included as a heading when this leaderboard is sent." + Environment.NewLine +
+                "Include %N% to include the number of rankings returned (the configured number)");
+            leaderboardBottomPlayersMessage = config.Bind<string>(BOARD_MESSAGES,
+                "Leaderboard Heading for Bottom N Players",
+                "Bottom %N% Player Leaderboards:",
+                "Set the message that is included as a heading when this leaderboard is sent." + Environment.NewLine +
+                "Include %N% to include the number of rankings returned (the configured number)");
+            leaderboardHighestPlayerMessage = config.Bind<string>(BOARD_MESSAGES,
+                "Leaderboard Heading for Highest Player",
+                "Top Performer",
+                "Set the message that is included as a heading when this leaderboard is sent." + Environment.NewLine +
+                "Include %N% to include the number of rankings returned (the configured number)");
+            leaderboardLowestPlayerMessage = config.Bind<string>(BOARD_MESSAGES,
+                "Leaderboard Heading for Lowest Player",
+                "Bottom Performer",
+                "Set the message that is included as a heading when this leaderboard is sent." + Environment.NewLine +
+                "Include %N% to include the number of rankings returned (the configured number)");
+
             config.Save();
         }
 
@@ -209,6 +238,13 @@ namespace DiscordConnector.Config
             jsonString += $"\"eventPausedMessage\":\"{eventPausedMessage.Value}\",";
             jsonString += $"\"eventResumedMessage\":\"{eventResumedMessage.Value}\",";
             jsonString += $"\"eventStopMessage\":\"{eventStopMessage.Value}\"";
+            jsonString += "},";
+
+            jsonString += $"\"{BOARD_MESSAGES}\":{{";
+            jsonString += $"\"leaderboardTopPlayersMessage\":\"{leaderboardTopPlayersMessage.Value}\",";
+            jsonString += $"\"leaderboardBottomPlayersMessage\":\"{leaderboardBottomPlayersMessage.Value}\",";
+            jsonString += $"\"leaderboardHighestPlayerMessage\":\"{leaderboardHighestPlayerMessage.Value}\",";
+            jsonString += $"\"leaderboardLowestPlayerMessage\":\"{leaderboardLowestPlayerMessage.Value}\"";
             jsonString += "}";
 
             jsonString += "}";
@@ -254,5 +290,10 @@ namespace DiscordConnector.Config
         public string EventStopMesssage => GetRandomStringFromValue(eventStopMessage);
         public string EventResumedMesssage => GetRandomStringFromValue(eventResumedMessage);
 
+        // Messages.Leaderboards
+        public string LeaderboardTopPlayerHeading => GetRandomStringFromValue(leaderboardTopPlayersMessage);
+        public string LeaderboardBottomPlayersHeading => GetRandomStringFromValue(leaderboardBottomPlayersMessage);
+        public string LeaderboardHighestHeading => GetRandomStringFromValue(leaderboardHighestPlayerMessage);
+        public string LeaderboardLowestHeading => GetRandomStringFromValue(leaderboardLowestPlayerMessage);
     }
 }

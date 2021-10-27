@@ -14,27 +14,26 @@ namespace DiscordConnector.Leaderboards
             var shouts = Records.Helper.TopNResultForCategory(Records.Categories.Shout, Plugin.StaticConfig.IncludedNumberOfRankings);
             var pings = Records.Helper.TopNResultForCategory(Records.Categories.Ping, Plugin.StaticConfig.IncludedNumberOfRankings);
 
-
-
             if (Plugin.StaticConfig.RankedDeathLeaderboardEnabled && deaths.Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Top Deaths", Leaderboard.RankedCountResultToString(deaths)));
+                leaderFields.Add(Tuple.Create("Deaths", Leaderboard.RankedCountResultToString(deaths)));
             }
             if (Plugin.StaticConfig.RankedSessionLeaderboardEnabled && sessions.Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Top Sessions", Leaderboard.RankedCountResultToString(sessions)));
+                leaderFields.Add(Tuple.Create("Sessions", Leaderboard.RankedCountResultToString(sessions)));
             }
             if (Plugin.StaticConfig.RankedShoutLeaderboardEnabled && shouts.Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Top Shouts", Leaderboard.RankedCountResultToString(shouts)));
+                leaderFields.Add(Tuple.Create("Shouts", Leaderboard.RankedCountResultToString(shouts)));
             }
             if (Plugin.StaticConfig.RankedPingLeaderboardEnabled && pings.Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Top Pings", Leaderboard.RankedCountResultToString(pings)));
+                leaderFields.Add(Tuple.Create("Pings", Leaderboard.RankedCountResultToString(pings)));
             }
             if (leaderFields.Count > 0)
             {
-                DiscordApi.SendMessageWithFields("Current top player leaderboard:", leaderFields);
+                string discordContent = MessageTransformer.FormatLeaderboardHeader(Plugin.StaticConfig.LeaderboardTopPlayerHeading, Plugin.StaticConfig.IncludedNumberOfRankings);
+                DiscordApi.SendMessageWithFields(discordContent, leaderFields);
             }
             else
             {

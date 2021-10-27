@@ -34,6 +34,7 @@ namespace DiscordConnector.Leaderboards
             }
             if (leaderFields.Count > 0)
             {
+                string discordContent = MessageTransformer.FormatLeaderboardHeader(Plugin.StaticConfig.LeaderboardBottomPlayersHeading, Plugin.StaticConfig.IncludedNumberOfRankings);
                 DiscordApi.SendMessageWithFields("Current Bottom player leaderboard:", leaderFields);
             }
             else

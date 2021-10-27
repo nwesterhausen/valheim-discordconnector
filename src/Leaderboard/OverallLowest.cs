@@ -31,6 +31,7 @@ namespace DiscordConnector.Leaderboards
             }
             if (leaderFields.Count > 0)
             {
+                string discordContent = MessageTransformer.FormatLeaderboardHeader(Plugin.StaticConfig.LeaderboardLowestHeading);
                 DiscordApi.SendMessageWithFields("Current leaderboard least stats:", leaderFields);
             }
             else
