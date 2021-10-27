@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using LiteDB;
 using UnityEngine;
 
@@ -38,88 +39,6 @@ namespace DiscordConnector.Records
             db.Dispose();
         }
 
-        public void InsertDeathRecord(string playerName, ulong steamId, Vector3 pos)
-        {
-            InsertSimpleStatRecord(DeathCollection, playerName, steamId, pos);
-        }
-        public void InsertJoinRecord(string playerName, ulong steamId, Vector3 pos)
-        {
-            InsertSimpleStatRecord(JoinCollection, playerName, steamId, pos);
-        }
-        public void InsertLeaveRecord(string playerName, ulong steamId, Vector3 pos)
-        {
-            InsertSimpleStatRecord(LeaveCollection, playerName, steamId, pos);
-        }
-        public void InsertShoutRecord(string playerName, ulong steamId, Vector3 pos)
-        {
-            InsertSimpleStatRecord(ShoutCollection, playerName, steamId, pos);
-        }
-        public void InsertPingRecord(string playerName, ulong steamId, Vector3 pos)
-        {
-            InsertSimpleStatRecord(PingCollection, playerName, steamId, pos);
-        }
-        public void InsertDeathRecord(string playerName, ulong steamId)
-        {
-            InsertSimpleStatRecord(DeathCollection, playerName, steamId);
-        }
-        public void InsertJoinRecord(string playerName, ulong steamId)
-        {
-            InsertSimpleStatRecord(JoinCollection, playerName, steamId);
-        }
-        public void InsertLeaveRecord(string playerName, ulong steamId)
-        {
-            InsertSimpleStatRecord(LeaveCollection, playerName, steamId);
-        }
-        public void InsertShoutRecord(string playerName, ulong steamId)
-        {
-            InsertSimpleStatRecord(ShoutCollection, playerName, steamId);
-        }
-        public void InsertPingRecord(string playerName, ulong steamId)
-        {
-            InsertSimpleStatRecord(PingCollection, playerName, steamId);
-        }
-
-        public int GetNumberDeaths(string playerName)
-        {
-            return CountOfRecordsByName(DeathCollection, playerName);
-        }
-        public int GetNumberDeaths(ulong steamId)
-        {
-            return CountOfRecordsBySteamId(DeathCollection, steamId);
-        }
-        public int GetNumberJoins(string playerName)
-        {
-            return CountOfRecordsByName(JoinCollection, playerName);
-        }
-        public int GetNumberJoins(ulong steamId)
-        {
-            return CountOfRecordsBySteamId(JoinCollection, steamId);
-        }
-        public int GetNumberLeaves(string playerName)
-        {
-            return CountOfRecordsByName(LeaveCollection, playerName);
-        }
-        public int GetNumberLeaves(ulong steamId)
-        {
-            return CountOfRecordsBySteamId(LeaveCollection, steamId);
-        }
-        public int GetNumberShouts(string playerName)
-        {
-            return CountOfRecordsByName(ShoutCollection, playerName);
-        }
-        public int GetNumberShouts(ulong steamId)
-        {
-            return CountOfRecordsBySteamId(ShoutCollection, steamId);
-        }
-        public int GetNumberPings(string playerName)
-        {
-            return CountOfRecordsByName(PingCollection, playerName);
-        }
-        public int GetNumberPings(ulong steamId)
-        {
-            return CountOfRecordsBySteamId(PingCollection, steamId);
-        }
-
         private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, ulong steamId, Vector3 pos)
         {
             var newRecord = new SimpleStat(
@@ -150,5 +69,159 @@ namespace DiscordConnector.Records
                 .Where(x => x.SteamId == steamId)
                 .Count();
         }
+
+        private List<CountResult> CountAllRecordsGroupBySteamId(ILiteCollection<SimpleStat> collection)
+        {
+            return ConvertBsonDocumentCountToDotNet(
+                collection.Query()
+                    .GroupBy("SteamId")
+                    .Select("{Name: SteamId, Count: COUNT(*)}")
+                    .ToList()
+            );
+        }
+
+        private List<CountResult> RetrieveAllRecordsGroupByName(ILiteCollection<SimpleStat> collection)
+        {
+            return ConvertBsonDocumentCountToDotNet(
+                collection.Query()
+                    .GroupBy("Name")
+                    .Select("{Name: Name, Count: COUNT(*)}")
+                    .ToList()
+            );
+        }
+
+        private List<CountResult> ConvertBsonDocumentCountToDotNet(List<BsonDocument> bsonDocuments)
+        {
+            List<CountResult> results = new List<CountResult>();
+            foreach (BsonDocument doc in bsonDocuments)
+            {
+                if (doc.ContainsKey("Name") && doc.ContainsKey("Count"))
+                {
+                    results.Add(new CountResult (
+                        doc["Name"].AsString,
+                        doc["Count"].AsInt32
+                    ));
+                }
+            }
+            return results;
+        }
+
+        public List<CountResult> RetrieveAllRecordsGroupByName(string key)
+        {           
+            switch (key)
+            {
+                case Categories.Death:
+                    return RetrieveAllRecordsGroupByName(DeathCollection);
+                case Categories.Join:
+                    return RetrieveAllRecordsGroupByName(JoinCollection);
+                case Categories.Leave:
+                    return RetrieveAllRecordsGroupByName(LeaveCollection);
+                case Categories.Ping:
+                    return RetrieveAllRecordsGroupByName(PingCollection);
+                case Categories.Shout:
+                    return RetrieveAllRecordsGroupByName(ShoutCollection);
+                default:
+                    Plugin.StaticLogger.LogDebug($"RetrieveAllRecordsGroupByName, invalid key '{key}'");
+                    return new List<CountResult>();
+            }
+        }
+        public List<CountResult> CountAllRecordsGroupBySteamId(string key)
+        {           
+            switch (key)
+            {
+                case Categories.Death:
+                    return CountAllRecordsGroupBySteamId(DeathCollection);
+                case Categories.Join:
+                    return CountAllRecordsGroupBySteamId(JoinCollection);
+                case Categories.Leave:
+                    return CountAllRecordsGroupBySteamId(LeaveCollection);
+                case Categories.Ping:
+                    return CountAllRecordsGroupBySteamId(PingCollection);
+                case Categories.Shout:
+                    return CountAllRecordsGroupBySteamId(ShoutCollection);
+                default:
+                    Plugin.StaticLogger.LogDebug($"CountAllRecordsGroupBySteamId, invalid key '{key}'");
+                    return new List<CountResult>();
+            }
+        }
+
+        public int CountOfRecordsByName(string key, string playerName)
+        {
+            if (!Plugin.StaticConfig.CollectStatsEnabled)
+            {
+                return -1;
+            }
+            switch (key)
+            {
+                case Categories.Death:
+                    return CountOfRecordsByName(DeathCollection, playerName);
+                case Categories.Join:
+                    return CountOfRecordsByName(JoinCollection, playerName);
+                case Categories.Leave:
+                    return CountOfRecordsByName(LeaveCollection, playerName);
+                case Categories.Ping:
+                    return CountOfRecordsByName(PingCollection, playerName);
+                case Categories.Shout:
+                    return CountOfRecordsByName(ShoutCollection, playerName);
+                default:
+                    Plugin.StaticLogger.LogDebug($"CountOfRecordsBySteamId, invalid key '{key}'");
+                    return -2;
+            }
+        }
+        
+        public int CountOfRecordsBySteamId(string key, ulong steamId)
+        {
+            if (!Plugin.StaticConfig.CollectStatsEnabled)
+            {
+                return -1;
+            }
+            switch (key)
+            {
+                case Categories.Death:
+                    return CountOfRecordsBySteamId(DeathCollection, steamId);
+                case Categories.Join:
+                    return CountOfRecordsBySteamId(JoinCollection, steamId);
+                case Categories.Leave:
+                    return CountOfRecordsBySteamId(LeaveCollection, steamId);
+                case Categories.Ping:
+                    return CountOfRecordsBySteamId(PingCollection, steamId);
+                case Categories.Shout:
+                    return CountOfRecordsBySteamId(ShoutCollection, steamId);
+                default:
+                    Plugin.StaticLogger.LogDebug($"CountOfRecordsBySteamId, invalid key '{key}'");
+                    return -2;
+            }
+        }
+        
+        public void InsertSimpleStatRecord(string key, string playerName, ulong steamId, Vector3 pos)
+        {
+           
+            switch (key)
+            {
+                case Categories.Death:
+                    InsertSimpleStatRecord(DeathCollection, playerName, steamId, pos);
+                    break;
+                case Categories.Join:
+                    InsertSimpleStatRecord(JoinCollection, playerName, steamId, pos);
+                    break;
+                case Categories.Leave:
+                    InsertSimpleStatRecord(LeaveCollection, playerName, steamId, pos);
+                    break;
+                case Categories.Ping:
+                    InsertSimpleStatRecord(PingCollection, playerName, steamId, pos);
+                    break;
+                case Categories.Shout:
+                    InsertSimpleStatRecord(ShoutCollection, playerName, steamId, pos);
+                    break;
+                default:
+                    Plugin.StaticLogger.LogDebug($"InsertSimpleStatRecord, invalid key '{key}'");
+                    break;
+            }
+        }
+        public void InsertSimpleStatRecord(string key, string playerName, ulong steamId)
+        {
+            InsertSimpleStatRecord(key, playerName, steamId, Vector3.zero);
+        }
+
     }
 }

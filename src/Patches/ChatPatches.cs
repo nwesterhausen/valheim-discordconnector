@@ -21,7 +21,7 @@ namespace DiscordConnector.Patches
                 switch (type)
                 {
                     case Talker.Type.Ping:
-                        if (Plugin.StaticConfig.AnnouncePlayerFirstPingEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Ping, user) == 0)
+                        if (Plugin.StaticConfig.AnnouncePlayerFirstPingEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Ping, user) == 0)
                         {
                             DiscordApi.SendMessage(
                                 MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstPingMessage, user)
@@ -29,7 +29,7 @@ namespace DiscordConnector.Patches
                         }
                         if (Plugin.StaticConfig.StatsPingEnabled)
                         {
-                            Plugin.StaticDatabase.InsertPingRecord(user, peerSteamID, pos);
+                            Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Ping, user, peerSteamID, pos);
                         }
                         if (Plugin.StaticConfig.ChatPingEnabled)
                         {
@@ -58,7 +58,7 @@ namespace DiscordConnector.Patches
                         {
                             if (!Plugin.IsHeadless())
                             {
-                                if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Join, user) == 0)
+                                if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Join, user) == 0)
                                 {
                                     DiscordApi.SendMessage(
                                         MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstJoinMessage, user)
@@ -66,7 +66,7 @@ namespace DiscordConnector.Patches
                                 }
                                 if (Plugin.StaticConfig.StatsJoinEnabled)
                                 {
-                                    Plugin.StaticDatabase.InsertJoinRecord(user, peerSteamID, pos);
+                                    Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Join, user, peerSteamID, pos);
                                 }
                                 if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
                                 {
@@ -93,7 +93,7 @@ namespace DiscordConnector.Patches
                         }
                         else
                         {
-                            if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && Plugin.StaticRecords.Retrieve(RecordCategories.Shout, user) == 0)
+                            if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Shout, user) == 0)
                             {
                                 DiscordApi.SendMessage(
                                     MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstShoutMessage, user, text)
@@ -101,7 +101,7 @@ namespace DiscordConnector.Patches
                             }
                             if (Plugin.StaticConfig.StatsShoutEnabled)
                             {
-                                Plugin.StaticDatabase.InsertShoutRecord(user, peerSteamID, pos);
+                                Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Shout, user, peerSteamID, pos);
                             }
                             if (Plugin.StaticConfig.ChatShoutEnabled)
                             {
