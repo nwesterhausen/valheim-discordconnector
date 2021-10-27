@@ -9,17 +9,20 @@ namespace DiscordConnector
         private Leaderboards.Base overallHighest;
         private Leaderboards.Base overallLowest;
         private Leaderboards.Base topPlayers;
+        private Leaderboards.Base bottomPlayers;
 
         public Leaderboard()
         {
             overallHighest = new Leaderboards.OverallHighest();
             overallLowest = new Leaderboards.OverallLowest();
             topPlayers = new Leaderboards.TopPlayers();
+            bottomPlayers = new Leaderboards.BottomPlayers();
         }
 
         public Leaderboards.Base OverallHighest => overallHighest;
         public Leaderboards.Base OverallLowest => overallLowest;
         public Leaderboards.Base TopPlayers => topPlayers;
+        public Leaderboards.Base BottomPlayers => bottomPlayers;
 
 
 
@@ -49,6 +52,7 @@ namespace DiscordConnector.Leaderboards
         /// </summary>
         public void SendLeaderboardOnTimer(object sender, ElapsedEventArgs elapsedEventArgs)
         {
+            Plugin.StaticLogger.LogDebug($"Running the leaderboard send");
             this.SendLeaderboard();
         }
 

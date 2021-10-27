@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,6 +30,7 @@ namespace DiscordConnector.Records
         public static List<CountResult> TopNResultForCategory(string key, int n)
         {
             List<CountResult> queryResults = Plugin.StaticDatabase.RetrieveAllRecordsGroupByName(key);
+            Plugin.StaticLogger.LogDebug($"TopNResultForCategory {key} n={n}, results={queryResults.Count}");
             if (queryResults.Count == 0)
             {
                 return queryResults;
@@ -48,13 +49,19 @@ namespace DiscordConnector.Records
 
         public static CountResult TopResultForCategory(string key)
         {
-            return Helper.TopNResultForCategory(key, 1)[0];
+            var results = Helper.TopNResultForCategory(key, 1);
+            if (results.Count == 0)
+            {
+                return new CountResult("", 0);
+            }
+            return results[0];
         }
 
         public static List<CountResult> BottomNResultForCategory(string key, int n)
         {
-            
+
             List<CountResult> queryResults = Plugin.StaticDatabase.RetrieveAllRecordsGroupByName(key);
+            Plugin.StaticLogger.LogDebug($"BottomNResultForCategory {key} n={n}, results={queryResults.Count}");
             if (queryResults.Count == 0)
             {
                 return queryResults;
@@ -72,7 +79,12 @@ namespace DiscordConnector.Records
 
         public static CountResult BottomResultForCategory(string key)
         {
-            return Helper.BottomNResultForCategory(key, 1)[0];
+            var results = Helper.BottomNResultForCategory(key, 1);
+            if (results.Count == 0)
+            {
+                return new CountResult("", 0);
+            }
+            return results[0];
         }
     }
-    }
+}

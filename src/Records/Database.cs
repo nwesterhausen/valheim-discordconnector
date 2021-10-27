@@ -75,7 +75,7 @@ namespace DiscordConnector.Records
             return ConvertBsonDocumentCountToDotNet(
                 collection.Query()
                     .GroupBy("SteamId")
-                    .Select("{Name: SteamId, Count: COUNT(*)}")
+                    .Select("{Name: @Key, Count: COUNT(*)}")
                     .ToList()
             );
         }
@@ -85,7 +85,7 @@ namespace DiscordConnector.Records
             return ConvertBsonDocumentCountToDotNet(
                 collection.Query()
                     .GroupBy("Name")
-                    .Select("{Name: Name, Count: COUNT(*)}")
+                    .Select("{Name: @Key, Count: COUNT(*)}")
                     .ToList()
             );
         }
@@ -97,7 +97,7 @@ namespace DiscordConnector.Records
             {
                 if (doc.ContainsKey("Name") && doc.ContainsKey("Count"))
                 {
-                    results.Add(new CountResult (
+                    results.Add(new CountResult(
                         doc["Name"].AsString,
                         doc["Count"].AsInt32
                     ));
@@ -107,7 +107,7 @@ namespace DiscordConnector.Records
         }
 
         public List<CountResult> RetrieveAllRecordsGroupByName(string key)
-        {           
+        {
             switch (key)
             {
                 case Categories.Death:
@@ -126,7 +126,7 @@ namespace DiscordConnector.Records
             }
         }
         public List<CountResult> CountAllRecordsGroupBySteamId(string key)
-        {           
+        {
             switch (key)
             {
                 case Categories.Death:
@@ -168,7 +168,7 @@ namespace DiscordConnector.Records
                     return -2;
             }
         }
-        
+
         public int CountOfRecordsBySteamId(string key, ulong steamId)
         {
             if (!Plugin.StaticConfig.CollectStatsEnabled)
@@ -192,10 +192,10 @@ namespace DiscordConnector.Records
                     return -2;
             }
         }
-        
+
         public void InsertSimpleStatRecord(string key, string playerName, ulong steamId, Vector3 pos)
         {
-           
+
             switch (key)
             {
                 case Categories.Death:

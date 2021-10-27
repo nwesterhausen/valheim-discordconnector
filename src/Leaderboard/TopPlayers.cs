@@ -7,12 +7,15 @@ namespace DiscordConnector.Leaderboards
     {
         public override void SendLeaderboard()
         {
+            List<Tuple<string, string>> leaderFields = new List<Tuple<string, string>>();
+
             var deaths = Records.Helper.TopNResultForCategory(Records.Categories.Death, Plugin.StaticConfig.IncludedNumberOfRankings);
             var sessions = Records.Helper.TopNResultForCategory(Records.Categories.Join, Plugin.StaticConfig.IncludedNumberOfRankings);
             var shouts = Records.Helper.TopNResultForCategory(Records.Categories.Shout, Plugin.StaticConfig.IncludedNumberOfRankings);
             var pings = Records.Helper.TopNResultForCategory(Records.Categories.Ping, Plugin.StaticConfig.IncludedNumberOfRankings);
 
-            List<Tuple<string, string>> leaderFields = new List<Tuple<string, string>>();
+
+
             if (Plugin.StaticConfig.RankedDeathLeaderboardEnabled && deaths.Count > 0)
             {
                 leaderFields.Add(Tuple.Create("Top Deaths", Leaderboard.RankedCountResultToString(deaths)));
