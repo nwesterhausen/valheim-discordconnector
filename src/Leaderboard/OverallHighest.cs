@@ -32,7 +32,7 @@ namespace DiscordConnector.Leaderboards
             if (leaderFields.Count > 0)
             {
                 string discordContent = MessageTransformer.FormatLeaderboardHeader(Plugin.StaticConfig.LeaderboardHighestHeading);
-                DiscordApi.SendMessageWithFields("Current Highest stat leader board:", leaderFields);
+                DiscordApi.SendMessageWithFields(discordContent, leaderFields);
             }
             else
             {
