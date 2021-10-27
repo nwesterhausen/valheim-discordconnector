@@ -1,4 +1,6 @@
-﻿using System.Timers;
+﻿using System;
+using System.Collections.Generic;
+using System.Timers;
 
 namespace DiscordConnector
 {
@@ -18,6 +20,23 @@ namespace DiscordConnector
         public Leaderboards.Base OverallHighest => overallHighest;
         public Leaderboards.Base OverallLowest => overallLowest;
         public Leaderboards.Base TopPlayers => topPlayers;
+
+
+
+        /// <summary>
+        /// Takes a sorted list <paramref name="rankings"/> and returns a string listing each member on a line prepended with 1, 2, 3, etc.
+        /// </summary>
+        /// <param name="rankings">A pre-sorted list of CountResults.</param>
+        /// <returns>String ready to send to discord listing each player and their value.</returns>
+        public static string RankedCountResultToString(List<Records.CountResult> rankings)
+        {
+            string res = "";
+            for (int i = 0; i < rankings.Count; i++)
+            {
+                res += $"{i + 1}: {rankings[i].Name}: {rankings[i].Count}{Environment.NewLine}";
+            }
+            return res;
+        }
     }
 }
 

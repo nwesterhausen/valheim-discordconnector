@@ -7,27 +7,27 @@ namespace DiscordConnector.Leaderboards
     {
         public override void SendLeaderboard()
         {
-            var deathLeader = Plugin.StaticRecords.RetrieveHighest(RecordCategories.Death);
-            var joinLeader = Plugin.StaticRecords.RetrieveHighest(RecordCategories.Join);
-            var shoutLeader = Plugin.StaticRecords.RetrieveHighest(RecordCategories.Shout);
-            var pingLeader = Plugin.StaticRecords.RetrieveHighest(RecordCategories.Ping);
+            var deathLeader = Records.Helper.TopResultForCategory(Records.Categories.Death);
+            var joinLeader = Records.Helper.TopResultForCategory(Records.Categories.Join);
+            var shoutLeader = Records.Helper.TopResultForCategory(Records.Categories.Shout);
+            var pingLeader = Records.Helper.TopResultForCategory(Records.Categories.Ping);
 
             List<Tuple<string, string>> leaderFields = new List<Tuple<string, string>>();
-            if (Plugin.StaticConfig.MostDeathLeaderboardEnabled && deathLeader.Item2 > 0)
+            if (Plugin.StaticConfig.MostDeathLeaderboardEnabled && deathLeader.Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Most Deaths", $"{deathLeader.Item1} ({deathLeader.Item2})"));
+                leaderFields.Add(Tuple.Create("Most Deaths", $"{deathLeader.Name} ({deathLeader.Count})"));
             }
-            if (Plugin.StaticConfig.MostSessionLeaderboardEnabled && joinLeader.Item2 > 0)
+            if (Plugin.StaticConfig.MostSessionLeaderboardEnabled && joinLeader.Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Most Sessions", $"{joinLeader.Item1} ({joinLeader.Item2})"));
+                leaderFields.Add(Tuple.Create("Most Sessions", $"{joinLeader.Name} ({joinLeader.Count})"));
             }
-            if (Plugin.StaticConfig.MostShoutLeaderboardEnabled && shoutLeader.Item2 > 0)
+            if (Plugin.StaticConfig.MostShoutLeaderboardEnabled && shoutLeader.Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Most Shouts", $"{shoutLeader.Item1} ({shoutLeader.Item2})"));
+                leaderFields.Add(Tuple.Create("Most Shouts", $"{shoutLeader.Name} ({shoutLeader.Count})"));
             }
-            if (Plugin.StaticConfig.MostPingLeaderboardEnabled && pingLeader.Item2 > 0)
+            if (Plugin.StaticConfig.MostPingLeaderboardEnabled && pingLeader.Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Most Pings", $"{pingLeader.Item1} ({pingLeader.Item2})"));
+                leaderFields.Add(Tuple.Create("Most Pings", $"{pingLeader.Name} ({pingLeader.Count})"));
             }
             if (leaderFields.Count > 0)
             {

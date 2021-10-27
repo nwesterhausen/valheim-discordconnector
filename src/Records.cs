@@ -8,26 +8,6 @@ using UnityEngine;
 namespace DiscordConnector
 {
     /// <summary>
-    /// These are categories used when keeping track of values in the record system. It is a simple system
-    /// that currently only supports storing string:integer pairings underneath one of these categories.
-    /// </summary>
-    public static class RecordCategories
-    {
-        public const string Death = "death";
-        public const string Join = "join";
-        public const string Leave = "leave";
-        public const string Ping = "ping";
-        public const string Shout = "shout";
-
-        public static string[] All = new string[] {
-            Death,
-            Join,
-            Leave,
-            Ping,
-            Shout
-        };
-    }
-    /// <summary>
     /// The individual key:value pairings used in the record system. It supports only string:int pairings.
     /// </summary>
     internal class RecordValue
@@ -74,16 +54,16 @@ namespace DiscordConnector
 
         /// <summary>
         /// Add <paramref name="value"/> to a record for <paramref name="playername"/> under <paramref name="key"/> in the records database. 
-        /// This will not save the record if the <paramref name="key"/> is not one defined in RecordCategories.
+        /// This will not save the record if the <paramref name="key"/> is not one defined in Records.Categories.
         /// </summary>
-        /// <param name="key">RecordCategories category to store the value under</param>
+        /// <param name="key">Records.Categories category to store the value under</param>
         /// <param name="playername">The player's name.</param>
         /// <param name="value">How much to increase current stored value by.</param>
         // public void Store(string key, string playername, int value)
         // {
         //     if (Plugin.StaticConfig.CollectStatsEnabled)
         //     {
-        //         if (Array.IndexOf<string>(RecordCategories.All, key) >= 0)
+        //         if (Array.IndexOf<string>(Records.Categories.All, key) >= 0)
         //         {
         //             foreach (Record r in recordCache)
         //             {
@@ -122,7 +102,7 @@ namespace DiscordConnector
         /// <summary>
         /// Get the value stored under <paramref name="key"/> at <paramref name="playername"/>.
         /// </summary>
-        /// <param name="key">The RecordCategories category the value is stored under</param>
+        /// <param name="key">The Records.Categories category the value is stored under</param>
         /// <param name="playername">The name of the player</param>
         /// <returns>This will return 0 if there is no record found for that player. It will return -1 if the category is invalid.</returns>
         // public int Retrieve(string key, string playername)
@@ -131,7 +111,7 @@ namespace DiscordConnector
         //     {
         //         return -1;
         //     }
-        //     if (Array.IndexOf<string>(RecordCategories.All, key) >= 0)
+        //     if (Array.IndexOf<string>(Records.Categories.All, key) >= 0)
         //     {
         //         foreach (Record r in recordCache)
         //         {
@@ -154,7 +134,7 @@ namespace DiscordConnector
         /// <summary>
         /// Retrieve all stored values under <paramref name="key"/>.
         /// </summary>
-        /// <param name="key">RecordCategories category to retrieve stored values from</param>
+        /// <param name="key">Records.Categories category to retrieve stored values from</param>
         /// <returns>A list of (playername, value) tuples. The list will have length 0 if there are no stored records.</returns>
         public List<Tuple<string, int>> RetrieveAll(string key)
         {
@@ -164,7 +144,7 @@ namespace DiscordConnector
                 return results;
             }
 
-            if (Array.IndexOf<string>(RecordCategories.All, key) >= 0)
+            if (Array.IndexOf<string>(Records.Categories.All, key) >= 0)
             {
                 foreach (Record r in recordCache)
                 {
@@ -186,7 +166,7 @@ namespace DiscordConnector
         /// <summary>
         /// Retrieve the highest stored value under <paramref name="key"/>.
         /// </summary>
-        /// <param name="key">RecordCategories category to retrieve stored values from</param>
+        /// <param name="key">Records.Categories category to retrieve stored values from</param>
         /// <returns>A single (playername, value) tuple.</returns>
         public Tuple<string, int> RetrieveHighest(string key)
         {
@@ -195,7 +175,7 @@ namespace DiscordConnector
                 return Tuple.Create("not allowed", -1);
             }
 
-            if (Array.IndexOf<string>(RecordCategories.All, key) >= 0)
+            if (Array.IndexOf<string>(Records.Categories.All, key) >= 0)
             {
                 string player = "no result";
                 int records = -1;
@@ -224,7 +204,7 @@ namespace DiscordConnector
         /// <summary>
         /// Retrieve the lowest stored value under <paramref name="key"/>.
         /// </summary>
-        /// <param name="key">RecordCategories category to retrieve stored values from</param>
+        /// <param name="key">Records.Categories category to retrieve stored values from</param>
         /// <returns>A single (playername, value) tuple.</returns>
         public Tuple<string, int> RetrieveLowest(string key)
         {
@@ -233,7 +213,7 @@ namespace DiscordConnector
                 return Tuple.Create("not allowed", -1);
             }
 
-            if (Array.IndexOf<string>(RecordCategories.All, key) >= 0)
+            if (Array.IndexOf<string>(Records.Categories.All, key) >= 0)
             {
                 string player = "no result";
                 int records = int.MaxValue;
@@ -322,7 +302,7 @@ namespace DiscordConnector
         private void InitializeEmptyCache()
         {
             recordCache = new List<Record>();
-            foreach (string category in RecordCategories.All)
+            foreach (string category in Records.Categories.All)
             {
                 recordCache.Add(new Record
                 {

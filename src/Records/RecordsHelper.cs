@@ -24,4 +24,55 @@ namespace DiscordConnector.Records
             Shout
         };
     }
+
+    public static class Helper
+    {
+        public static List<CountResult> TopNResultForCategory(string key, int n)
+        {
+            List<CountResult> queryResults = Plugin.StaticDatabase.RetrieveAllRecordsGroupByName(key);
+            if (queryResults.Count == 0)
+            {
+                return queryResults;
+            }
+
+            queryResults.Sort(CountResult.CompareByCount); // sorts lowest to highest
+            queryResults.Reverse(); // Now high --> low
+
+            if (queryResults.Count <= n)
+            {
+                return queryResults;
+            }
+
+            return queryResults.GetRange(0, n);
+        }
+
+        public static CountResult TopResultForCategory(string key)
+        {
+            return Helper.TopNResultForCategory(key, 1)[0];
+        }
+
+        public static List<CountResult> BottomNResultForCategory(string key, int n)
+        {
+            
+            List<CountResult> queryResults = Plugin.StaticDatabase.RetrieveAllRecordsGroupByName(key);
+            if (queryResults.Count == 0)
+            {
+                return queryResults;
+            }
+
+            queryResults.Sort(CountResult.CompareByCount); // sorts lowest to highest
+
+            if (queryResults.Count <= n)
+            {
+                return queryResults;
+            }
+
+            return queryResults.GetRange(0, n);
+        }
+
+        public static CountResult BottomResultForCategory(string key)
+        {
+            return Helper.BottomNResultForCategory(key, 1)[0];
+        }
+    }
     }
