@@ -18,19 +18,19 @@ namespace DiscordConnector.Leaderboards
 
             if (Plugin.StaticConfig.RankedDeathLeaderboardEnabled && deaths.Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Bottom Deaths", Leaderboard.RankedCountResultToString(deaths)));
+                leaderFields.Add(Tuple.Create("Deaths", Leaderboard.RankedCountResultToString(deaths)));
             }
             if (Plugin.StaticConfig.RankedSessionLeaderboardEnabled && sessions.Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Bottom Sessions", Leaderboard.RankedCountResultToString(sessions)));
+                leaderFields.Add(Tuple.Create("Sessions", Leaderboard.RankedCountResultToString(sessions)));
             }
             if (Plugin.StaticConfig.RankedShoutLeaderboardEnabled && shouts.Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Bottom Shouts", Leaderboard.RankedCountResultToString(shouts)));
+                leaderFields.Add(Tuple.Create("Shouts", Leaderboard.RankedCountResultToString(shouts)));
             }
             if (Plugin.StaticConfig.RankedPingLeaderboardEnabled && pings.Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Bottom Pings", Leaderboard.RankedCountResultToString(pings)));
+                leaderFields.Add(Tuple.Create("Pings", Leaderboard.RankedCountResultToString(pings)));
             }
             if (leaderFields.Count > 0)
             {
