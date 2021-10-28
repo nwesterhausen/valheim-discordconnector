@@ -56,7 +56,8 @@ namespace DiscordConnector
                 leaderboardTimer.Elapsed += StaticLeaderboards.TopPlayers.SendLeaderboardOnTimer;
                 leaderboardTimer.Elapsed += StaticLeaderboards.BottomPlayers.SendLeaderboardOnTimer;
                 // Interval is learned from config file in minutes
-                leaderboardTimer.Interval = 60 * 1000 * StaticConfig.StatsAnnouncementPeriod;
+                // leaderboardTimer.Interval = 60 * 1000 * StaticConfig.StatsAnnouncementPeriod;
+                leaderboardTimer.Interval = 30 * 1000 * StaticConfig.StatsAnnouncementPeriod;
                 Plugin.StaticLogger.LogDebug($"Enabling leaderboard timers with interval {leaderboardTimer.Interval}ms");
                 leaderboardTimer.Start();
             }

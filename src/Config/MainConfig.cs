@@ -4,6 +4,13 @@ using BepInEx.Configuration;
 
 namespace DiscordConnector.Config
 {
+    public static class RetrievalDiscernmentMethods
+    {
+        public static readonly string BySteamID = "Treat each SteamID as a separate player";
+        public static readonly string ByNameAndSteamID = "Treat each SteamID:PlayerName combo as a separate player";
+        public static readonly string ByName = "Treat each PlayerName as a separate player";
+
+    }
     internal class MainConfig
     {
         private ConfigFile config;
@@ -20,6 +27,7 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> sendPositionsToggle;
         private ConfigEntry<bool> announcePlayerFirsts;
         private ConfigEntry<int> numberRankingsListed;
+        private ConfigEntry<string> playerLookupPreference;
 
         public MainConfig(ConfigFile configFile)
         {
@@ -86,6 +94,16 @@ namespace DiscordConnector.Config
                 3,
                 "Set how many places (1st, 2nd, 3rd by default) to display when sending the ranked leaderboard.");
 
+            playerLookupPreference = config.Bind<string>(MAIN_SETTINGS,
+                "How to discern players in Record Retrieval",
+                RetrievalDiscernmentMethods.BySteamID,
+                new ConfigDescription("Choose a method for how players will be separated from the results of a record query.",
+                new AcceptableValueList<string>(new string[] {
+                    RetrievalDiscernmentMethods.BySteamID,
+                    RetrievalDiscernmentMethods.ByName,
+                    RetrievalDiscernmentMethods.ByNameAndSteamID
+                })));
+
 
             config.Save();
         }
@@ -103,7 +121,8 @@ namespace DiscordConnector.Config
             jsonString += $"\"colectStatsEnabled\":\"{CollectStatsEnabled}\",";
             jsonString += $"\"sendPositionsEnabled\":\"{SendPositionsEnabled}\",";
             jsonString += $"\"announcePlayerFirsts\":\"{AnnouncePlayerFirsts}\",";
-            jsonString += $"\"numberRankingsListed\":\"{IncludedNumberOfRankings}\"";
+            jsonString += $"\"numberRankingsListed\":\"{IncludedNumberOfRankings}\",";
+            jsonString += $"\"playerLookupPreference\":\"{RecordRetrievalDiscernmentMethod}\"";
             jsonString += "}";
             return jsonString;
         }
@@ -117,6 +136,7 @@ namespace DiscordConnector.Config
         public List<string> MutedPlayers => mutedPlayers;
         public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
         public int IncludedNumberOfRankings => numberRankingsListed.Value;
+        public string RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
 
     }
 }

@@ -87,6 +87,7 @@ namespace DiscordConnector
         public bool DiscordEmbedsEnabled => mainConfig.DiscordEmbedsEnabled;
         public bool SendPositionsEnabled => mainConfig.SendPositionsEnabled;
         public bool AnnouncePlayerFirsts => mainConfig.AnnouncePlayerFirsts;
+        public string RecordRetrievalDiscernmentMethod => mainConfig.RecordRetrievalDiscernmentMethod;
         public List<string> MutedPlayers => mainConfig.MutedPlayers;
 
 
@@ -162,6 +163,7 @@ namespace DiscordConnector
         public bool DebugEveryEventCheck => togglesConfig.DebugEveryEventCheck;
         public bool DebugEveryEventChange => togglesConfig.DebugEveryEventChange;
         public bool DebugHttpRequestResponse => togglesConfig.DebugHttpRequestResponse;
+        public bool DebugDatabaseMethods => togglesConfig.DebugDatabaseMethods;
 
         // Leaderboard Messages
         public string LeaderboardTopPlayerHeading => messagesConfig.LeaderboardTopPlayerHeading;
