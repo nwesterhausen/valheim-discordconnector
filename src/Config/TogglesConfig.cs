@@ -13,6 +13,7 @@ namespace DiscordConnector.Config
         private const string POSITION_TOGGLES = "Toggles.Position";
         private const string STATS_TOGGLES = "Toggles.Stats";
         private const string LEADERBOARD_TOGGLES = "Toggles.Leaderboard";
+        private const string LEADERBOARD_BOTTOM_N_TOGGLES = "Toggles.InverseLeaderboard";
         private const string LEADERBOARD_TOGGLES_HIGHEST = "Toggles.Leaderboard.Highest";
         private const string LEADERBOARD_TOGGLES_LOWEST = "Toggles.Leaderboard.Lowest";
         private const string PLAYER_FIRSTS_TOGGLES = "Toggles.PlayerFirsts";
@@ -69,6 +70,12 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> sendPingRankingLeaderboard;
         private ConfigEntry<bool> sendDeathRankingLeaderboard;
         private ConfigEntry<bool> sendShoutRankingLeaderboard;
+
+        // Send Leaderboard Settings (inverse rankings)
+        private ConfigEntry<bool> sendSessionInverseRankingLeaderboard;
+        private ConfigEntry<bool> sendPingInverseRankingLeaderboard;
+        private ConfigEntry<bool> sendDeathInverseRankingLeaderboard;
+        private ConfigEntry<bool> sendShoutInverseRankingLeaderboard;
 
         // Player-firsts Settings
         private ConfigEntry<bool> announcePlayerFirstDeath;
@@ -309,6 +316,23 @@ namespace DiscordConnector.Config
                     "If enabled, this will write a log message at the DEBUG level with the content of HTTP request responses." + Environment.NewLine +
                     "Nearly all of these requests are when data is sent to the Discord Webhook.");
 
+            // LEADERBOARD_BOTTOM_N_TOGGLES
+            sendDeathInverseRankingLeaderboard = config.Bind<bool>(LEADERBOARD_BOTTOM_N_TOGGLES,
+                "Send Periodic Inverse Leaderboard for Player Deaths",
+                true,
+                "If enabled, will send a ranked leaderboard (least to most) for player deaths at the interval.");
+            sendPingInverseRankingLeaderboard = config.Bind<bool>(LEADERBOARD_BOTTOM_N_TOGGLES,
+                "Send Periodic Inverse Leaderboard for Player Pings",
+                false,
+                "If enabled, will send a ranked leaderboard (least to most) for player pings at the interval.");
+            sendSessionInverseRankingLeaderboard = config.Bind<bool>(LEADERBOARD_BOTTOM_N_TOGGLES,
+                "Send Periodic Inverse Leaderboard for Player Sessions",
+                false,
+                "If enabled, will send a ranked leaderboard (least to most) for player sessions at the interval.");
+            sendShoutInverseRankingLeaderboard = config.Bind<bool>(LEADERBOARD_BOTTOM_N_TOGGLES,
+                "Send Periodic Inverse Leaderboard for Player Shouts",
+                false,
+                "If enabled, will send a ranked leaderboard (least to most) for player shouts at the interval.");
 
             config.Save();
         }
@@ -386,6 +410,13 @@ namespace DiscordConnector.Config
             jsonString += $"\"debugEveryEventCheck\":\"{DebugEveryEventCheck}\",";
             jsonString += $"\"debugEventChanges\":\"{DebugEveryEventChange}\",";
             jsonString += $"\"debugHttpRequestResponses\":\"{DebugHttpRequestResponse}\"";
+            jsonString += "},";
+
+            jsonString += $"\"{LEADERBOARD_BOTTOM_N_TOGGLES}\":{{";
+            jsonString += $"\"leaderboardInverseDeathEnabled\":\"{InverseRankedDeathLeaderboardEnabled}\",";
+            jsonString += $"\"leaderboardInversePingEnabled\":\"{InverseRankedPingLeaderboardEnabled}\",";
+            jsonString += $"\"leaderboardInverseShoutEnabled\":\"{InverseRankedShoutLeaderboardEnabled}\",";
+            jsonString += $"\"leaderboardInverseSessionEnabled\":\"{InverseRankedSessionLeaderboardEnabled}\"";
             jsonString += "}";
 
             jsonString += "}";
@@ -441,5 +472,9 @@ namespace DiscordConnector.Config
         public bool DebugEveryEventCheck => debugEveryEventCheck.Value;
         public bool DebugEveryEventChange => debugEventChanges.Value;
         public bool DebugHttpRequestResponse => debugHttpRequestResponses.Value;
+        public bool InverseRankedDeathLeaderboardEnabled => sendDeathInverseRankingLeaderboard.Value;
+        public bool InverseRankedPingLeaderboardEnabled => sendPingInverseRankingLeaderboard.Value;
+        public bool InverseRankedSessionLeaderboardEnabled => sendSessionInverseRankingLeaderboard.Value;
+        public bool InverseRankedShoutLeaderboardEnabled => sendShoutInverseRankingLeaderboard.Value;
     }
 }

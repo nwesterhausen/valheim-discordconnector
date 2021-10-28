@@ -2,6 +2,12 @@
 
 A full changelog
 
+### Version 1.5.1
+
+Fixes:
+
+- Toggles for the bottom n players leaderboards (inverse ranked leaderboards)
+
 ### Version 1.5.0
 
 Features:
