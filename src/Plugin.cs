@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using DiscordConnector.Records;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -11,7 +12,8 @@ namespace DiscordConnector
     {
         internal static ManualLogSource StaticLogger;
         internal static PluginConfig StaticConfig;
-        internal static Records StaticRecords;
+        internal static RecordsOld StaticRecords;
+        internal static Database StaticDatabase;
         internal static Leaderboard StaticLeaderboards;
         internal static EventWatcher StaticEventWatcher;
         internal static string PublicIpAddress;
@@ -21,8 +23,11 @@ namespace DiscordConnector
         {
             StaticLogger = Logger;
             StaticConfig = new PluginConfig(Config);
-            StaticRecords = new Records(Paths.GameRootPath);
+            StaticDatabase = new Records.Database(Paths.GameRootPath);
             StaticLeaderboards = new Leaderboard();
+
+            //! Remove in next major version
+            StaticRecords = new RecordsOld(Paths.GameRootPath);
         }
 
         private void Awake()
@@ -49,8 +54,10 @@ namespace DiscordConnector
                 leaderboardTimer.Elapsed += StaticLeaderboards.OverallHighest.SendLeaderboardOnTimer;
                 leaderboardTimer.Elapsed += StaticLeaderboards.OverallLowest.SendLeaderboardOnTimer;
                 leaderboardTimer.Elapsed += StaticLeaderboards.TopPlayers.SendLeaderboardOnTimer;
+                leaderboardTimer.Elapsed += StaticLeaderboards.BottomPlayers.SendLeaderboardOnTimer;
                 // Interval is learned from config file in minutes
                 leaderboardTimer.Interval = 60 * 1000 * StaticConfig.StatsAnnouncementPeriod;
+                Plugin.StaticLogger.LogDebug($"Enabling leaderboard timers with interval {leaderboardTimer.Interval}ms");
                 leaderboardTimer.Start();
             }
 
@@ -62,6 +69,7 @@ namespace DiscordConnector
         private void OnDestroy()
         {
             _harmony.UnpatchSelf();
+            StaticDatabase.Dispose();
         }
 
         /// <summary>
