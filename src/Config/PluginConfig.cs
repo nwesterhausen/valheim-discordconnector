@@ -87,6 +87,7 @@ namespace DiscordConnector
         public bool DiscordEmbedsEnabled => mainConfig.DiscordEmbedsEnabled;
         public bool SendPositionsEnabled => mainConfig.SendPositionsEnabled;
         public bool AnnouncePlayerFirsts => mainConfig.AnnouncePlayerFirsts;
+        public string RecordRetrievalDiscernmentMethod => mainConfig.RecordRetrievalDiscernmentMethod;
         public List<string> MutedPlayers => mainConfig.MutedPlayers;
 
 
