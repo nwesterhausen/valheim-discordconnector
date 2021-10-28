@@ -35,22 +35,15 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
-**Release 1.0.0+ is a breaking release** since the structure of the configuration files completely changes. When you update you will need to modify the config
-to save your webhook again and to update any message customization you have done!
+### Version 1.5.2
 
-**Release 1.2.0 affected the records.json file** so if you update and notice that your recorded stats aren't changing, it's a simple fix.
+Fixes:
 
-records.json pre 1.2.0:
+- Highest and Lowest leaderboards were not checking the correct tables
+- Configurable retrieval strategy for all records (either SteamID, PLayer Name, or both) -- always returns player names
 
-```json
-[{"Category":"death","Values":[{"PlayerName":"Xithyr","Value":13} ...
-```
-
-records.json 1.2.0+ (PlayerName changed to Key)
-
-```json
-[{"Category":"death","Values":[{"Key":"Xithyr","Value":13} ...
-```
+Due to how records.json recorded stats and the LiteDB, you will not be able to use the old records with strategies
+involving the SteamID because prior to 1.5.0 we were not recording the SteamID with the record.
 
 ### Version 1.5.1
 

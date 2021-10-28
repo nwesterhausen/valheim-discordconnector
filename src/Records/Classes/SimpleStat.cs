@@ -62,6 +62,11 @@ namespace DiscordConnector.Records
             SteamId = steamId;
             Pos = pos;
         }
+
+        public override string ToString()
+        {
+            return $"{Date.ToShortDateString()} {Date.ToShortTimeString()}: {Name} ({SteamId}) at {Pos}";
+        }
     }
 
 }

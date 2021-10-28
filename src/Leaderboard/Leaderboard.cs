@@ -52,7 +52,6 @@ namespace DiscordConnector.Leaderboards
         /// </summary>
         public void SendLeaderboardOnTimer(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            Plugin.StaticLogger.LogDebug($"Running the leaderboard send");
             this.SendLeaderboard();
         }
 

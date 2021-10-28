@@ -16,6 +16,8 @@ namespace DiscordConnector.Records
         private ILiteCollection<SimpleStat> ShoutCollection;
         private ILiteCollection<SimpleStat> PingCollection;
 
+        private const long STEAMID_LOWERBOUND = 100;
+
         public Database(string rootStorePath)
         {
             DbPath = System.IO.Path.Combine(rootStorePath, DB_NAME);
@@ -24,13 +26,21 @@ namespace DiscordConnector.Records
 
         public void Initialize()
         {
-            db = new LiteDatabase(DbPath);
-            Plugin.StaticLogger.LogDebug($"LiteDB Connection Established to {DbPath}");
-            DeathCollection = db.GetCollection<SimpleStat>("deaths");
-            JoinCollection = db.GetCollection<SimpleStat>("joins");
-            LeaveCollection = db.GetCollection<SimpleStat>("leaves");
-            ShoutCollection = db.GetCollection<SimpleStat>("shouts");
-            PingCollection = db.GetCollection<SimpleStat>("pings");
+            try
+            {
+                db = new LiteDatabase(DbPath);
+                Plugin.StaticLogger.LogDebug($"LiteDB Connection Established to {DbPath}");
+                DeathCollection = db.GetCollection<SimpleStat>("deaths");
+                JoinCollection = db.GetCollection<SimpleStat>("joins");
+                LeaveCollection = db.GetCollection<SimpleStat>("leaves");
+                ShoutCollection = db.GetCollection<SimpleStat>("shouts");
+                PingCollection = db.GetCollection<SimpleStat>("pings");
+            }
+            catch (System.IO.IOException e)
+            {
+                Plugin.StaticLogger.LogError($"Unable to acquire un-shared access to {DbPath}");
+                Plugin.StaticLogger.LogDebug(e);
+            }
         }
 
         public void Dispose()
@@ -58,89 +68,133 @@ namespace DiscordConnector.Records
 
         private int CountOfRecordsByName(ILiteCollection<SimpleStat> collection, string playerName)
         {
-            return DeathCollection.Query()
+            return collection.Query()
                 .Where(x => x.Name.Equals(playerName))
                 .Count();
         }
 
         private int CountOfRecordsBySteamId(ILiteCollection<SimpleStat> collection, ulong steamId)
         {
-            return DeathCollection.Query()
+            return collection.Query()
                 .Where(x => x.SteamId == steamId)
                 .Count();
         }
 
-        private List<CountResult> CountAllRecordsGroupBySteamId(ILiteCollection<SimpleStat> collection)
+        private int CountOfRecordsByNameAndSteamId(ILiteCollection<SimpleStat> collection, string playerName, ulong steamId)
         {
-            return ConvertBsonDocumentCountToDotNet(
-                collection.Query()
-                    .GroupBy("SteamId")
-                    .Select("{Name: @Key, Count: COUNT(*)}")
-                    .ToList()
-            );
+            return collection.Query()
+                .Where(x => (x.Name.Equals(playerName) && x.SteamId == steamId))
+                .Count();
         }
 
-        private List<CountResult> RetrieveAllRecordsGroupByName(ILiteCollection<SimpleStat> collection)
+        private List<CountResult> CountAllRecordsGrouped(ILiteCollection<SimpleStat> collection)
         {
-            return ConvertBsonDocumentCountToDotNet(
-                collection.Query()
-                    .GroupBy("Name")
-                    .Select("{Name: @Key, Count: COUNT(*)}")
-                    .ToList()
-            );
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"CountAllRecordsGrouped {Plugin.StaticConfig.RecordRetrievalDiscernmentMethod}"); }
+            //! if treat name as character, each name combined regardless
+            if (Plugin.StaticConfig.RecordRetrievalDiscernmentMethod.Equals(Config.RetrievalDiscernmentMethods.ByName))
+            {
+                return ConvertBsonDocumentCountToDotNet(
+                    collection.Query()
+                        .GroupBy("Name")
+                        .Select("{Name: @Key, Count: COUNT(*)}")
+                        .ToList()
+                );
+            }
+            else if (Plugin.StaticConfig.RecordRetrievalDiscernmentMethod.Equals(Config.RetrievalDiscernmentMethods.ByNameAndSteamID))
+            {
+                return ConvertBsonDocumentCountToDotNet(
+                    collection.Query()
+                        .GroupBy("{Name,SteamId}")
+                        .Select("{NameSteam: @Key, Count: COUNT(*)}")
+                        .ToList()
+                );
+            }
+            else // Leaving only Config.RetrievalDiscernmentMethods.BySteamID
+            {
+
+                return ConvertBsonDocumentCountToDotNet(
+                    collection.Query()
+                        .GroupBy("SteamId")
+                        .Select("{Steam: @Key, Count: COUNT(*)}")
+                        .ToList()
+                );
+            }
+        }
+
+        private string GetLatestNameForSteamId(ulong steamId)
+        {
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForSteamId {steamId} begin"); }
+            var nameQuery = JoinCollection.Query()
+                .Where(x => x.SteamId == steamId)
+                .OrderByDescending("Date")
+                .Select("$.Name")
+                .ToList();
+            if (nameQuery.Count == 0)
+            {
+                if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForSteamId {steamId} result = NONE"); }
+                return "undefined";
+            }
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"nameQuery has {nameQuery.Count} results"); }
+            var result = nameQuery[0];
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForSteamId {steamId} result = {result}"); }
+            return result["Name"].AsString;
         }
 
         private List<CountResult> ConvertBsonDocumentCountToDotNet(List<BsonDocument> bsonDocuments)
         {
             List<CountResult> results = new List<CountResult>();
+
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"ConvertBsonDocumentCountToDotNet r={bsonDocuments.Count}"); }
             foreach (BsonDocument doc in bsonDocuments)
             {
-                if (doc.ContainsKey("Name") && doc.ContainsKey("Count"))
+                if (!doc.ContainsKey("Count"))
+                {
+                    continue;
+                }
+                if (doc.ContainsKey("Name"))
                 {
                     results.Add(new CountResult(
                         doc["Name"].AsString,
                         doc["Count"].AsInt32
                     ));
                 }
+                else if (doc.ContainsKey("NameSteam"))
+                {
+                    results.Add(new CountResult(
+                        doc["NameSteam"]["Name"].AsString,
+                        doc["Count"].AsInt32
+                    ));
+                }
+                else if (doc.ContainsKey("Steam"))
+                {
+                    if (doc["Steam"].AsInt64 >= STEAMID_LOWERBOUND)
+                    {
+                        results.Add(new CountResult(
+                            GetLatestNameForSteamId((ulong)doc["Steam"].AsInt64),
+                            doc["Count"].AsInt32
+                        ));
+                    }
+                }
             }
             return results;
         }
 
-        public List<CountResult> RetrieveAllRecordsGroupByName(string key)
+        public List<CountResult> CountAllRecordsGrouped(string key)
         {
             switch (key)
             {
                 case Categories.Death:
-                    return RetrieveAllRecordsGroupByName(DeathCollection);
+                    return CountAllRecordsGrouped(DeathCollection);
                 case Categories.Join:
-                    return RetrieveAllRecordsGroupByName(JoinCollection);
+                    return CountAllRecordsGrouped(JoinCollection);
                 case Categories.Leave:
-                    return RetrieveAllRecordsGroupByName(LeaveCollection);
+                    return CountAllRecordsGrouped(LeaveCollection);
                 case Categories.Ping:
-                    return RetrieveAllRecordsGroupByName(PingCollection);
+                    return CountAllRecordsGrouped(PingCollection);
                 case Categories.Shout:
-                    return RetrieveAllRecordsGroupByName(ShoutCollection);
+                    return CountAllRecordsGrouped(ShoutCollection);
                 default:
                     Plugin.StaticLogger.LogDebug($"RetrieveAllRecordsGroupByName, invalid key '{key}'");
-                    return new List<CountResult>();
-            }
-        }
-        public List<CountResult> CountAllRecordsGroupBySteamId(string key)
-        {
-            switch (key)
-            {
-                case Categories.Death:
-                    return CountAllRecordsGroupBySteamId(DeathCollection);
-                case Categories.Join:
-                    return CountAllRecordsGroupBySteamId(JoinCollection);
-                case Categories.Leave:
-                    return CountAllRecordsGroupBySteamId(LeaveCollection);
-                case Categories.Ping:
-                    return CountAllRecordsGroupBySteamId(PingCollection);
-                case Categories.Shout:
-                    return CountAllRecordsGroupBySteamId(ShoutCollection);
-                default:
-                    Plugin.StaticLogger.LogDebug($"CountAllRecordsGroupBySteamId, invalid key '{key}'");
                     return new List<CountResult>();
             }
         }

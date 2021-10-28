@@ -2,6 +2,16 @@
 
 A full changelog for reference.
 
+### Version 1.5.2
+
+Fixes:
+
+- Highest and Lowest leaderboards were not checking the correct tables
+- Configurable retrieval strategy for all records (either SteamID, PLayer Name, or both) -- always returns player names
+
+Due to how records.json recorded stats and the LiteDB, you will not be able to use the old records with strategies
+involving the SteamID because prior to 1.5.0 we were not recording the SteamID with the record.
+
 ### Version 1.5.1
 
 Fixes:
