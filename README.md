@@ -30,8 +30,10 @@ The compiled plugin will be in a zip ready for upload at `bin/DiscordConnector.z
 
 ### Dependencies
 
-For JSON serialization, I chose to use the System.Text.Json library which is part of
-the most recent .NET but can be used with .NET 4.8 which is used in this project.
+For JSON serialization, using Newtonsoft.Json
+
+For data storage/retrieval using [LiteDB](https://www.litedb.org/) 
+(If you want to read the database file generated, you can use [LitDB Studio](https://github.com/mbdavid/LiteDB.Studio/releases/latest))
 
 ### Contributors
 
