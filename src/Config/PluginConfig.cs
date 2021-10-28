@@ -163,6 +163,7 @@ namespace DiscordConnector
         public bool DebugEveryEventCheck => togglesConfig.DebugEveryEventCheck;
         public bool DebugEveryEventChange => togglesConfig.DebugEveryEventChange;
         public bool DebugHttpRequestResponse => togglesConfig.DebugHttpRequestResponse;
+        public bool DebugDatabaseMethods => togglesConfig.DebugDatabaseMethods;
 
         // Leaderboard Messages
         public string LeaderboardTopPlayerHeading => messagesConfig.LeaderboardTopPlayerHeading;

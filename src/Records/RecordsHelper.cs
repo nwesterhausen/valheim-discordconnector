@@ -30,7 +30,7 @@ namespace DiscordConnector.Records
         public static List<CountResult> TopNResultForCategory(string key, int n)
         {
             List<CountResult> queryResults = Plugin.StaticDatabase.CountAllRecordsGrouped(key);
-            Plugin.StaticLogger.LogDebug($"TopNResultForCategory {key} n={n}, results={queryResults.Count}");
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"TopNResultForCategory {key} n={n}, results={queryResults.Count}"); }
             if (queryResults.Count == 0)
             {
                 return queryResults;
@@ -61,7 +61,7 @@ namespace DiscordConnector.Records
         {
 
             List<CountResult> queryResults = Plugin.StaticDatabase.CountAllRecordsGrouped(key);
-            Plugin.StaticLogger.LogDebug($"BottomNResultForCategory {key} n={n}, results={queryResults.Count}");
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"BottomNResultForCategory {key} n={n}, results={queryResults.Count}"); }
             if (queryResults.Count == 0)
             {
                 return queryResults;

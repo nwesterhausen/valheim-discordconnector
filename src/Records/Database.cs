@@ -89,7 +89,7 @@ namespace DiscordConnector.Records
 
         private List<CountResult> CountAllRecordsGrouped(ILiteCollection<SimpleStat> collection)
         {
-            Plugin.StaticLogger.LogDebug($"CountAllRecordsGrouped {Plugin.StaticConfig.RecordRetrievalDiscernmentMethod}");
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"CountAllRecordsGrouped {Plugin.StaticConfig.RecordRetrievalDiscernmentMethod}"); }
             //! if treat name as character, each name combined regardless
             if (Plugin.StaticConfig.RecordRetrievalDiscernmentMethod.Equals(Config.RetrievalDiscernmentMethods.ByName))
             {
@@ -123,26 +123,28 @@ namespace DiscordConnector.Records
 
         private string GetLatestNameForSteamId(ulong steamId)
         {
-            Plugin.StaticLogger.LogDebug($"GetLatestNameForSteamId {steamId} begin");
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForSteamId {steamId} begin"); }
             var nameQuery = JoinCollection.Query()
                 .Where(x => x.SteamId == steamId)
-                .OrderByDescending("Date");
-            if (nameQuery.Count() == 0)
+                .OrderByDescending("Date")
+                .Select("$.Name")
+                .ToList();
+            if (nameQuery.Count == 0)
             {
-                Plugin.StaticLogger.LogDebug($"GetLatestNameForSteamId {steamId} result = NONE");
+                if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForSteamId {steamId} result = NONE"); }
                 return "undefined";
             }
-            SimpleStat result = nameQuery
-                .First();
-            Plugin.StaticLogger.LogDebug($"GetLatestNameForSteamId {steamId} result = {result}");
-            return result.Name;
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"nameQuery has {nameQuery.Count} results"); }
+            var result = nameQuery[0];
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForSteamId {steamId} result = {result}"); }
+            return result["Name"].AsString;
         }
 
         private List<CountResult> ConvertBsonDocumentCountToDotNet(List<BsonDocument> bsonDocuments)
         {
             List<CountResult> results = new List<CountResult>();
 
-            Plugin.StaticLogger.LogDebug($"ConvertBsonDocumentCountToDotNet r={bsonDocuments.Count}");
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"ConvertBsonDocumentCountToDotNet r={bsonDocuments.Count}"); }
             foreach (BsonDocument doc in bsonDocuments)
             {
                 if (!doc.ContainsKey("Count"))

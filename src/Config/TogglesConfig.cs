@@ -89,6 +89,7 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> debugEveryEventPlayerPosCheck;
         private ConfigEntry<bool> debugEventChanges;
         private ConfigEntry<bool> debugHttpRequestResponses;
+        private ConfigEntry<bool> debugDatabaseMethods;
 
         public TogglesConfig(ConfigFile configFile)
         {
@@ -315,6 +316,10 @@ namespace DiscordConnector.Config
                     false,
                     "If enabled, this will write a log message at the DEBUG level with the content of HTTP request responses." + Environment.NewLine +
                     "Nearly all of these requests are when data is sent to the Discord Webhook.");
+            debugDatabaseMethods = config.Bind<bool>(DEBUG_TOGGLES,
+                    "Debug Message for Database Methods",
+                    false,
+                    "If enabled, this will write a log message at the DEBUG level with logs generated while executing database methods.");
 
             // LEADERBOARD_BOTTOM_N_TOGGLES
             sendDeathInverseRankingLeaderboard = config.Bind<bool>(LEADERBOARD_BOTTOM_N_TOGGLES,
@@ -409,6 +414,7 @@ namespace DiscordConnector.Config
             jsonString += $"\"debugEveryPlayerPosCheck\":\"{DebugEveryPlayerPosCheck}\",";
             jsonString += $"\"debugEveryEventCheck\":\"{DebugEveryEventCheck}\",";
             jsonString += $"\"debugEventChanges\":\"{DebugEveryEventChange}\",";
+            jsonString += $"\"debugDatabaseMethods\":\"{DebugDatabaseMethods}\",";
             jsonString += $"\"debugHttpRequestResponses\":\"{DebugHttpRequestResponse}\"";
             jsonString += "},";
 
@@ -472,6 +478,7 @@ namespace DiscordConnector.Config
         public bool DebugEveryEventCheck => debugEveryEventCheck.Value;
         public bool DebugEveryEventChange => debugEventChanges.Value;
         public bool DebugHttpRequestResponse => debugHttpRequestResponses.Value;
+        public bool DebugDatabaseMethods => debugDatabaseMethods.Value;
         public bool InverseRankedDeathLeaderboardEnabled => sendDeathInverseRankingLeaderboard.Value;
         public bool InverseRankedPingLeaderboardEnabled => sendPingInverseRankingLeaderboard.Value;
         public bool InverseRankedSessionLeaderboardEnabled => sendSessionInverseRankingLeaderboard.Value;
