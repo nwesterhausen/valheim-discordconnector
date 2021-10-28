@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace DiscordConnector
 {
@@ -26,8 +24,9 @@ namespace DiscordConnector
     class RecordsOld
     {
         private static string DEFAULT_FILENAME = "records.json";
-        private string storepath;
-        private bool saveEnabled;
+        private const string MIGRATED_FILENAME = "records.json.migrated";
+        private string storepath, movepath;
+        // private bool saveEnabled;
         private List<Record> recordCache;
 
         /// <summary>
@@ -43,239 +42,22 @@ namespace DiscordConnector
                 fileName = DEFAULT_FILENAME;
             }
             storepath = Path.Combine(basePath, fileName);
-            saveEnabled = true;
-            PopulateCache();
-            if (!Plugin.StaticConfig.CollectStatsEnabled)
-            {
-                Plugin.StaticLogger.LogInfo("Saving stats is disabled, nothing will be recorded.");
-            }
+            movepath = Path.Combine(basePath, MIGRATED_FILENAME);
+
+            MigrateRecords();
         }
 
-
-        /// <summary>
-        /// Add <paramref name="value"/> to a record for <paramref name="playername"/> under <paramref name="key"/> in the records database. 
-        /// This will not save the record if the <paramref name="key"/> is not one defined in Records.Categories.
-        /// </summary>
-        /// <param name="key">Records.Categories category to store the value under</param>
-        /// <param name="playername">The player's name.</param>
-        /// <param name="value">How much to increase current stored value by.</param>
-        // public void Store(string key, string playername, int value)
-        // {
-        //     if (Plugin.StaticConfig.CollectStatsEnabled)
-        //     {
-        //         if (Array.IndexOf<string>(Records.Categories.All, key) >= 0)
-        //         {
-        //             foreach (Record r in recordCache)
-        //             {
-        //                 if (r.Category.Equals(key))
-        //                 {
-        //                     bool stored = false;
-        //                     foreach (RecordValue v in r.Values)
-        //                     {
-        //                         if (v.Key.Equals(playername))
-        //                         {
-        //                             v.Value += value;
-        //                             stored = true;
-        //                         }
-        //                     }
-        //                     if (!stored)
-        //                     {
-        //                         r.Values.Add(new RecordValue()
-        //                         {
-        //                             Key = playername,
-        //                             Value = value
-        //                         });
-        //                     }
-        //                 }
-        //             }
-        //             // After adding new data, flush data to disk.
-        //             FlushCache().ContinueWith(
-        //                 t => Plugin.StaticLogger.LogWarning(t.Exception),
-        //                 TaskContinuationOptions.OnlyOnFaulted);
-        //         }
-        //         else
-        //         {
-        //             Plugin.StaticLogger.LogWarning($"Unable to store record of {key} for player {playername} - not considered a valid category.");
-        //         }
-        //     }
-        // }
-        /// <summary>
-        /// Get the value stored under <paramref name="key"/> at <paramref name="playername"/>.
-        /// </summary>
-        /// <param name="key">The Records.Categories category the value is stored under</param>
-        /// <param name="playername">The name of the player</param>
-        /// <returns>This will return 0 if there is no record found for that player. It will return -1 if the category is invalid.</returns>
-        // public int Retrieve(string key, string playername)
-        // {
-        //     if (!Plugin.StaticConfig.CollectStatsEnabled)
-        //     {
-        //         return -1;
-        //     }
-        //     if (Array.IndexOf<string>(Records.Categories.All, key) >= 0)
-        //     {
-        //         foreach (Record r in recordCache)
-        //         {
-        //             if (r.Category.Equals(key))
-        //             {
-        //                 foreach (RecordValue v in r.Values)
-        //                 {
-        //                     if (v.Key.Equals(playername))
-        //                     {
-        //                         return v.Value;
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     Plugin.StaticLogger.LogWarning($"No stored record for player {playername} under {key}, returning default of 0.");
-        //     return 0;
-        // }
-
-        /// <summary>
-        /// Retrieve all stored values under <paramref name="key"/>.
-        /// </summary>
-        /// <param name="key">Records.Categories category to retrieve stored values from</param>
-        /// <returns>A list of (playername, value) tuples. The list will have length 0 if there are no stored records.</returns>
-        public List<Tuple<string, int>> RetrieveAll(string key)
+        private void MigrateRecords()
         {
-            List<Tuple<string, int>> results = new List<Tuple<string, int>>();
-            if (!Plugin.StaticConfig.CollectStatsEnabled)
+            //! check if storePath exists..
+            if (System.IO.File.Exists(storepath))
             {
-                return results;
-            }
+                Plugin.StaticLogger.LogInfo("Migrating from discovered Records.json to LiteDB");
+                //! read all records in from storePath if they exist
 
-            if (Array.IndexOf<string>(Records.Categories.All, key) >= 0)
-            {
-                foreach (Record r in recordCache)
-                {
-                    if (r.Category.Equals(key))
-                    {
-                        foreach (RecordValue v in r.Values)
-                        {
-                            results.Add(Tuple.Create(
-                                v.Key, v.Value
-                            ));
-                        }
-                    }
-                }
-            }
-
-            return results;
-        }
-
-        /// <summary>
-        /// Retrieve the highest stored value under <paramref name="key"/>.
-        /// </summary>
-        /// <param name="key">Records.Categories category to retrieve stored values from</param>
-        /// <returns>A single (playername, value) tuple.</returns>
-        public Tuple<string, int> RetrieveHighest(string key)
-        {
-            if (!Plugin.StaticConfig.CollectStatsEnabled)
-            {
-                return Tuple.Create("not allowed", -1);
-            }
-
-            if (Array.IndexOf<string>(Records.Categories.All, key) >= 0)
-            {
-                string player = "no result";
-                int records = -1;
-                foreach (Record r in recordCache)
-                {
-                    if (r.Category.Equals(key))
-                    {
-                        foreach (RecordValue v in r.Values)
-                        {
-                            if (v.Value > records)
-                            {
-                                player = v.Key;
-                                records = v.Value;
-                            }
-                        }
-                    }
-                }
-                return Tuple.Create(player, records);
-            }
-            else
-            {
-                return Tuple.Create($"not recording for {key}", -1);
-            }
-        }
-
-        /// <summary>
-        /// Retrieve the lowest stored value under <paramref name="key"/>.
-        /// </summary>
-        /// <param name="key">Records.Categories category to retrieve stored values from</param>
-        /// <returns>A single (playername, value) tuple.</returns>
-        public Tuple<string, int> RetrieveLowest(string key)
-        {
-            if (!Plugin.StaticConfig.CollectStatsEnabled)
-            {
-                return Tuple.Create("not allowed", -1);
-            }
-
-            if (Array.IndexOf<string>(Records.Categories.All, key) >= 0)
-            {
-                string player = "no result";
-                int records = int.MaxValue;
-                foreach (Record r in recordCache)
-                {
-                    if (r.Category.Equals(key))
-                    {
-                        foreach (RecordValue v in r.Values)
-                        {
-                            if (v.Value < records)
-                            {
-                                player = v.Key;
-                                records = v.Value;
-                            }
-                        }
-                        if (r.Values.Count == 0)
-                        {
-                            records = -1;
-                        }
-                    }
-                }
-                return Tuple.Create(player, records);
-            }
-            else
-            {
-                return Tuple.Create($"not recording for {key}", -1);
-            }
-        }
-
-        /// <summary>
-        /// (Asynchronous) Writes the in-memory cache of records to disk. 
-        /// </summary>
-        private async Task FlushCache()
-        {
-            if (!saveEnabled)
-            {
-                Plugin.StaticLogger.LogDebug("Saving records is disabled due to an error at load time.");
-                return;
-            }
-            if (Plugin.StaticConfig.CollectStatsEnabled)
-            {
-                string jsonString = JsonConvert.SerializeObject(recordCache);
-
-                using (var stream = new StreamWriter(@storepath, false))
-                {
-                    await stream.WriteAsync(jsonString);
-                }
-
-                Plugin.StaticLogger.LogDebug($"Flushed cached stats to {storepath}");
-            }
-        }
-
-        /// <summary>
-        /// Builds the in-memory cache by reading from disk.
-        /// </summary>
-        private void PopulateCache()
-        {
-            if (File.Exists(storepath))
-            {
-                string jsonString = File.ReadAllText(@storepath);
                 try
                 {
+                    string jsonString = File.ReadAllText(@storepath);
                     recordCache = JsonConvert.DeserializeObject<List<Record>>(jsonString);
                     Plugin.StaticLogger.LogInfo($"Read existing stats from disk {storepath}");
                 }
@@ -283,38 +65,40 @@ namespace DiscordConnector
                 {
                     Plugin.StaticLogger.LogWarning($"No content found when reading {storepath} to read saved records. We will start with default values for all records.");
                     Plugin.StaticLogger.LogDebug("File contained null and threw ArgumentNullException");
-                    InitializeEmptyCache();
+                    return;
                 }
                 catch (JsonException)
                 {
                     Plugin.StaticLogger.LogError($"Unable to parse the contents of {storepath} as JSON.");
                     Plugin.StaticLogger.LogError("No records will be recorded to disk until existing file is moved, renamed, or deleted.");
-                    saveEnabled = false;
+                    return;
                 }
+
+                //! store records into LiteDB
+                foreach (Record r in recordCache)
+                {
+                    int count = 0;
+                    foreach (RecordValue v in r.Values)
+                    {
+                        for (int i = 0; i < v.Value; i++)
+                        {
+                            Plugin.StaticDatabase.InsertSimpleStatRecord(r.Category, v.Key, 1);
+                            count++;
+                        }
+
+                    }
+                    Plugin.StaticLogger.LogInfo($"Migrated {count} {r.Category} records");
+
+                }
+
+                //! move storePath to a new path with MIGRATED_FILENAME
+                System.IO.File.Move(storepath, movepath);
+                Plugin.StaticLogger.LogInfo($"Moved existing records.json to {MIGRATED_FILENAME}");
             }
             else
             {
-                Plugin.StaticLogger.LogInfo($"Unable to find existing stats data at {storepath}. Creating new {DEFAULT_FILENAME}");
-                InitializeEmptyCache();
+                Plugin.StaticLogger.LogDebug("No records.json found, not migrating.");
             }
         }
-
-        private void InitializeEmptyCache()
-        {
-            recordCache = new List<Record>();
-            foreach (string category in Records.Categories.All)
-            {
-                recordCache.Add(new Record
-                {
-                    Category = category,
-                    Values = new List<RecordValue>()
-                });
-            }
-            FlushCache().ContinueWith(
-                t => Plugin.StaticLogger.LogWarning(t.Exception),
-                TaskContinuationOptions.OnlyOnFaulted);
-        }
-
-        public Comparison<Tuple<string, int>> HighToLowSort = (x, y) => y.Item2.CompareTo(x.Item2);
     }
 }

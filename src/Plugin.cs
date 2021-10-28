@@ -23,9 +23,11 @@ namespace DiscordConnector
         {
             StaticLogger = Logger;
             StaticConfig = new PluginConfig(Config);
-            StaticRecords = new RecordsOld(Paths.GameRootPath);
             StaticDatabase = new Records.Database(Paths.GameRootPath);
             StaticLeaderboards = new Leaderboard();
+
+            //! Remove in next major version
+            StaticRecords = new RecordsOld(Paths.GameRootPath);
         }
 
         private void Awake()
