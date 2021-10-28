@@ -2,6 +2,12 @@
 
 A full changelog
 
+### Version 1.5.2
+
+Fixes:
+
+- Highest and Lowest leaderboards were not checking the correct tables
+
 ### Version 1.5.1
 
 Fixes:

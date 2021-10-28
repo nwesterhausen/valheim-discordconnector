@@ -58,15 +58,22 @@ namespace DiscordConnector.Records
 
         private int CountOfRecordsByName(ILiteCollection<SimpleStat> collection, string playerName)
         {
-            return DeathCollection.Query()
+            return collection.Query()
                 .Where(x => x.Name.Equals(playerName))
                 .Count();
         }
 
         private int CountOfRecordsBySteamId(ILiteCollection<SimpleStat> collection, ulong steamId)
         {
-            return DeathCollection.Query()
+            return collection.Query()
                 .Where(x => x.SteamId == steamId)
+                .Count();
+        }
+
+        private int CountOfRecordsByNameAndSteamId(ILiteCollection<SimpleStat> collection, string playerName, ulong steamId)
+        {
+            return collection.Query()
+                .Where(x => (x.Name.Equals(playerName) && x.SteamId == steamId))
                 .Count();
         }
 
