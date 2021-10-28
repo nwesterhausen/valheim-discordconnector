@@ -52,59 +52,52 @@ records.json 1.2.0+ (PlayerName changed to Key)
 [{"Category":"death","Values":[{"Key":"Xithyr","Value":13} ...
 ```
 
-### Version 1.4.4
-
-Fixes:
-
-- Position being sent with event messages even if event position was disabled in config
-
-### Version 1.4.3
-
-Fixes:
-
-- Event messages were sending the wrong message (start instead of end and vice-versa)
-- Event Stop messages were sending zero coordinates
-- If you had enabled first death message and death message (this is default settings), you would
-get two messages. This has been changed to merge the messages into one if both settings are on
-and it's a player's first death.
+### Version 1.5.0
 
 Features:
 
-- Added toggles to enable/disable some event debug messages (all disabled by default)
-- Added a toggle to enable/disable a debug message with responses from the webhook (disabled by default)
+- Using LiteDB for record storage.
 
-### Version 1.4.2
+Because of how unreliable storing the records in a "roll-your-own"
+database with a JSON file was, and because of the increased flexibility
+in what could be stored, I've changed the storage system for the
+recorded player stats to use LiteDB. Currently this means records for
+join/leave/death/shout/ping will be timestamped, include the position of
+the event, have the player name, and the player's steamid. Hopefully
+adding this additional information will allow for more customization
+options for the users of this mod.
 
-Fixes:
+It is set up to do a migration on first load of the updated plugin, the
+steps it follows for that is:
 
-- Least deaths leaderboard wasn't respecting the correct config entry. (THanks @thedefside)
+	1. check if records.json (or configured name) exists
+	2. read all records from the file
+	3. parse the records
+	4. loop through all the records and add them to the database
 
-### Version 1.4.1
+		Records added this way will have position of zero and a
+		steamid of 1.
 
-Fixes:
+	5. move the records.json file to records.json.migrated
 
-- Removed the two debug logging calls for events -- sorry for the log spam!
+If you don't want to have it auto-migrate the records, rename your
+records.json or delete it. If the name does not match exactly it will
+not migrate the data.
 
-### Version 1.4.0
+For the migration steps, it will be outputting log information (at INFO
+level) with how many records were migrated and which steps completed.
 
-Features:
+- Ranked Lowest Player Leaderbaord
 
-- 10 user defined variables that can be used an any messages (%VAR1% thru %VAR10%). These are set in their own configuration file, 
-`games.nwest.valheim.discordconnector-variables.cfg` which will get generated first time 1.4.0 is run.
-- The position of where the player/ping/event coordinates are inserted into messages is configurable using the `%POS%` variable in
-the messages config. It won't be replaced if the "send coordinates" toggle is off for that message. If you don't include a `%POS%`
-variable, it will append the coordinates as happens with previous versions.
+Added an inverse of the Top Player leaderboard.
 
-Fixes:
+- Custom leaderboard heading messages
 
-- Fixed an off-by-one error in the Top Players leaderboard (the default leaderboard) (Thanks @thedefside)
-- Fixed configuration not referencing proper settings (Thanks @thedefside)
-- Fixed event messages (now properly functioning on dedicated servers)
+Added configuration for the messages sent at the top of the leaderboard
+messages.
 
-Breaking Changes:
-
-- If you used `%PLAYERS%` in any of the event messages, you need to remove it. With the changes required for the event messages
-functionality, it is not supportable at this time.
+- The variable `%PUBLICIP%` can be used in _any_ message configuration
+  now.
 
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md)
