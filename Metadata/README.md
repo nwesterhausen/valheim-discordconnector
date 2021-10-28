@@ -52,6 +52,12 @@ records.json 1.2.0+ (PlayerName changed to Key)
 [{"Category":"death","Values":[{"Key":"Xithyr","Value":13} ...
 ```
 
+### Version 1.5.1
+
+Fixes:
+
+- Toggles for the bottom n players leaderboards (inverse ranked leaderboards)
+
 ### Version 1.5.0
 
 Features:

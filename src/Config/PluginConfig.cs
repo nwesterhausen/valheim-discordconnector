@@ -116,6 +116,11 @@ namespace DiscordConnector
         public bool RankedPingLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedPingLeaderboardEnabled;
         public bool RankedSessionLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedSessionLeaderboardEnabled;
         public bool RankedShoutLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.RankedShoutLeaderboardEnabled;
+        // Toggles.Leaderboard
+        public bool InverseRankedDeathLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.InverseRankedDeathLeaderboardEnabled;
+        public bool InverseRankedPingLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.InverseRankedPingLeaderboardEnabled;
+        public bool InverseRankedSessionLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.InverseRankedSessionLeaderboardEnabled;
+        public bool InverseRankedShoutLeaderboardEnabled => mainConfig.StatsAnnouncementEnabled && togglesConfig.InverseRankedShoutLeaderboardEnabled;
 
 
         public int IncludedNumberOfRankings => mainConfig.IncludedNumberOfRankings;
