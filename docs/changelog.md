@@ -6,7 +6,7 @@ A full changelog
 
 Fixes:
 
-- Highest and Lowest leaderboards were not checking the correct tables
+- Database connector for providing stat counts for individuals was only using the death table (not the correct table)
 
 ### Version 1.5.1
 
