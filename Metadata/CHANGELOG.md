@@ -2,6 +2,53 @@
 
 A full changelog for reference.
 
+### Version 1.5.0
+
+Features:
+
+- Using LiteDB for record storage.
+
+Because of how unreliable storing the records in a "roll-your-own"
+database with a JSON file was, and because of the increased flexibility
+in what could be stored, I've changed the storage system for the
+recorded player stats to use LiteDB. Currently this means records for
+join/leave/death/shout/ping will be timestamped, include the position of
+the event, have the player name, and the player's steamid. Hopefully
+adding this additional information will allow for more customization
+options for the users of this mod.
+
+It is set up to do a migration on first load of the updated plugin, the
+steps it follows for that is:
+
+	1. check if records.json (or configured name) exists
+	2. read all records from the file
+	3. parse the records
+	4. loop through all the records and add them to the database
+
+		Records added this way will have position of zero and a
+		steamid of 1.
+
+	5. move the records.json file to records.json.migrated
+
+If you don't want to have it auto-migrate the records, rename your
+records.json or delete it. If the name does not match exactly it will
+not migrate the data.
+
+For the migration steps, it will be outputting log information (at INFO
+level) with how many records were migrated and which steps completed.
+
+- Ranked Lowest Player Leaderbaord
+
+Added an inverse of the Top Player leaderboard.
+
+- Custom leaderboard heading messages
+
+Added configuration for the messages sent at the top of the leaderboard
+messages.
+
+- The variable `%PUBLICIP%` can be used in _any_ message configuration
+  now.
+  
 ### Version 1.4.4
 
 Fixes:

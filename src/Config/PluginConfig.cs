@@ -158,13 +158,19 @@ namespace DiscordConnector
         public bool DebugEveryEventChange => togglesConfig.DebugEveryEventChange;
         public bool DebugHttpRequestResponse => togglesConfig.DebugHttpRequestResponse;
 
+        // Leaderboard Messages
+        public string LeaderboardTopPlayerHeading => messagesConfig.LeaderboardTopPlayerHeading;
+        public string LeaderboardBottomPlayersHeading => messagesConfig.LeaderboardBottomPlayersHeading;
+        public string LeaderboardHighestHeading => messagesConfig.LeaderboardHighestHeading;
+        public string LeaderboardLowestHeading => messagesConfig.LeaderboardLowestHeading;
+
         public string ConfigAsJson()
         {
             string jsonString = "{";
 
             jsonString += $"\"Config.Main\":{mainConfig.ConfigAsJson()},";
             jsonString += $"\"Config.Messages\":{messagesConfig.ConfigAsJson()},";
-            jsonString += $"\"Config.Toggles\":{togglesConfig.ConfigAsJson()}";
+            jsonString += $"\"Config.Toggles\":{togglesConfig.ConfigAsJson()},";
             jsonString += $"\"Config.Variables\":{variableConfig.ConfigAsJson()}";
 
             jsonString += "}";

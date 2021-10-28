@@ -35,7 +35,7 @@
       <!-- Include Newtonsoft.Json dependency -->
       <BuiltLibraryAndDeps Include="$(ProjectDir)lib/Newtonsoft.Json/*.dll" />
       <!-- Include LiteDB dependency -->
-      <!-- <BuiltLibraryAndDeps Include="$(ProjectDir)bin/Debug/net48/LiteDB.dll" /> -->
+      <BuiltLibraryAndDeps Include="$(ProjectDir)bin/Debug/net48/LiteDB.dll" />
       <!-- Metadata files for Thunderstore -->
       <ThunderstoreMetadata Include="$(ProjectDir)Metadata/manifest.json" />
       <ThunderstoreMetadata Include="$(ProjectDir)Metadata/icon.png" />
