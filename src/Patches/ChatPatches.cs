@@ -16,8 +16,12 @@ namespace DiscordConnector.Patches
                     Plugin.StaticLogger.LogInfo($"Ignored shout from user on muted list. User: {user} Shout: {text}. Index {Plugin.StaticConfig.MutedPlayers.IndexOf(user)}");
                     return;
                 }
-
-                ulong peerSteamID = ((ZSteamSocket)ZNet.instance.GetPeerByPlayerName(user).m_socket).GetPeerID().m_SteamID; // Get the SteamID from peer.
+                ulong peerSteamID = 0;
+                ZNetPeer peerInstance = ZNet.instance.GetPeerByPlayerName(user);
+                if (peerInstance != null)
+                {
+                    peerSteamID = ((ZSteamSocket)peerInstance.m_socket).GetPeerID().m_SteamID; // Get the SteamID from peer.
+                }
                 switch (type)
                 {
                     case Talker.Type.Ping:
