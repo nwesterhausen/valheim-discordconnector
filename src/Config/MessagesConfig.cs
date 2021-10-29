@@ -14,7 +14,8 @@ namespace DiscordConnector.Config
         private const string PLAYER_MESSAGES = "Messages.Player";
         private const string PLAYER_FIRSTS_MESSAGES = "Messages.PlayerFirsts";
         private const string EVENT_MESSAGES = "Messages.Events";
-        private const string BOARD_MESSAGES = "Messages.Leaderbaords";
+        private const string BOARD_MESSAGES = "Messages.Leaderboards";
+        private const string TIME_MESSAGES = "Messages.TimePassing";
 
         // Server Messages
         private ConfigEntry<string> serverLaunchMessage;
@@ -48,6 +49,9 @@ namespace DiscordConnector.Config
         private ConfigEntry<string> leaderboardBottomPlayersMessage;
         private ConfigEntry<string> leaderboardHighestPlayerMessage;
         private ConfigEntry<string> leaderboardLowestPlayerMessage;
+
+        // Time Passing Messages
+        private ConfigEntry<string> newDayMessage;
 
         public MessagesConfig(ConfigFile configFile)
         {
@@ -202,6 +206,13 @@ namespace DiscordConnector.Config
                 "Set the message that is included as a heading when this leaderboard is sent." + Environment.NewLine +
                 "Include %N% to include the number of rankings returned (the configured number)");
 
+            // Time Passing Messages
+            newDayMessage = config.Bind<string>(TIME_MESSAGES,
+                "New Day Announcement Message",
+                "Day %DAY% Begins",
+                "Set the message to be sent when a new day begins." + Environment.NewLine +
+                "Include %DAY% to reference the number of the day that just started (and %DAY-1% for the number of the day just ended.)");
+
             config.Save();
         }
 
@@ -245,6 +256,10 @@ namespace DiscordConnector.Config
             jsonString += $"\"leaderboardBottomPlayersMessage\":\"{leaderboardBottomPlayersMessage.Value}\",";
             jsonString += $"\"leaderboardHighestPlayerMessage\":\"{leaderboardHighestPlayerMessage.Value}\",";
             jsonString += $"\"leaderboardLowestPlayerMessage\":\"{leaderboardLowestPlayerMessage.Value}\"";
+            jsonString += "},";
+
+            jsonString += $"\"{TIME_MESSAGES}\":{{";
+            jsonString += $"\"newDayMessage\":\"{newDayMessage.Value}\"";
             jsonString += "}";
 
             jsonString += "}";
@@ -295,5 +310,8 @@ namespace DiscordConnector.Config
         public string LeaderboardBottomPlayersHeading => GetRandomStringFromValue(leaderboardBottomPlayersMessage);
         public string LeaderboardHighestHeading => GetRandomStringFromValue(leaderboardHighestPlayerMessage);
         public string LeaderboardLowestHeading => GetRandomStringFromValue(leaderboardLowestPlayerMessage);
+
+        // Message.TimePassing
+        public string NewDayMessage => GetRandomStringFromValue(newDayMessage);
     }
 }

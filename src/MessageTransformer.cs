@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace DiscordConnector
 {
@@ -13,6 +14,13 @@ namespace DiscordConnector
         private const string VAR_5 = "%VAR6%";
         private const string VAR_6 = "%VAR7%";
         private const string VAR_7 = "%VAR8%";
+
+        public static string FormatNewDayMessage(int currentDay)
+        {
+            return MessageTransformer.ReplaceVariables(Plugin.StaticConfig.NewDayMessage)
+                .Replace(DAY_NUMBER, currentDay.ToString());
+        }
+
         private const string VAR_8 = "%VAR9%";
         private const string VAR_9 = "%VAR10%";
         private const string PLAYER_NAME = "%PLAYER_NAME%";
@@ -23,6 +31,7 @@ namespace DiscordConnector
         private const string EVENT_MSG = "%EVENT_MSG%";
         private const string EVENT_PLAYERS = "%PLAYERS%";
         private const string N = "%N%";
+        private const string DAY_NUMBER = "%DAY%";
         private static string ReplaceVariables(string rawMessage)
         {
             return rawMessage

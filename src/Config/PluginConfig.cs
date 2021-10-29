@@ -171,6 +171,10 @@ namespace DiscordConnector
         public string LeaderboardHighestHeading => messagesConfig.LeaderboardHighestHeading;
         public string LeaderboardLowestHeading => messagesConfig.LeaderboardLowestHeading;
 
+        // Time Related Messages
+        public string NewDayMessage => messagesConfig.NewDayMessage;
+        public bool AnnounceNewDay => togglesConfig.AnnounceNewDay;
+
         public string ConfigAsJson()
         {
             string jsonString = "{";

@@ -18,6 +18,7 @@ namespace DiscordConnector.Config
         private const string LEADERBOARD_TOGGLES_LOWEST = "Toggles.Leaderboard.Lowest";
         private const string PLAYER_FIRSTS_TOGGLES = "Toggles.PlayerFirsts";
         private const string DEBUG_TOGGLES = "Toggles.DebugMessages";
+        private const string TIME_MSG_TOGGLES = "Toggles.TimeMessages";
 
         // Logged Information Toggles
         private ConfigEntry<bool> serverLaunchToggle;
@@ -90,6 +91,9 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> debugEventChanges;
         private ConfigEntry<bool> debugHttpRequestResponses;
         private ConfigEntry<bool> debugDatabaseMethods;
+
+        // Time Message Toggles
+        private ConfigEntry<bool> announceNewDay;
 
         public TogglesConfig(ConfigFile configFile)
         {
@@ -339,6 +343,12 @@ namespace DiscordConnector.Config
                 false,
                 "If enabled, will send a ranked leaderboard (least to most) for player shouts at the interval.");
 
+            // Time Messages
+            announceNewDay = config.Bind<bool>(TIME_MSG_TOGGLES,
+                "Send a message when a new day starts",
+                false,
+                "If enabled, a message will be sent when a new day starts.");
+
             config.Save();
         }
 
@@ -423,6 +433,10 @@ namespace DiscordConnector.Config
             jsonString += $"\"leaderboardInversePingEnabled\":\"{InverseRankedPingLeaderboardEnabled}\",";
             jsonString += $"\"leaderboardInverseShoutEnabled\":\"{InverseRankedShoutLeaderboardEnabled}\",";
             jsonString += $"\"leaderboardInverseSessionEnabled\":\"{InverseRankedSessionLeaderboardEnabled}\"";
+            jsonString += "},";
+
+            jsonString += $"\"{LEADERBOARD_BOTTOM_N_TOGGLES}\":{{";
+            jsonString += $"\"announceNewDay\":\"{AnnounceNewDay}\"";
             jsonString += "}";
 
             jsonString += "}";
@@ -483,5 +497,6 @@ namespace DiscordConnector.Config
         public bool InverseRankedPingLeaderboardEnabled => sendPingInverseRankingLeaderboard.Value;
         public bool InverseRankedSessionLeaderboardEnabled => sendSessionInverseRankingLeaderboard.Value;
         public bool InverseRankedShoutLeaderboardEnabled => sendShoutInverseRankingLeaderboard.Value;
+        public bool AnnounceNewDay => announceNewDay.Value;
     }
 }
