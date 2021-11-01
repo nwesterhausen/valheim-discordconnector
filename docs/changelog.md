@@ -2,6 +2,12 @@
 
 A full changelog
 
+### Version 1.5.3
+
+Fixes:
+
+- Leaderboard interval was half of what was configured (now is properly minutes)
+
 ### Version 1.5.2
 
 Fixes:
