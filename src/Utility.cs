@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Security.Cryptography;
 
 namespace DiscordConnector
 {
@@ -21,26 +19,51 @@ namespace DiscordConnector
             WebRequest request = WebRequest.Create(ENDPOINT);
             request.Method = "GET";
 
-            WebResponse response = request.GetResponse();
-            Plugin.StaticLogger.LogDebug($"Response Short Code (ipify.org): {((HttpWebResponse)response).StatusDescription}");
-
-            // Get the stream containing content returned by the server.
-            // The using block ensures the stream is automatically closed.
-            using (Stream dataStream = response.GetResponseStream())
+            // Wrap firing the response in a TRY/CATCH and on an exception, abandon trying to retreive the public IP
+            try
             {
-                // Open the stream using a StreamReader for easy access.
-                StreamReader reader = new StreamReader(dataStream);
-                // Read the content.
-                ipAddress = reader.ReadToEnd();
-                // Display the content.
-                Plugin.StaticLogger.LogDebug($"Full response (ipify): {ipAddress}");
+                WebResponse response = request.GetResponse();
+                Plugin.StaticLogger.LogDebug($"Response Short Code (ipify.org): {((HttpWebResponse)response).StatusDescription}");
+
+                // Get the stream containing content returned by the server.
+                // The using block ensures the stream is automatically closed.
+                using (Stream dataStream = response.GetResponseStream())
+                {
+                    // Open the stream using a StreamReader for easy access.
+                    StreamReader reader = new StreamReader(dataStream);
+                    // Read the content.
+                    ipAddress = reader.ReadToEnd();
+                    // Display the content.
+                    Plugin.StaticLogger.LogDebug($"Full response (ipify): {ipAddress}");
+                }
+
+                // Close the response.
+                response.Close();
+
+                return ipAddress;
             }
-
-            // Close the response.
-            response.Close();
-
-            return ipAddress;
+            catch (Exception e)
+            {
+                Plugin.StaticLogger.LogWarning("Failure to get public IP from ipify.org");
+                Plugin.StaticLogger.LogWarning(e);
+            }
+            return "::";
         }
 
+    }
+
+    internal class Hashing
+    {
+        public static string GetMD5Checksum(string filename)
+        {
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+            {
+                using (var stream = System.IO.File.OpenRead(filename))
+                {
+                    var hash = md5.ComputeHash(stream);
+                    return BitConverter.ToString(hash).Replace("-", "");
+                }
+            }
+        }
     }
 }

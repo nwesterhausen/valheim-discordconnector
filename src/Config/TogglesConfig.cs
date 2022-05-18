@@ -95,12 +95,13 @@ namespace DiscordConnector.Config
         {
             config = configFile;
 
-            ReloadConfig();
+            LoadConfig();
         }
 
         public void ReloadConfig()
         {
-            LoadConfig();
+            config.Reload();
+            config.Save();
         }
 
         private void LoadConfig()
