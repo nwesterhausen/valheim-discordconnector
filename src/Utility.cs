@@ -49,7 +49,7 @@ namespace DiscordConnector
                 Plugin.StaticLogger.LogWarning("Failure to get public IP from ipify.org");
                 Plugin.StaticLogger.LogWarning(e);
             }
-            return "::0";
+            return "::";
         }
 
     }
