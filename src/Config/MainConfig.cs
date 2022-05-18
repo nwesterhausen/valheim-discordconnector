@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using BepInEx.Configuration;
 
 namespace DiscordConnector.Config
@@ -15,12 +16,14 @@ namespace DiscordConnector.Config
     {
         private ConfigFile config;
         private static List<String> mutedPlayers;
+        private static Regex mutedPlayersRegex;
         private const string MAIN_SETTINGS = "Main Settings";
 
         // Main Settings
         private ConfigEntry<string> webhookUrl;
         private ConfigEntry<bool> discordEmbedMessagesToggle;
         private ConfigEntry<string> mutedDiscordUserlist;
+        private ConfigEntry<string> mutedDiscordUserlistRegex;
         private ConfigEntry<bool> statsAnnouncementToggle;
         private ConfigEntry<int> statsAnnouncementPeriod;
         private ConfigEntry<bool> colectStatsToggle;
@@ -33,6 +36,8 @@ namespace DiscordConnector.Config
         {
             config = configFile;
             LoadConfig();
+            mutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(';'));
+            mutedPlayersRegex = new Regex(@mutedDiscordUserlistRegex.Value);
         }
 
         public void ReloadConfig()
@@ -41,6 +46,7 @@ namespace DiscordConnector.Config
             config.Save();
 
             mutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(';'));
+            mutedPlayersRegex = new Regex(@mutedDiscordUserlistRegex.Value);
         }
 
         private void LoadConfig()
@@ -62,6 +68,12 @@ namespace DiscordConnector.Config
                 "",
                 "It may be that you have some players that you never want to send Discord messages for. Adding a player name to this list will ignore them." + Environment.NewLine +
                 "Format should be a semicolon-separated list: Stuart;John McJohnny;Weird-name1");
+
+            mutedDiscordUserlistRegex = config.Bind<string>(MAIN_SETTINGS,
+                "Ignored Players (Regex)",
+                "",
+                "It may be that you have some players that you never want to send Discord messages for. This option lets you provide a regular expression to filter out players if their name matches." + Environment.NewLine +
+                "Format should be a valid string for a .NET Regex (reference: https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference)");
 
             sendPositionsToggle = config.Bind<bool>(MAIN_SETTINGS,
                 "Send Positions with Messages",
@@ -115,7 +127,8 @@ namespace DiscordConnector.Config
             jsonString += "\"discord\":{";
             jsonString += $"\"webhook\":\"{(string.IsNullOrEmpty(WebHookURL) ? "unset" : "REDACTED")}\",";
             jsonString += $"\"fancierMessages\":\"{DiscordEmbedsEnabled}\",";
-            jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserlist.Value}\"";
+            jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserlist.Value}\",";
+            jsonString += $"\"ignoredPlayersRegex\":\"{mutedDiscordUserlistRegex.Value}\"";
             jsonString += "},";
             jsonString += $"\"periodicLeaderboardEnabled\":\"{StatsAnnouncementEnabled}\",";
             jsonString += $"\"periodicLeaderboardPeriodSeconds\":{StatsAnnouncementPeriod},";
@@ -135,6 +148,7 @@ namespace DiscordConnector.Config
         public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
         public bool SendPositionsEnabled => sendPositionsToggle.Value;
         public List<string> MutedPlayers => mutedPlayers;
+        public Regex MutedPlayersRegex => MutedPlayersRegex;
         public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
         public int IncludedNumberOfRankings => numberRankingsListed.Value;
         public string RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
