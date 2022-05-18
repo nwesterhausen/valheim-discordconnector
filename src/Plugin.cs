@@ -12,7 +12,6 @@ namespace DiscordConnector
     {
         internal static ManualLogSource StaticLogger;
         internal static PluginConfig StaticConfig;
-        internal static RecordsOld StaticRecords;
         internal static Database StaticDatabase;
         internal static Leaderboard StaticLeaderboards;
         internal static EventWatcher StaticEventWatcher;
@@ -28,9 +27,6 @@ namespace DiscordConnector
             StaticLeaderboards = new Leaderboard();
 
             StaticConfigWatcher = new ConfigWatcher();
-
-            //! Remove in next major version
-            StaticRecords = new RecordsOld(Paths.GameRootPath);
         }
 
         private void Awake()
