@@ -32,12 +32,13 @@ namespace DiscordConnector.Config
         public MainConfig(ConfigFile configFile)
         {
             config = configFile;
-            ReloadConfig();
+            LoadConfig();
         }
 
         public void ReloadConfig()
         {
-            LoadConfig();
+            config.Reload();
+            config.Save();
 
             mutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(';'));
         }

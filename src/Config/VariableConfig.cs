@@ -26,12 +26,13 @@ namespace DiscordConnector.Config
         public VariableConfig(ConfigFile configFile)
         {
             config = configFile;
-            ReloadConfig();
+            LoadConfig();
         }
 
         public void ReloadConfig()
         {
-            LoadConfig();
+            config.Reload();
+            config.Save();
         }
         private void LoadConfig()
         {
