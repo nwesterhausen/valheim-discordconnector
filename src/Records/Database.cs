@@ -8,7 +8,8 @@ namespace DiscordConnector.Records
 {
     internal class Database
     {
-        private const string DB_NAME = "records.db";
+        private const string OLD_DB_NAME = "records.db";
+        private const string DB_NAME = $"{PluginInfo.PLUGIN_ID}-records.db";
         private static string DbPath;
         private LiteDatabase db;
         private ILiteCollection<SimpleStat> DeathCollection;
@@ -24,15 +25,15 @@ namespace DiscordConnector.Records
             DbPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, DB_NAME);
 
             // TEMPORARY CODE to migrate a database from old to new location
-            string OldDbPath = System.IO.Path.Combine(rootStorePath, DB_NAME);
+            // Target removal in 1.8.0
+            string OldDbPath = System.IO.Path.Combine(rootStorePath, OLD_DB_NAME);
             if (File.Exists(OldDbPath) && !File.Exists(DbPath)) {
-                string OldDbPathRenamed = System.IO.Path.Combine(rootStorePath, DB_NAME+".moved");
+                string OldDbPathRenamed = System.IO.Path.Combine(rootStorePath, $"{OLD_DB_NAME}.moved");
                 Plugin.StaticLogger.LogInfo("Migrating (copying) leaderboard/records database to new location!");
                 File.Copy(OldDbPath, DbPath);
                 File.Move(OldDbPath, OldDbPathRenamed);
                 Plugin.StaticLogger.LogInfo("Database migrated and renamed previous to avoid future conflicts");
             }
-
 
             Initialize();
         }
