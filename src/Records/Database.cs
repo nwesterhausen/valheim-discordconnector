@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using System.IO;
 using LiteDB;
 using UnityEngine;
 
@@ -20,7 +21,19 @@ namespace DiscordConnector.Records
 
         public Database(string rootStorePath)
         {
-            DbPath = System.IO.Path.Combine(rootStorePath, DB_NAME);
+            DbPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, DB_NAME);
+
+            // TEMPORARY CODE to migrate a database from old to new location
+            string OldDbPath = System.IO.Path.Combine(rootStorePath, DB_NAME);
+            if (File.Exists(OldDbPath) && !File.Exists(DbPath)) {
+                string OldDbPathRenamed = System.IO.Path.Combine(rootStorePath, DB_NAME+".moved");
+                Plugin.StaticLogger.LogInfo("Migrating (copying) leaderboard/records database to new location!");
+                File.Copy(OldDbPath, DbPath);
+                File.Move(OldDbPath, OldDbPathRenamed);
+                Plugin.StaticLogger.LogInfo("Database migrated and renamed previous to avoid future conflicts");
+            }
+
+
             Initialize();
         }
 
