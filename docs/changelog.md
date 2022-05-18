@@ -2,7 +2,9 @@
 
 A full changelog
 
-### Version Dev
+### Version 1.6.0
+
+Finally a new release! This on is mainly some small features and bugfixes from the github issues backlog.
 
 Features:
 
