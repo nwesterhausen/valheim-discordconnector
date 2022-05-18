@@ -2,6 +2,28 @@
 
 A full changelog
 
+### Version 1.6.0
+
+Finally a new release! This on is mainly some small features and bugfixes from the github issues backlog.
+
+Features:
+
+- New configuration setting, "Ignored Players (Regex)" lets you specify a regular expression to ignore players.
+- Configuration is reloaded when a change is detected.
+- The records database is saved in the BepInEx config directory.
+
+Fixes:
+
+- Handle exceptions that occur when checking the public IP from ipify.org
+- Fully quality the records database to avoid any possible conflicts
+
+Breaking Changes:
+
+- Removed conversion code which would convert `records.json` into `records.db`. 
+
+  If you need to make use of that automatic conversion, load the 1.5.3 version of the plugin once before upgrading.
+
+
 ### Version 1.5.3
 
 Fixes:

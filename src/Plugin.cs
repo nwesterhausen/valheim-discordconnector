@@ -12,10 +12,10 @@ namespace DiscordConnector
     {
         internal static ManualLogSource StaticLogger;
         internal static PluginConfig StaticConfig;
-        internal static RecordsOld StaticRecords;
         internal static Database StaticDatabase;
         internal static Leaderboard StaticLeaderboards;
         internal static EventWatcher StaticEventWatcher;
+        internal static ConfigWatcher StaticConfigWatcher;
         internal static string PublicIpAddress;
         private Harmony _harmony;
 
@@ -26,8 +26,7 @@ namespace DiscordConnector
             StaticDatabase = new Records.Database(Paths.GameRootPath);
             StaticLeaderboards = new Leaderboard();
 
-            //! Remove in next major version
-            StaticRecords = new RecordsOld(Paths.GameRootPath);
+            StaticConfigWatcher = new ConfigWatcher();
         }
 
         private void Awake()

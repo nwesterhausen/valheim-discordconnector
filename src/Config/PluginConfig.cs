@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using BepInEx.Configuration;
 using DiscordConnector.Config;
 
@@ -10,6 +11,7 @@ namespace DiscordConnector
         private MessagesConfig messagesConfig;
         private TogglesConfig togglesConfig;
         private VariableConfig variableConfig;
+        private Dictionary<string, Regex> filenameDictionaryRegex;
 
         public PluginConfig(ConfigFile config)
         {
@@ -17,6 +19,7 @@ namespace DiscordConnector
             string messageConfigFilename = $"{PluginInfo.PLUGIN_ID}-{MessagesConfig.ConfigExtension}.cfg";
             string togglesConfigFilename = $"{PluginInfo.PLUGIN_ID}-{TogglesConfig.ConfigExtension}.cfg";
             string variableConfigFilename = $"{PluginInfo.PLUGIN_ID}-{VariableConfig.ConfigExtension}.cfg";
+
             string messagesConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, messageConfigFilename);
             string togglesConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, togglesConfigFilename);
             string variableConfigPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, variableConfigFilename);
@@ -32,6 +35,12 @@ namespace DiscordConnector
 
             Plugin.StaticLogger.LogDebug("Configuration Loaded");
             Plugin.StaticLogger.LogDebug(ConfigAsJson());
+
+            filenameDictionaryRegex = new Dictionary<string, Regex>();
+            filenameDictionaryRegex.Add("main", new Regex(@"games.nwest.valheim.discordconnector\.cfg$"));
+            filenameDictionaryRegex.Add("messages", new Regex(@"games.nwest.valheim.discordconnector-message\.cfg$"));
+            filenameDictionaryRegex.Add("toggles", new Regex(@"games.nwest.valheim.discordconnector-toggles\.cfg$"));
+            filenameDictionaryRegex.Add("variables", new Regex(@"games.nwest.valheim.discordconnector-variables\.cfg$"));
         }
 
         public void ReloadConfig()
@@ -39,6 +48,31 @@ namespace DiscordConnector
             mainConfig.ReloadConfig();
             messagesConfig.ReloadConfig();
             togglesConfig.ReloadConfig();
+            variableConfig.ReloadConfig();
+        }
+
+        public void ReloadConfig(string configPath)
+        {
+            if (filenameDictionaryRegex["main"].IsMatch(configPath))
+            {
+                mainConfig.ReloadConfig();
+            }
+
+            if (filenameDictionaryRegex["messages"].IsMatch(configPath))
+            {
+                messagesConfig.ReloadConfig();
+            }
+
+            if (filenameDictionaryRegex["toggles"].IsMatch(configPath))
+            {
+                togglesConfig.ReloadConfig();
+            }
+
+            if (filenameDictionaryRegex["variables"].IsMatch(configPath))
+            {
+                variableConfig.ReloadConfig();
+            }
+
         }
 
         // Exposed Config Values
@@ -89,6 +123,7 @@ namespace DiscordConnector
         public bool AnnouncePlayerFirsts => mainConfig.AnnouncePlayerFirsts;
         public string RecordRetrievalDiscernmentMethod => mainConfig.RecordRetrievalDiscernmentMethod;
         public List<string> MutedPlayers => mainConfig.MutedPlayers;
+        public Regex MutedPlayersRegex => mainConfig.MutedPlayersRegex;
 
 
         // Messages.Server

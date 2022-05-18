@@ -21,6 +21,7 @@ Filename `games.nwest.valheim.discordconnector.cfg`
 | Use fancier discord messages                            | false   | Set to true to enable using embeds in the Discord messages. If left false, all messages will remain plain strings (except for the leaderboard).  |
 | Allow positions to be sent                              | true    | Set to false to prevent any positions/coordinates from being sent. If this is true, it can be overridden per message in the toggles config file. |
 | Ignored players                                         | (none)  | List of playernames to never send a discord message for (they also won't be tracked in stats). This list should be semicolon (`;`) separated.    |
+| Ignored players (Regex)                                 | (none)  | Regex which playernames are matched against to determine to not send a discord message for (they also won't be tracked in stats)                 |
 | Collect stats                                           | true    | When this setting is enabled, DiscordConnector will record basic stats (leave, join, ping, shout, death) about players.                          |
 | Send leaderboard updates                                | false   | If you set this to true, that will enable DiscordConnector to send a leaderboard for stats to Discord on the set interval                        |
 | Leaderboard update interval                             | 600     | Time in minutes between each leaderboard update sent to Discord.                                                                                 |
@@ -29,9 +30,11 @@ Filename `games.nwest.valheim.discordconnector.cfg`
 
 !!! info "Stat Collection Details"
 
-     Stat collection will create a file in the game root directory "records.json" where it will record the number of times each player joins, leaves, dies, shouts or pings.
+     Stat collection will create a file in the BepInEx config directory `games.nwest.valheim.discordconnector-records.db`, where it will record the number of times each player joins, leaves, dies, shouts or pings.
      If this is set to false, DiscordConnector will not keep a record of number of times each player does something it alerts to.
      If this is false, it takes precedent over the "Send leaderboard updates" setting and no leaderboards will get sent.
+
+     The stat collection database uses the [LiteDB](https://www.litedb.org/) library and if you are so inclined they offer a database gui which you can use to view/modify this database. (Find the LiteDB Editor on their site.)
 
 ## Variable Definitions
 

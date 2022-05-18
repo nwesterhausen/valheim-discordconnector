@@ -35,74 +35,26 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
-### Version 1.5.3
+### Version 1.6.0
 
-Fixes:
-
-- Leaderboard interval was half of what was configured (now is properly minutes)
-
-### Version 1.5.2
-
-Fixes:
-
-- Highest and Lowest leaderboards were not checking the correct tables
-- Configurable retrieval strategy for all records (either SteamID, PLayer Name, or both) -- always returns player names
-
-Due to how records.json recorded stats and the LiteDB, you will not be able to use the old records with strategies
-involving the SteamID because prior to 1.5.0 we were not recording the SteamID with the record.
-
-### Version 1.5.1
-
-Fixes:
-
-- Toggles for the bottom n players leaderboards (inverse ranked leaderboards)
-
-### Version 1.5.0
+Finally a new release! This on is mainly some small features and bugfixes from the github issues backlog.
 
 Features:
 
-- Using LiteDB for record storage.
+- New configuration setting, "Ignored Players (Regex)" lets you specify a regular expression to ignore players.
+- Configuration is reloaded when a change is detected.
+- The records database is saved in the BepInEx config directory.
 
-Because of how unreliable storing the records in a "roll-your-own"
-database with a JSON file was, and because of the increased flexibility
-in what could be stored, I've changed the storage system for the
-recorded player stats to use LiteDB. Currently this means records for
-join/leave/death/shout/ping will be timestamped, include the position of
-the event, have the player name, and the player's steamid. Hopefully
-adding this additional information will allow for more customization
-options for the users of this mod.
+Fixes:
 
-It is set up to do a migration on first load of the updated plugin, the
-steps it follows for that is:
+- Handle exceptions that occur when checking the public IP from ipify.org
+- Fully quality the records database to avoid any possible conflicts
 
-	1. check if records.json (or configured name) exists
-	2. read all records from the file
-	3. parse the records
-	4. loop through all the records and add them to the database
+Breaking Changes:
 
-		Records added this way will have position of zero and a
-		steamid of 1.
+- Removed conversion code which would convert `records.json` into `records.db`. 
 
-	5. move the records.json file to records.json.migrated
-
-If you don't want to have it auto-migrate the records, rename your
-records.json or delete it. If the name does not match exactly it will
-not migrate the data.
-
-For the migration steps, it will be outputting log information (at INFO
-level) with how many records were migrated and which steps completed.
-
-- Ranked Lowest Player Leaderbaord
-
-Added an inverse of the Top Player leaderboard.
-
-- Custom leaderboard heading messages
-
-Added configuration for the messages sent at the top of the leaderboard
-messages.
-
-- The variable `%PUBLICIP%` can be used in _any_ message configuration
-  now.
+  If you need to make use of that automatic conversion, load the 1.5.3 version of the plugin once before upgrading.
 
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md)

@@ -11,9 +11,9 @@ namespace DiscordConnector.Patches
         {
             private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type, ref string user, ref string text)
             {
-                if (Plugin.StaticConfig.MutedPlayers.IndexOf(user) >= 0)
+                if (Plugin.StaticConfig.MutedPlayers.IndexOf(user) >= 0 || Plugin.StaticConfig.MutedPlayersRegex.IsMatch(user))
                 {
-                    Plugin.StaticLogger.LogInfo($"Ignored shout from user on muted list. User: {user} Shout: {text}. Index {Plugin.StaticConfig.MutedPlayers.IndexOf(user)}");
+                    Plugin.StaticLogger.LogInfo($"Ignored shout from user on muted list. User: {user} Shout: {text}.");
                     return;
                 }
                 ulong peerSteamID = 0;
