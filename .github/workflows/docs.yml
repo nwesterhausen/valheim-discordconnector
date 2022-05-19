@@ -11,7 +11,7 @@ jobs:
     steps: 
       - uses: actions/checkout@v2
       # Build
-      - uses: Tiryoh/actions-mkdocs@v0.8.0
+      - uses: Tiryoh/actions-mkdocs@v0.15.0
         with:
           requirements: 'docs/.requirements.txt'
       # Upload
