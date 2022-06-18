@@ -2,6 +2,14 @@
 
 A full changelog
 
+### Version 1.6.1
+
+Fixes:
+
+- Errors when accessing the ignored players regex
+
+There was a typo that was affecting the way the config file was read. I didn't run into this in my testing on Windows but was able to duplicate this on Linux after it was reported. Thank you to those who reported this. 
+
 ### Version 1.6.0
 
 Finally a new release! This on is mainly some small features and bugfixes from the github issues backlog.
