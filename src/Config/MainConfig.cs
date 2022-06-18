@@ -148,7 +148,7 @@ namespace DiscordConnector.Config
         public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
         public bool SendPositionsEnabled => sendPositionsToggle.Value;
         public List<string> MutedPlayers => mutedPlayers;
-        public Regex MutedPlayersRegex => MutedPlayersRegex;
+        public Regex MutedPlayersRegex => mutedPlayersRegex;
         public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
         public int IncludedNumberOfRankings => numberRankingsListed.Value;
         public string RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
