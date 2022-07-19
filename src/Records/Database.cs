@@ -27,7 +27,8 @@ namespace DiscordConnector.Records
             // TEMPORARY CODE to migrate a database from old to new location
             // Target removal in 1.8.0
             string OldDbPath = System.IO.Path.Combine(rootStorePath, OLD_DB_NAME);
-            if (File.Exists(OldDbPath) && !File.Exists(DbPath)) {
+            if (File.Exists(OldDbPath) && !File.Exists(DbPath))
+            {
                 string OldDbPathRenamed = System.IO.Path.Combine(rootStorePath, $"{OLD_DB_NAME}.moved");
                 Plugin.StaticLogger.LogInfo("Migrating (copying) leaderboard/records database to new location!");
                 File.Copy(OldDbPath, DbPath);
