@@ -28,7 +28,7 @@ namespace DiscordConnector.Patches
                         if (Plugin.StaticConfig.AnnouncePlayerFirstPingEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Ping, user) == 0)
                         {
                             DiscordApi.SendMessage(
-                                MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstPingMessage, user)
+                                MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstPingMessage, user, peerSteamID.ToString())
                             );
                         }
                         if (Plugin.StaticConfig.StatsPingEnabled)
@@ -37,7 +37,7 @@ namespace DiscordConnector.Patches
                         }
                         if (Plugin.StaticConfig.ChatPingEnabled)
                         {
-                            string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PingMessage, user);
+                            string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PingMessage, user, peerSteamID.ToString());
                             if (Plugin.StaticConfig.ChatPingPosEnabled)
                             {
                                 if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
@@ -48,7 +48,7 @@ namespace DiscordConnector.Patches
                                     );
                                     break;
                                 }
-                                message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PingMessage, user, pos);
+                                message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PingMessage, user, peerSteamID.ToString(), pos);
                             }
                             if (message.Contains("%POS%"))
                             {
@@ -65,7 +65,7 @@ namespace DiscordConnector.Patches
                                 if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Join, user) == 0)
                                 {
                                     DiscordApi.SendMessage(
-                                        MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstJoinMessage, user)
+                                        MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstJoinMessage, user, peerSteamID.ToString())
                                     );
                                 }
                                 if (Plugin.StaticConfig.StatsJoinEnabled)
@@ -74,7 +74,7 @@ namespace DiscordConnector.Patches
                                 }
                                 if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
                                 {
-                                    string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, user);
+                                    string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, user, peerSteamID.ToString());
                                     if (Plugin.StaticConfig.PlayerJoinPosEnabled)
                                     {
                                         if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
@@ -85,7 +85,7 @@ namespace DiscordConnector.Patches
                                             );
                                             break;
                                         }
-                                        message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, user, pos);
+                                        message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, user, peerSteamID.ToString(), pos);
                                     }
                                     if (message.Contains("%POS%"))
                                     {

@@ -64,7 +64,7 @@ namespace DiscordConnector.Patches
                     {
                         if (Plugin.StaticConfig.AnnouncePlayerFirstDeathEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Death, peer.m_playerName) == 0)
                         {
-                            string firstDeathMessage = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstDeathMessage, peer.m_playerName);
+                            string firstDeathMessage = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstDeathMessage, peer.m_playerName, peerSteamID.ToString());
                             if (Plugin.StaticConfig.PlayerDeathPosEnabled)
                             {
                                 if (Plugin.StaticConfig.DiscordEmbedsEnabled || !firstDeathMessage.Contains("%POS%"))
@@ -73,7 +73,7 @@ namespace DiscordConnector.Patches
                                 }
                                 else
                                 {
-                                    DiscordApi.SendMessage(MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstDeathMessage, peer.m_playerName, peer.m_refPos));
+                                    DiscordApi.SendMessage(MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstDeathMessage, peer.m_playerName, peerSteamID.ToString(), peer.m_refPos));
                                 }
                             }
                             else
@@ -83,7 +83,7 @@ namespace DiscordConnector.Patches
                         }
                         else
                         {
-                            string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.DeathMessage, peer.m_playerName);
+                            string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.DeathMessage, peer.m_playerName, peerSteamID.ToString());
                             if (Plugin.StaticConfig.PlayerDeathPosEnabled)
                             {
                                 if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
@@ -92,7 +92,7 @@ namespace DiscordConnector.Patches
                                 }
                                 else
                                 {
-                                    message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.DeathMessage, peer.m_playerName, peer.m_refPos);
+                                    message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.DeathMessage, peer.m_playerName, peerSteamID.ToString(), peer.m_refPos);
                                     DiscordApi.SendMessage(message);
                                 }
                             }
@@ -117,7 +117,7 @@ namespace DiscordConnector.Patches
                     {
                         if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Join, peer.m_playerName) == 0)
                         {
-                            string firstJoinMessage = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstJoinMessage, peer.m_playerName);
+                            string firstJoinMessage = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstJoinMessage, peer.m_playerName, peerSteamID.ToString());
                             if (Plugin.StaticConfig.PlayerJoinPosEnabled)
                             {
                                 if (Plugin.StaticConfig.DiscordEmbedsEnabled || !firstJoinMessage.Contains("%POS%"))
@@ -126,17 +126,17 @@ namespace DiscordConnector.Patches
                                 }
                                 else
                                 {
-                                    firstJoinMessage = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, peer.m_playerName, peer.m_refPos);
+                                    firstJoinMessage = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, peer.m_playerName, peerSteamID.ToString(), peer.m_refPos);
                                     DiscordApi.SendMessage(firstJoinMessage);
                                 }
                             }
                             else
                             {
                                 DiscordApi.SendMessage(
-                                MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstJoinMessage, peer.m_playerName));
+                                MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstJoinMessage, peer.m_playerName, peerSteamID.ToString()));
                             }
                         }
-                        string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, peer.m_playerName);
+                        string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, peer.m_playerName, peerSteamID.ToString());
                         if (Plugin.StaticConfig.PlayerJoinPosEnabled)
                         {
                             if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
@@ -145,7 +145,7 @@ namespace DiscordConnector.Patches
                             }
                             else
                             {
-                                message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, peer.m_playerName, peer.m_refPos);
+                                message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, peer.m_playerName, peerSteamID.ToString(), peer.m_refPos);
                                 DiscordApi.SendMessage(message);
                             }
                         }
@@ -171,11 +171,12 @@ namespace DiscordConnector.Patches
                 ZNetPeer peer = ZNet.instance.GetPeer(rpc);
                 if (peer != null && peer.m_uid != 0)
                 {
+                    ulong peerSteamID = ((ZSteamSocket)peer.m_socket).GetPeerID().m_SteamID; // Get the SteamID from peer.
                     if (Plugin.StaticConfig.PlayerLeaveMessageEnabled)
                     {
                         if (Plugin.StaticConfig.AnnouncePlayerFirstLeaveEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Leave, peer.m_playerName) == 0)
                         {
-                            string firstLeaveMessage = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstLeaveMessage, peer.m_playerName);
+                            string firstLeaveMessage = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstLeaveMessage, peer.m_playerName, peerSteamID.ToString());
                             if (Plugin.StaticConfig.PlayerLeavePosEnabled)
                             {
                                 if (Plugin.StaticConfig.DiscordEmbedsEnabled || !firstLeaveMessage.Contains("%POS%"))
@@ -184,7 +185,7 @@ namespace DiscordConnector.Patches
                                 }
                                 else
                                 {
-                                    firstLeaveMessage = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstLeaveMessage, peer.m_playerName, peer.m_refPos);
+                                    firstLeaveMessage = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstLeaveMessage, peer.m_playerName, peerSteamID.ToString(), peer.m_refPos);
                                     DiscordApi.SendMessage(firstLeaveMessage);
                                 }
                             }
@@ -194,7 +195,7 @@ namespace DiscordConnector.Patches
                             }
                         }
 
-                        string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.LeaveMessage, peer.m_playerName);
+                        string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.LeaveMessage, peer.m_playerName, peerSteamID.ToString());
                         if (Plugin.StaticConfig.PlayerLeavePosEnabled)
                         {
                             if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
@@ -203,7 +204,7 @@ namespace DiscordConnector.Patches
                             }
                             else
                             {
-                                message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.LeaveMessage, peer.m_playerName, peer.m_refPos);
+                                message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.LeaveMessage, peer.m_playerName, peerSteamID.ToString(), peer.m_refPos);
                                 DiscordApi.SendMessage(message);
                             }
 
@@ -216,7 +217,6 @@ namespace DiscordConnector.Patches
 
                     if (Plugin.StaticConfig.StatsLeaveEnabled)
                     {
-                        ulong peerSteamID = ((ZSteamSocket)peer.m_socket).GetPeerID().m_SteamID; // Get the SteamID from peer.
                         Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Leave, peer.m_playerName, peerSteamID, peer.m_refPos);
                     }
                 }
