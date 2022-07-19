@@ -8,6 +8,10 @@ Features:
 
 - New variable available for messages: `%PLAYER_STEAMID%` which gets replaced with the player's Steam ID
 
+Other Changes:
+
+- Switched from ipify.org to [ipconfig.me](https://ifconfig.me) for grabbing public IP address
+
 ### Version 1.6.1
 
 Fixes:
