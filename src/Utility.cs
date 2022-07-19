@@ -6,10 +6,10 @@ namespace DiscordConnector
 {
     internal static class IpifyAPI
     {
-        private const string ENDPOINT = "https://api64.ipify.org";
+        private const string ENDPOINT = "https://ifconfig.me/ip";
 
         /// <summary>
-        /// Get your public IP address (either IPv4 or IPv6, preferring IPv4) according to https://api64.ipify.org
+        /// Get your public IP address (either IPv4 or IPv6, preferring IPv4) according to https://ifconfig.me
         /// </summary>
         /// <returns>Your public IP address</returns>
         public static string PublicIpAddress()
@@ -23,7 +23,7 @@ namespace DiscordConnector
             try
             {
                 WebResponse response = request.GetResponse();
-                Plugin.StaticLogger.LogDebug($"Response Short Code (ipify.org): {((HttpWebResponse)response).StatusDescription}");
+                Plugin.StaticLogger.LogDebug($"Response Short Code (ifconfig.me/ip): {((HttpWebResponse)response).StatusDescription}");
 
                 // Get the stream containing content returned by the server.
                 // The using block ensures the stream is automatically closed.
@@ -34,7 +34,7 @@ namespace DiscordConnector
                     // Read the content.
                     ipAddress = reader.ReadToEnd();
                     // Display the content.
-                    Plugin.StaticLogger.LogDebug($"Full response (ipify): {ipAddress}");
+                    Plugin.StaticLogger.LogDebug($"Full response (ifconfig.me/ip): {ipAddress}");
                 }
 
                 // Close the response.
@@ -44,7 +44,7 @@ namespace DiscordConnector
             }
             catch (Exception e)
             {
-                Plugin.StaticLogger.LogWarning("Failure to get public IP from ipify.org");
+                Plugin.StaticLogger.LogWarning("Failure to get public IP from ifconfig.me/ip");
                 Plugin.StaticLogger.LogWarning(e);
             }
             return "::";

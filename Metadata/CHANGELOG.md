@@ -2,13 +2,23 @@
 
 A full changelog for reference.
 
+### Version 1.7.0
+
+Features:
+
+- New variable available for messages: `%PLAYER_STEAMID%` which gets replaced with the player's Steam ID
+
+Other Changes:
+
+- Switched from ipify.org to [ipconfig.me](https://ifconfig.me/) for grabbing public IP address
+
 ### Version 1.6.1
 
 Fixes:
 
 - Errors when accessing the ignored players regex
 
-There was a typo that was affecting the way the config file was read. I didn't run into this in my testing on Windows but was able to duplicate this on Linux after it was reported. Thank you to those who reported this. 
+There was a typo that was affecting the way the config file was read. I didn't run into this in my testing on Windows but was able to duplicate this on Linux after it was reported. Thank you to those who reported this.
 
 ### Version 1.6.0
 
@@ -27,7 +37,7 @@ Fixes:
 
 Breaking Changes:
 
-- Removed conversion code which would convert `records.json` into `records.db`. 
+- Removed conversion code which would convert `records.json` into `records.db`.
 
   If you need to make use of that automatic conversion, load the 1.5.3 version of the plugin once before upgrading.
 
@@ -71,15 +81,15 @@ options for the users of this mod.
 It is set up to do a migration on first load of the updated plugin, the
 steps it follows for that is:
 
-	1. check if records.json (or configured name) exists
-	2. read all records from the file
-	3. parse the records
-	4. loop through all the records and add them to the database
+    1. check if records.json (or configured name) exists
+    2. read all records from the file
+    3. parse the records
+    4. loop through all the records and add them to the database
 
-		Records added this way will have position of zero and a
-		steamid of 1.
+    	Records added this way will have position of zero and a
+    	steamid of 1.
 
-	5. move the records.json file to records.json.migrated
+    5. move the records.json file to records.json.migrated
 
 If you don't want to have it auto-migrate the records, rename your
 records.json or delete it. If the name does not match exactly it will
@@ -99,7 +109,7 @@ messages.
 
 - The variable `%PUBLICIP%` can be used in _any_ message configuration
   now.
-  
+
 ### Version 1.4.4
 
 Fixes:
@@ -113,8 +123,8 @@ Fixes:
 - Event messages were sending the wrong message (start instead of end and vice-versa)
 - Event Stop messages were sending zero coordinates
 - If you had enabled first death message and death message (this is default settings), you would
-get two messages. This has been changed to merge the messages into one if both settings are on
-and it's a player's first death.
+  get two messages. This has been changed to merge the messages into one if both settings are on
+  and it's a player's first death.
 
 Features:
 
@@ -137,11 +147,11 @@ Fixes:
 
 Features:
 
-- 10 user defined variables that can be used an any messages (%VAR1% thru %VAR10%). These are set in their own configuration file, 
-`games.nwest.valheim.discordconnector-variables.cfg` which will get generated first time 1.4.0 is run.
+- 10 user defined variables that can be used an any messages (%VAR1% thru %VAR10%). These are set in their own configuration file,
+  `games.nwest.valheim.discordconnector-variables.cfg` which will get generated first time 1.4.0 is run.
 - The position of where the player/ping/event coordinates are inserted into messages is configurable using the `%POS%` variable in
-the messages config. It won't be replaced if the "send coordinates" toggle is off for that message. If you don't include a `%POS%`
-variable, it will append the coordinates as happens with previous versions.
+  the messages config. It won't be replaced if the "send coordinates" toggle is off for that message. If you don't include a `%POS%`
+  variable, it will append the coordinates as happens with previous versions.
 
 Fixes:
 
@@ -152,15 +162,14 @@ Fixes:
 Breaking Changes:
 
 - If you used `%PLAYERS%` in any of the event messages, you need to remove it. With the changes required for the event messages
-functionality, it is not supportable at this time.
-
+  functionality, it is not supportable at this time.
 
 ### Version 1.3.0
 
 Features:
 
-- Additional leaderboard options. The existing leaerboard option will now default to sending top 3 players for what is enabled. 
-You can enable a highest and lowest leaderboard for each tracked stat now. All leaderboards get sent on the same interval.
+- Additional leaderboard options. The existing leaerboard option will now default to sending top 3 players for what is enabled.
+  You can enable a highest and lowest leaderboard for each tracked stat now. All leaderboards get sent on the same interval.
 
 ### Version 1.2.2
 
@@ -257,7 +266,7 @@ This is fixed and you can have join messages disabled and death messages enabled
 Features:
 
 - %PLAYER_NAME% is replaced in messages with the player name, allowing you to change
-where in the message the playe is mentioned (Thanks @Digitalroot)
+  where in the message the playe is mentioned (Thanks @Digitalroot)
 - Configurable Ping and Shout messages
 
 Fixes:
@@ -311,10 +320,10 @@ Fixes:
 Features:
 
 - when sending position (POS or coordinates) with the message, will use an embed
-to improve visibility (if enabled)
+  to improve visibility (if enabled)
 - added config options to enable/disable sending position with join and leave
 - added config option to enable/disable using the embed with discord when sending
-position data (disabled by default, I find it very busy when enabled atm)
+  position data (disabled by default, I find it very busy when enabled atm)
 - added config option to enable/disable sending position with pings
 
 ### Version 0.6.0
@@ -324,17 +333,19 @@ Enabled for both the client and server versions of Valheim.
 Key differences if running a server from the client:
 
 - No Launch/Startup message is sent. This is because when the server launches it
-immediately begins loading the world, but for the client it is loading into the
-main menu. This may be fixable in the future to be a hook that goes before the
-world begins getting loaded to keep the functionality on the server and to enable
-similar functionality on the client.
+  immediately begins loading the world, but for the client it is loading into the
+  main menu. This may be fixable in the future to be a hook that goes before the
+  world begins getting loaded to keep the functionality on the server and to enable
+  similar functionality on the client.
 
 ### Version 0.5.1
 
 Fixes:
+
 - removed '$' before the position for ping messages
 
 New this version:
+
 - stats recording
 
 Added a stat recording mechanism. This will record the player name and the trigger

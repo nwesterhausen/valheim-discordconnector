@@ -217,3 +217,15 @@ For the ranked leadboards, you choose how many ranks to calculate and display wi
 | Send Player Death Messages | true    | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first death."                |
 | Send Player Shout Messages | false   | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first ping.                  |
 | Send Player Ping Messages  | false   | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first shout.                 |
+
+## Variable Definitions
+
+| Variable            | Replaced with..                                          | Can be used in..                                 |
+| ------------------- | -------------------------------------------------------- | ------------------------------------------------ |
+| `%PLAYER_NAME%`     | Player's character name                                  | Any player join/leave/shout/ping/death messages. |
+| `%PLAYER_STEAMID%`  | Player's STEAM ID                                        | Any player join/leave/shout/ping/death messages. |
+| `%SHOUT%`           | Text of the player's shout                               | Only player shout messages.                      |
+| `%POS%`             | Player's coordinate position                             | Any player join/leave/shout/ping/death messages. |
+| `%EVENT_START_MSG%` | The event start message (e.g. "The forest is moving...") | Event start message                              |
+| `%EVENT_END_MSG%`   | The event stop message (e.g. "The forest rests again")   | Event stop message                               |
+| `%EVENT_MSG%`       | The appropriate start/end message for the event          | Event start/stop message                         |
