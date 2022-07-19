@@ -2,7 +2,7 @@
 
 A full changelog
 
-### Version NEW
+### Version 1.7.0
 
 Features:
 

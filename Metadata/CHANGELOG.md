@@ -2,6 +2,12 @@
 
 A full changelog for reference.
 
+### Version 1.7.0
+
+Features:
+
+- New variable available for messages: `%PLAYER_STEAMID%` which gets replaced with the player's Steam ID
+
 ### Version 1.6.1
 
 Fixes:
