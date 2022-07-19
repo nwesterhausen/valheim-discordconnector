@@ -73,8 +73,6 @@ Player Death Message = %PLAYER_NAME% has died a beautiful death!;%PLAYER_NAME% w
 
 ### Messages.Server
 
-In the server messages, anywhere in the message you can use the special string `%PUBLICIP%` which will be replaced with the public IP address of the server when sent.
-
 | Option                  | Default                  | Description                                                                                                 |
 | ----------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------- |
 | Server Launch Message   | `Server is starting up.` | The message defined here is sent when the server is starting up.                                            |
@@ -82,13 +80,13 @@ In the server messages, anywhere in the message you can use the special string `
 | Server Stop Message     | `Server is stopping.`    | The message defined here is sent when the server is shutting down.                                          |
 | Server Shutdown Message | `Server has stopped.`    | The message defined here is sent when the server finishes shutting down.                                    |
 
+#### Available Predefined Variables
+
+| Variable    | Replaced with..                                                        | Can be used in..    |
+| ----------- | ---------------------------------------------------------------------- | ------------------- |
+| `%PUBLICIP` | Server's public IP (obtained from [ifconfig.me](https://ifconfig.me/)) | Any server messages |
+
 ### Messages.Players
-
-In the player messages, anywhere in the message you put `%PLAYER_NAME%`, when the message is sent it will be replaced with that player's name. You can also use `%POS%` which will be replaced with their position if the position toggle is enabled.
-
-!!! Tip
-
-    When using the `%POS%` variable, in a Ping message it will reflect the location that was pinged, not the player's location. If you enabled the position toggle is enabled for these messages but you do not include the `%POS%` variable, the position will be appended to the message (the default behavior before the addition of `%POS%`).
 
 | Option               | Default                            | Description                                                                                                                                  |
 | -------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -97,6 +95,19 @@ In the player messages, anywhere in the message you put `%PLAYER_NAME%`, when th
 | Player Death Message | `%PLAYER_NAME% has died.`          | The message that will be sent when a player dies..                                                                                           |
 | Player Ping Message  | `%PLAYER_NAME% pings the map`      | The message that will be sent when a player pings the map.                                                                                   |
 | Player Shout Message | `%PLAYER_NAME% shout **%SHOUT%**.` | The message that will be sent when a player shouts in game. %SHOUT% must be somewhere in this message for what the player shouts to be sent. |
+
+#### Available Predefined Variables
+
+| Variable           | Replaced with..              | Can be used in..                             |
+| ------------------ | ---------------------------- | -------------------------------------------- |
+| `%PLAYER_NAME%`    | Player's character name      | Player join/leave/shout/ping/death messages. |
+| `%PLAYER_STEAMID%` | Player's STEAM ID            | Player join/leave/shout/ping/death messages. |
+| `%SHOUT%`          | Text of the player's shout   | Player shout messages.                       |
+| `%POS%`            | Player's coordinate position | Player join/leave/shout/ping/death messages. |
+
+!!! Tip
+
+    When using the `%POS%` variable, in a Ping message it will reflect the location that was pinged, not the player's location. If you enabled the position toggle is enabled for these messages but you do not include the `%POS%` variable, the position will be appended to the message (the default behavior before the addition of `%POS%`).
 
 ### Messages.PlayerFirsts
 
@@ -112,7 +123,22 @@ In the player messages, anywhere in the message you put `%PLAYER_NAME%`, when th
 
 ### Messages.Events
 
+| Option                | Default                                                                                          | Description                                                               |
+| --------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| Event Start Message   | `**Event**: %EVENT_MSG%`                                                                         | Message sent when a random event starts.                                  |
+| Event Stop Message    | `**Event**: %EVENT_MSG%`                                                                         | Message sent when a random event stops or ends.                           |
+| Event Paused Message  | `**Event**: %EVENT_END_MSG% -- for now! (Currently paused due to no players in the event area.)` | Message sent when a random event is paused because players left the area. |
+| Event Resumed Message | `**Event**: %EVENT_START_MSG%`                                                                   | Message sent when a random event resumes after being paused.              |
+
+#### Available Predefined Variables
+
 In the event messages, anywhere in the message you can use the string vars `%EVENT_START_MSG%` and `%EVENT_END_MSG%` (or `%EVENT_MSG%` which is uses the start message when the event starts and the end message when the event ends.) You can also use `%POS%` which will be replaced with their position if the position toggle is enabled.
+
+| Variable            | Replaced with..                                          | Can be used in..         |
+| ------------------- | -------------------------------------------------------- | ------------------------ |
+| `%EVENT_START_MSG%` | The event start message (e.g. "The forest is moving...") | Event start message      |
+| `%EVENT_END_MSG%`   | The event stop message (e.g. "The forest rests again")   | Event stop message       |
+| `%EVENT_MSG%`       | The appropriate start/end message for the event          | Event start/stop message |
 
 !!! Tip
 
@@ -121,13 +147,6 @@ In the event messages, anywhere in the message you can use the string vars `%EVE
 !!! warning "`%PLAYERS%` variable removed in 1.4.0"
 
     Due to how the server keeps track of where players are (only if they are sharing location), the `%PLAYERS%` variable has been disabled indefinitely until a reliable way to gather player positions is developed.
-
-| Option                | Default                                                                                          | Description                                                               |
-| --------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| Event Start Message   | `**Event**: %EVENT_MSG%`                                                                         | Message sent when a random event starts.                                  |
-| Event Stop Message    | `**Event**: %EVENT_MSG%`                                                                         | Message sent when a random event stops or ends.                           |
-| Event Paused Message  | `**Event**: %EVENT_END_MSG% -- for now! (Currently paused due to no players in the event area.)` | Message sent when a random event is paused because players left the area. |
-| Event Resumed Message | `**Event**: %EVENT_START_MSG%`                                                                   | Message sent when a random event resumes after being paused.              |
 
 ## Toggles
 
@@ -217,15 +236,3 @@ For the ranked leadboards, you choose how many ranks to calculate and display wi
 | Send Player Death Messages | true    | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first death."                |
 | Send Player Shout Messages | false   | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first ping.                  |
 | Send Player Ping Messages  | false   | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first shout.                 |
-
-## Variable Definitions
-
-| Variable            | Replaced with..                                          | Can be used in..                                 |
-| ------------------- | -------------------------------------------------------- | ------------------------------------------------ |
-| `%PLAYER_NAME%`     | Player's character name                                  | Any player join/leave/shout/ping/death messages. |
-| `%PLAYER_STEAMID%`  | Player's STEAM ID                                        | Any player join/leave/shout/ping/death messages. |
-| `%SHOUT%`           | Text of the player's shout                               | Only player shout messages.                      |
-| `%POS%`             | Player's coordinate position                             | Any player join/leave/shout/ping/death messages. |
-| `%EVENT_START_MSG%` | The event start message (e.g. "The forest is moving...") | Event start message                              |
-| `%EVENT_END_MSG%`   | The event stop message (e.g. "The forest rests again")   | Event stop message                               |
-| `%EVENT_MSG%`       | The appropriate start/end message for the event          | Event start/stop message                         |
