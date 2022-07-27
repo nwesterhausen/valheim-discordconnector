@@ -35,6 +35,7 @@ namespace DiscordConnector
 
             Plugin.StaticLogger.LogDebug("Configuration Loaded");
             Plugin.StaticLogger.LogDebug(ConfigAsJson());
+            Plugin.StaticLogger.LogDebug($"Regex pattern ('a^' is default for no matches): {mainConfig.MutedPlayersRegex.ToString()}");
 
             filenameDictionaryRegex = new Dictionary<string, Regex>();
             filenameDictionaryRegex.Add("main", new Regex(@"games.nwest.valheim.discordconnector\.cfg$"));

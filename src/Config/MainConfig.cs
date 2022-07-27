@@ -37,7 +37,14 @@ namespace DiscordConnector.Config
             config = configFile;
             LoadConfig();
             mutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(';'));
-            mutedPlayersRegex = new Regex(@mutedDiscordUserlistRegex.Value);
+            if (String.IsNullOrEmpty(@mutedDiscordUserlistRegex.Value))
+            {
+                mutedPlayersRegex = new Regex(@"a^");
+            }
+            else
+            {
+                mutedPlayersRegex = new Regex(@mutedDiscordUserlistRegex.Value);
+            }
         }
 
         public void ReloadConfig()
@@ -46,7 +53,14 @@ namespace DiscordConnector.Config
             config.Save();
 
             mutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(';'));
-            mutedPlayersRegex = new Regex(@mutedDiscordUserlistRegex.Value);
+            if (String.IsNullOrEmpty(@mutedDiscordUserlistRegex.Value))
+            {
+                mutedPlayersRegex = new Regex(@"a^");
+            }
+            else
+            {
+                mutedPlayersRegex = new Regex(@mutedDiscordUserlistRegex.Value);
+            }
         }
 
         private void LoadConfig()
