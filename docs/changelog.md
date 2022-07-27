@@ -2,6 +2,13 @@
 
 A full changelog
 
+### Version 1.7.1
+
+Fixes:
+
+- Ignore player regex was matching everything if not set. Now if it is not set, it will match nothing.
+- Player shout messages were not including enough information for formatting. Now they properly include steamId and shout text.
+
 ### Version 1.7.0
 
 Features:

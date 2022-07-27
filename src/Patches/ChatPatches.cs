@@ -100,7 +100,7 @@ namespace DiscordConnector.Patches
                             if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Shout, user) == 0)
                             {
                                 DiscordApi.SendMessage(
-                                    MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstShoutMessage, user, text)
+                                    MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstShoutMessage, user, peerSteamID.ToString(), text)
                                 );
                             }
                             if (Plugin.StaticConfig.StatsShoutEnabled)
@@ -109,7 +109,7 @@ namespace DiscordConnector.Patches
                             }
                             if (Plugin.StaticConfig.ChatShoutEnabled)
                             {
-                                string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.ShoutMessage, user, text);
+                                string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.ShoutMessage, user, peerSteamID.ToString(), text);
                                 if (Plugin.StaticConfig.ChatShoutPosEnabled)
                                 {
                                     if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
@@ -120,7 +120,7 @@ namespace DiscordConnector.Patches
                                         );
                                         break;
                                     }
-                                    message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.ShoutMessage, user, text, pos);
+                                    message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.ShoutMessage, user, peerSteamID.ToString(), text, pos);
                                 }
                                 if (message.Contains("%POS%"))
                                 {
