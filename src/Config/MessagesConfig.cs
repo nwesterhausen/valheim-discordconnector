@@ -255,6 +255,10 @@ namespace DiscordConnector.Config
 
         private static string GetRandomStringFromValue(ConfigEntry<string> configEntry)
         {
+            if (String.IsNullOrEmpty(configEntry.Value))
+            {
+                return "";
+            }
             if (!configEntry.Value.Contains(";"))
             {
                 return configEntry.Value;
