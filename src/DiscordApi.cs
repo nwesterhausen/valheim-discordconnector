@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -108,33 +109,37 @@ namespace DiscordConnector
             request.ContentType = "application/json";
             request.ContentLength = byteArray.Length;
 
-            Stream dataStream = request.GetRequestStream();
-            dataStream.Write(byteArray, 0, byteArray.Length);
-            dataStream.Close();
-
-            WebResponse response = request.GetResponse();
-            if (Plugin.StaticConfig.DebugHttpRequestResponse)
+            // Dispatch the request to discord and the response processing to an async task
+            Task.Run(() =>
             {
-                Plugin.StaticLogger.LogDebug($"Request Response Short Code: {((HttpWebResponse)response).StatusDescription}");
-            }
+                Stream dataStream = request.GetRequestStream();
+                dataStream.Write(byteArray, 0, byteArray.Length);
+                dataStream.Close();
 
-            // Get the stream containing content returned by the server.
-            // The using block ensures the stream is automatically closed.
-            using (dataStream = response.GetResponseStream())
-            {
-                // Open the stream using a StreamReader for easy access.
-                StreamReader reader = new StreamReader(dataStream);
-                // Read the content.
-                string responseFromServer = reader.ReadToEnd();
-                // Display the content.
+                WebResponse response = request.GetResponse();
                 if (Plugin.StaticConfig.DebugHttpRequestResponse)
                 {
-                    Plugin.StaticLogger.LogDebug($"Full response: {responseFromServer}");
+                    Plugin.StaticLogger.LogDebug($"Request Response Short Code: {((HttpWebResponse)response).StatusDescription}");
                 }
-            }
 
-            // Close the response.
-            response.Close();
+                // Get the stream containing content returned by the server.
+                // The using block ensures the stream is automatically closed.
+                using (dataStream = response.GetResponseStream())
+                {
+                    // Open the stream using a StreamReader for easy access.
+                    StreamReader reader = new StreamReader(dataStream);
+                    // Read the content.
+                    string responseFromServer = reader.ReadToEnd();
+                    // Display the content.
+                    if (Plugin.StaticConfig.DebugHttpRequestResponse)
+                    {
+                        Plugin.StaticLogger.LogDebug($"Full response: {responseFromServer}");
+                    }
+                }
+
+                // Close the response.
+                response.Close();
+            }).ConfigureAwait(false);
         }
     }
 
