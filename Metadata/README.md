@@ -35,6 +35,16 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+### Version 1.8.0
+
+Features:
+
+- Web requests to Discord API are async instead of blocking the main thread
+
+Fixes:
+
+- Handles the edge case when a toggle was enabled but the text in 'messages' for that toggle was blank, the plugin would crash. (e.g. if 'send shout' toggle was `true` but the 'shout message' was blank, in prior versions this would crash the plugin)
+
 ### Version 1.7.1
 
 Fixes:
@@ -54,7 +64,7 @@ Fixes:
 
 - Errors when accessing the ignored players regex
 
-There was a typo that was affecting the way the config file was read. I didn't run into this in my testing on Windows but was able to duplicate this on Linux after it was reported. Thank you to those who reported this. 
+There was a typo that was affecting the way the config file was read. I didn't run into this in my testing on Windows but was able to duplicate this on Linux after it was reported. Thank you to those who reported this.
 
 ### Version 1.6.0
 
@@ -73,7 +83,7 @@ Fixes:
 
 Breaking Changes:
 
-- Removed conversion code which would convert `records.json` into `records.db`. 
+- Removed conversion code which would convert `records.json` into `records.db`.
 
   If you need to make use of that automatic conversion, load the 1.5.3 version of the plugin once before upgrading.
 

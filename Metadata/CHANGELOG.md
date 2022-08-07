@@ -2,6 +2,16 @@
 
 A full changelog for reference.
 
+### Version 1.8.0
+
+Features:
+
+- Web requests to Discord API are async instead of blocking the main thread
+
+Fixes:
+
+- Handles the edge case when a toggle was enabled but the text in 'messages' for that toggle was blank, the plugin would crash. (e.g. if 'send shout' toggle was `true` but the 'shout message' was blank, in prior versions this would crash the plugin)
+
 ### Version 1.7.1
 
 Fixes:
