@@ -156,7 +156,8 @@ namespace DiscordConnector.Config
         }
 
         public string WebHookURL => webhookUrl.Value;
-        public bool StatsAnnouncementEnabled => statsAnnouncementToggle.Value;
+        // public bool StatsAnnouncementEnabled => statsAnnouncementToggle.Value;
+        public bool StatsAnnouncementEnabled => false; // Hard-coded false due to issues with the playFab changes
         public int StatsAnnouncementPeriod => statsAnnouncementPeriod.Value;
         public bool CollectStatsEnabled => colectStatsToggle.Value;
         public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;

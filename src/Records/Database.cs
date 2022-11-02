@@ -9,7 +9,7 @@ namespace DiscordConnector.Records
     internal class Database
     {
         private const string OLD_DB_NAME = "records.db";
-        private const string DB_NAME = $"{PluginInfo.PLUGIN_ID}-records.db";
+        private const string DB_NAME = $"{PluginInfo.PLUGIN_ID}-records2.db";
         private static string DbPath;
         private LiteDatabase db;
         private ILiteCollection<SimpleStat> DeathCollection;
@@ -23,18 +23,6 @@ namespace DiscordConnector.Records
         public Database(string rootStorePath)
         {
             DbPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, DB_NAME);
-
-            // TEMPORARY CODE to migrate a database from old to new location
-            // Target removal in 1.8.0
-            string OldDbPath = System.IO.Path.Combine(rootStorePath, OLD_DB_NAME);
-            if (File.Exists(OldDbPath) && !File.Exists(DbPath))
-            {
-                string OldDbPathRenamed = System.IO.Path.Combine(rootStorePath, $"{OLD_DB_NAME}.moved");
-                Plugin.StaticLogger.LogInfo("Migrating (copying) leaderboard/records database to new location!");
-                File.Copy(OldDbPath, DbPath);
-                File.Move(OldDbPath, OldDbPathRenamed);
-                Plugin.StaticLogger.LogInfo("Database migrated and renamed previous to avoid future conflicts");
-            }
 
             Initialize();
         }
@@ -64,21 +52,21 @@ namespace DiscordConnector.Records
             db.Dispose();
         }
 
-        private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, ulong steamId, Vector3 pos)
+        private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, string characterId, Vector3 pos)
         {
             var newRecord = new SimpleStat(
                 playerName,
-                steamId,
+                characterId,
                 pos.x, pos.y, pos.z
             );
             collection.Insert(newRecord);
 
             collection.EnsureIndex(x => x.Name);
-            collection.EnsureIndex(x => x.SteamId);
+            collection.EnsureIndex(x => x.CharacterId);
         }
-        private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, ulong steamId)
+        private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, string characterId)
         {
-            InsertSimpleStatRecord(collection, playerName, steamId, Vector3.zero);
+            InsertSimpleStatRecord(collection, playerName, characterId, Vector3.zero);
         }
 
         private int CountOfRecordsByName(ILiteCollection<SimpleStat> collection, string playerName)
@@ -88,17 +76,17 @@ namespace DiscordConnector.Records
                 .Count();
         }
 
-        private int CountOfRecordsBySteamId(ILiteCollection<SimpleStat> collection, ulong steamId)
+        private int CountOfRecordsByCharacterId(ILiteCollection<SimpleStat> collection, string characterId)
         {
             return collection.Query()
-                .Where(x => x.SteamId == steamId)
+                .Where(x => x.CharacterId == characterId)
                 .Count();
         }
 
-        private int CountOfRecordsByNameAndSteamId(ILiteCollection<SimpleStat> collection, string playerName, ulong steamId)
+        private int CountOfRecordsByNameAndCharacterId(ILiteCollection<SimpleStat> collection, string playerName, string characterId)
         {
             return collection.Query()
-                .Where(x => (x.Name.Equals(playerName) && x.SteamId == steamId))
+                .Where(x => (x.Name.Equals(playerName) && x.CharacterId == characterId))
                 .Count();
         }
 
@@ -119,8 +107,8 @@ namespace DiscordConnector.Records
             {
                 return ConvertBsonDocumentCountToDotNet(
                     collection.Query()
-                        .GroupBy("{Name,SteamId}")
-                        .Select("{NameSteam: @Key, Count: COUNT(*)}")
+                        .GroupBy("{Name,CharacterId}")
+                        .Select("{NameCharacter: @Key, Count: COUNT(*)}")
                         .ToList()
                 );
             }
@@ -129,29 +117,29 @@ namespace DiscordConnector.Records
 
                 return ConvertBsonDocumentCountToDotNet(
                     collection.Query()
-                        .GroupBy("SteamId")
-                        .Select("{Steam: @Key, Count: COUNT(*)}")
+                        .GroupBy("CharacterId")
+                        .Select("{CharacterId: @Key, Count: COUNT(*)}")
                         .ToList()
                 );
             }
         }
 
-        private string GetLatestNameForSteamId(ulong steamId)
+        private string GetLatestNameForCharacterId(string characterId)
         {
-            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForSteamId {steamId} begin"); }
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {characterId} begin"); }
             var nameQuery = JoinCollection.Query()
-                .Where(x => x.SteamId == steamId)
+                .Where(x => x.CharacterId == characterId)
                 .OrderByDescending("Date")
                 .Select("$.Name")
                 .ToList();
             if (nameQuery.Count == 0)
             {
-                if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForSteamId {steamId} result = NONE"); }
+                if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {characterId} result = NONE"); }
                 return "undefined";
             }
             if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"nameQuery has {nameQuery.Count} results"); }
             var result = nameQuery[0];
-            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForSteamId {steamId} result = {result}"); }
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {characterId} result = {result}"); }
             return result["Name"].AsString;
         }
 
@@ -173,19 +161,19 @@ namespace DiscordConnector.Records
                         doc["Count"].AsInt32
                     ));
                 }
-                else if (doc.ContainsKey("NameSteam"))
+                else if (doc.ContainsKey("NameCharacter"))
                 {
                     results.Add(new CountResult(
-                        doc["NameSteam"]["Name"].AsString,
+                        doc["NameCharacter"]["Name"].AsString,
                         doc["Count"].AsInt32
                     ));
                 }
-                else if (doc.ContainsKey("Steam"))
+                else if (doc.ContainsKey("CharacterId"))
                 {
-                    if (doc["Steam"].AsInt64 >= STEAMID_LOWERBOUND)
+                    if (!doc["CharacterId"].IsNull)
                     {
                         results.Add(new CountResult(
-                            GetLatestNameForSteamId((ulong)doc["Steam"].AsInt64),
+                            GetLatestNameForCharacterId(doc["CharacterId"]),
                             doc["Count"].AsInt32
                         ));
                     }
@@ -238,7 +226,7 @@ namespace DiscordConnector.Records
             }
         }
 
-        public int CountOfRecordsBySteamId(string key, ulong steamId)
+        public int CountOfRecordsBySteamId(string key, string characterId)
         {
             if (!Plugin.StaticConfig.CollectStatsEnabled)
             {
@@ -247,49 +235,49 @@ namespace DiscordConnector.Records
             switch (key)
             {
                 case Categories.Death:
-                    return CountOfRecordsBySteamId(DeathCollection, steamId);
+                    return CountOfRecordsByCharacterId(DeathCollection, characterId);
                 case Categories.Join:
-                    return CountOfRecordsBySteamId(JoinCollection, steamId);
+                    return CountOfRecordsByCharacterId(JoinCollection, characterId);
                 case Categories.Leave:
-                    return CountOfRecordsBySteamId(LeaveCollection, steamId);
+                    return CountOfRecordsByCharacterId(LeaveCollection, characterId);
                 case Categories.Ping:
-                    return CountOfRecordsBySteamId(PingCollection, steamId);
+                    return CountOfRecordsByCharacterId(PingCollection, characterId);
                 case Categories.Shout:
-                    return CountOfRecordsBySteamId(ShoutCollection, steamId);
+                    return CountOfRecordsByCharacterId(ShoutCollection, characterId);
                 default:
                     Plugin.StaticLogger.LogDebug($"CountOfRecordsBySteamId, invalid key '{key}'");
                     return -2;
             }
         }
 
-        public void InsertSimpleStatRecord(string key, string playerName, ulong steamId, Vector3 pos)
+        public void InsertSimpleStatRecord(string key, string playerName, string characterId, Vector3 pos)
         {
 
             switch (key)
             {
                 case Categories.Death:
-                    InsertSimpleStatRecord(DeathCollection, playerName, steamId, pos);
+                    InsertSimpleStatRecord(DeathCollection, playerName, characterId, pos);
                     break;
                 case Categories.Join:
-                    InsertSimpleStatRecord(JoinCollection, playerName, steamId, pos);
+                    InsertSimpleStatRecord(JoinCollection, playerName, characterId, pos);
                     break;
                 case Categories.Leave:
-                    InsertSimpleStatRecord(LeaveCollection, playerName, steamId, pos);
+                    InsertSimpleStatRecord(LeaveCollection, playerName, characterId, pos);
                     break;
                 case Categories.Ping:
-                    InsertSimpleStatRecord(PingCollection, playerName, steamId, pos);
+                    InsertSimpleStatRecord(PingCollection, playerName, characterId, pos);
                     break;
                 case Categories.Shout:
-                    InsertSimpleStatRecord(ShoutCollection, playerName, steamId, pos);
+                    InsertSimpleStatRecord(ShoutCollection, playerName, characterId, pos);
                     break;
                 default:
                     Plugin.StaticLogger.LogDebug($"InsertSimpleStatRecord, invalid key '{key}'");
                     break;
             }
         }
-        public void InsertSimpleStatRecord(string key, string playerName, ulong steamId)
+        public void InsertSimpleStatRecord(string key, string playerName, string characterId)
         {
-            InsertSimpleStatRecord(key, playerName, steamId, Vector3.zero);
+            InsertSimpleStatRecord(key, playerName, characterId, Vector3.zero);
         }
 
     }

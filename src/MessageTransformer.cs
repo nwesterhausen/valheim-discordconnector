@@ -47,7 +47,7 @@ namespace DiscordConnector
         public static string FormatPlayerMessage(string rawMessage, string playerName, string playerSteamId)
         {
             return MessageTransformer.ReplaceVariables(rawMessage)
-                .Replace(PLAYER_STEAMID, playerSteamId)
+                .Replace(PLAYER_STEAMID, "")
                 .Replace(PLAYER_NAME, playerName);
         }
 
