@@ -13,7 +13,7 @@ Fixes:
 - Periodic leaderboard messages sending will now respect your config value intead of never sending
 - The STEAMID variable works again. An alias is the PLAYERID variable, which does the same thing -- they both provide the full player id, so `Steam_<SteamID>` or `XBox_<XBoxID>`
 
-Breaking chnages:
+Breaking changes:
 
 - Player IDs are tracked in the stat database using a new column name, which resets any stat tracking because the player ID is used to resolve to a single player by combining with the character name.
 
