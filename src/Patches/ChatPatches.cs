@@ -16,10 +16,10 @@ namespace DiscordConnector.Patches
                     Plugin.StaticLogger.LogInfo($"Ignored shout from user on muted list. User: {user} Shout: {text}.");
                     return;
                 }
-                ZNetPeer peerInstance = ZNet.instance.GetPeerByPlayerName(user);
 
-                // Player steam ID is no longer guarenteed. Instead use the characterId (if possible)
-                string playerCharacterId = $"{peerInstance.m_characterID}"; // Player SteamID is not guarenteed, so a work-around is needed.
+                ZNetPeer peerInstance = ZNet.instance.GetPeerByPlayerName(user);
+                // Get the player's hostname to use for record keeping and logging
+                string playerHostName = $"{peerInstance.m_socket.GetHostName()}";
 
                 switch (type)
                 {
@@ -27,16 +27,16 @@ namespace DiscordConnector.Patches
                         if (Plugin.StaticConfig.AnnouncePlayerFirstPingEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Ping, user) == 0)
                         {
                             DiscordApi.SendMessage(
-                                MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstPingMessage, user, playerCharacterId.ToString())
+                                MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstPingMessage, user, playerHostName)
                             );
                         }
                         if (Plugin.StaticConfig.StatsPingEnabled)
                         {
-                            Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Ping, user, playerCharacterId, pos);
+                            Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Ping, user, playerHostName, pos);
                         }
                         if (Plugin.StaticConfig.ChatPingEnabled)
                         {
-                            string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PingMessage, user, playerCharacterId.ToString());
+                            string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PingMessage, user, playerHostName);
                             if (Plugin.StaticConfig.ChatPingPosEnabled)
                             {
                                 if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
@@ -47,7 +47,7 @@ namespace DiscordConnector.Patches
                                     );
                                     break;
                                 }
-                                message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PingMessage, user, playerCharacterId.ToString(), pos);
+                                message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PingMessage, user, playerHostName, pos);
                             }
                             if (message.Contains("%POS%"))
                             {
@@ -64,16 +64,16 @@ namespace DiscordConnector.Patches
                                 if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Join, user) == 0)
                                 {
                                     DiscordApi.SendMessage(
-                                        MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstJoinMessage, user, playerCharacterId.ToString())
+                                        MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstJoinMessage, user, playerHostName)
                                     );
                                 }
                                 if (Plugin.StaticConfig.StatsJoinEnabled)
                                 {
-                                    Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Join, user, playerCharacterId, pos);
+                                    Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Join, user, playerHostName, pos);
                                 }
                                 if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
                                 {
-                                    string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, user, playerCharacterId.ToString());
+                                    string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, user, playerHostName);
                                     if (Plugin.StaticConfig.PlayerJoinPosEnabled)
                                     {
                                         if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
@@ -84,7 +84,7 @@ namespace DiscordConnector.Patches
                                             );
                                             break;
                                         }
-                                        message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, user, playerCharacterId.ToString(), pos);
+                                        message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.JoinMessage, user, playerHostName, pos);
                                     }
                                     if (message.Contains("%POS%"))
                                     {
@@ -99,16 +99,16 @@ namespace DiscordConnector.Patches
                             if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Shout, user) == 0)
                             {
                                 DiscordApi.SendMessage(
-                                    MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstShoutMessage, user, playerCharacterId.ToString(), text)
+                                    MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstShoutMessage, user, playerHostName, text)
                                 );
                             }
                             if (Plugin.StaticConfig.StatsShoutEnabled)
                             {
-                                Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Shout, user, playerCharacterId, pos);
+                                Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Shout, user, playerHostName, pos);
                             }
                             if (Plugin.StaticConfig.ChatShoutEnabled)
                             {
-                                string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.ShoutMessage, user, playerCharacterId.ToString(), text);
+                                string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.ShoutMessage, user, playerHostName, text);
                                 if (Plugin.StaticConfig.ChatShoutPosEnabled)
                                 {
                                     if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
@@ -119,7 +119,7 @@ namespace DiscordConnector.Patches
                                         );
                                         break;
                                     }
-                                    message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.ShoutMessage, user, playerCharacterId.ToString(), text, pos);
+                                    message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.ShoutMessage, user, playerHostName, text, pos);
                                 }
                                 if (message.Contains("%POS%"))
                                 {

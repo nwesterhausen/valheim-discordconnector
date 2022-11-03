@@ -80,7 +80,7 @@ Player Death Message = %PLAYER_NAME% has died a beautiful death!;%PLAYER_NAME% w
 | Server Stop Message     | `Server is stopping.`    | The message defined here is sent when the server is shutting down.                                          |
 | Server Shutdown Message | `Server has stopped.`    | The message defined here is sent when the server finishes shutting down.                                    |
 
-#### Available Predefined Variables
+#### Available Predefined Variables (Server)
 
 | Variable    | Replaced with..                                                        | Can be used in..    |
 | ----------- | ---------------------------------------------------------------------- | ------------------- |
@@ -96,12 +96,13 @@ Player Death Message = %PLAYER_NAME% has died a beautiful death!;%PLAYER_NAME% w
 | Player Ping Message  | `%PLAYER_NAME% pings the map`      | The message that will be sent when a player pings the map.                                                                                   |
 | Player Shout Message | `%PLAYER_NAME% shout **%SHOUT%**.` | The message that will be sent when a player shouts in game. %SHOUT% must be somewhere in this message for what the player shouts to be sent. |
 
-#### Available Predefined Variables
+#### Available Predefined Variables (Players)
 
 | Variable           | Replaced with..              | Can be used in..                             |
 | ------------------ | ---------------------------- | -------------------------------------------- |
 | `%PLAYER_NAME%`    | Player's character name      | Player join/leave/shout/ping/death messages. |
-| `%PLAYER_STEAMID%` | Player's STEAM ID            | Player join/leave/shout/ping/death messages. |
+| `%PLAYER_STEAMID%` | Player's Platform ID         | Player join/leave/shout/ping/death messages. |
+| `%PLAYER_ID%`      | Player's Platform ID         | Player join/leave/shout/ping/death messages. |
 | `%SHOUT%`          | Text of the player's shout   | Player shout messages.                       |
 | `%POS%`            | Player's coordinate position | Player join/leave/shout/ping/death messages. |
 
@@ -130,7 +131,7 @@ In the player messages, anywhere in the message you put `%PLAYER_NAME%`, when th
 | Event Paused Message  | `**Event**: %EVENT_END_MSG% -- for now! (Currently paused due to no players in the event area.)` | Message sent when a random event is paused because players left the area. |
 | Event Resumed Message | `**Event**: %EVENT_START_MSG%`                                                                   | Message sent when a random event resumes after being paused.              |
 
-#### Available Predefined Variables
+#### Available Predefined Variables (Events)
 
 In the event messages, anywhere in the message you can use the string vars `%EVENT_START_MSG%` and `%EVENT_END_MSG%` (or `%EVENT_MSG%` which is uses the start message when the event starts and the end message when the event ends.) You can also use `%POS%` which will be replaced with their position if the position toggle is enabled.
 

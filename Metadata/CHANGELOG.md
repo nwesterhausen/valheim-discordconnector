@@ -2,6 +2,21 @@
 
 A full changelog for reference.
 
+## History
+
+### Version 2.0.1
+
+With this update, we bring back Steam_ID variable inclusion and leaderboard message sending (respecting your config settings). I recommend you replace your `discordconnector.valheim.nwest.games-records.db` database, since the records will not line up and will be essentially soft-reset because the column name changed with the different type of data. Steam IDs are prefaced with 'Steam_' now, so you could migrate your stat database with a bit of effort. I believe this could all be done with queries inside the LiteDB Query Tool.
+
+Fixes:
+
+- Periodic leaderboard messages sending will now respect your config value intead of never sending
+- The STEAMID variable works again. An alias is the PLAYERID variable, which does the same thing -- they both provide the full player id, so `Steam_<SteamID>` or `XBox_<XBoxID>`
+
+Breaking chnages:
+
+- Player IDs are tracked in the stat database using a new column name, which resets any stat tracking because the player ID is used to resolve to a single player by combining with the character name.
+
 ### Version 2.0.0
 
 Previous version broke with the new updates to Valheim using the PlayFab server stuff. Previously, the steam ID was grabbed directly from the socket but that doesn't work anymore. To get something workable (the other messages work), I have removed the code which tried to get the SteamID and disabled leaderboard sending.
@@ -113,8 +128,8 @@ steps it follows for that is:
     3. parse the records
     4. loop through all the records and add them to the database
 
-    	Records added this way will have position of zero and a
-    	steamid of 1.
+     Records added this way will have position of zero and a
+     steamid of 1.
 
     5. move the records.json file to records.json.migrated
 

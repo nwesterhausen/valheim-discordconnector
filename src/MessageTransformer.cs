@@ -17,6 +17,7 @@ namespace DiscordConnector
         private const string VAR_9 = "%VAR10%";
         private const string PLAYER_NAME = "%PLAYER_NAME%";
         private const string PLAYER_STEAMID = "%PLAYER_STEAMID%";
+        private const string PLAYER_ID = "%PLAYER_ID%";
         private const string SHOUT = "%SHOUT%";
         private const string POS = "%POS%";
         private const string EVENT_START_MSG = "%EVENT_START_MSG%";
@@ -44,21 +45,22 @@ namespace DiscordConnector
             return MessageTransformer.ReplaceVariables(rawMessage);
         }
 
-        public static string FormatPlayerMessage(string rawMessage, string playerName, string playerSteamId)
+        public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId)
         {
             return MessageTransformer.ReplaceVariables(rawMessage)
-                .Replace(PLAYER_STEAMID, "")
+                .Replace(PLAYER_STEAMID, playerId)
+                .Replace(PLAYER_ID, playerId)
                 .Replace(PLAYER_NAME, playerName);
         }
 
-        public static string FormatPlayerMessage(string rawMessage, string playerName, string playerSteamId, Vector3 pos)
+        public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId, Vector3 pos)
         {
-            return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerSteamId)
+            return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerId)
                 .Replace(POS, $"{pos}");
         }
-        public static string FormatPlayerMessage(string rawMessage, string playerName, string playerSteamId, string shout)
+        public static string FormatPlayerMessage(string rawMessage, string playerName, string playerid, string shout)
         {
-            return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerSteamId)
+            return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerid)
                 .Replace(SHOUT, shout);
         }
         public static string FormatPlayerMessage(string rawMessage, string playerName, string playerSteamId, string shout, Vector3 pos)

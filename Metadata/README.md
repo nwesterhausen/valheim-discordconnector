@@ -35,6 +35,19 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+### Version 2.0.1
+
+With this update, we bring back Steam_ID variable inclusion and leaderboard message sending (respecting your config settings). I recommend you replace your `discordconnector.valheim.nwest.games-records.db` database, since the records will not line up and will be essentially soft-reset because the column name changed with the different type of data. Steam IDs are prefaced with 'Steam_' now, so you could migrate your stat database with a bit of effort. I believe this could all be done with queries inside the LiteDB Query Tool.
+
+Fixes:
+
+- Periodic leaderboard messages sending will now respect your config value intead of never sending
+- The STEAMID variable works again. An alias is the PLAYERID variable, which does the same thing -- they both provide the full player id, so `Steam_<SteamID>` or `XBox_<XBoxID>`
+
+Breaking chnages:
+
+- Player IDs are tracked in the stat database using a new column name, which resets any stat tracking because the player ID is used to resolve to a single player by combining with the character name.
+
 ### Version 2.0.0
 
 Previous version broke with the new updates to Valheim using the PlayFab server stuff. Previously, the steam ID was grabbed directly from the socket but that doesn't work anymore. To get something workable (the other messages work), I have removed the code which tried to get the SteamID and disabled leaderboard sending.
@@ -54,48 +67,6 @@ Features:
 Fixes:
 
 - Handles the edge case when a toggle was enabled but the text in 'messages' for that toggle was blank, the plugin would crash. (e.g. if 'send shout' toggle was `true` but the 'shout message' was blank, in prior versions this would crash the plugin)
-
-### Version 1.7.1
-
-Fixes:
-
-- Ignore player regex was matching everything if not set. Now if it is not set, it will match nothing.
-- Player shout messages were not including enough information for formatting. Now they properly include steamId and shout text.
-
-### Version 1.7.0
-
-Features:
-
-- New variable available for messages: `%PLAYER_STEAMID%` which gets replaced with the player's Steam ID
-
-### Version 1.6.1
-
-Fixes:
-
-- Errors when accessing the ignored players regex
-
-There was a typo that was affecting the way the config file was read. I didn't run into this in my testing on Windows but was able to duplicate this on Linux after it was reported. Thank you to those who reported this.
-
-### Version 1.6.0
-
-Finally a new release! This on is mainly some small features and bugfixes from the github issues backlog.
-
-Features:
-
-- New configuration setting, "Ignored Players (Regex)" lets you specify a regular expression to ignore players.
-- Configuration is reloaded when a change is detected.
-- The records database is saved in the BepInEx config directory.
-
-Fixes:
-
-- Handle exceptions that occur when checking the public IP from ipify.org
-- Fully quality the records database to avoid any possible conflicts
-
-Breaking Changes:
-
-- Removed conversion code which would convert `records.json` into `records.db`.
-
-  If you need to make use of that automatic conversion, load the 1.5.3 version of the plugin once before upgrading.
 
 Full changelog history available on the
 [Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md)

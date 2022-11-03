@@ -1,6 +1,5 @@
 ﻿
 using System.Collections.Generic;
-using System.IO;
 using LiteDB;
 using UnityEngine;
 
@@ -8,8 +7,7 @@ namespace DiscordConnector.Records
 {
     internal class Database
     {
-        private const string OLD_DB_NAME = "records.db";
-        private const string DB_NAME = $"{PluginInfo.PLUGIN_ID}-records2.db";
+        private const string DB_NAME = $"{PluginInfo.PLUGIN_ID}-records.db";
         private static string DbPath;
         private LiteDatabase db;
         private ILiteCollection<SimpleStat> DeathCollection;
@@ -17,8 +15,6 @@ namespace DiscordConnector.Records
         private ILiteCollection<SimpleStat> LeaveCollection;
         private ILiteCollection<SimpleStat> ShoutCollection;
         private ILiteCollection<SimpleStat> PingCollection;
-
-        private const long STEAMID_LOWERBOUND = 100;
 
         public Database(string rootStorePath)
         {
@@ -52,21 +48,21 @@ namespace DiscordConnector.Records
             db.Dispose();
         }
 
-        private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, string characterId, Vector3 pos)
+        private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, string playerHostName, Vector3 pos)
         {
             var newRecord = new SimpleStat(
                 playerName,
-                characterId,
+                playerHostName,
                 pos.x, pos.y, pos.z
             );
             collection.Insert(newRecord);
 
             collection.EnsureIndex(x => x.Name);
-            collection.EnsureIndex(x => x.CharacterId);
+            collection.EnsureIndex(x => x.PlayerId);
         }
-        private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, string characterId)
+        private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, string playerHostName)
         {
-            InsertSimpleStatRecord(collection, playerName, characterId, Vector3.zero);
+            InsertSimpleStatRecord(collection, playerName, playerHostName, Vector3.zero);
         }
 
         private int CountOfRecordsByName(ILiteCollection<SimpleStat> collection, string playerName)
@@ -76,17 +72,17 @@ namespace DiscordConnector.Records
                 .Count();
         }
 
-        private int CountOfRecordsByCharacterId(ILiteCollection<SimpleStat> collection, string characterId)
+        private int CountOfRecordsByCharacterId(ILiteCollection<SimpleStat> collection, string playerHostName)
         {
             return collection.Query()
-                .Where(x => x.CharacterId == characterId)
+                .Where(x => x.PlayerId == playerHostName)
                 .Count();
         }
 
-        private int CountOfRecordsByNameAndCharacterId(ILiteCollection<SimpleStat> collection, string playerName, string characterId)
+        private int CountOfRecordsByNameAndCharacterId(ILiteCollection<SimpleStat> collection, string playerName, string playerHostName)
         {
             return collection.Query()
-                .Where(x => (x.Name.Equals(playerName) && x.CharacterId == characterId))
+                .Where(x => (x.Name.Equals(playerName) && x.PlayerId == playerHostName))
                 .Count();
         }
 
@@ -107,8 +103,8 @@ namespace DiscordConnector.Records
             {
                 return ConvertBsonDocumentCountToDotNet(
                     collection.Query()
-                        .GroupBy("{Name,CharacterId}")
-                        .Select("{NameCharacter: @Key, Count: COUNT(*)}")
+                        .GroupBy("{Name,PlayerId}")
+                        .Select("{NamePlayer: @Key, Count: COUNT(*)}")
                         .ToList()
                 );
             }
@@ -117,29 +113,29 @@ namespace DiscordConnector.Records
 
                 return ConvertBsonDocumentCountToDotNet(
                     collection.Query()
-                        .GroupBy("CharacterId")
-                        .Select("{CharacterId: @Key, Count: COUNT(*)}")
+                        .GroupBy("PlayerId")
+                        .Select("{Player: @Key, Count: COUNT(*)}")
                         .ToList()
                 );
             }
         }
 
-        private string GetLatestNameForCharacterId(string characterId)
+        private string GetLatestNameForCharacterId(string playerHostName)
         {
-            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {characterId} begin"); }
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {playerHostName} begin"); }
             var nameQuery = JoinCollection.Query()
-                .Where(x => x.CharacterId == characterId)
+                .Where(x => x.PlayerId == playerHostName)
                 .OrderByDescending("Date")
                 .Select("$.Name")
                 .ToList();
             if (nameQuery.Count == 0)
             {
-                if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {characterId} result = NONE"); }
+                if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {playerHostName} result = NONE"); }
                 return "undefined";
             }
             if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"nameQuery has {nameQuery.Count} results"); }
             var result = nameQuery[0];
-            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {characterId} result = {result}"); }
+            if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {playerHostName} result = {result}"); }
             return result["Name"].AsString;
         }
 
@@ -161,19 +157,19 @@ namespace DiscordConnector.Records
                         doc["Count"].AsInt32
                     ));
                 }
-                else if (doc.ContainsKey("NameCharacter"))
+                else if (doc.ContainsKey("NamePlayer"))
                 {
                     results.Add(new CountResult(
-                        doc["NameCharacter"]["Name"].AsString,
+                        doc["NamePlayer"]["Name"].AsString,
                         doc["Count"].AsInt32
                     ));
                 }
-                else if (doc.ContainsKey("CharacterId"))
+                else if (doc.ContainsKey("Player"))
                 {
-                    if (!doc["CharacterId"].IsNull)
+                    if (!doc["Player"].IsNull)
                     {
                         results.Add(new CountResult(
-                            GetLatestNameForCharacterId(doc["CharacterId"]),
+                            GetLatestNameForCharacterId(doc["Player"]),
                             doc["Count"].AsInt32
                         ));
                     }
@@ -226,7 +222,7 @@ namespace DiscordConnector.Records
             }
         }
 
-        public int CountOfRecordsBySteamId(string key, string characterId)
+        public int CountOfRecordsBySteamId(string key, string playerHostName)
         {
             if (!Plugin.StaticConfig.CollectStatsEnabled)
             {
@@ -235,40 +231,40 @@ namespace DiscordConnector.Records
             switch (key)
             {
                 case Categories.Death:
-                    return CountOfRecordsByCharacterId(DeathCollection, characterId);
+                    return CountOfRecordsByCharacterId(DeathCollection, playerHostName);
                 case Categories.Join:
-                    return CountOfRecordsByCharacterId(JoinCollection, characterId);
+                    return CountOfRecordsByCharacterId(JoinCollection, playerHostName);
                 case Categories.Leave:
-                    return CountOfRecordsByCharacterId(LeaveCollection, characterId);
+                    return CountOfRecordsByCharacterId(LeaveCollection, playerHostName);
                 case Categories.Ping:
-                    return CountOfRecordsByCharacterId(PingCollection, characterId);
+                    return CountOfRecordsByCharacterId(PingCollection, playerHostName);
                 case Categories.Shout:
-                    return CountOfRecordsByCharacterId(ShoutCollection, characterId);
+                    return CountOfRecordsByCharacterId(ShoutCollection, playerHostName);
                 default:
                     Plugin.StaticLogger.LogDebug($"CountOfRecordsBySteamId, invalid key '{key}'");
                     return -2;
             }
         }
 
-        public void InsertSimpleStatRecord(string key, string playerName, string characterId, Vector3 pos)
+        public void InsertSimpleStatRecord(string key, string playerName, string playerHostName, Vector3 pos)
         {
 
             switch (key)
             {
                 case Categories.Death:
-                    InsertSimpleStatRecord(DeathCollection, playerName, characterId, pos);
+                    InsertSimpleStatRecord(DeathCollection, playerName, playerHostName, pos);
                     break;
                 case Categories.Join:
-                    InsertSimpleStatRecord(JoinCollection, playerName, characterId, pos);
+                    InsertSimpleStatRecord(JoinCollection, playerName, playerHostName, pos);
                     break;
                 case Categories.Leave:
-                    InsertSimpleStatRecord(LeaveCollection, playerName, characterId, pos);
+                    InsertSimpleStatRecord(LeaveCollection, playerName, playerHostName, pos);
                     break;
                 case Categories.Ping:
-                    InsertSimpleStatRecord(PingCollection, playerName, characterId, pos);
+                    InsertSimpleStatRecord(PingCollection, playerName, playerHostName, pos);
                     break;
                 case Categories.Shout:
-                    InsertSimpleStatRecord(ShoutCollection, playerName, characterId, pos);
+                    InsertSimpleStatRecord(ShoutCollection, playerName, playerHostName, pos);
                     break;
                 default:
                     Plugin.StaticLogger.LogDebug($"InsertSimpleStatRecord, invalid key '{key}'");

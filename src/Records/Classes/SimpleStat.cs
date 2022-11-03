@@ -32,40 +32,40 @@ namespace DiscordConnector.Records
         public ObjectId StatId { get; }
         public string Name { get; }
         public System.DateTime Date { get; }
-        public string CharacterId { get; }
+        public string PlayerId { get; }
         public Position Pos { get; }
 
-        public SimpleStat(string name, string characterId)
+        public SimpleStat(string name, string playerHostName)
         {
             StatId = ObjectId.NewObjectId();
             Name = name;
-            CharacterId = characterId;
+            PlayerId = playerHostName;
             Date = System.DateTime.Now;
             Pos = new Position();
         }
 
-        public SimpleStat(string name, string characterId, float x, float y, float z)
+        public SimpleStat(string name, string playerHostName, float x, float y, float z)
         {
             StatId = ObjectId.NewObjectId();
             Name = name;
-            CharacterId = characterId;
+            PlayerId = playerHostName;
             Date = System.DateTime.Now;
             Pos = new Position(x, y, z);
         }
 
         [BsonCtor]
-        public SimpleStat(ObjectId _id, string name, System.DateTime date, string characterId, Position pos)
+        public SimpleStat(ObjectId _id, string name, System.DateTime date, string playerHostName, Position pos)
         {
             StatId = _id;
             Name = name;
             Date = date;
-            CharacterId = characterId;
+            PlayerId = playerHostName;
             Pos = pos;
         }
 
         public override string ToString()
         {
-            return $"{Date.ToShortDateString()} {Date.ToShortTimeString()}: {Name} ({CharacterId}) at {Pos}";
+            return $"{Date.ToShortDateString()} {Date.ToShortTimeString()}: {Name} ({PlayerId}) at {Pos}";
         }
     }
 
