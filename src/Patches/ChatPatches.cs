@@ -11,6 +11,10 @@ namespace DiscordConnector.Patches
         {
             private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type, ref string user, ref string text, ref string senderNetworkUserId)
             {
+                if (string.IsNullOrEmpty(user))
+                {
+                    Plugin.StaticLogger.LogInfo("Ignored shout from invalid user (null reference)");
+                }
                 if (Plugin.StaticConfig.MutedPlayers.IndexOf(user) >= 0 || Plugin.StaticConfig.MutedPlayersRegex.IsMatch(user))
                 {
                     Plugin.StaticLogger.LogInfo($"Ignored shout from user on muted list. User: {user} Shout: {text}.");
@@ -18,8 +22,14 @@ namespace DiscordConnector.Patches
                 }
 
                 ZNetPeer peerInstance = ZNet.instance.GetPeerByPlayerName(user);
+
+                if (peerInstance == null || peerInstance.m_socket == null)
+                {
+                    Plugin.StaticLogger.LogInfo($"Ignored shout from {user} because they aren't a real player");
+                }
+
                 // Get the player's hostname to use for record keeping and logging
-                string playerHostName = $"{peerInstance.m_socket.GetHostName()}";
+                string playerHostName = peerInstance.m_socket.GetHostName();
 
                 switch (type)
                 {
