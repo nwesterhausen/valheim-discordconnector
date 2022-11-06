@@ -4,6 +4,23 @@ A full changelog for reference.
 
 ## History
 
+### Version 2.1.0
+
+Adds optional leaderboards which track by day and by week. This work by filtering the normal leaderboards to the specfic day or date range. These support a range of options:
+
+- today's most/least for deaths/sessions/shouts/pings
+- yesterday's most/least deaths/sessions/shouts/pings
+- rolling past 7 days most/least deaths/sessions/shouts/pings
+- sunday-to-saturday 7 days most/least deaths/sessions/shouts/pings
+- monday-to-sundary 7 days most/least deaths/sessions/shouts/pings
+
+Also adds a "most time on the server" leaderboard, which looks at join/leave times and presents the sum.
+
+Features:
+
+- Adds new tracked stat for time on server
+- Adds new leaderboard sending options
+
 ### Version 2.0.2
 
 If a shout is performed by a player that isn't a real player (like a mod), it would break the shout call from working. This is because Discord Connector was trying to lookup the player's details and encountering null. The plugin now checks for that and returns early if null is found.

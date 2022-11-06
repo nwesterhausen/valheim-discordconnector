@@ -61,4 +61,13 @@ namespace DiscordConnector.Leaderboards
         public abstract void SendLeaderboard();
     }
 
+    internal enum LeaderboardRange
+    {
+        AllTime,
+        Today,
+        Yesterday,
+        PastWeek,
+        WeekSundayToSaturday,
+        WeekMondayToSunday,
+    }
 }
