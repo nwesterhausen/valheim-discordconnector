@@ -24,7 +24,8 @@ namespace DiscordConnector.Patches
                 switch (type)
                 {
                     case Talker.Type.Ping:
-                        if (Plugin.StaticConfig.AnnouncePlayerFirstPingEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Ping, user) == 0)
+                        if (Plugin.StaticConfig.AnnouncePlayerFirstPingEnabled
+                            && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Ping, user) == 0)
                         {
                             DiscordApi.SendMessage(
                                 MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstPingMessage, user, playerHostName)
@@ -61,7 +62,8 @@ namespace DiscordConnector.Patches
                         {
                             if (!Plugin.IsHeadless())
                             {
-                                if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Join, user) == 0)
+                                if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled
+                                    && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Join, user) == 0)
                                 {
                                     DiscordApi.SendMessage(
                                         MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstJoinMessage, user, playerHostName)
@@ -96,7 +98,8 @@ namespace DiscordConnector.Patches
                         }
                         else
                         {
-                            if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Shout, user) == 0)
+                            if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled
+                                && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Shout, user) == 0)
                             {
                                 DiscordApi.SendMessage(
                                     MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.PlayerFirstShoutMessage, user, playerHostName, text)

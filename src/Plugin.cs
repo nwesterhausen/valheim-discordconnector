@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿using System.Threading.Tasks;
+using BepInEx;
 using BepInEx.Logging;
 using DiscordConnector.Records;
 using HarmonyLib;
@@ -60,7 +61,10 @@ namespace DiscordConnector
                 leaderboardTimer.Start();
             }
 
-            PublicIpAddress = IpifyAPI.PublicIpAddress();
+            Task.Run(() =>
+            {
+                PublicIpAddress = IpifyAPI.PublicIpAddress();
+            }).ConfigureAwait(false);
 
             _harmony = Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, PluginInfo.PLUGIN_ID);
         }
