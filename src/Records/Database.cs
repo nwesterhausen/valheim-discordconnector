@@ -356,7 +356,7 @@ namespace DiscordConnector.Records
             catch
             {
                 Plugin.StaticLogger.LogDebug($"Error when trying to find {playerName} to count!");
-                return 0;
+                return -3;
             }
         }
 
@@ -371,7 +371,7 @@ namespace DiscordConnector.Records
             catch
             {
                 Plugin.StaticLogger.LogDebug($"Error when trying to find {playerHostName} to count!");
-                return 0;
+                return -3;
             }
         }
 
@@ -386,7 +386,7 @@ namespace DiscordConnector.Records
             catch
             {
                 Plugin.StaticLogger.LogDebug($"Error when trying to find {playerHostName} as {playerName} to count!");
-                return 0;
+                return -3;
             }
         }
 
