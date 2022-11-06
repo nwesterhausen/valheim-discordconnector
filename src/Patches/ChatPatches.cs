@@ -26,6 +26,7 @@ namespace DiscordConnector.Patches
                 if (peerInstance == null || peerInstance.m_socket == null)
                 {
                     Plugin.StaticLogger.LogInfo($"Ignored shout from {user} because they aren't a real player");
+                    return;
                 }
 
                 // Get the player's hostname to use for record keeping and logging
