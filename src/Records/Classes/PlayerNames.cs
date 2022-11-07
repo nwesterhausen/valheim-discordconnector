@@ -1,4 +1,4 @@
-
+﻿
 using LiteDB;
 
 namespace DiscordConnector.Records

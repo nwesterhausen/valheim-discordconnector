@@ -29,7 +29,14 @@ namespace DiscordConnector.Records
         /// <param name="rootStorePath">Directory to save the LiteDB database in.</param>
         public Database(string rootStorePath)
         {
-            DbPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, DB_NAME);
+            DbPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, PluginInfo.PLUGIN_ID, DB_NAME);
+
+            // Check for datbase in old location and move if necessary
+            string oldDatabase = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, $"{PluginInfo.PLUGIN_ID}-records.db");
+            if (System.IO.File.Exists(oldDatabase))
+            {
+                System.IO.File.Move(oldDatabase, DbPath);
+            }
 
             Initialize();
         }
@@ -305,21 +312,21 @@ namespace DiscordConnector.Records
             }
         }
 
-        public List<CountResult> CountAllRecordsGrouped(string key, Leaderboards.LeaderboardRange timeRange)
+        public List<CountResult> CountAllRecordsGrouped(string key, Leaderboards.TimeRange timeRange)
         {
             switch (timeRange)
             {
-                case Leaderboards.LeaderboardRange.AllTime:
+                case Leaderboards.TimeRange.AllTime:
                     return CountAllRecordsGrouped(key);
-                case Leaderboards.LeaderboardRange.Today:
+                case Leaderboards.TimeRange.Today:
                     return CountTodaysRecordsGrouped(key);
-                case Leaderboards.LeaderboardRange.Yesterday:
+                case Leaderboards.TimeRange.Yesterday:
                     return CountYesterdaysRecordsGrouped(key);
-                case Leaderboards.LeaderboardRange.PastWeek:
+                case Leaderboards.TimeRange.PastWeek:
                     return CountPastWeekRecordsGrouped(key);
-                case Leaderboards.LeaderboardRange.WeekSundayToSaturday:
+                case Leaderboards.TimeRange.WeekSundayToSaturday:
                     return CountWeekSunSatRecordsGrouped(key);
-                case Leaderboards.LeaderboardRange.WeekMondayToSunday:
+                case Leaderboards.TimeRange.WeekMondayToSunday:
                     return CountWeekMonSunRecordsGrouped(key);
                 default:
                     Plugin.StaticLogger.LogDebug($"CountAllRecordsGrouped, no specified time range. Returning empty list!");
@@ -427,6 +434,15 @@ namespace DiscordConnector.Records
                 Plugin.StaticLogger.LogDebug($"CountAllRecordsGrouped {Plugin.StaticConfig.RecordRetrievalDiscernmentMethod}");
             }
 
+            if (collection.Count() == 0)
+            {
+                if (Plugin.StaticConfig.DebugDatabaseMethods)
+                {
+                    Plugin.StaticLogger.LogDebug("Collection is empty, skipping.");
+                }
+                return new List<CountResult>();
+            }
+
             // Config.RetrievalDiscernmentMethods.BySteamID by default (should be most common), conditionally check for others
             string GroupByClause = "PlayerId";
             string SelectClause = "{Player: @Key, Count: Count(*)}";
@@ -442,12 +458,19 @@ namespace DiscordConnector.Records
                 SelectClause = "{Name: @Key, Count: Count(*)}";
             }
 
-            return CountResult.ConvertFromBsonDocuments(
+            var result = CountResult.ConvertFromBsonDocuments(
                 collection.Query()
                     .GroupBy(GroupByClause)
                     .Select(SelectClause)
                     .ToList()
             );
+
+            if (Plugin.StaticConfig.DebugDatabaseMethods)
+            {
+                Plugin.StaticLogger.LogDebug($"CountAllRecordsGrouped {result.Count} records returned");
+            }
+
+            return result;
         }
 
 

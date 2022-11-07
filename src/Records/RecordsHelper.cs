@@ -19,7 +19,7 @@ namespace DiscordConnector.Records
             Join,
             Leave,
             Ping,
-            Shout
+            Shout,
         };
     }
 
@@ -45,16 +45,6 @@ namespace DiscordConnector.Records
             return queryResults.GetRange(0, n);
         }
 
-        public static CountResult TopResultForCategory(string key)
-        {
-            var results = Helper.TopNResultForCategory(key, 1);
-            if (results.Count == 0)
-            {
-                return new CountResult("", 0);
-            }
-            return results[0];
-        }
-
         public static List<CountResult> BottomNResultForCategory(string key, int n)
         {
 
@@ -73,16 +63,6 @@ namespace DiscordConnector.Records
             }
 
             return queryResults.GetRange(0, n);
-        }
-
-        public static CountResult BottomResultForCategory(string key)
-        {
-            var results = Helper.BottomNResultForCategory(key, 1);
-            if (results.Count == 0)
-            {
-                return new CountResult("", 0);
-            }
-            return results[0];
         }
     }
 }

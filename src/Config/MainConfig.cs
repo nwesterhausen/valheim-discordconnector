@@ -24,12 +24,9 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> discordEmbedMessagesToggle;
         private ConfigEntry<string> mutedDiscordUserlist;
         private ConfigEntry<string> mutedDiscordUserlistRegex;
-        private ConfigEntry<bool> statsAnnouncementToggle;
-        private ConfigEntry<int> statsAnnouncementPeriod;
         private ConfigEntry<bool> colectStatsToggle;
         private ConfigEntry<bool> sendPositionsToggle;
         private ConfigEntry<bool> announcePlayerFirsts;
-        private ConfigEntry<int> numberRankingsListed;
         private ConfigEntry<string> playerLookupPreference;
 
         public MainConfig(ConfigFile configFile)
@@ -99,27 +96,10 @@ namespace DiscordConnector.Config
                 true,
                 "Disable this setting to disable all stat collection. (Overwrites any individual setting.)");
 
-            statsAnnouncementToggle = config.Bind<bool>(MAIN_SETTINGS,
-                "Periodic Player Stats Notifications",
-                false,
-                "Disable this setting to disable all stat announcements (i.e. leader board messages). (Overwrites any individual setting.)" + Environment.NewLine +
-                "EX: Top Player Deaths: etc etc Top Player Joins: etc etc");
-
-            statsAnnouncementPeriod = config.Bind<int>(MAIN_SETTINGS,
-                "Player Stats Notifications Period",
-                600,
-                "Set the number of minutes between a leader board announcement sent to discord." + Environment.NewLine +
-                "This time starts when the server is started. Default is set to 10 hours (600 mintues).");
-
             announcePlayerFirsts = config.Bind<bool>(MAIN_SETTINGS,
                 "Announce Player Firsts",
                 true,
                 "Disable this setting to disable all extra announcements the first time each player does something. (Overwrites any individual setting.)");
-
-            numberRankingsListed = config.Bind<int>(MAIN_SETTINGS,
-                "How many places to list in the top ranking leaderboards",
-                3,
-                "Set how many places (1st, 2nd, 3rd by default) to display when sending the ranked leaderboard.");
 
             playerLookupPreference = config.Bind<string>(MAIN_SETTINGS,
                 "How to discern players in Record Retrieval",
@@ -144,27 +124,21 @@ namespace DiscordConnector.Config
             jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserlist.Value}\",";
             jsonString += $"\"ignoredPlayersRegex\":\"{mutedDiscordUserlistRegex.Value}\"";
             jsonString += "},";
-            jsonString += $"\"periodicLeaderboardEnabled\":\"{StatsAnnouncementEnabled}\",";
-            jsonString += $"\"periodicLeaderboardPeriodSeconds\":{StatsAnnouncementPeriod},";
             jsonString += $"\"colectStatsEnabled\":\"{CollectStatsEnabled}\",";
             jsonString += $"\"sendPositionsEnabled\":\"{SendPositionsEnabled}\",";
             jsonString += $"\"announcePlayerFirsts\":\"{AnnouncePlayerFirsts}\",";
-            jsonString += $"\"numberRankingsListed\":\"{IncludedNumberOfRankings}\",";
             jsonString += $"\"playerLookupPreference\":\"{RecordRetrievalDiscernmentMethod}\"";
             jsonString += "}";
             return jsonString;
         }
 
         public string WebHookURL => webhookUrl.Value;
-        public bool StatsAnnouncementEnabled => statsAnnouncementToggle.Value;
-        public int StatsAnnouncementPeriod => statsAnnouncementPeriod.Value;
         public bool CollectStatsEnabled => colectStatsToggle.Value;
         public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
         public bool SendPositionsEnabled => sendPositionsToggle.Value;
         public List<string> MutedPlayers => mutedPlayers;
         public Regex MutedPlayersRegex => mutedPlayersRegex;
         public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
-        public int IncludedNumberOfRankings => numberRankingsListed.Value;
         public string RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
 
     }

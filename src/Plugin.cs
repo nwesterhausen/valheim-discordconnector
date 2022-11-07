@@ -48,18 +48,47 @@ namespace DiscordConnector
                 StaticLogger.LogWarning("No value set for WebHookURL! Plugin will run without using a main Discord webhook.");
             }
 
-            if (StaticConfig.StatsAnnouncementEnabled)
+            if (StaticConfig.LeaderboardConfigs[0].Enabled)
             {
-                System.Timers.Timer leaderboardTimer = new System.Timers.Timer();
-                leaderboardTimer.Elapsed += StaticLeaderboards.OverallHighest.SendLeaderboardOnTimer;
-                leaderboardTimer.Elapsed += StaticLeaderboards.OverallLowest.SendLeaderboardOnTimer;
-                leaderboardTimer.Elapsed += StaticLeaderboards.TopPlayers.SendLeaderboardOnTimer;
-                leaderboardTimer.Elapsed += StaticLeaderboards.BottomPlayers.SendLeaderboardOnTimer;
+                System.Timers.Timer leaderboard1Timer = new System.Timers.Timer();
+                leaderboard1Timer.Elapsed += StaticLeaderboards.Leaderboard1.SendLeaderboardOnTimer;
                 // Interval is learned from config file in minutes
-                leaderboardTimer.Interval = 60 * 1000 * StaticConfig.StatsAnnouncementPeriod;
-                Plugin.StaticLogger.LogDebug($"Enabling leaderboard timers with interval {leaderboardTimer.Interval}ms");
-                leaderboardTimer.Start();
+                leaderboard1Timer.Interval = 60 * 1000 * StaticConfig.LeaderboardConfigs[0].PeriodInMinutes;
+                Plugin.StaticLogger.LogInfo($"Enabling Leaderboard.1 timer with interval 1:{leaderboard1Timer.Interval} ms");
+                leaderboard1Timer.Start();
             }
+
+            if (StaticConfig.LeaderboardConfigs[1].Enabled)
+            {
+                System.Timers.Timer leaderboard2Timer = new System.Timers.Timer();
+                leaderboard2Timer.Elapsed += StaticLeaderboards.Leaderboard2.SendLeaderboardOnTimer;
+                // Interval is learned from config file in minutes
+                leaderboard2Timer.Interval = 60 * 1000 * StaticConfig.LeaderboardConfigs[1].PeriodInMinutes;
+                Plugin.StaticLogger.LogInfo($"Enabling Leaderboard.2 timer with interval 1:{leaderboard2Timer.Interval} ms");
+                leaderboard2Timer.Start();
+            }
+
+            if (StaticConfig.LeaderboardConfigs[2].Enabled)
+            {
+                System.Timers.Timer leaderboard3Timer = new System.Timers.Timer();
+                leaderboard3Timer.Elapsed += StaticLeaderboards.Leaderboard3.SendLeaderboardOnTimer;
+                // Interval is learned from config file in minutes
+                leaderboard3Timer.Interval = 60 * 1000 * StaticConfig.LeaderboardConfigs[2].PeriodInMinutes;
+                Plugin.StaticLogger.LogInfo($"Enabling Leaderboard.3 timer with interval 1:{leaderboard3Timer.Interval} ms");
+                leaderboard3Timer.Start();
+            }
+
+            if (StaticConfig.LeaderboardConfigs[3].Enabled)
+            {
+                System.Timers.Timer leaderboard4Timer = new System.Timers.Timer();
+                leaderboard4Timer.Elapsed += StaticLeaderboards.Leaderboard4.SendLeaderboardOnTimer;
+                // Interval is learned from config file in minutes
+                leaderboard4Timer.Interval = 60 * 1000 * StaticConfig.LeaderboardConfigs[3].PeriodInMinutes;
+                Plugin.StaticLogger.LogInfo($"Enabling Leaderboard.4 timer with interval 1:{leaderboard4Timer.Interval} ms");
+                leaderboard4Timer.Start();
+            }
+
+
 
             Task.Run(() =>
             {

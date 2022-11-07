@@ -1,4 +1,4 @@
-
+﻿
 namespace DiscordConnector.Records
 {
     public class Position

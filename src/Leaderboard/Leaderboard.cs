@@ -6,25 +6,24 @@ namespace DiscordConnector
 {
     internal class Leaderboard
     {
-        private Leaderboards.Base overallHighest;
-        private Leaderboards.Base overallLowest;
-        private Leaderboards.Base topPlayers;
-        private Leaderboards.Base bottomPlayers;
+        private Leaderboards.Base leaderboard1;
+        private Leaderboards.Base leaderboard2;
+        private Leaderboards.Base leaderboard3;
+        private Leaderboards.Base leaderboard4;
+        public static readonly int MAX_LEADERBOARD_SIZE = 16;
 
         public Leaderboard()
         {
-            overallHighest = new Leaderboards.OverallHighest();
-            overallLowest = new Leaderboards.OverallLowest();
-            topPlayers = new Leaderboards.TopPlayers();
-            bottomPlayers = new Leaderboards.BottomPlayers();
+            leaderboard1 = new Leaderboards.Composer(0);
+            leaderboard2 = new Leaderboards.Composer(1);
+            leaderboard3 = new Leaderboards.Composer(2);
+            leaderboard4 = new Leaderboards.Composer(3);
         }
 
-        public Leaderboards.Base OverallHighest => overallHighest;
-        public Leaderboards.Base OverallLowest => overallLowest;
-        public Leaderboards.Base TopPlayers => topPlayers;
-        public Leaderboards.Base BottomPlayers => bottomPlayers;
-
-
+        public Leaderboards.Base Leaderboard1 => leaderboard1;
+        public Leaderboards.Base Leaderboard2 => leaderboard2;
+        public Leaderboards.Base Leaderboard3 => leaderboard3;
+        public Leaderboards.Base Leaderboard4 => leaderboard4;
 
         /// <summary>
         /// Takes a sorted list <paramref name="rankings"/> and returns a string listing each member on a line prepended with 1, 2, 3, etc.
@@ -52,7 +51,10 @@ namespace DiscordConnector.Leaderboards
         /// </summary>
         public void SendLeaderboardOnTimer(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            this.SendLeaderboard();
+            System.Threading.Tasks.Task.Run(() =>
+            {
+                this.SendLeaderboard();
+            });
         }
 
         /// <summary>
@@ -61,7 +63,7 @@ namespace DiscordConnector.Leaderboards
         public abstract void SendLeaderboard();
     }
 
-    internal enum LeaderboardRange
+    public enum TimeRange
     {
         AllTime,
         Today,
@@ -69,5 +71,13 @@ namespace DiscordConnector.Leaderboards
         PastWeek,
         WeekSundayToSaturday,
         WeekMondayToSunday,
+    }
+    public enum Statistic
+    {
+        Death,
+        Session,
+        Shout,
+        Ping,
+        TimeOnline,
     }
 }
