@@ -62,59 +62,122 @@ namespace DiscordConnector.Leaderboards
 
         private Dictionary<Statistic, List<CountResult>> makeRankings(LeaderboardConfigReference settings)
         {
-
-            switch (settings.TimeRange)
+            if (settings.TimeRange == TimeRange.AllTime)
             {
-                case TimeRange.AllTime:
-                    return AllTimeRankings(settings);
-                default:
-                    return new Dictionary<Statistic, List<CountResult>>();
+                return AllRankings(settings);
             }
+
+            var BeginEndDate = DateHelper.StartEndDatesForTimeRange(settings.TimeRange);
+            return TimeBasedRankings(settings, BeginEndDate.Item1, BeginEndDate.Item2);
         }
 
-        private Dictionary<Statistic, List<CountResult>> AllTimeRankings(LeaderboardConfigReference settings)
+        private Dictionary<Statistic, List<CountResult>> AllRankings(LeaderboardConfigReference settings)
         {
             Dictionary<Statistic, List<CountResult>> Dict = new Dictionary<Statistic, List<CountResult>>();
-            if (settings.Type == LeaderboardTypes.Most)
+            if (settings.Type == Leaderboards.Ordering.Descending)
             {
                 if (settings.Deaths)
                 {
-                    Dict.Add(Statistic.Death, Records.Helper.TopNResultForCategory(Categories.Death, Leaderboard.MAX_LEADERBOARD_SIZE));
+                    Dict.Add(Statistic.Death, Records.Helper.TopNResultForCategory(Categories.Death, settings.NumberListings));
                 }
                 if (settings.Sessions)
                 {
-                    Dict.Add(Statistic.Session, Records.Helper.TopNResultForCategory(Categories.Join, Leaderboard.MAX_LEADERBOARD_SIZE));
+                    Dict.Add(Statistic.Session, Records.Helper.TopNResultForCategory(Categories.Join, settings.NumberListings));
                 }
                 if (settings.Shouts)
                 {
-                    Dict.Add(Statistic.Shout, Records.Helper.TopNResultForCategory(Categories.Shout, Leaderboard.MAX_LEADERBOARD_SIZE));
+                    Dict.Add(Statistic.Shout, Records.Helper.TopNResultForCategory(Categories.Shout, settings.NumberListings));
                 }
                 if (settings.Pings)
                 {
-                    Dict.Add(Statistic.Ping, Records.Helper.TopNResultForCategory(Categories.Ping, Leaderboard.MAX_LEADERBOARD_SIZE));
+                    Dict.Add(Statistic.Ping, Records.Helper.TopNResultForCategory(Categories.Ping, settings.NumberListings));
+                }
+                if (settings.TimeOnline)
+                {
+                    Dict.Add(Statistic.TimeOnline, Records.Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings));
                 }
             }
-            if (settings.Type == LeaderboardTypes.Least)
+            if (settings.Type == Leaderboards.Ordering.Ascending)
             {
                 if (settings.Deaths)
                 {
-                    Dict.Add(Statistic.Death, Records.Helper.BottomNResultForCategory(Categories.Death, Leaderboard.MAX_LEADERBOARD_SIZE));
+                    Dict.Add(Statistic.Death, Records.Helper.BottomNResultForCategory(Categories.Death, settings.NumberListings));
                 }
                 if (settings.Sessions)
                 {
-                    Dict.Add(Statistic.Session, Records.Helper.BottomNResultForCategory(Categories.Join, Leaderboard.MAX_LEADERBOARD_SIZE));
+                    Dict.Add(Statistic.Session, Records.Helper.BottomNResultForCategory(Categories.Join, settings.NumberListings));
                 }
                 if (settings.Shouts)
                 {
-                    Dict.Add(Statistic.Shout, Records.Helper.BottomNResultForCategory(Categories.Shout, Leaderboard.MAX_LEADERBOARD_SIZE));
+                    Dict.Add(Statistic.Shout, Records.Helper.BottomNResultForCategory(Categories.Shout, settings.NumberListings));
                 }
                 if (settings.Pings)
                 {
-                    Dict.Add(Statistic.Ping, Records.Helper.BottomNResultForCategory(Categories.Ping, Leaderboard.MAX_LEADERBOARD_SIZE));
+                    Dict.Add(Statistic.Ping, Records.Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings));
+                }
+                if (settings.TimeOnline)
+                {
+                    Dict.Add(Statistic.TimeOnline, Records.Helper.BottomNResultForCategory(Categories.TimeOnline, settings.NumberListings));
                 }
             }
 
             return Dict;
+
+        }
+
+
+        private Dictionary<Statistic, List<CountResult>> TimeBasedRankings(LeaderboardConfigReference settings, System.DateTime startDate, System.DateTime endDate)
+        {
+            Dictionary<Statistic, List<CountResult>> Dict = new Dictionary<Statistic, List<CountResult>>();
+            if (settings.Type == Leaderboards.Ordering.Descending)
+            {
+                if (settings.Deaths)
+                {
+                    Dict.Add(Statistic.Death, Records.Helper.TopNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate));
+                }
+                if (settings.Sessions)
+                {
+                    Dict.Add(Statistic.Session, Records.Helper.TopNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate));
+                }
+                if (settings.Shouts)
+                {
+                    Dict.Add(Statistic.Shout, Records.Helper.TopNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate));
+                }
+                if (settings.Pings)
+                {
+                    Dict.Add(Statistic.Ping, Records.Helper.TopNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
+                }
+                if (settings.TimeOnline)
+                {
+                    Dict.Add(Statistic.TimeOnline, Records.Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings, startDate, endDate));
+                }
+            }
+            if (settings.Type == Leaderboards.Ordering.Ascending)
+            {
+                if (settings.Deaths)
+                {
+                    Dict.Add(Statistic.Death, Records.Helper.BottomNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate));
+                }
+                if (settings.Sessions)
+                {
+                    Dict.Add(Statistic.Session, Records.Helper.BottomNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate));
+                }
+                if (settings.Shouts)
+                {
+                    Dict.Add(Statistic.Shout, Records.Helper.BottomNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate));
+                }
+                if (settings.Pings)
+                {
+                    Dict.Add(Statistic.Ping, Records.Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
+                }
+                if (settings.TimeOnline)
+                {
+                    Dict.Add(Statistic.TimeOnline, Records.Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
+                }
+            }
+
+            return Dict;
+
         }
 
     }

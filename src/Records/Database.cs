@@ -1,6 +1,8 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DiscordConnector.Leaderboards;
 using LiteDB;
 using UnityEngine;
 
@@ -282,12 +284,32 @@ namespace DiscordConnector.Records
                     return CountAllRecordsGrouped(PingCollection);
                 case Categories.Shout:
                     return CountAllRecordsGrouped(ShoutCollection);
+                case Categories.TimeOnline:
+                    return AllTimeOnlineRecordsGrouped();
                 default:
                     Plugin.StaticLogger.LogDebug($"CountAllRecordsGrouped, invalid key '{key}'");
                     return new List<CountResult>();
             }
         }
 
+        private List<CountResult> AllTimeOnlineRecordsGrouped()
+        {
+            //Todo: query following the configuration setting add together all the time between join and leave records
+            return new List<CountResult>();
+        }
+
+        /// <summary>
+        /// Get the total count of records in the category for the player (by character name).
+        /// 
+        /// This can be used to figure out if its the first action the player has taken.
+        /// 
+        /// Returns -1 if collecting stats is disabled.
+        /// Returns -2 if the specified category key is invalid
+        /// Returns -3 if the collection in the database has an issue
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="playerName"></param>
+        /// <returns></returns>
         public int CountOfRecordsByName(string key, string playerName)
         {
             if (!Plugin.StaticConfig.CollectStatsEnabled)
@@ -314,74 +336,13 @@ namespace DiscordConnector.Records
 
         public List<CountResult> CountAllRecordsGrouped(string key, Leaderboards.TimeRange timeRange)
         {
-            switch (timeRange)
+            if (timeRange == TimeRange.AllTime)
             {
-                case Leaderboards.TimeRange.AllTime:
-                    return CountAllRecordsGrouped(key);
-                case Leaderboards.TimeRange.Today:
-                    return CountTodaysRecordsGrouped(key);
-                case Leaderboards.TimeRange.Yesterday:
-                    return CountYesterdaysRecordsGrouped(key);
-                case Leaderboards.TimeRange.PastWeek:
-                    return CountPastWeekRecordsGrouped(key);
-                case Leaderboards.TimeRange.WeekSundayToSaturday:
-                    return CountWeekSunSatRecordsGrouped(key);
-                case Leaderboards.TimeRange.WeekMondayToSunday:
-                    return CountWeekMonSunRecordsGrouped(key);
-                default:
-                    Plugin.StaticLogger.LogDebug($"CountAllRecordsGrouped, no specified time range. Returning empty list!");
-                    return new List<CountResult>();
-
-            }
-        }
-
-        internal List<CountResult> CountTodaysRecordsGrouped(string key)
-        {
-            System.DateTime today = System.DateTime.Today;
-            return CountRecordsBetweenDatesGrouped(key, today, today);
-        }
-        internal List<CountResult> CountYesterdaysRecordsGrouped(string key)
-        {
-            System.DateTime yesterday = System.DateTime.Today.AddDays(-1.0);
-            return CountRecordsBetweenDatesGrouped(key, yesterday, yesterday);
-        }
-        internal List<CountResult> CountPastWeekRecordsGrouped(string key)
-        {
-            System.DateTime weekAgo = System.DateTime.Today.AddDays(-7.0);
-            System.DateTime today = System.DateTime.Today;
-            return CountRecordsBetweenDatesGrouped(key, weekAgo, today);
-        }
-        internal List<CountResult> CountWeekSunSatRecordsGrouped(string key)
-        {
-            System.DateTime today = System.DateTime.Today;
-            int dow = (int)today.DayOfWeek;
-
-            System.DateTime sunday = today.AddDays(-dow);
-            System.DateTime saturday = today.AddDays(6 - dow);
-            // If we are on sunday, show for the current week 
-            if (today.DayOfWeek == System.DayOfWeek.Sunday)
-            {
-                sunday = today;
-                saturday = today.AddDays(6);
+                return CountAllRecordsGrouped(key);
             }
 
-            return CountRecordsBetweenDatesGrouped(key, sunday, saturday);
-        }
-        internal List<CountResult> CountWeekMonSunRecordsGrouped(string key)
-        {
-            System.DateTime today = System.DateTime.Today;
-            int dow = (int)today.DayOfWeek;
-
-            System.DateTime monday = today.AddDays(1 - dow); // Monday - day of week = goes backward to previous monday until we are in Sunday
-            System.DateTime sunday = today.AddDays(7 - dow); // (Next monday) - day of week = goes to next monday until we are in Sunday then shows next Sunday
-
-            // If we are on sunday, fix to show "current" week still 
-            if (today.DayOfWeek == System.DayOfWeek.Sunday)
-            {
-                monday = today.AddDays(-6); // Sunday - 6 = previuos monday
-                sunday = today; // Sunday is today
-            }
-            return CountRecordsBetweenDatesGrouped(key, monday, sunday);
+            var BeginEndDate = DateHelper.StartEndDatesForTimeRange(timeRange);
+            return CountRecordsBetweenDatesGrouped(key, BeginEndDate.Item1, BeginEndDate.Item2);
         }
 
         internal List<CountResult> CountRecordsBetweenDatesGrouped(string key, System.DateTime startDate, System.DateTime endDate, bool inclusiveStart = true, bool inclusiveEnd = true)
@@ -447,12 +408,12 @@ namespace DiscordConnector.Records
             string GroupByClause = "PlayerId";
             string SelectClause = "{Player: @Key, Count: Count(*)}";
 
-            if (Plugin.StaticConfig.RecordRetrievalDiscernmentMethod.Equals(Config.RetrievalDiscernmentMethods.ByNameAndSteamID))
+            if (Plugin.StaticConfig.RecordRetrievalDiscernmentMethod == Config.MainConfig.RetrievalDiscernmentMethods.NameAndPlayerId)
             {
                 GroupByClause = "{Name,PlayerId}";
                 SelectClause = "{NamePlayer: @Key, Count: COUNT(*)}";
             }
-            if (Plugin.StaticConfig.RecordRetrievalDiscernmentMethod.Equals(Config.RetrievalDiscernmentMethods.ByName))
+            if (Plugin.StaticConfig.RecordRetrievalDiscernmentMethod == Config.MainConfig.RetrievalDiscernmentMethods.Name)
             {
                 GroupByClause = "Name";
                 SelectClause = "{Name: @Key, Count: Count(*)}";
@@ -489,26 +450,37 @@ namespace DiscordConnector.Records
         {
             if (Plugin.StaticConfig.DebugDatabaseMethods)
             {
-                Plugin.StaticLogger.LogDebug($"CountAllTodaysRecordsGrouped {Plugin.StaticConfig.RecordRetrievalDiscernmentMethod}");
+                Plugin.StaticLogger.LogDebug($"CountAllRecordsGroupsWhereDate {Plugin.StaticConfig.RecordRetrievalDiscernmentMethod} {startDate} {endDate}");
             }
+
+            if (collection.Count() == 0)
+            {
+                if (Plugin.StaticConfig.DebugDatabaseMethods)
+                {
+                    Plugin.StaticLogger.LogDebug("Collection is empty, skipping.");
+                }
+                return new List<CountResult>();
+            }
+
             // Config.RetrievalDiscernmentMethods.BySteamID by default (should be most common), conditionally check for others
             string GroupByClause = "PlayerId";
             string SelectClause = "{Player: @Key, Count: Count(*)}";
 
-            if (Plugin.StaticConfig.RecordRetrievalDiscernmentMethod.Equals(Config.RetrievalDiscernmentMethods.ByNameAndSteamID))
+            if (Plugin.StaticConfig.RecordRetrievalDiscernmentMethod == Config.MainConfig.RetrievalDiscernmentMethods.NameAndPlayerId)
             {
                 GroupByClause = "{Name,PlayerId}";
                 SelectClause = "{NamePlayer: @Key, Count: COUNT(*)}";
             }
-            if (Plugin.StaticConfig.RecordRetrievalDiscernmentMethod.Equals(Config.RetrievalDiscernmentMethods.ByName))
+            if (Plugin.StaticConfig.RecordRetrievalDiscernmentMethod == Config.MainConfig.RetrievalDiscernmentMethods.Name)
             {
                 GroupByClause = "Name";
                 SelectClause = "{Name: @Key, Count: Count(*)}";
             }
 
+            List<CountResult> result;
             if (inclusiveStart && inclusiveEnd)
             {
-                return CountResult.ConvertFromBsonDocuments(
+                result = CountResult.ConvertFromBsonDocuments(
                     collection.Query()
                         // Filter to dates inclusively
                         .Where(x => x.Date.Year >= startDate.Date.Year
@@ -524,7 +496,7 @@ namespace DiscordConnector.Records
             }
             else if (inclusiveEnd)
             {
-                return CountResult.ConvertFromBsonDocuments(
+                result = CountResult.ConvertFromBsonDocuments(
                     collection.Query()
                         // Filter to dates: end date inclusively, start date exclusively
                         .Where(x => x.Date.Year > startDate.Date.Year
@@ -540,7 +512,7 @@ namespace DiscordConnector.Records
             }
             else if (inclusiveStart)
             {
-                return CountResult.ConvertFromBsonDocuments(
+                result = CountResult.ConvertFromBsonDocuments(
                     collection.Query()
                         // Filter to dates: start date inclusively, end date exclusively
                         .Where(x => x.Date.Year >= startDate.Date.Year
@@ -556,7 +528,7 @@ namespace DiscordConnector.Records
             }
             else
             {
-                return CountResult.ConvertFromBsonDocuments(
+                result = CountResult.ConvertFromBsonDocuments(
                     collection.Query()
                         // Filter to dates exclusively
                         .Where(x => x.Date.Year > startDate.Date.Year
@@ -570,6 +542,13 @@ namespace DiscordConnector.Records
                         .ToList()
                 );
             }
+
+            if (Plugin.StaticConfig.DebugDatabaseMethods)
+            {
+                Plugin.StaticLogger.LogDebug($"CountAllRecordsGroupsWhereDate {result.Count} records returned");
+            }
+
+            return result;
 
         }
 

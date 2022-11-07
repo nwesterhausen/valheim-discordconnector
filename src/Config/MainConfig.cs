@@ -5,15 +5,20 @@ using BepInEx.Configuration;
 
 namespace DiscordConnector.Config
 {
-    public static class RetrievalDiscernmentMethods
-    {
-        public static readonly string BySteamID = "Treat each SteamID as a separate player";
-        public static readonly string ByNameAndSteamID = "Treat each SteamID:PlayerName combo as a separate player";
-        public static readonly string ByName = "Treat each PlayerName as a separate player";
-
-    }
     internal class MainConfig
     {
+        public enum RetrievalDiscernmentMethods
+        {
+            [System.ComponentModel.Description("Treat each PlayerId as a separate player")]
+            PlayerId,
+            [System.ComponentModel.Description("Treat each Character Name as a separate player")]
+            Name,
+            [System.ComponentModel.Description("Treat each [PlayerId:Character Name] combo as a separate player")]
+            NameAndPlayerId,
+        }
+        public static readonly string RetrieveBySteamID = "PlayerId: Treat each PlayerId as a separate player";
+        public static readonly string RetrieveByNameAndSteamID = "NameAndPlayerId: Treat each [PlayerId:CharacterName] combo as a separate player";
+        public static readonly string RetrieveByName = "Name: Treat each CharacterName as a separate player";
         private ConfigFile config;
         private static List<String> mutedPlayers;
         private static Regex mutedPlayersRegex;
@@ -27,7 +32,7 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> colectStatsToggle;
         private ConfigEntry<bool> sendPositionsToggle;
         private ConfigEntry<bool> announcePlayerFirsts;
-        private ConfigEntry<string> playerLookupPreference;
+        private ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
 
         public MainConfig(ConfigFile configFile)
         {
@@ -101,15 +106,14 @@ namespace DiscordConnector.Config
                 true,
                 "Disable this setting to disable all extra announcements the first time each player does something. (Overwrites any individual setting.)");
 
-            playerLookupPreference = config.Bind<string>(MAIN_SETTINGS,
+            playerLookupPreference = config.Bind<RetrievalDiscernmentMethods>(MAIN_SETTINGS,
                 "How to discern players in Record Retrieval",
-                RetrievalDiscernmentMethods.BySteamID,
-                new ConfigDescription("Choose a method for how players will be separated from the results of a record query.",
-                new AcceptableValueList<string>(new string[] {
-                    RetrievalDiscernmentMethods.BySteamID,
-                    RetrievalDiscernmentMethods.ByName,
-                    RetrievalDiscernmentMethods.ByNameAndSteamID
-                })));
+                RetrievalDiscernmentMethods.PlayerId,
+                "Choose a method for how players will be separated from the results of a record query (used for statistic leaderboards)." + Environment.NewLine +
+                RetrieveByName + Environment.NewLine +
+                RetrieveBySteamID + Environment.NewLine +
+                RetrieveByNameAndSteamID
+            );
 
 
             config.Save();
@@ -139,7 +143,7 @@ namespace DiscordConnector.Config
         public List<string> MutedPlayers => mutedPlayers;
         public Regex MutedPlayersRegex => mutedPlayersRegex;
         public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
-        public string RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
+        public RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
 
     }
 }

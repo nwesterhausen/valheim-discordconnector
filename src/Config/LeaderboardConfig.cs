@@ -3,23 +3,9 @@ using BepInEx.Configuration;
 
 namespace DiscordConnector.Config
 {
-    public static class LeaderboardTypes
-    {
-        public const string Most = "Most to Least";
-        public const string Least = "Least to Most";
-    }
-    public static class LeaderboardTimeRanges
-    {
-        public const string AllTime = "All Time";
-        public const string PastWeek = "Past 7 Days";
-        public const string Today = "Today";
-        public const string Yesterday = "Yesterday";
-        public const string WeekSS = "Current Week, Sunday to Saturday";
-        public const string WeekMS = "Current Week, Monday to Sunday";
-    }
     public class LeaderboardConfigReference
     {
-        public string Type;
+        public Leaderboards.Ordering Type;
         public Leaderboards.TimeRange TimeRange;
         public int NumberListings;
         public bool Enabled;
@@ -34,8 +20,8 @@ namespace DiscordConnector.Config
     internal class LeaderboardConfigValues
     {
         // Each leaderboard has these values to configure
-        public ConfigEntry<string> type;
-        public ConfigEntry<string> timeRange;
+        public ConfigEntry<Leaderboards.Ordering> type;
+        public ConfigEntry<Leaderboards.TimeRange> timeRange;
         public ConfigEntry<int> numberListings;
         public ConfigEntry<bool> enabled;
         public ConfigEntry<int> periodInMinutes;
@@ -51,14 +37,14 @@ namespace DiscordConnector.Config
         public static readonly string EnableDescription = "Enable or disable this leaderboard.";
 
         public static readonly string TimeRangeTitle = "Leaderboard Time Range";
-        public static readonly string TimeRangeDefault = LeaderboardTimeRanges.AllTime;
+        public static readonly Leaderboards.TimeRange TimeRangeDefault = Leaderboards.TimeRange.AllTime;
         public static readonly string TimeRangeDescription = "A more restrictive filter of time can be applied to the leaderboard. This restricts it to tally up statistics within the range specified.";
-        public static readonly string TimeRangeDescription1 = $"{LeaderboardTimeRanges.AllTime}: Apply no time restriction to the leaderboard, use all available records.";
-        public static readonly string TimeRangeDescription2 = $"{LeaderboardTimeRanges.Today}: Restrict leaderboard to recorded events from today.";
-        public static readonly string TimeRangeDescription3 = $"{LeaderboardTimeRanges.Yesterday}: Restrict leaderboard to recorded events from yesterday.";
-        public static readonly string TimeRangeDescription4 = $"{LeaderboardTimeRanges.PastWeek}: Restrict leaderboard to recorded events from the past week (including today).";
-        public static readonly string TimeRangeDescription5 = $"{LeaderboardTimeRanges.WeekSS}: Restrict leaderboard to recorded events from the current week, beginning on Sunday and ending Saturday.";
-        public static readonly string TimeRangeDescription6 = $"{LeaderboardTimeRanges.WeekMS}: Restrict leaderboard to recorded events from the current week, beginning on Monday and ending Sunday.";
+        public static readonly string TimeRangeDescription1 = $"{Leaderboards.TimeRange.AllTime}: Apply no time restriction to the leaderboard, use all available records.";
+        public static readonly string TimeRangeDescription2 = $"{Leaderboards.TimeRange.Today}: Restrict leaderboard to recorded events from today.";
+        public static readonly string TimeRangeDescription3 = $"{Leaderboards.TimeRange.Yesterday}: Restrict leaderboard to recorded events from yesterday.";
+        public static readonly string TimeRangeDescription4 = $"{Leaderboards.TimeRange.PastWeek}: Restrict leaderboard to recorded events from the past week (including today).";
+        public static readonly string TimeRangeDescription5 = $"{Leaderboards.TimeRange.WeekSundayToSaturday}: Restrict leaderboard to recorded events from the current week, beginning on Sunday and ending Saturday.";
+        public static readonly string TimeRangeDescription6 = $"{Leaderboards.TimeRange.WeekMondayToSunday}: Restrict leaderboard to recorded events from the current week, beginning on Monday and ending Sunday.";
 
         public static readonly string NumberListingsTitle = "Number of Rankings";
         public static readonly int NumberListingsDefault = 3;
@@ -66,10 +52,10 @@ namespace DiscordConnector.Config
         public static readonly string NumberListingsDescription1 = $"Setting to 0 (zero) results in limiting to the hard-coded maximum of {Leaderboard.MAX_LEADERBOARD_SIZE}.";
 
         public static readonly string TypeTitle = "Type";
-        public static readonly string TypeDefault = LeaderboardTypes.Most;
+        public static readonly Leaderboards.Ordering TypeDefault = Leaderboards.Ordering.Descending;
         public static readonly string TypeDescription = "Choose what type of leaderboard this should be. There are 2 options:";
-        public static readonly string TypeDescription1 = $"{LeaderboardTypes.Most}:\"Number of Rankings\" players (with at least 1 record) are listed in descending order";
-        public static readonly string TypeDescription2 = $"{LeaderboardTypes.Least}:  \"Number of Rankings\" players (with at least 1 record) are listed in ascending order";
+        public static readonly string TypeDescription1 = $"{Leaderboards.Ordering.Descending}:\"Number of Rankings\" players (with at least 1 record) are listed in descending order";
+        public static readonly string TypeDescription2 = $"{Leaderboards.Ordering.Ascending}:  \"Number of Rankings\" players (with at least 1 record) are listed in ascending order";
 
         public static readonly string PeriodTitle = "Sending Period";
         public static readonly int PeriodDefault = 600;
@@ -97,7 +83,6 @@ namespace DiscordConnector.Config
         public static readonly string TimeOnlineDescription = "If enabled, player online time statistics will be part of the leaderboard.";
 
         public static readonly string DisplayedHeadingTitle = "Leaderboard Heading";
-        public static readonly string DisplayedHeadingDefault = "Leaderboard";
         public static readonly string DisplayedHeadingDescription = "Define the heading message to display with this leaderboard.";
         public static readonly string DisplayedHeadingDescription1 = "Include %N% to dynamically reference the value in \"Number of Rankings\"";
 
@@ -110,48 +95,36 @@ namespace DiscordConnector.Config
 
             displayedHeading = config.Bind<string>(header,
                 DisplayedHeadingTitle,
-                DisplayedHeadingDefault,
+                $"{header} Statistic Leaderboard",
                 DisplayedHeadingDescription + System.Environment.NewLine +
                 DisplayedHeadingDescription1);
 
-            timeRange = config.Bind<string>(header,
+            timeRange = config.Bind<Leaderboards.TimeRange>(header,
                 TimeRangeTitle,
                 TimeRangeDefault,
-                new ConfigDescription(
-                    TimeRangeDescription + System.Environment.NewLine +
-                    TimeRangeDescription1 + System.Environment.NewLine +
-                    TimeRangeDescription2 + System.Environment.NewLine +
-                    TimeRangeDescription3 + System.Environment.NewLine +
-                    TimeRangeDescription4 + System.Environment.NewLine +
-                    TimeRangeDescription5 + System.Environment.NewLine +
-                    TimeRangeDescription6
-                ,
-                new AcceptableValueList<string>(new string[] {
-                    LeaderboardTimeRanges.AllTime,
-                    LeaderboardTimeRanges.Today,
-                    LeaderboardTimeRanges.Yesterday,
-                    LeaderboardTimeRanges.PastWeek,
-                    LeaderboardTimeRanges.WeekSS,
-                    LeaderboardTimeRanges.WeekMS,
-                })));
+                TimeRangeDescription + System.Environment.NewLine +
+                TimeRangeDescription1 + System.Environment.NewLine +
+                TimeRangeDescription2 + System.Environment.NewLine +
+                TimeRangeDescription3 + System.Environment.NewLine +
+                TimeRangeDescription4 + System.Environment.NewLine +
+                TimeRangeDescription5 + System.Environment.NewLine +
+                TimeRangeDescription6
+                );
 
             periodInMinutes = config.Bind<int>(header,
                 PeriodTitle,
                 PeriodDefault,
                 PeriodDescription + System.Environment.NewLine +
-                PeriodDescription1);
+                PeriodDescription1
+            );
 
-            type = config.Bind<string>(header,
+            type = config.Bind<Leaderboards.Ordering>(header,
                 TypeTitle,
                 TypeDefault,
-                new ConfigDescription(
-                    TypeDescription + System.Environment.NewLine +
-                    TypeDescription1 + System.Environment.NewLine +
-                    TypeDescription2,
-                new AcceptableValueList<string>(new string[] {
-                    LeaderboardTypes.Most,
-                    LeaderboardTypes.Least,
-                })));
+                TypeDescription + System.Environment.NewLine +
+                TypeDescription1 + System.Environment.NewLine +
+                TypeDescription2
+            );
 
             numberListings = config.Bind<int>(header,
                 NumberListingsTitle,
@@ -193,7 +166,7 @@ namespace DiscordConnector.Config
             string jsonString = "{";
             jsonString += $"\"enabled\":\"{enabled.Value}\",";
             jsonString += $"\"periodInMinutes\":{periodInMinutes.Value},";
-            jsonString += $"\"displayedHeading\":{displayedHeading.Value},";
+            jsonString += $"\"displayedHeading\":\"{displayedHeading.Value}\",";
             jsonString += $"\"type\":\"{type.Value}\",";
             jsonString += $"\"timeRange\":\"{timeRange.Value}\",";
             jsonString += $"\"numberListings\":{numberListings.Value},";
@@ -217,12 +190,14 @@ namespace DiscordConnector.Config
         private const string LEADERBOARD_2 = "Leaderboard.2";
         private const string LEADERBOARD_3 = "Leaderboard.3";
         private const string LEADERBOARD_4 = "Leaderboard.4";
+        private const string LEADERBOARD_5 = "Leaderboard.5";
 
         // Config Definitions
         private LeaderboardConfigValues leaderboard1;
         private LeaderboardConfigValues leaderboard2;
         private LeaderboardConfigValues leaderboard3;
         private LeaderboardConfigValues leaderboard4;
+        private LeaderboardConfigValues leaderboard5;
         private LeaderboardConfigReference[] _leaderboards;
 
         public LeaderboardConfig(ConfigFile configFile)
@@ -242,13 +217,14 @@ namespace DiscordConnector.Config
             leaderboard2 = new LeaderboardConfigValues(config, LEADERBOARD_2);
             leaderboard3 = new LeaderboardConfigValues(config, LEADERBOARD_3);
             leaderboard4 = new LeaderboardConfigValues(config, LEADERBOARD_4);
+            leaderboard5 = new LeaderboardConfigValues(config, LEADERBOARD_5);
 
             config.Save();
             _leaderboards = new LeaderboardConfigReference[]{
             new LeaderboardConfigReference
             {
                 Type = leaderboard1.type.Value,
-                TimeRange = TimeRangeFromString(leaderboard1.timeRange.Value),
+                TimeRange = leaderboard1.timeRange.Value,
                 DisplayedHeading = leaderboard1.displayedHeading.Value,
                 NumberListings = leaderboard1.numberListings.Value == 0 ? Leaderboard.MAX_LEADERBOARD_SIZE : leaderboard1.numberListings.Value,
                 Enabled = leaderboard1.enabled.Value,
@@ -262,7 +238,7 @@ namespace DiscordConnector.Config
             new LeaderboardConfigReference
             {
                 Type = leaderboard2.type.Value,
-                TimeRange = TimeRangeFromString(leaderboard2.timeRange.Value),
+                TimeRange = leaderboard2.timeRange.Value,
                 DisplayedHeading = leaderboard2.displayedHeading.Value,
                 NumberListings = leaderboard2.numberListings.Value == 0 ? Leaderboard.MAX_LEADERBOARD_SIZE : leaderboard2.numberListings.Value,
                 Enabled = leaderboard2.enabled.Value,
@@ -276,7 +252,7 @@ namespace DiscordConnector.Config
             new LeaderboardConfigReference
             {
                 Type = leaderboard3.type.Value,
-                TimeRange = TimeRangeFromString(leaderboard3.timeRange.Value),
+                TimeRange = leaderboard3.timeRange.Value,
                 DisplayedHeading = leaderboard3.displayedHeading.Value,
                 NumberListings = leaderboard3.numberListings.Value == 0 ? Leaderboard.MAX_LEADERBOARD_SIZE : leaderboard3.numberListings.Value,
                 Enabled = leaderboard3.enabled.Value,
@@ -290,7 +266,7 @@ namespace DiscordConnector.Config
             new LeaderboardConfigReference
             {
                 Type = leaderboard4.type.Value,
-                TimeRange = TimeRangeFromString(leaderboard4.timeRange.Value),
+                TimeRange = leaderboard4.timeRange.Value,
                 DisplayedHeading = leaderboard4.displayedHeading.Value,
                 NumberListings = leaderboard4.numberListings.Value == 0 ? Leaderboard.MAX_LEADERBOARD_SIZE : leaderboard4.numberListings.Value,
                 Enabled = leaderboard4.enabled.Value,
@@ -300,30 +276,22 @@ namespace DiscordConnector.Config
                 Shouts = leaderboard4.shouts.Value,
                 Pings = leaderboard4.pings.Value,
                 TimeOnline = leaderboard4.timeOnline.Value,
+            },
+            new LeaderboardConfigReference
+            {
+                Type = leaderboard5.type.Value,
+                TimeRange = leaderboard5.timeRange.Value,
+                DisplayedHeading = leaderboard5.displayedHeading.Value,
+                NumberListings = leaderboard5.numberListings.Value == 0 ? Leaderboard.MAX_LEADERBOARD_SIZE : leaderboard5.numberListings.Value,
+                Enabled = leaderboard5.enabled.Value,
+                PeriodInMinutes = leaderboard5.periodInMinutes.Value,
+                Deaths = leaderboard5.deaths.Value,
+                Sessions = leaderboard5.sessions.Value,
+                Shouts = leaderboard5.shouts.Value,
+                Pings = leaderboard5.pings.Value,
+                TimeOnline = leaderboard5.timeOnline.Value,
             }};
 
-        }
-
-        private Leaderboards.TimeRange TimeRangeFromString(string value)
-        {
-            switch (value)
-            {
-                case LeaderboardTimeRanges.AllTime:
-                    return DiscordConnector.Leaderboards.TimeRange.AllTime;
-                case LeaderboardTimeRanges.Today:
-                    return DiscordConnector.Leaderboards.TimeRange.Today;
-                case LeaderboardTimeRanges.Yesterday:
-                    return DiscordConnector.Leaderboards.TimeRange.Yesterday;
-                case LeaderboardTimeRanges.PastWeek:
-                    return DiscordConnector.Leaderboards.TimeRange.PastWeek;
-                case LeaderboardTimeRanges.WeekSS:
-                    return DiscordConnector.Leaderboards.TimeRange.WeekSundayToSaturday;
-                case LeaderboardTimeRanges.WeekMS:
-                    return DiscordConnector.Leaderboards.TimeRange.WeekMondayToSunday;
-                default:
-                    Plugin.StaticLogger.LogWarning($"Invalid setting for time range in leaderboard configs: '{value}'");
-                    return DiscordConnector.Leaderboards.TimeRange.AllTime;
-            }
         }
 
         public string ConfigAsJson()
@@ -332,7 +300,8 @@ namespace DiscordConnector.Config
             jsonString += $"\"leaderboard1\":{leaderboard1.ConfigAsJson()},";
             jsonString += $"\"leaderboard2\":{leaderboard2.ConfigAsJson()},";
             jsonString += $"\"leaderboard3\":{leaderboard3.ConfigAsJson()},";
-            jsonString += $"\"leaderboard4\":{leaderboard4.ConfigAsJson()}";
+            jsonString += $"\"leaderboard4\":{leaderboard4.ConfigAsJson()},";
+            jsonString += $"\"leaderboard5\":{leaderboard5.ConfigAsJson()}";
             jsonString += "}";
             return jsonString;
         }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DiscordConnector.Leaderboards;
 
 namespace DiscordConnector.Records
 {
@@ -13,6 +14,7 @@ namespace DiscordConnector.Records
         public const string Leave = "leave";
         public const string Ping = "ping";
         public const string Shout = "shout";
+        public const string TimeOnline = "time_online";
 
         public readonly static string[] All = new string[] {
             Death,
@@ -20,6 +22,7 @@ namespace DiscordConnector.Records
             Leave,
             Ping,
             Shout,
+            TimeOnline,
         };
     }
 
@@ -27,7 +30,17 @@ namespace DiscordConnector.Records
     {
         public static List<CountResult> TopNResultForCategory(string key, int n)
         {
+            return TopNResultForCategory(key, n, DateHelper.DummyDateTime, DateHelper.DummyDateTime);
+        }
+        public static List<CountResult> TopNResultForCategory(string key, int n, System.DateTime startDate, System.DateTime endDate)
+        {
             List<CountResult> queryResults = Plugin.StaticDatabase.CountAllRecordsGrouped(key);
+
+            if (startDate != DateHelper.DummyDateTime && endDate != DateHelper.DummyDateTime)
+            {
+                queryResults = Plugin.StaticDatabase.CountRecordsBetweenDatesGrouped(key, startDate, endDate);
+            }
+
             if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"TopNResultForCategory {key} n={n}, results={queryResults.Count}"); }
             if (queryResults.Count == 0)
             {
@@ -47,8 +60,17 @@ namespace DiscordConnector.Records
 
         public static List<CountResult> BottomNResultForCategory(string key, int n)
         {
-
+            return BottomNResultForCategory(key, n, DateHelper.DummyDateTime, DateHelper.DummyDateTime);
+        }
+        public static List<CountResult> BottomNResultForCategory(string key, int n, System.DateTime startDate, System.DateTime endDate)
+        {
             List<CountResult> queryResults = Plugin.StaticDatabase.CountAllRecordsGrouped(key);
+
+            if (startDate != DateHelper.DummyDateTime && endDate != DateHelper.DummyDateTime)
+            {
+                queryResults = Plugin.StaticDatabase.CountRecordsBetweenDatesGrouped(key, startDate, endDate);
+            }
+
             if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"BottomNResultForCategory {key} n={n}, results={queryResults.Count}"); }
             if (queryResults.Count == 0)
             {
