@@ -22,6 +22,7 @@ Changes:
 - Configuration files are now nested in a subdirectory
 - Database file moved into the subdirectory
 - `config-debug.json` file is dumped to subdirectory after config load to be useful for debugging issues with the plugin
+- Multiple-choice config options use Enums on the backend now instead of Strings (may reset your playerLookupPreference setting)
 
 ### Version 2.0.2
 
