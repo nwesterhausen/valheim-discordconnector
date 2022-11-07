@@ -11,7 +11,7 @@ namespace DiscordConnector.Records
     /// </summary>
     internal class Database
     {
-        private const string DB_NAME = $"{PluginInfo.PLUGIN_ID}-records.db";
+        private const string DB_NAME = "records.db";
         private static string DbPath;
         private LiteDatabase db;
         private ILiteCollection<SimpleStat> DeathCollection;
