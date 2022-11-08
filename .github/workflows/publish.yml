@@ -33,6 +33,7 @@ jobs:
           wget -O tcli.tar.gz https://github.com/thunderstore-io/thunderstore-cli/releases/download/0.1.4/tcli-0.1.4-linux-x64.tar.gz
           tar xvf tcli.tar.gz
           sudo mv -v tcli-0.1.4-linux-x64/tcli /bin
+          tcli version
       - name: Publish package to Thunderstore
         working-directory: thunderstore
         run: |
