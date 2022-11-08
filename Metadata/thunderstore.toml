@@ -23,5 +23,5 @@ target = ""
 
 [publish]
 repository = "https://thunderstore.dev"
-communities = ["valheim"]
+communities = [""]
 categories = ["server-side","utility"]
