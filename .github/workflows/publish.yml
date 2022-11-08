@@ -29,15 +29,12 @@ jobs:
           sudo mv -v tcli-0.1.4-linux-x64/tcli /bin
           tcli help || true
       - name: Publish package to Thunderstore
-        working-directory: thunderstore
+        working-directory: Metadata
         run: |
-          cd /home/runner/work/valheim-discordconnector/valheim-discordconnector/Metadata
-          # Some reason tcli requires this diretory?
-          mkdir /home/runner/work/valheim-discordconnector/valheim-discordconnector/thunderstore
-          tcli publish --token ${{ secrets.THUNDERSTORE_TOKEN }} --repository "$TS_REPO" --file "/home/runner/work/valheim-discordconnector/valheim-discordconnector/bin/DiscordConnector.zip"
+          tcli publish --token ${{ secrets.THUNDERSTORE_TOKEN }} --repository "$TS_REPO" --file "../bin/DiscordConnector.zip"
       - name: Attach release artifacts
         uses: softprops/action-gh-release@v1
         with:
-          files: "/home/runner/work/valheim-discordconnector/valheim-discordconnector/bin/DiscordConnector.zip"
+          files: "../DiscordConnector.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
