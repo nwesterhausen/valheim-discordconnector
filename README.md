@@ -1,14 +1,19 @@
 # Discord Connector
 
+[![CodeQL](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/codeql-analysis.yml)
+[![Docs](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/docs.yml/badge.svg)](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/docs.yml)
+[![Build](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/dotnet.yml/badge.svg)](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/dotnet.yml)
+[![Publish](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/publish.yml/badge.svg)](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/publish.yml)
+
 Connect your Valheim server to Discord. ([See website for installation or configuration instructions](https://discordconnector.valheim.nwest.games/)). This plugin is largely based on [valheim-discord-notifier](https://github.com/aequasi/valheim-discord-notifier), but this plugin supports randomized messages, muting players, and Discord message embeds.
 
 Plugin available on [Thunderstore.io](https://valheim.thunderstore.io/package/nwesterhausen/DiscordConnector/), [NexusMods](https://www.nexusmods.com/valheim/mods/1551/), and [Mod Vault](https://modvault.xyz/viewmod/132).
 
-### Plugin Details
+## Plugin Details
 
 See [the README](Metadata/README.md) for the plugin.
 
-### Changelog
+## Changelog
 
 See [the changelog](Metadata/CHANGELOG.md).
 
@@ -32,7 +37,7 @@ The compiled plugin will be in a zip ready for upload at `bin/DiscordConnector.z
 
 For JSON serialization, using Newtonsoft.Json
 
-For data storage/retrieval using [LiteDB](https://www.litedb.org/) 
+For data storage/retrieval using [LiteDB](https://www.litedb.org/)
 (If you want to read the database file generated, you can use [LitDB Studio](https://github.com/mbdavid/LiteDB.Studio/releases/latest))
 
 ### Contributors
