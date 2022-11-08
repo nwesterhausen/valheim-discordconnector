@@ -10,7 +10,6 @@ websiteUrl = "https://discordconnector.valheim.nwest.games/"
 containsNsfwContent = false
 
 [package.dependencies]
-denikson-BepInExPack_Valheim = "5.4.1901"
 
 [build]
 icon = "./icon.png"
@@ -22,6 +21,6 @@ source = "./dist"
 target = ""
 
 [publish]
-repository = "https://thunderstore.io"
-communities = ["valheim"]
+repository = "https://thunderstore.dev"
+communities = []
 categories = []

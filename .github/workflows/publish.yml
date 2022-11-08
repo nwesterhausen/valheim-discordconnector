@@ -1,7 +1,8 @@
 name: Publish
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "v*.*.*"
   workflow_dispatch:
 
 jobs:
@@ -20,13 +21,7 @@ jobs:
         run: dotnet restore
       - name: Build
         run: dotnet build --no-restore
-      - name: "Check for tcli"
-        id: tcli_check
-        uses: andstor/file-existence-action@v2
-        with:
-          files: "tcli"
       - name: Setup tcli
-        if: steps.tcli_check.outputs.file_exists != 'true'
         run: |
           wget -O tcli.tar.gz https://github.com/thunderstore-io/thunderstore-cli/releases/download/0.1.4/tcli-0.1.4-linux-x64.tar.gz
           tar xvf tcli.tar.gz
@@ -35,7 +30,7 @@ jobs:
       - name: Publish package to Thunderstore
         working-directory: Metadata
         run: |
-          ../tcli publish --token ${{ secrets.THUNDERSTORE_TOKEN }} --file "../bin/DiscordConnector.zip"
+          ../tcli publish --token ${{ secrets.TS_DEV_TOKEN }} --file "../bin/DiscordConnector.zip"
       - name: Attach release artifacts
         uses: softprops/action-gh-release@v1
         with:
