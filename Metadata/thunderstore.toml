@@ -22,6 +22,6 @@ source = "./dist"
 target = ""
 
 [publish]
-repository = "https://thunderstore.dev"
+repository = "https://thunderstore.io"
 communities = ["valheim"]
-categories = ["server-side","utility"]
+categories = []

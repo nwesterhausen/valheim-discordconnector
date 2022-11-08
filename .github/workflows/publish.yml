@@ -1,7 +1,8 @@
 name: Publish
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "v*.*.*"
   workflow_dispatch:
 
 jobs:
@@ -10,14 +11,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env:
-      # Release envs, comment this out when running locally
-      TCLI_AUTH_TOKEN: ${{ secrets.THUNDERSTORE_TOKEN }}
-      TS_REPO: https://thunderstore.dev/
-      TS_COMMUNITY: valheim
-
-      # Thunderstore info and descriptions
-      TS_NAMESPACE: nwesterhausen
     steps:
       - uses: actions/checkout@v3
       - name: Setup .NET
@@ -28,20 +21,19 @@ jobs:
         run: dotnet restore
       - name: Build
         run: dotnet build --no-restore
+      - name: Attach release artifacts
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "../DiscordConnector.zip"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup tcli
         run: |
           wget -O tcli.tar.gz https://github.com/thunderstore-io/thunderstore-cli/releases/download/0.1.4/tcli-0.1.4-linux-x64.tar.gz
           tar xvf tcli.tar.gz
-          sudo mv -v tcli-0.1.4-linux-x64/tcli /bin
+          sudo mv -v tcli-0.1.4-linux-x64/tcli ./tcli
+          ./tcli help || true
       - name: Publish package to Thunderstore
-        working-directory: thunderstore
+        working-directory: Metadata
         run: |
-          pwd
-          cd ./Metadata
-          tcli publish --repository "$TS_REPO" --file ../bin/DiscordConnector.zip
-      - name: Attach release artifacts
-        uses: softprops/action-gh-release@v1
-        with:
-          files: "bin/DiscordConnector.zip"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ../tcli publish --token ${{ secrets.THUNDERSTORE_TOKEN }} --file "../bin/DiscordConnector.zip"
