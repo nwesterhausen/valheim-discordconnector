@@ -59,12 +59,33 @@ namespace DiscordConnector.Records
                 {
                     db = new LiteDatabase(DbPath);
                     Plugin.StaticLogger.LogDebug($"LiteDB Connection Established to {DbPath}");
+
+                    // Grab references to the collections
                     DeathCollection = db.GetCollection<SimpleStat>("deaths");
                     JoinCollection = db.GetCollection<SimpleStat>("joins");
                     LeaveCollection = db.GetCollection<SimpleStat>("leaves");
                     ShoutCollection = db.GetCollection<SimpleStat>("shouts");
                     PingCollection = db.GetCollection<SimpleStat>("pings");
                     PlayerToNameCollection = db.GetCollection<PlayerToName>("player_name");
+
+                    // Ensure indices on the collections
+                    Task.Run(() =>
+                    {
+                        DeathCollection.EnsureIndex(x => x.PlayerId);
+                        DeathCollection.EnsureIndex(x => x.Name);
+                        JoinCollection.EnsureIndex(x => x.PlayerId);
+                        JoinCollection.EnsureIndex(x => x.Name);
+                        LeaveCollection.EnsureIndex(x => x.PlayerId);
+                        LeaveCollection.EnsureIndex(x => x.Name);
+                        ShoutCollection.EnsureIndex(x => x.PlayerId);
+                        ShoutCollection.EnsureIndex(x => x.Name);
+                        PingCollection.EnsureIndex(x => x.PlayerId);
+                        PingCollection.EnsureIndex(x => x.Name);
+                        PlayerToNameCollection.EnsureIndex(x => x.PlayerId);
+                        PlayerToNameCollection.EnsureIndex(x => x.CharacterName);
+
+                        Plugin.StaticLogger.LogDebug("Created indices on database collections");
+                    }).ConfigureAwait(false);
                 }
                 catch (System.IO.IOException e)
                 {
@@ -100,9 +121,6 @@ namespace DiscordConnector.Records
                     pos.x, pos.y, pos.z
                 );
                 collection.Insert(newRecord);
-
-                collection.EnsureIndex(x => x.Name);
-                collection.EnsureIndex(x => x.PlayerId);
             }).ConfigureAwait(false);
         }
 
@@ -130,9 +148,6 @@ namespace DiscordConnector.Records
                 // Insert the player name record if it doesn't exist
                 PlayerToName newPlayer = new PlayerToName(characterName, playerHostName);
                 PlayerToNameCollection.Insert(newPlayer);
-
-                PlayerToNameCollection.EnsureIndex(x => x.PlayerId);
-                PlayerToNameCollection.EnsureIndex(x => x.CharacterName);
             }).ConfigureAwait(false);
         }
 
