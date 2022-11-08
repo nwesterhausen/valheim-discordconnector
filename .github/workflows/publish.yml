@@ -36,7 +36,7 @@ jobs:
       - name: Publish package to Thunderstore
         working-directory: thunderstore
         run: |
-          pwd
+          echo `pwd`
           cd ./Metadata
           tcli publish --repository "$TS_REPO" --file ../bin/DiscordConnector.zip
       - name: Attach release artifacts
