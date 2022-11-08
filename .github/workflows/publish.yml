@@ -24,18 +24,18 @@ jobs:
         id: tcli_check
         uses: andstor/file-existence-action@v2
         with:
-          files: "/bin/tcli"
+          files: "tcli"
       - name: Setup tcli
-        if: steps.tcli_check.outputs.file_exists == 'false'
+        if: steps.tcli_check.outputs.file_exists != 'true'
         run: |
           wget -O tcli.tar.gz https://github.com/thunderstore-io/thunderstore-cli/releases/download/0.1.4/tcli-0.1.4-linux-x64.tar.gz
           tar xvf tcli.tar.gz
-          sudo mv -v tcli-0.1.4-linux-x64/tcli /bin
-          tcli help || true
+          sudo mv -v tcli-0.1.4-linux-x64/tcli ./tcli
+          ./tcli help || true
       - name: Publish package to Thunderstore
         working-directory: Metadata
         run: |
-          tcli publish --token ${{ secrets.THUNDERSTORE_TOKEN }} --file "../bin/DiscordConnector.zip"
+          ../tcli publish --token ${{ secrets.THUNDERSTORE_TOKEN }} --file "../bin/DiscordConnector.zip"
       - name: Attach release artifacts
         uses: softprops/action-gh-release@v1
         with:
