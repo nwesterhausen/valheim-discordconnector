@@ -24,4 +24,4 @@ target = ""
 [publish]
 repository = "https://thunderstore.dev"
 communities = ["test"]
-categories = ["server-side","utility"]
+categories = []
