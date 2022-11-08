@@ -9,13 +9,13 @@ jobs:
   Build-Publish_Documentation: 
     runs-on: ubuntu-latest
     steps: 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       # Build
-      - uses: Tiryoh/actions-mkdocs@v0.15.0
+      - uses: Tiryoh/actions-mkdocs@v0
         with:
           requirements: 'docs/.requirements.txt'
       # Upload
-      - uses: bacongobbler/azure-blob-storage-upload@v1.2.0
+      - uses: bacongobbler/azure-blob-storage-upload@main
         with: 
           container_name: $web
           extra_args: "--destination-path discordconnector.valheim.nwest.games/ --overwrite"
