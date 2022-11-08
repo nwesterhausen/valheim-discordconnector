@@ -36,12 +36,11 @@ jobs:
       - name: Publish package to Thunderstore
         working-directory: thunderstore
         run: |
-          echo `pwd`
-          cd ./Metadata
-          tcli publish --repository "$TS_REPO" --file ../bin/DiscordConnector.zip
+          cd /home/runner/work/valheim-discordconnector/valheim-discordconnector/Metadata
+          tcli publish --repository "$TS_REPO" --file "/home/runner/work/valheim-discordconnector/valheim-discordconnector/bin/DiscordConnector.zip"
       - name: Attach release artifacts
         uses: softprops/action-gh-release@v1
         with:
-          files: "bin/DiscordConnector.zip"
+          files: "/home/runner/work/valheim-discordconnector/valheim-discordconnector/bin/DiscordConnector.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
