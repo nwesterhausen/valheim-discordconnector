@@ -31,7 +31,7 @@ jobs:
       - name: Publish package to Thunderstore
         working-directory: Metadata
         run: |
-          tcli publish --token ${{ secrets.THUNDERSTORE_TOKEN }} --repository "$TS_REPO" --file "../bin/DiscordConnector.zip"
+          tcli publish --token ${{ secrets.TS_DEV_TOKEN }} --repository "$TS_REPO" --file "../bin/DiscordConnector.zip"
       - name: Attach release artifacts
         uses: softprops/action-gh-release@v1
         with:
