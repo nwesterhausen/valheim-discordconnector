@@ -125,6 +125,7 @@ namespace DiscordConnector
         public string RecordRetrievalDiscernmentMethod => mainConfig.RecordRetrievalDiscernmentMethod;
         public List<string> MutedPlayers => mainConfig.MutedPlayers;
         public Regex MutedPlayersRegex => mainConfig.MutedPlayersRegex;
+        public bool AllowNonPlayerShoutLogging => mainConfig.AllowNonPlayerShoutLogging;
 
 
         // Messages.Server

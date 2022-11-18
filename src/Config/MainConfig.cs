@@ -31,6 +31,7 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> announcePlayerFirsts;
         private ConfigEntry<int> numberRankingsListed;
         private ConfigEntry<string> playerLookupPreference;
+        private ConfigEntry<bool> allowNonPlayerShoutLogging;
 
         public MainConfig(ConfigFile configFile)
         {
@@ -131,6 +132,12 @@ namespace DiscordConnector.Config
                     RetrievalDiscernmentMethods.ByNameAndSteamID
                 })));
 
+            allowNonPlayerShoutLogging = config.Bind<bool>(MAIN_SETTINGS,
+                "Send Non-Player Shouts to Discord",
+                false,
+                "Enable this setting to have shouts which are performed by other mods/the server/non-players to be sent to Discord as well." + Environment.NewLine +
+                "Note: These are still subject to censure by the muted player regex and list.");
+
 
             config.Save();
         }
@@ -150,7 +157,8 @@ namespace DiscordConnector.Config
             jsonString += $"\"sendPositionsEnabled\":\"{SendPositionsEnabled}\",";
             jsonString += $"\"announcePlayerFirsts\":\"{AnnouncePlayerFirsts}\",";
             jsonString += $"\"numberRankingsListed\":\"{IncludedNumberOfRankings}\",";
-            jsonString += $"\"playerLookupPreference\":\"{RecordRetrievalDiscernmentMethod}\"";
+            jsonString += $"\"playerLookupPreference\":\"{RecordRetrievalDiscernmentMethod}\",";
+            jsonString += $"\"allowNonPlayerShoutLogging\":\"{AllowNonPlayerShoutLogging}\"";
             jsonString += "}";
             return jsonString;
         }
@@ -166,6 +174,7 @@ namespace DiscordConnector.Config
         public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
         public int IncludedNumberOfRankings => numberRankingsListed.Value;
         public string RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
+        public bool AllowNonPlayerShoutLogging => allowNonPlayerShoutLogging.Value;
 
     }
 }
