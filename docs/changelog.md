@@ -4,6 +4,12 @@ A full changelog
 
 ## History
 
+### Version 2.0.4
+
+Features:
+
+- Adds a config option to enable sending non-player shouts to Discord. This is in the main config file and disabled by default.
+
 ### Version 2.0.3
 
 Other Changes:
