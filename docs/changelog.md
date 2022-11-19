@@ -4,6 +4,12 @@ A full changelog
 
 ## History
 
+### Version 2.0.3
+
+Other Changes:
+
+- Set BepInEx depencency to eactly 5.4.19 instead of 5.* (this stops a warning from showing up)
+
 ### Version 2.0.2
 
 If a shout is performed by a player that isn't a real player (like a mod), it would break the shout call from working. This is because Discord Connector was trying to lookup the player's details and encountering null. The plugin now checks for that and returns early if null is found.
