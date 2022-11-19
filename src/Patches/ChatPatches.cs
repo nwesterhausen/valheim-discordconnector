@@ -25,6 +25,36 @@ namespace DiscordConnector.Patches
 
                 if (peerInstance == null || peerInstance.m_socket == null)
                 {
+                    // Check if we allow non-player shouts
+                    if (Plugin.StaticConfig.AllowNonPlayerShoutLogging)
+                    {
+                        // Guard against chats that aren't shouts by non-players
+                        if (type != Talker.Type.Shout)
+                        {
+                            Plugin.StaticLogger.LogDebug($"Ignored ping/join/leave from non-player {user}");
+                            return;
+                        }
+
+                        string nonplayerHostName = "";
+                        Plugin.StaticLogger.LogDebug($"Sending shout from '{user}' to discord: '{text}'");
+
+                        // Only if we are sending shouts per the config should we send the shout
+                        if (Plugin.StaticConfig.ChatShoutEnabled)
+                        {
+                            string userCleaned = MessageTransformer.CleanCaretFormatting(user);
+                            string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.ShoutMessage, userCleaned, nonplayerHostName, text);
+
+                            if (message.Contains("%POS%"))
+                            {
+                                message.Replace("%POS%", "");
+                            }
+
+                            DiscordApi.SendMessage(message);
+                        }
+                        // Exit the function since we sent the message
+                        return;
+                    }
+
                     Plugin.StaticLogger.LogInfo($"Ignored shout from {user} because they aren't a real player");
                     return;
                 }

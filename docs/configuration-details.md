@@ -27,6 +27,7 @@ Filename `games.nwest.valheim.discordconnector.cfg`
 | Leaderboard update interval                             | 600     | Time in minutes between each leaderboard update sent to Discord.                                                                                 |
 | Announce Player Firsts                                  | true    | Disable this setting to disable all extra announcements the first time each player does something. (Overwrites any individual setting.)          |
 | How many places to list in the top ranking leaderboards | 3       | Set how many places (1st, 2nd, 3rd by default) to display when sending the ranked leaderboard.                                                   |
+| Send Non-Player Shouts to Discord                       | false   | Enable this setting to have shouts which are performed by other mods/the server/non-players to be sent to Discord as well.                       |
 
 !!! info "Stat Collection Details"
 

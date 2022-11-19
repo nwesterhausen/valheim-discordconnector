@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace DiscordConnector
 {
@@ -25,6 +26,9 @@ namespace DiscordConnector
         private const string EVENT_MSG = "%EVENT_MSG%";
         private const string EVENT_PLAYERS = "%PLAYERS%";
         private const string N = "%N%";
+
+        private static Regex OpenCaretRegex = new Regex(@"<[\w=]+>");
+        private static Regex CloseCaretRegex = new Regex(@"</[\w]+>");
         private static string ReplaceVariables(string rawMessage)
         {
             return rawMessage
@@ -109,6 +113,15 @@ namespace DiscordConnector
         {
             return MessageTransformer.ReplaceVariables(rawMessage)
                 .Replace(N, n.ToString());
+        }
+
+        public static string CleanCaretFormatting(string str)
+        {
+            // regex.Replace(input, sub, 1);
+            string result = OpenCaretRegex.Replace(str, @"", 1);
+            result = CloseCaretRegex.Replace(result, @"", 1);
+
+            return result;
         }
     }
 }
