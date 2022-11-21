@@ -21,12 +21,12 @@ namespace DiscordConnector
             if (Plugin.StaticConfig.DiscordEmbedsEnabled)
             {
                 SendMessageWithFields(message, new List<Tuple<string, string>> {
-                    Tuple.Create("Coordinates",$"{pos}")
+                    Tuple.Create("Coordinates",MessageTransformer.FormatVector3AsPos(pos))
                 });
             }
             else
             {
-                SendMessage($"{message} Coords: {pos}");
+                SendMessage($"{message} {MessageTransformer.FormatAppendedPos(pos)}");
             }
         }
         /// <summary>

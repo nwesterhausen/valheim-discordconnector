@@ -115,6 +115,17 @@ namespace DiscordConnector
                 .Replace(N, n.ToString());
         }
 
+        /// <summary>
+        /// Remove caret formatting from a string. This is used to strip special color codes away from user names.
+        /// 
+        /// For example, some mods can send messages as shouts in the game. They may try to color the name of the user:
+        ///     `<color=cyan>[Admin]</color> vadmin`
+        /// This function strips away any caret formatting, making the string "plain text"
+        ///     `[Admin] vadmin`
+        /// 
+        /// </summary>
+        /// <param name="str">String to strip caret formatting from</param>
+        /// <returns>Same string but without the caret formatting</returns>
         public static string CleanCaretFormatting(string str)
         {
             // regex.Replace(input, sub, 1);
@@ -122,6 +133,31 @@ namespace DiscordConnector
             result = CloseCaretRegex.Replace(result, @"", 1);
 
             return result;
+        }
+
+        /// <summary>
+        /// Format a vector3 position into the formatted version used by discord connector
+        /// </summary>
+        /// <param name="vec3">Position vector to turn into string</param>
+        /// <returns>String following the formatting laid out in the variable config file.</returns>
+        public static string FormatVector3AsPos(Vector3 vec3)
+        {
+            return Plugin.StaticConfig.PosVarFormat
+                .Replace("%X%", vec3.x.ToString("F1"))
+                .Replace("%Y%", vec3.y.ToString("F1"))
+                .Replace("%Z%", vec3.z.ToString("F1"));
+        }
+
+        /// <summary>
+        /// Format the appended position data using the config values.
+        /// </summary>
+        /// <param name="vec3">Position vector to include</param>
+        /// <returns>String to append with the position information</returns>
+        public static string FormatAppendedPos(Vector3 vec3)
+        {
+            string posStr = FormatVector3AsPos(vec3);
+            return Plugin.StaticConfig.AppendedPosFormat
+                .Replace(POS, posStr);
         }
     }
 }
