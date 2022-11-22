@@ -20,8 +20,8 @@ Filename `games.nwest.valheim.discordconnector.cfg`
 | Webhook URL                                             | (none)  | The main Discord webhook URL to send notifications/messages to.                                                                                  |
 | Use fancier discord messages                            | false   | Set to true to enable using embeds in the Discord messages. If left false, all messages will remain plain strings (except for the leaderboard).  |
 | Allow positions to be sent                              | true    | Set to false to prevent any positions/coordinates from being sent. If this is true, it can be overridden per message in the toggles config file. |
-| Ignored players                                         | (none)  | List of playernames to never send a discord message for (they also won't be tracked in stats). This list should be semicolon (`;`) separated.    |
-| Ignored players (Regex)                                 | (none)  | Regex which playernames are matched against to determine to not send a discord message for (they also won't be tracked in stats)                 |
+| Ignored players                                         | (none)  | List of player names to never send a discord message for (they also won't be tracked in stats). This list should be semicolon (`;`) separated.    |
+| Ignored players (Regex)                                 | (none)  | Regex which player names are matched against to determine to not send a discord message for (they also won't be tracked in stats)                 |
 | Collect stats                                           | true    | When this setting is enabled, DiscordConnector will record basic stats (leave, join, ping, shout, death) about players.                          |
 | Send leaderboard updates                                | false   | If you set this to true, that will enable DiscordConnector to send a leaderboard for stats to Discord on the set interval                        |
 | Leaderboard update interval                             | 600     | Time in minutes between each leaderboard update sent to Discord.                                                                                 |
@@ -56,6 +56,21 @@ You may assign strings to these variables to reference them in any messages.
 | Defined Variable 9  | (none)  | This variable can be reference in any of the message content settings with %VAR9%  |
 | Defined Variable 10 | (none)  | This variable can be reference in any of the message content settings with %VAR10% |
 
+### Variable Configurations
+
+Some variables can be configured. Mainly the positional information.
+
+| Option | Default | Description |
+| -- | -- | -- |
+| POS Variable Formatting | `%X%, %Y%, %Z%` | Change how the %POS% variable is formatted.
+| Auto-Appended POS Format | `Coords: (%POS%)` | Change this to modify how Discord Connector automatically appends the POS data.
+
+!!! info
+
+    POS data gets auto-appended if you enable the `Send Position with ...` toggles.
+
+    If you manually include `%POS%` in your messages then those will not be affected by the "auto-append" format setting.
+
 ## Messages
 
 Filename `games.nwest.valheim.discordconnector-messages.cfg`
@@ -64,7 +79,7 @@ All of the message options support having multiple messages defined in a semicol
 
 If you wanted to have a couple different messages for when a player dies (always chosen at random), you could simply set the config value like this:
 
-```
+```toml
 Player Death Message = %PLAYER_NAME% has died a beautiful death!;%PLAYER_NAME% went to their end with honor!;%PLAYER_NAME% died.
 ```
 
@@ -202,7 +217,7 @@ The toggle configuration is a collection of on/off switches for all the message 
 !!! Info
 All leaderboard toggles are restricted by the `Send leaderboard updates` toggle in the [Main config](#main-config).
 
-For the ranked leadboards, you choose how many ranks to calculate and display with the `How many places to list in the top ranking leaderboards` setting in the [Main Config](#main-config).
+For the ranked leaderboards, you choose how many ranks to calculate and display with the `How many places to list in the top ranking leaderboards` setting in the [Main Config](#main-config).
 
 | Option                                        | Default | Description                                                                     |
 | --------------------------------------------- | ------- | ------------------------------------------------------------------------------- |
@@ -233,8 +248,8 @@ For the ranked leadboards, you choose how many ranks to calculate and display wi
 
 | Option                     | Default | Description                                                                                                                   |
 | -------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| Send Player Join Messages  | true    | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first leave from the server. |
-| Send Player Leave Messages | false   | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first join to the server.    |
-| Send Player Death Messages | true    | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first death."                |
-| Send Player Shout Messages | false   | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first ping.                  |
-| Send Player Ping Messages  | false   | If enabled (and player-first anouncements are enabled), will send an extra message on a player's first shout.                 |
+| Send Player Join Messages  | true    | If enabled (and player-first announcements are enabled), will send an extra message on a player's first leave from the server. |
+| Send Player Leave Messages | false   | If enabled (and player-first announcements are enabled), will send an extra message on a player's first join to the server.    |
+| Send Player Death Messages | true    | If enabled (and player-first announcements are enabled), will send an extra message on a player's first death."                |
+| Send Player Shout Messages | false   | If enabled (and player-first announcements are enabled), will send an extra message on a player's first ping.                  |
+| Send Player Ping Messages  | false   | If enabled (and player-first announcements are enabled), will send an extra message on a player's first shout.                 |

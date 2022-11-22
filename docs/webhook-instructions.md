@@ -1,3 +1,5 @@
+# Webhook Instructions
+
 ## How to get a Discord webhook
 
 1. Make sure you have admin permission on the Discord server
