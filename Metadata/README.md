@@ -12,7 +12,7 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 - Record number of logins/deaths/pings and flavor the Discord messages
 - Works with non-dedicated server (games opened to lan from the client)
 
-### Supported Message Notificaitons
+### Supported Message Notifications
 
 - Server startup (server starting, loading the world)
 - Server started (world loaded, ready to join)
@@ -35,6 +35,18 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+### Version 2.0.5
+
+Features:
+
+- Adds a config option to format how position data is formatted
+- Adds a config option to format how the automatically-appended position data is formatted
+- Adds a new variable which can be used in any messages: `%WORLD_NAME%` turns into the name of the world.
+
+Changes:
+
+- `%POS%` now renders without the enclosing parentheses.
+
 ### Version 2.0.4
 
 Features:
@@ -45,7 +57,7 @@ Features:
 
 Other Changes:
 
-- Set BepInEx depencency to eactly 5.4.19 instead of 5.* (this stops a warning from showing up)
+- Set BepInEx dependency to exactly 5.4.19 instead of 5.* (this stops a warning from showing up)
 
 ### Version 2.0.2
 
@@ -61,7 +73,7 @@ With this update, we bring back Steam_ID variable inclusion and leaderboard mess
 
 Fixes:
 
-- Periodic leaderboard messages sending will now respect your config value intead of never sending
+- Periodic leaderboard messages sending will now respect your config value instead of never sending
 - The STEAMID variable works again. An alias is the PLAYERID variable, which does the same thing -- they both provide the full player id, so `Steam_<SteamID>` or `XBox_<XBoxID>`
 
 Breaking changes:
@@ -76,18 +88,4 @@ Breaking changes:
 
 - Removed steamid variable (internally) and tracking stats by steamid. This broke with the PlayFab changes to Valheim. It will be a bit involved to figure out how to deliver the same thing again, so if you have an idea or seen it done in another mod, please reach out with a Github Issue or ping on Discord.
 - Leaderboard records will reset and a new database with suffix '-records2.db' will be saved anew. This is because what is being tracked is changed (used to be steamid, now it is using the character id).
-- Perodic leaderboard messages will not send, ignoring the setting in the config (for now). This is until a more reliable method of determining players apart.
-
-### Version 1.8.0
-
-Features:
-
-- Web requests to Discord API are async instead of blocking the main thread
-
-Fixes:
-
-- Handles the edge case when a toggle was enabled but the text in 'messages' for that toggle was blank, the plugin would crash. (e.g. if 'send shout' toggle was `true` but the 'shout message' was blank, in prior versions this would crash the plugin)
-
-Full changelog history available on the
-[Github repository](https://github.com/nwesterhausen/valheim-discordconnector/blob/main/Metadata/CHANGELOG.md)
-or [discordconnector.valheim.nwest.games](https://discordconnector.valheim.nwest.games/changelog).
+- Periodic leaderboard messages will not send, ignoring the setting in the config (for now). This is until a more reliable method of determining players apart.

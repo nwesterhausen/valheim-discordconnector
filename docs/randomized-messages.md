@@ -1,8 +1,8 @@
-## Randomized Messages
+# Randomized Messages
 
 To use the random message feature, when editing the config file, separate each message with a semicolon. This does mean you cannot use a semicolon as part of your message. Raise an issue on the github if you have a better resolution.
 
-### Using r2modman to edit
+## Using r2modman to edit
 
 Use r2modman to modify the config value
 
@@ -13,7 +13,7 @@ Use r2modman to modify the config value
 
 ![example modification](/img/howto-6.png)
 
-### Manually Editing the Config File
+## Manually Editing the Config File
 
 In the `games.nwest.valheim.discordconnector.cfg` file, a multi-message string would look like this:
 
