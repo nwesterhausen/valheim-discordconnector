@@ -44,6 +44,10 @@ namespace DiscordConnector
 
 namespace DiscordConnector.LeaderBoards
 {
+    /// <summary>
+    /// A base class for leaderboards to inherit from. It includes a method that lets the leader board be sent on a timer
+    /// and an abstract method which sends the leader board.
+    /// </summary>
     internal abstract class Base
     {
         /// <summary>
@@ -62,7 +66,9 @@ namespace DiscordConnector.LeaderBoards
         /// </summary>
         public abstract void SendLeaderBoard();
     }
-
+    /// <summary>
+    /// Time ranges that are supported for querying from the database using a "where" clause on the date.
+    /// </summary>
     public enum TimeRange
     {
         [System.ComponentModel.Description("All Time")]
@@ -78,6 +84,9 @@ namespace DiscordConnector.LeaderBoards
         [System.ComponentModel.Description("Current Week, Monday to Sunday")]
         WeekMondayToSunday,
     }
+    /// <summary>
+    /// Available options for sorting the results gathered from the database. This is used when defining the custom leader boards.
+    /// </summary>
     public enum Ordering
     {
         [System.ComponentModel.Description("Most to Least (Descending)")]
@@ -85,6 +94,9 @@ namespace DiscordConnector.LeaderBoards
         [System.ComponentModel.Description("Least to Most (Ascending)")]
         Ascending,
     }
+    /// <summary>
+    /// Tracked statistics which can be stored in the records database. The <see cref="TimeOnline"/> value is calculated dynamically.
+    /// </summary>
     public enum Statistic
     {
         Death,
@@ -95,7 +107,16 @@ namespace DiscordConnector.LeaderBoards
     }
     public static class DateHelper
     {
+        /// <summary>
+        /// A "dummy" date time, set to 20 years ago. This is used internally as both the start and end date to indicate all records.
+        /// </summary>
         public static readonly System.DateTime DummyDateTime = System.DateTime.Now.AddYears(-20);
+
+        /// <summary>
+        /// Get a tuple with the start and end date for the specified <paramref name="timeRange"/>
+        /// </summary>
+        /// <param name="timeRange">TimeRange that you want the actual start and end date for</param>
+        /// <returns>A tuple with two dates for the time range, where the earlier date is <code>Item1</code></returns>
         public static Tuple<System.DateTime, System.DateTime> StartEndDatesForTimeRange(TimeRange timeRange)
         {
             switch (timeRange)
@@ -143,6 +164,9 @@ namespace DiscordConnector.LeaderBoards
                     }
 
                     return new Tuple<DateTime, DateTime>(monday, sunday1);
+
+                case TimeRange.AllTime:
+                    return new Tuple<DateTime, DateTime>(DummyDateTime, DummyDateTime);
 
                 default:
                     Plugin.StaticLogger.LogWarning("DateHelper fell through, probably not wanted!");

@@ -1,5 +1,7 @@
 
 using System;
+using System.Timers;
+
 namespace DiscordConnector.LeaderBoards
 {
     /// <summary>
@@ -21,15 +23,15 @@ namespace DiscordConnector.LeaderBoards
     /// <para>
     ///     What is currently supported:
     /// <code>
-    ///     SERVER PLAYERS
-    ///     Online now: 4
-    ///     (unique) Players today: 5
-    ///     (unique) Players this week: 6
-    ///     (unique) Players all time: 12
+    ///     Active Players
+    ///     Online now: 1
+    ///     Players today: 2
+    ///     This week: 2
+    ///     All time: 0
     /// </code>
     /// </para>
     /// </summary>
-    internal class ActivePlayersBoard
+    internal static class ActivePlayersAnnouncement
     {
         /// <summary>
         /// Return the number of currently online players. This is grabbed from the GetAllCharacterZDOS method.
@@ -45,19 +47,46 @@ namespace DiscordConnector.LeaderBoards
         /// To count unique players we do a trick by getting the total number of Joins for each player for each time range we care
         /// about and then doing an meta count of how many records come back (see <see cref="Records.Helper.CountUniquePlayers"/>).
         /// </summary>
-        public static void SendActivePlayersBoard()
+        private static void SendActivePlayersBoard()
         {
-            int currentlyOnline = CurrentOnlinePlayers();
-            int uniqueToday = Records.Helper.CountUniquePlayers(Records.Categories.Join, TimeRange.Today);
-            int uniqueThisWeek = Records.Helper.CountUniquePlayers(Records.Categories.Join, TimeRange.PastWeek);
-            int uniqueAllTime = Records.Helper.CountUniquePlayers(Records.Categories.Join, TimeRange.AllTime);
+            string formattedAnnouncement = $"**Active Players**\n";
+            if (Plugin.StaticConfig.ActivePlayersAnnouncement.IncludeCurrentlyOnline)
+            {
+                int currentlyOnline = CurrentOnlinePlayers();
+                formattedAnnouncement += $"Online now: {currentlyOnline}\n";
+            }
 
-            string formattedAnnouncement = $"**Active Players**\n\nOnline now: {currentlyOnline}\n" +
-                $"Players today: {uniqueToday}\n" +
-                $"This week: {uniqueThisWeek}\n" +
-                $"All time: {uniqueAllTime}";
+            if (Plugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalToday)
+            {
+                int uniqueToday = Records.Helper.CountUniquePlayers(Records.Categories.Join, TimeRange.Today);
+                formattedAnnouncement += $"Players today: {uniqueToday}\n";
+            }
+
+            if (Plugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalPastWeek)
+            {
+                int uniqueThisWeek = Records.Helper.CountUniquePlayers(Records.Categories.Join, TimeRange.PastWeek);
+                formattedAnnouncement += $"This week: {uniqueThisWeek}\n";
+            }
+
+            if (Plugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalAllTime)
+            {
+                int uniqueAllTime = Records.Helper.CountUniquePlayers(Records.Categories.Join, TimeRange.AllTime);
+                formattedAnnouncement += $"All time: {uniqueAllTime}";
+            }
+
 
             DiscordApi.SendMessage(formattedAnnouncement);
+        }
+
+        /// <summary>
+        /// An interface for sending the leader board as a timer event.
+        /// </summary>
+        public static void SendOnTimer(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            System.Threading.Tasks.Task.Run(() =>
+            {
+                SendActivePlayersBoard();
+            });
         }
     }
 }

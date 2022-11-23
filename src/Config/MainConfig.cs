@@ -7,18 +7,21 @@ namespace DiscordConnector.Config
 {
     internal class MainConfig
     {
+        /// <summary>
+        /// Allowed methods for differentiating between players on the server
+        /// </summary>
         public enum RetrievalDiscernmentMethods
         {
-            [System.ComponentModel.Description("Treat each PlayerId as a separate player")]
+            [System.ComponentModel.Description(RetrieveBySteamID)]
             PlayerId,
-            [System.ComponentModel.Description("Treat each Character Name as a separate player")]
+            [System.ComponentModel.Description(RetrieveByNameAndSteamID)]
             Name,
-            [System.ComponentModel.Description("Treat each [PlayerId:Character Name] combo as a separate player")]
+            [System.ComponentModel.Description(RetrieveByName)]
             NameAndPlayerId,
         }
-        public static readonly string RetrieveBySteamID = "PlayerId: Treat each PlayerId as a separate player";
-        public static readonly string RetrieveByNameAndSteamID = "NameAndPlayerId: Treat each [PlayerId:CharacterName] combo as a separate player";
-        public static readonly string RetrieveByName = "Name: Treat each CharacterName as a separate player";
+        public const string RetrieveBySteamID = "PlayerId: Treat each PlayerId as a separate player";
+        public const string RetrieveByNameAndSteamID = "NameAndPlayerId: Treat each [PlayerId:CharacterName] combo as a separate player";
+        public const string RetrieveByName = "Name: Treat each CharacterName as a separate player";
         private ConfigFile config;
         private static List<String> mutedPlayers;
         private static Regex mutedPlayersRegex;

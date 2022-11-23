@@ -243,8 +243,9 @@ namespace DiscordConnector
         public string LeaderBoardHighestHeading => messagesConfig.LeaderBoardHighestHeading;
         public string LeaderBoardLowestHeading => messagesConfig.LeaderBoardLowestHeading;
 
-        // Leader board 1
-        public LeaderBoardConfigReference[] LeaderBoardConfigs => leaderBoardConfig.LeaderBoards;
+        // Leader board configs
+        public LeaderBoardConfigReference[] LeaderBoards => leaderBoardConfig.LeaderBoards;
+        public ActivePlayersAnnouncementConfigValues ActivePlayersAnnouncement => leaderBoardConfig.ActivePlayersAnnouncement;
 
         public void DumpConfigAsJson()
         {

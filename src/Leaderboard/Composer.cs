@@ -15,13 +15,13 @@ namespace DiscordConnector.LeaderBoards
         }
         public override void SendLeaderBoard()
         {
-            if (leaderBoardIdx > Plugin.StaticConfig.LeaderBoardConfigs.Length || leaderBoardIdx < 0)
+            if (leaderBoardIdx > Plugin.StaticConfig.LeaderBoards.Length || leaderBoardIdx < 0)
             {
-                Plugin.StaticLogger.LogWarning($"Tried to get leader board out of index bounds (index:{leaderBoardIdx}, length:{Plugin.StaticConfig.LeaderBoardConfigs.Length})");
+                Plugin.StaticLogger.LogWarning($"Tried to get leader board out of index bounds (index:{leaderBoardIdx}, length:{Plugin.StaticConfig.LeaderBoards.Length})");
                 return;
             }
 
-            LeaderBoardConfigReference settings = Plugin.StaticConfig.LeaderBoardConfigs[leaderBoardIdx];
+            LeaderBoardConfigReference settings = Plugin.StaticConfig.LeaderBoards[leaderBoardIdx];
 
             if (!settings.Enabled)
             {
