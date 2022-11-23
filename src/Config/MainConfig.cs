@@ -27,9 +27,9 @@ namespace DiscordConnector.Config
         // Main Settings
         private ConfigEntry<string> webhookUrl;
         private ConfigEntry<bool> discordEmbedMessagesToggle;
-        private ConfigEntry<string> mutedDiscordUserlist;
-        private ConfigEntry<string> mutedDiscordUserlistRegex;
-        private ConfigEntry<bool> colectStatsToggle;
+        private ConfigEntry<string> mutedDiscordUserList;
+        private ConfigEntry<string> mutedDiscordUserListRegex;
+        private ConfigEntry<bool> collectStatsToggle;
         private ConfigEntry<bool> sendPositionsToggle;
         private ConfigEntry<bool> announcePlayerFirsts;
         private ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
@@ -38,14 +38,14 @@ namespace DiscordConnector.Config
         {
             config = configFile;
             LoadConfig();
-            mutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(';'));
-            if (String.IsNullOrEmpty(@mutedDiscordUserlistRegex.Value))
+            mutedPlayers = new List<string>(mutedDiscordUserList.Value.Split(';'));
+            if (String.IsNullOrEmpty(mutedDiscordUserListRegex.Value))
             {
                 mutedPlayersRegex = new Regex(@"a^");
             }
             else
             {
-                mutedPlayersRegex = new Regex(@mutedDiscordUserlistRegex.Value);
+                mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
             }
         }
 
@@ -54,14 +54,14 @@ namespace DiscordConnector.Config
             config.Reload();
             config.Save();
 
-            mutedPlayers = new List<string>(mutedDiscordUserlist.Value.Split(';'));
-            if (String.IsNullOrEmpty(@mutedDiscordUserlistRegex.Value))
+            mutedPlayers = new List<string>(mutedDiscordUserList.Value.Split(';'));
+            if (String.IsNullOrEmpty(mutedDiscordUserListRegex.Value))
             {
                 mutedPlayersRegex = new Regex(@"a^");
             }
             else
             {
-                mutedPlayersRegex = new Regex(@mutedDiscordUserlistRegex.Value);
+                mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
             }
         }
 
@@ -79,13 +79,13 @@ namespace DiscordConnector.Config
                 false,
                 "Enable this setting to use embeds in the messages sent to Discord. Currently this will affect the position details for the messages.");
 
-            mutedDiscordUserlist = config.Bind<string>(MAIN_SETTINGS,
+            mutedDiscordUserList = config.Bind<string>(MAIN_SETTINGS,
                 "Ignored Players",
                 "",
                 "It may be that you have some players that you never want to send Discord messages for. Adding a player name to this list will ignore them." + Environment.NewLine +
                 "Format should be a semicolon-separated list: Stuart;John McJohnny;Weird-name1");
 
-            mutedDiscordUserlistRegex = config.Bind<string>(MAIN_SETTINGS,
+            mutedDiscordUserListRegex = config.Bind<string>(MAIN_SETTINGS,
                 "Ignored Players (Regex)",
                 "",
                 "It may be that you have some players that you never want to send Discord messages for. This option lets you provide a regular expression to filter out players if their name matches." + Environment.NewLine +
@@ -96,7 +96,7 @@ namespace DiscordConnector.Config
                 true,
                 "Disable this setting to disable any positions/coordinates being sent with messages (e.g. players deaths or players joining/leaving). (Overwrites any individual setting.)");
 
-            colectStatsToggle = config.Bind<bool>(MAIN_SETTINGS,
+            collectStatsToggle = config.Bind<bool>(MAIN_SETTINGS,
                 "Collect Player Stats",
                 true,
                 "Disable this setting to disable all stat collection. (Overwrites any individual setting.)");
@@ -109,7 +109,7 @@ namespace DiscordConnector.Config
             playerLookupPreference = config.Bind<RetrievalDiscernmentMethods>(MAIN_SETTINGS,
                 "How to discern players in Record Retrieval",
                 RetrievalDiscernmentMethods.PlayerId,
-                "Choose a method for how players will be separated from the results of a record query (used for statistic leaderboards)." + Environment.NewLine +
+                "Choose a method for how players will be separated from the results of a record query (used for statistic leader boards)." + Environment.NewLine +
                 RetrieveByName + Environment.NewLine +
                 RetrieveBySteamID + Environment.NewLine +
                 RetrieveByNameAndSteamID
@@ -125,10 +125,10 @@ namespace DiscordConnector.Config
             jsonString += "\"discord\":{";
             jsonString += $"\"webhook\":\"{(string.IsNullOrEmpty(WebHookURL) ? "unset" : "REDACTED")}\",";
             jsonString += $"\"fancierMessages\":\"{DiscordEmbedsEnabled}\",";
-            jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserlist.Value}\",";
-            jsonString += $"\"ignoredPlayersRegex\":\"{mutedDiscordUserlistRegex.Value}\"";
+            jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserList.Value}\",";
+            jsonString += $"\"ignoredPlayersRegex\":\"{mutedDiscordUserListRegex.Value}\"";
             jsonString += "},";
-            jsonString += $"\"colectStatsEnabled\":\"{CollectStatsEnabled}\",";
+            jsonString += $"\"collectStatsEnabled\":\"{CollectStatsEnabled}\",";
             jsonString += $"\"sendPositionsEnabled\":\"{SendPositionsEnabled}\",";
             jsonString += $"\"announcePlayerFirsts\":\"{AnnouncePlayerFirsts}\",";
             jsonString += $"\"playerLookupPreference\":\"{RecordRetrievalDiscernmentMethod}\"";
@@ -137,7 +137,7 @@ namespace DiscordConnector.Config
         }
 
         public string WebHookURL => webhookUrl.Value;
-        public bool CollectStatsEnabled => colectStatsToggle.Value;
+        public bool CollectStatsEnabled => collectStatsToggle.Value;
         public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
         public bool SendPositionsEnabled => sendPositionsToggle.Value;
         public List<string> MutedPlayers => mutedPlayers;

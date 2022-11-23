@@ -58,9 +58,9 @@ namespace DiscordConnector
             return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerId)
                 .Replace(POS, $"{pos}");
         }
-        public static string FormatPlayerMessage(string rawMessage, string playerName, string playerid, string shout)
+        public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId, string shout)
         {
-            return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerid)
+            return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerId)
                 .Replace(SHOUT, shout);
         }
         public static string FormatPlayerMessage(string rawMessage, string playerName, string playerSteamId, string shout, Vector3 pos)
@@ -100,12 +100,12 @@ namespace DiscordConnector
             return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, pos)
                 .Replace(EVENT_MSG, eventEndMsg);
         }
-        public static string FormatLeaderboardHeader(string rawMessage)
+        public static string FormatLeaderBoardHeader(string rawMessage)
         {
             return MessageTransformer.ReplaceVariables(rawMessage);
         }
 
-        public static string FormatLeaderboardHeader(string rawMessage, int n)
+        public static string FormatLeaderBoardHeader(string rawMessage, int n)
         {
             return MessageTransformer.ReplaceVariables(rawMessage)
                 .Replace(N, n.ToString());

@@ -43,7 +43,7 @@ namespace DiscordConnector.Patches
                     if (Plugin.StaticConfig.EventResumedMessageEnabled)
                     {
                         string message = MessageTransformer.FormatEventMessage(
-                            Plugin.StaticConfig.EventResumedMesssage,
+                            Plugin.StaticConfig.EventResumedMessage,
                             Localization.instance.Localize(__instance.m_endMessage),
                             Localization.instance.Localize(__instance.m_startMessage)
                         // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
@@ -60,7 +60,7 @@ namespace DiscordConnector.Patches
                         else
                         {
                             message = MessageTransformer.FormatEventMessage(
-                                Plugin.StaticConfig.EventResumedMesssage,
+                                Plugin.StaticConfig.EventResumedMessage,
                                 Localization.instance.Localize(__instance.m_endMessage),
                                 Localization.instance.Localize(__instance.m_startMessage),
                                 // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
@@ -75,7 +75,7 @@ namespace DiscordConnector.Patches
                     if (Plugin.StaticConfig.EventStartMessageEnabled)
                     {
                         string message = MessageTransformer.FormatEventStartMessage(
-                            Plugin.StaticConfig.EventResumedMesssage,
+                            Plugin.StaticConfig.EventResumedMessage,
                             Localization.instance.Localize(__instance.m_endMessage),
                             Localization.instance.Localize(__instance.m_startMessage)
                         // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
@@ -92,7 +92,7 @@ namespace DiscordConnector.Patches
                         else
                         {
                             message = MessageTransformer.FormatEventStartMessage(
-                                Plugin.StaticConfig.EventResumedMesssage,
+                                Plugin.StaticConfig.EventResumedMessage,
                                 Localization.instance.Localize(__instance.m_endMessage),
                                 Localization.instance.Localize(__instance.m_startMessage),
                                 // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
@@ -137,7 +137,7 @@ namespace DiscordConnector.Patches
                     if (Plugin.StaticConfig.EventPausedMessageEnabled)
                     {
                         string message = MessageTransformer.FormatEventMessage(
-                            Plugin.StaticConfig.EventPausedMesssage,
+                            Plugin.StaticConfig.EventPausedMessage,
                             Localization.instance.Localize(__instance.m_endMessage),
                             Localization.instance.Localize(__instance.m_startMessage)
                         // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
@@ -154,7 +154,7 @@ namespace DiscordConnector.Patches
                         else
                         {
                             message = MessageTransformer.FormatEventMessage(
-                                Plugin.StaticConfig.EventPausedMesssage,
+                                Plugin.StaticConfig.EventPausedMessage,
                                 Localization.instance.Localize(__instance.m_endMessage),
                                 Localization.instance.Localize(__instance.m_startMessage),
                                 // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
@@ -169,7 +169,7 @@ namespace DiscordConnector.Patches
                     if (Plugin.StaticConfig.EventStopMessageEnabled)
                     {
                         string message = MessageTransformer.FormatEventEndMessage(
-                            Plugin.StaticConfig.EventStopMesssage,
+                            Plugin.StaticConfig.EventStopMessage,
                             Localization.instance.Localize(__instance.m_endMessage),
                             Localization.instance.Localize(__instance.m_startMessage)
                         // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
@@ -186,7 +186,7 @@ namespace DiscordConnector.Patches
                         else
                         {
                             message = MessageTransformer.FormatEventEndMessage(
-                                Plugin.StaticConfig.EventStopMesssage,
+                                Plugin.StaticConfig.EventStopMessage,
                                 Localization.instance.Localize(__instance.m_endMessage),
                                 Localization.instance.Localize(__instance.m_startMessage),
                                 // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 

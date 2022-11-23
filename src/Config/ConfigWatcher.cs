@@ -31,7 +31,7 @@ namespace DiscordConnector
             Plugin.StaticLogger.LogInfo("File watcher loaded and watching for changes to configs.");
 
             // Create and populate the file hash dictionary (a collection of MD5 hashes of our configs, to be able
-            // to detmine if the files were properly changed or not).
+            // to determine if the files were properly changed or not).
             _fileHashDictionary = new Dictionary<string, string>();
 
             var myConfigFiles = Directory.EnumerateFiles(BepInEx.Paths.ConfigPath).Where(file => watchedConfigFilesRegex.IsMatch(file));
@@ -44,7 +44,7 @@ namespace DiscordConnector
             Plugin.StaticLogger.LogDebug($"Initialization of file hash dictionary completed.");
             Plugin.StaticLogger.LogDebug(string.Join(Environment.NewLine, _fileHashDictionary));
 
-            // Set an inital value for last change detected.
+            // Set an initial value for last change detected.
             lastChangeDetected = DateTime.Now;
         }
 
@@ -57,18 +57,18 @@ namespace DiscordConnector
             Plugin.StaticLogger.LogInfo($"Changed: {e.FullPath}");
 
             // Hash the changed file
-            String filehash = DiscordConnector.Hashing.GetMD5Checksum(e.FullPath);
+            String fileHash = DiscordConnector.Hashing.GetMD5Checksum(e.FullPath);
 
             // Create an entry if we haven't yet
             if (!_fileHashDictionary.ContainsKey(e.FullPath))
             {
                 Plugin.StaticLogger.LogWarning("Unexpectedly encountered unhashed config file!");
-                _fileHashDictionary.Add(e.FullPath, filehash);
+                _fileHashDictionary.Add(e.FullPath, fileHash);
                 return;
             }
 
             // Check if current hash differs from stored hash.
-            if (String.Equals(_fileHashDictionary[e.FullPath], filehash))
+            if (String.Equals(_fileHashDictionary[e.FullPath], fileHash))
             {
                 Plugin.StaticLogger.LogDebug("Changes to file were determined to be inconsequential.");
             }

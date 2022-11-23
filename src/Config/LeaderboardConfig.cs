@@ -3,7 +3,7 @@ using BepInEx.Configuration;
 
 namespace DiscordConnector.Config
 {
-    public class LeaderboardConfigReference
+    public class LeaderBoardConfigReference
     {
         public LeaderBoards.Ordering Type;
         public LeaderBoards.TimeRange TimeRange;
@@ -17,9 +17,9 @@ namespace DiscordConnector.Config
         public bool TimeOnline;
         public string DisplayedHeading;
     }
-    internal class LeaderboardConfigValues
+    internal class LeaderBoardConfigValues
     {
-        // Each leaderboard has these values to configure
+        // Each leader board has these values to configure
         public ConfigEntry<LeaderBoards.Ordering> type;
         public ConfigEntry<LeaderBoards.TimeRange> timeRange;
         public ConfigEntry<int> numberListings;
@@ -34,59 +34,59 @@ namespace DiscordConnector.Config
 
         public static readonly string EnabledTitle = "Enabled";
         public static readonly bool EnabledDefault = false;
-        public static readonly string EnableDescription = "Enable or disable this leaderboard.";
+        public static readonly string EnableDescription = "Enable or disable this leader board.";
 
-        public static readonly string TimeRangeTitle = "Leaderboard Time Range";
+        public static readonly string TimeRangeTitle = "Leader Board Time Range";
         public static readonly LeaderBoards.TimeRange TimeRangeDefault = LeaderBoards.TimeRange.AllTime;
-        public static readonly string TimeRangeDescription = "A more restrictive filter of time can be applied to the leaderboard. This restricts it to tally up statistics within the range specified.";
-        public static readonly string TimeRangeDescription1 = $"{LeaderBoards.TimeRange.AllTime}: Apply no time restriction to the leaderboard, use all available records.";
-        public static readonly string TimeRangeDescription2 = $"{LeaderBoards.TimeRange.Today}: Restrict leaderboard to recorded events from today.";
-        public static readonly string TimeRangeDescription3 = $"{LeaderBoards.TimeRange.Yesterday}: Restrict leaderboard to recorded events from yesterday.";
-        public static readonly string TimeRangeDescription4 = $"{LeaderBoards.TimeRange.PastWeek}: Restrict leaderboard to recorded events from the past week (including today).";
-        public static readonly string TimeRangeDescription5 = $"{LeaderBoards.TimeRange.WeekSundayToSaturday}: Restrict leaderboard to recorded events from the current week, beginning on Sunday and ending Saturday.";
-        public static readonly string TimeRangeDescription6 = $"{LeaderBoards.TimeRange.WeekMondayToSunday}: Restrict leaderboard to recorded events from the current week, beginning on Monday and ending Sunday.";
+        public static readonly string TimeRangeDescription = "A more restrictive filter of time can be applied to the leader board. This restricts it to tally up statistics within the range specified.";
+        public static readonly string TimeRangeDescription1 = $"{LeaderBoards.TimeRange.AllTime}: Apply no time restriction to the leader board, use all available records.";
+        public static readonly string TimeRangeDescription2 = $"{LeaderBoards.TimeRange.Today}: Restrict leader board to recorded events from today.";
+        public static readonly string TimeRangeDescription3 = $"{LeaderBoards.TimeRange.Yesterday}: Restrict leader board to recorded events from yesterday.";
+        public static readonly string TimeRangeDescription4 = $"{LeaderBoards.TimeRange.PastWeek}: Restrict leader board to recorded events from the past week (including today).";
+        public static readonly string TimeRangeDescription5 = $"{LeaderBoards.TimeRange.WeekSundayToSaturday}: Restrict leader board to recorded events from the current week, beginning on Sunday and ending Saturday.";
+        public static readonly string TimeRangeDescription6 = $"{LeaderBoards.TimeRange.WeekMondayToSunday}: Restrict leader board to recorded events from the current week, beginning on Monday and ending Sunday.";
 
         public static readonly string NumberListingsTitle = "Number of Rankings";
         public static readonly int NumberListingsDefault = 3;
-        public static readonly string NumberListingsDescription = "Specify a number of places in the leaderboard. Setting this can help prevent a very long leaderboard in the case of active servers.";
+        public static readonly string NumberListingsDescription = "Specify a number of places in the leader board. Setting this can help prevent a very long leader board in the case of active servers.";
         public static readonly string NumberListingsDescription1 = $"Setting to 0 (zero) results in limiting to the hard-coded maximum of {LeaderBoard.MAX_LEADER_BOARD_SIZE}.";
 
         public static readonly string TypeTitle = "Type";
         public static readonly LeaderBoards.Ordering TypeDefault = LeaderBoards.Ordering.Descending;
-        public static readonly string TypeDescription = "Choose what type of leaderboard this should be. There are 2 options:";
+        public static readonly string TypeDescription = "Choose what type of leader board this should be. There are 2 options:";
         public static readonly string TypeDescription1 = $"{LeaderBoards.Ordering.Descending}:\"Number of Rankings\" players (with at least 1 record) are listed in descending order";
         public static readonly string TypeDescription2 = $"{LeaderBoards.Ordering.Ascending}:  \"Number of Rankings\" players (with at least 1 record) are listed in ascending order";
 
         public static readonly string PeriodTitle = "Sending Period";
         public static readonly int PeriodDefault = 600;
-        public static readonly string PeriodDescription = "Set the number of minutes between a leaderboard announcement sent to discord.";
-        public static readonly string PeriodDescription1 = "This timer starts when the server is started. Default is set to 10 hours (600 mintues).";
+        public static readonly string PeriodDescription = "Set the number of minutes between a leader board announcement sent to discord.";
+        public static readonly string PeriodDescription1 = "This timer starts when the server is started. Default is set to 10 hours (600 minutes).";
 
         public static readonly string DeathsTitle = "Death Statistics";
         public static readonly bool DeathsDefault = true;
-        public static readonly string DeathsDescription = "If enabled, player death statistics will be part of the leaderboard.";
+        public static readonly string DeathsDescription = "If enabled, player death statistics will be part of the leader board.";
 
         public static readonly string SessionsTitle = "Session Statistics";
         public static readonly bool SessionsDefault = false;
-        public static readonly string SessionsDescription = "If enabled, player session statistics will be part of the leaderboard.";
+        public static readonly string SessionsDescription = "If enabled, player session statistics will be part of the leader board.";
 
         public static readonly string ShoutsTitle = "Shout Statistics";
         public static readonly bool ShoutsDefault = false;
-        public static readonly string ShoutsDescription = "If enabled, player shout statistics will be part of the leaderboard.";
+        public static readonly string ShoutsDescription = "If enabled, player shout statistics will be part of the leader board.";
 
         public static readonly string PingsTitle = "Ping Statistics";
         public static readonly bool PingsDefault = false;
-        public static readonly string PingsDescription = "If enabled, player ping statistics will be part of the leaderboard.";
+        public static readonly string PingsDescription = "If enabled, player ping statistics will be part of the leader board.";
 
         public static readonly string TimeOnlineTitle = "Time Online Statistics";
         public static readonly bool TimeOnlineDefault = false;
-        public static readonly string TimeOnlineDescription = "If enabled, player online time statistics will be part of the leaderboard.";
+        public static readonly string TimeOnlineDescription = "If enabled, player online time statistics will be part of the leader board.";
 
-        public static readonly string DisplayedHeadingTitle = "Leaderboard Heading";
-        public static readonly string DisplayedHeadingDescription = "Define the heading message to display with this leaderboard.";
+        public static readonly string DisplayedHeadingTitle = "Leader Board Heading";
+        public static readonly string DisplayedHeadingDescription = "Define the heading message to display with this leader board.";
         public static readonly string DisplayedHeadingDescription1 = "Include %N% to dynamically reference the value in \"Number of Rankings\"";
 
-        public LeaderboardConfigValues(ConfigFile config, string header)
+        public LeaderBoardConfigValues(ConfigFile config, string header)
         {
             enabled = config.Bind<bool>(header,
                 EnabledTitle,
@@ -95,7 +95,7 @@ namespace DiscordConnector.Config
 
             displayedHeading = config.Bind<string>(header,
                 DisplayedHeadingTitle,
-                $"{header} Statistic Leaderboard",
+                $"{header} Statistic Leader Board",
                 DisplayedHeadingDescription + System.Environment.NewLine +
                 DisplayedHeadingDescription1);
 
@@ -179,28 +179,28 @@ namespace DiscordConnector.Config
             return jsonString;
         }
     }
-    internal class LeaderboardConfig
+    internal class LeaderBoardConfig
     {
         private static ConfigFile config;
 
-        public static string ConfigExtension = "leaderboards";
+        public static string ConfigExtension = "leaderBoards";
 
         // config header strings
-        private const string LEADERBOARD_1 = "Leaderboard.1";
-        private const string LEADERBOARD_2 = "Leaderboard.2";
-        private const string LEADERBOARD_3 = "Leaderboard.3";
-        private const string LEADERBOARD_4 = "Leaderboard.4";
-        private const string LEADERBOARD_5 = "Leaderboard.5";
+        private const string LEADER_BOARD_1 = "LeaderBoard.1";
+        private const string LEADER_BOARD_2 = "LeaderBoard.2";
+        private const string LEADER_BOARD_3 = "LeaderBoard.3";
+        private const string LEADER_BOARD_4 = "LeaderBoard.4";
+        private const string LEADER_BOARD_5 = "LeaderBoard.5";
 
         // Config Definitions
-        private LeaderboardConfigValues leaderboard1;
-        private LeaderboardConfigValues leaderboard2;
-        private LeaderboardConfigValues leaderboard3;
-        private LeaderboardConfigValues leaderboard4;
-        private LeaderboardConfigValues leaderboard5;
-        private LeaderboardConfigReference[] _leaderboards;
+        private LeaderBoardConfigValues leaderBoard1;
+        private LeaderBoardConfigValues leaderBoard2;
+        private LeaderBoardConfigValues leaderBoard3;
+        private LeaderBoardConfigValues leaderBoard4;
+        private LeaderBoardConfigValues leaderBoard5;
+        private LeaderBoardConfigReference[] _leaderBoards;
 
-        public LeaderboardConfig(ConfigFile configFile)
+        public LeaderBoardConfig(ConfigFile configFile)
         {
             config = configFile;
             LoadConfig();
@@ -213,83 +213,83 @@ namespace DiscordConnector.Config
         }
         private void LoadConfig()
         {
-            leaderboard1 = new LeaderboardConfigValues(config, LEADERBOARD_1);
-            leaderboard2 = new LeaderboardConfigValues(config, LEADERBOARD_2);
-            leaderboard3 = new LeaderboardConfigValues(config, LEADERBOARD_3);
-            leaderboard4 = new LeaderboardConfigValues(config, LEADERBOARD_4);
-            leaderboard5 = new LeaderboardConfigValues(config, LEADERBOARD_5);
+            leaderBoard1 = new LeaderBoardConfigValues(config, LEADER_BOARD_1);
+            leaderBoard2 = new LeaderBoardConfigValues(config, LEADER_BOARD_2);
+            leaderBoard3 = new LeaderBoardConfigValues(config, LEADER_BOARD_3);
+            leaderBoard4 = new LeaderBoardConfigValues(config, LEADER_BOARD_4);
+            leaderBoard5 = new LeaderBoardConfigValues(config, LEADER_BOARD_5);
 
             config.Save();
-            _leaderboards = new LeaderboardConfigReference[]{
-            new LeaderboardConfigReference
+            _leaderBoards = new LeaderBoardConfigReference[]{
+            new LeaderBoardConfigReference
             {
-                Type = leaderboard1.type.Value,
-                TimeRange = leaderboard1.timeRange.Value,
-                DisplayedHeading = leaderboard1.displayedHeading.Value,
-                NumberListings = leaderboard1.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderboard1.numberListings.Value,
-                Enabled = leaderboard1.enabled.Value,
-                PeriodInMinutes = leaderboard1.periodInMinutes.Value,
-                Deaths = leaderboard1.deaths.Value,
-                Sessions = leaderboard1.sessions.Value,
-                Shouts = leaderboard1.shouts.Value,
-                Pings = leaderboard1.pings.Value,
-                TimeOnline = leaderboard1.timeOnline.Value,
+                Type = leaderBoard1.type.Value,
+                TimeRange = leaderBoard1.timeRange.Value,
+                DisplayedHeading = leaderBoard1.displayedHeading.Value,
+                NumberListings = leaderBoard1.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderBoard1.numberListings.Value,
+                Enabled = leaderBoard1.enabled.Value,
+                PeriodInMinutes = leaderBoard1.periodInMinutes.Value,
+                Deaths = leaderBoard1.deaths.Value,
+                Sessions = leaderBoard1.sessions.Value,
+                Shouts = leaderBoard1.shouts.Value,
+                Pings = leaderBoard1.pings.Value,
+                TimeOnline = leaderBoard1.timeOnline.Value,
             },
-            new LeaderboardConfigReference
+            new LeaderBoardConfigReference
             {
-                Type = leaderboard2.type.Value,
-                TimeRange = leaderboard2.timeRange.Value,
-                DisplayedHeading = leaderboard2.displayedHeading.Value,
-                NumberListings = leaderboard2.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderboard2.numberListings.Value,
-                Enabled = leaderboard2.enabled.Value,
-                PeriodInMinutes = leaderboard2.periodInMinutes.Value,
-                Deaths = leaderboard2.deaths.Value,
-                Sessions = leaderboard2.sessions.Value,
-                Shouts = leaderboard2.shouts.Value,
-                Pings = leaderboard2.pings.Value,
-                TimeOnline = leaderboard2.timeOnline.Value,
+                Type = leaderBoard2.type.Value,
+                TimeRange = leaderBoard2.timeRange.Value,
+                DisplayedHeading = leaderBoard2.displayedHeading.Value,
+                NumberListings = leaderBoard2.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderBoard2.numberListings.Value,
+                Enabled = leaderBoard2.enabled.Value,
+                PeriodInMinutes = leaderBoard2.periodInMinutes.Value,
+                Deaths = leaderBoard2.deaths.Value,
+                Sessions = leaderBoard2.sessions.Value,
+                Shouts = leaderBoard2.shouts.Value,
+                Pings = leaderBoard2.pings.Value,
+                TimeOnline = leaderBoard2.timeOnline.Value,
             },
-            new LeaderboardConfigReference
+            new LeaderBoardConfigReference
             {
-                Type = leaderboard3.type.Value,
-                TimeRange = leaderboard3.timeRange.Value,
-                DisplayedHeading = leaderboard3.displayedHeading.Value,
-                NumberListings = leaderboard3.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderboard3.numberListings.Value,
-                Enabled = leaderboard3.enabled.Value,
-                PeriodInMinutes = leaderboard3.periodInMinutes.Value,
-                Deaths = leaderboard3.deaths.Value,
-                Sessions = leaderboard3.sessions.Value,
-                Shouts = leaderboard3.shouts.Value,
-                Pings = leaderboard3.pings.Value,
-                TimeOnline = leaderboard3.timeOnline.Value,
+                Type = leaderBoard3.type.Value,
+                TimeRange = leaderBoard3.timeRange.Value,
+                DisplayedHeading = leaderBoard3.displayedHeading.Value,
+                NumberListings = leaderBoard3.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderBoard3.numberListings.Value,
+                Enabled = leaderBoard3.enabled.Value,
+                PeriodInMinutes = leaderBoard3.periodInMinutes.Value,
+                Deaths = leaderBoard3.deaths.Value,
+                Sessions = leaderBoard3.sessions.Value,
+                Shouts = leaderBoard3.shouts.Value,
+                Pings = leaderBoard3.pings.Value,
+                TimeOnline = leaderBoard3.timeOnline.Value,
             },
-            new LeaderboardConfigReference
+            new LeaderBoardConfigReference
             {
-                Type = leaderboard4.type.Value,
-                TimeRange = leaderboard4.timeRange.Value,
-                DisplayedHeading = leaderboard4.displayedHeading.Value,
-                NumberListings = leaderboard4.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderboard4.numberListings.Value,
-                Enabled = leaderboard4.enabled.Value,
-                PeriodInMinutes = leaderboard4.periodInMinutes.Value,
-                Deaths = leaderboard4.deaths.Value,
-                Sessions = leaderboard4.sessions.Value,
-                Shouts = leaderboard4.shouts.Value,
-                Pings = leaderboard4.pings.Value,
-                TimeOnline = leaderboard4.timeOnline.Value,
+                Type = leaderBoard4.type.Value,
+                TimeRange = leaderBoard4.timeRange.Value,
+                DisplayedHeading = leaderBoard4.displayedHeading.Value,
+                NumberListings = leaderBoard4.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderBoard4.numberListings.Value,
+                Enabled = leaderBoard4.enabled.Value,
+                PeriodInMinutes = leaderBoard4.periodInMinutes.Value,
+                Deaths = leaderBoard4.deaths.Value,
+                Sessions = leaderBoard4.sessions.Value,
+                Shouts = leaderBoard4.shouts.Value,
+                Pings = leaderBoard4.pings.Value,
+                TimeOnline = leaderBoard4.timeOnline.Value,
             },
-            new LeaderboardConfigReference
+            new LeaderBoardConfigReference
             {
-                Type = leaderboard5.type.Value,
-                TimeRange = leaderboard5.timeRange.Value,
-                DisplayedHeading = leaderboard5.displayedHeading.Value,
-                NumberListings = leaderboard5.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderboard5.numberListings.Value,
-                Enabled = leaderboard5.enabled.Value,
-                PeriodInMinutes = leaderboard5.periodInMinutes.Value,
-                Deaths = leaderboard5.deaths.Value,
-                Sessions = leaderboard5.sessions.Value,
-                Shouts = leaderboard5.shouts.Value,
-                Pings = leaderboard5.pings.Value,
-                TimeOnline = leaderboard5.timeOnline.Value,
+                Type = leaderBoard5.type.Value,
+                TimeRange = leaderBoard5.timeRange.Value,
+                DisplayedHeading = leaderBoard5.displayedHeading.Value,
+                NumberListings = leaderBoard5.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderBoard5.numberListings.Value,
+                Enabled = leaderBoard5.enabled.Value,
+                PeriodInMinutes = leaderBoard5.periodInMinutes.Value,
+                Deaths = leaderBoard5.deaths.Value,
+                Sessions = leaderBoard5.sessions.Value,
+                Shouts = leaderBoard5.shouts.Value,
+                Pings = leaderBoard5.pings.Value,
+                TimeOnline = leaderBoard5.timeOnline.Value,
             }};
 
         }
@@ -297,15 +297,15 @@ namespace DiscordConnector.Config
         public string ConfigAsJson()
         {
             string jsonString = "{";
-            jsonString += $"\"leaderboard1\":{leaderboard1.ConfigAsJson()},";
-            jsonString += $"\"leaderboard2\":{leaderboard2.ConfigAsJson()},";
-            jsonString += $"\"leaderboard3\":{leaderboard3.ConfigAsJson()},";
-            jsonString += $"\"leaderboard4\":{leaderboard4.ConfigAsJson()},";
-            jsonString += $"\"leaderboard5\":{leaderboard5.ConfigAsJson()}";
+            jsonString += $"\"leaderBoard1\":{leaderBoard1.ConfigAsJson()},";
+            jsonString += $"\"leaderBoard2\":{leaderBoard2.ConfigAsJson()},";
+            jsonString += $"\"leaderBoard3\":{leaderBoard3.ConfigAsJson()},";
+            jsonString += $"\"leaderBoard4\":{leaderBoard4.ConfigAsJson()},";
+            jsonString += $"\"leaderBoard5\":{leaderBoard5.ConfigAsJson()}";
             jsonString += "}";
             return jsonString;
         }
         // Variables
-        public LeaderboardConfigReference[] Leaderboards => _leaderboards;
+        public LeaderBoardConfigReference[] LeaderBoards => _leaderBoards;
     }
 }

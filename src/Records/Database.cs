@@ -10,7 +10,7 @@ using UnityEngine;
 namespace DiscordConnector.Records
 {
     /// <summary>
-    /// The database class holds the connection to the database, and so all the databse-accessing methods are contained within.
+    /// The database class holds the connection to the database, and so all the database-accessing methods are contained within.
     /// </summary>
     internal class Database
     {
@@ -34,7 +34,7 @@ namespace DiscordConnector.Records
         {
             DbPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, PluginInfo.PLUGIN_ID, DB_NAME);
 
-            // Check for datbase in old location and move if necessary
+            // Check for database in old location and move if necessary
             string oldDatabase = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, $"{PluginInfo.PLUGIN_ID}-records.db");
             if (System.IO.File.Exists(oldDatabase))
             {
@@ -133,7 +133,7 @@ namespace DiscordConnector.Records
         }
 
         /// <summary>
-        /// Inserts a record with the player hostname and id into the databse, to simplify retrieval at a later date.
+        /// Inserts a record with the player hostname and id into the database, to simplify retrieval at a later date.
         /// </summary>
         /// <param name="characterName">Player character's name</param>
         /// <param name="playerHostName">Player's connection hostname</param>
@@ -175,7 +175,7 @@ namespace DiscordConnector.Records
         /// </summary>
         /// <param name="key">What kind of record to insert</param>
         /// <param name="playerName">Player character name</param>
-        /// <param name="playerHostName">Player connection host name (e.g. `Steam_{steamid}`)</param>
+        /// <param name="playerHostName">Player connection host name (e.g. `Steam_{steamId}`)</param>
         /// <param name="pos">World position to record with the stat</param>
         public void InsertSimpleStatRecord(string key, string playerName, string playerHostName, Vector3 pos)
         {
@@ -210,7 +210,7 @@ namespace DiscordConnector.Records
         /// </summary>
         /// <param name="key">What kind of record to insert</param>
         /// <param name="playerName">Player character name</param>
-        /// <param name="playerHostName">Player connection host name (e.g. `Steam_{steamid}`)</param>
+        /// <param name="playerHostName">Player connection host name (e.g. `Steam_{steamId}`)</param>
         public void InsertSimpleStatRecord(string key, string playerName, string playerHostName)
         {
             InsertSimpleStatRecord(key, playerName, playerHostName, Vector3.zero);
@@ -280,7 +280,7 @@ namespace DiscordConnector.Records
 
             Task.Run(() =>
             {
-                // Insert the playername, since we didn't have it in the player_name database!
+                // Insert the player name, since we didn't have it in the player_name database!
                 EnsurePlayerNameRecorded(result["Name"], playerHostName);
             }).ConfigureAwait(false);
 
@@ -379,7 +379,7 @@ namespace DiscordConnector.Records
         /// <param name="startDate">Date to stop including records before</param>
         /// <param name="inclusiveStart">Whether to include the start date or not in the returned results. If true, it will use `>=` for the startDate comparison; otherwise `>`.</param>
         /// <param name="inclusiveEnd">Whether to include the end date or not in the returned results. If true, it will use `<=` for the startDate comparison; otherwise `<`.</param>
-        /// <returns>List of counts with CharacterName and Total (x) for the provided SimpleStat colleciton.</returns>
+        /// <returns>List of counts with CharacterName and Total (x) for the provided SimpleStat collection.</returns>
         private List<CountResult> TimeOnlineRecordsWhereDate(System.DateTime startDate, System.DateTime endDate, bool inclusiveStart = true, bool inclusiveEnd = true)
         {
 
@@ -630,7 +630,7 @@ namespace DiscordConnector.Records
         /// This looks through the provided simple stat table and counts up results for each player using the method defined in the config.
         /// </summary>
         /// <param name="collection">Simple stat collection to count player totals in</param>
-        /// <returns>List of counts with CharacterName and Total (x) for the provided SimpleStat colleciton.</returns>
+        /// <returns>List of counts with CharacterName and Total (x) for the provided SimpleStat collection.</returns>
         internal List<CountResult> CountAllRecordsGrouped(ILiteCollection<SimpleStat> collection)
         {
             if (Plugin.StaticConfig.DebugDatabaseMethods)
@@ -688,7 +688,7 @@ namespace DiscordConnector.Records
         /// <param name="startDate">Date to stop including records before</param>
         /// <param name="inclusiveStart">Whether to include the start date or not in the returned results. If true, it will use `>=` for the startDate comparison; otherwise `>`.</param>
         /// <param name="inclusiveEnd">Whether to include the end date or not in the returned results. If true, it will use `<=` for the startDate comparison; otherwise `<`.</param>
-        /// <returns>List of counts with CharacterName and Total (x) for the provided SimpleStat colleciton.</returns>
+        /// <returns>List of counts with CharacterName and Total (x) for the provided SimpleStat collection.</returns>
         internal List<CountResult> CountAllRecordsGroupsWhereDate(ILiteCollection<SimpleStat> collection, System.DateTime startDate, System.DateTime endDate, bool inclusiveStart = true, bool inclusiveEnd = true)
         {
             if (Plugin.StaticConfig.DebugDatabaseMethods)

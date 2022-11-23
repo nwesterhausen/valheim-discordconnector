@@ -12,14 +12,14 @@ namespace DiscordConnector
         private MessagesConfig messagesConfig;
         private TogglesConfig togglesConfig;
         private VariableConfig variableConfig;
-        private LeaderboardConfig leaderboardConfig;
+        private LeaderBoardConfig leaderBoardConfig;
         private Dictionary<string, Regex> filenameDictionaryRegex;
         private string configPath;
 
         private static string[] configExtensions = new string[]{
             "messages",
             "variables",
-            "leaderboard",
+            "leaderBoard",
             "toggles"
         };
 
@@ -62,25 +62,25 @@ namespace DiscordConnector
             string messageConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}-{MessagesConfig.ConfigExtension}.cfg";
             string togglesConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}-{TogglesConfig.ConfigExtension}.cfg";
             string variableConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}-{VariableConfig.ConfigExtension}.cfg";
-            string leaderboardConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}-{LeaderboardConfig.ConfigExtension}.cfg";
+            string leaderBoardConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}-{LeaderBoardConfig.ConfigExtension}.cfg";
 
             string mainConfigPath = Path.Combine(configPath, mainConfigFilename);
             string messagesConfigPath = Path.Combine(configPath, messageConfigFilename);
             string togglesConfigPath = Path.Combine(configPath, togglesConfigFilename);
             string variableConfigPath = Path.Combine(configPath, variableConfigFilename);
-            string leaderboardConfigPath = Path.Combine(configPath, leaderboardConfigFilename);
+            string leaderBoardConfigPath = Path.Combine(configPath, leaderBoardConfigFilename);
 
             Plugin.StaticLogger.LogDebug($"Main config: {mainConfigPath}");
             Plugin.StaticLogger.LogDebug($"Messages config: {messagesConfigPath}");
             Plugin.StaticLogger.LogDebug($"Toggles config: {togglesConfigPath}");
             Plugin.StaticLogger.LogDebug($"Variable config: {variableConfigPath}");
-            Plugin.StaticLogger.LogDebug($"Leaderboard config: {leaderboardConfigFilename}");
+            Plugin.StaticLogger.LogDebug($"Leader board config: {leaderBoardConfigFilename}");
 
             mainConfig = new MainConfig(new BepInEx.Configuration.ConfigFile(mainConfigPath, true));
             messagesConfig = new MessagesConfig(new BepInEx.Configuration.ConfigFile(messagesConfigPath, true));
             togglesConfig = new TogglesConfig(new BepInEx.Configuration.ConfigFile(togglesConfigPath, true));
             variableConfig = new VariableConfig(new BepInEx.Configuration.ConfigFile(variableConfigPath, true));
-            leaderboardConfig = new LeaderboardConfig(new BepInEx.Configuration.ConfigFile(leaderboardConfigPath, true));
+            leaderBoardConfig = new LeaderBoardConfig(new BepInEx.Configuration.ConfigFile(leaderBoardConfigPath, true));
 
             Plugin.StaticLogger.LogDebug("Configuration Loaded");
             Plugin.StaticLogger.LogDebug($"Muted Players Regex pattern ('a^' is default for no matches): {mainConfig.MutedPlayersRegex.ToString()}");
@@ -91,7 +91,7 @@ namespace DiscordConnector
             filenameDictionaryRegex.Add("messages", new Regex(@"games.nwest.valheim.discordconnector-message\.cfg$"));
             filenameDictionaryRegex.Add("toggles", new Regex(@"games.nwest.valheim.discordconnector-toggles\.cfg$"));
             filenameDictionaryRegex.Add("variables", new Regex(@"games.nwest.valheim.discordconnector-variables\.cfg$"));
-            filenameDictionaryRegex.Add("leaderboard", new Regex(@"games.nwest.valheim.discordconnector-leaderboard\.cfg$"));
+            filenameDictionaryRegex.Add("leaderBoard", new Regex(@"games.nwest.valheim.discordconnector-leaderBoard\.cfg$"));
         }
 
         public void ReloadConfig()
@@ -100,7 +100,7 @@ namespace DiscordConnector
             messagesConfig.ReloadConfig();
             togglesConfig.ReloadConfig();
             variableConfig.ReloadConfig();
-            leaderboardConfig.ReloadConfig();
+            leaderBoardConfig.ReloadConfig();
         }
 
         public void ReloadConfig(string configPath)
@@ -125,9 +125,9 @@ namespace DiscordConnector
                 variableConfig.ReloadConfig();
             }
 
-            if (filenameDictionaryRegex["leaderboard"].IsMatch(configPath))
+            if (filenameDictionaryRegex["leaderBoard"].IsMatch(configPath))
             {
-                leaderboardConfig.ReloadConfig();
+                leaderBoardConfig.ReloadConfig();
             }
         }
 
@@ -208,10 +208,10 @@ namespace DiscordConnector
         public bool AnnouncePlayerFirstShoutEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstShoutEnabled;
 
         // Messages.Events
-        public string EventStartMessage => messagesConfig.EventStartMesssage;
-        public string EventStopMesssage => messagesConfig.EventStopMesssage;
-        public string EventPausedMesssage => messagesConfig.EventPausedMesssage;
-        public string EventResumedMesssage => messagesConfig.EventResumedMesssage;
+        public string EventStartMessage => messagesConfig.EventStartMessage;
+        public string EventStopMessage => messagesConfig.EventStopMessage;
+        public string EventPausedMessage => messagesConfig.EventPausedMessage;
+        public string EventResumedMessage => messagesConfig.EventResumedMessage;
 
         // Variable Definition
         public string UserVariable => variableConfig.UserVariable;
@@ -232,14 +232,14 @@ namespace DiscordConnector
         public bool DebugHttpRequestResponse => togglesConfig.DebugHttpRequestResponse;
         public bool DebugDatabaseMethods => togglesConfig.DebugDatabaseMethods;
 
-        // Leaderboard Messages
-        public string LeaderboardTopPlayerHeading => messagesConfig.LeaderboardTopPlayerHeading;
-        public string LeaderboardBottomPlayersHeading => messagesConfig.LeaderboardBottomPlayersHeading;
-        public string LeaderboardHighestHeading => messagesConfig.LeaderboardHighestHeading;
-        public string LeaderboardLowestHeading => messagesConfig.LeaderboardLowestHeading;
+        // Leader board Messages
+        public string LeaderBoardTopPlayerHeading => messagesConfig.LeaderBoardTopPlayerHeading;
+        public string LeaderBoardBottomPlayersHeading => messagesConfig.LeaderBoardBottomPlayersHeading;
+        public string LeaderBoardHighestHeading => messagesConfig.LeaderBoardHighestHeading;
+        public string LeaderBoardLowestHeading => messagesConfig.LeaderBoardLowestHeading;
 
-        // Leaderboard 1
-        public LeaderboardConfigReference[] LeaderboardConfigs => leaderboardConfig.Leaderboards;
+        // Leader board 1
+        public LeaderBoardConfigReference[] LeaderBoardConfigs => leaderBoardConfig.LeaderBoards;
 
         public void DumpConfigAsJson()
         {
@@ -249,7 +249,7 @@ namespace DiscordConnector
             jsonString += $"\"Config.Messages\":{messagesConfig.ConfigAsJson()},";
             jsonString += $"\"Config.Toggles\":{togglesConfig.ConfigAsJson()},";
             jsonString += $"\"Config.Variables\":{variableConfig.ConfigAsJson()},";
-            jsonString += $"\"Config.Leaderboard\":{leaderboardConfig.ConfigAsJson()}";
+            jsonString += $"\"Config.LeaderBoard\":{leaderBoardConfig.ConfigAsJson()}";
 
             jsonString += "}";
 

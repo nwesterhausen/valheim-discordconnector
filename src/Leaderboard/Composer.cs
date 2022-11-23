@@ -8,20 +8,20 @@ namespace DiscordConnector.LeaderBoards
 {
     internal class Composer : Base
     {
-        private int leaderboardIdx;
-        public Composer(int leaderboard)
+        private int leaderBoardIdx;
+        public Composer(int leaderBoard)
         {
-            leaderboardIdx = leaderboard;
+            leaderBoardIdx = leaderBoard;
         }
         public override void SendLeaderBoard()
         {
-            if (leaderboardIdx > Plugin.StaticConfig.LeaderboardConfigs.Length || leaderboardIdx < 0)
+            if (leaderBoardIdx > Plugin.StaticConfig.LeaderBoardConfigs.Length || leaderBoardIdx < 0)
             {
-                Plugin.StaticLogger.LogWarning($"Tried to get leaderboard out of index bounds (index:{leaderboardIdx}, length:{Plugin.StaticConfig.LeaderboardConfigs.Length})");
+                Plugin.StaticLogger.LogWarning($"Tried to get leader board out of index bounds (index:{leaderBoardIdx}, length:{Plugin.StaticConfig.LeaderBoardConfigs.Length})");
                 return;
             }
 
-            LeaderboardConfigReference settings = Plugin.StaticConfig.LeaderboardConfigs[leaderboardIdx];
+            LeaderBoardConfigReference settings = Plugin.StaticConfig.LeaderBoardConfigs[leaderBoardIdx];
 
             if (!settings.Enabled)
             {
@@ -31,7 +31,7 @@ namespace DiscordConnector.LeaderBoards
             // Build standings
             var rankings = makeRankings(settings);
 
-            // Build leaderboard for discord
+            // Build leader board for discord
             List<Tuple<string, string>> leaderFields = new List<Tuple<string, string>>();
             if (rankings[Statistic.Death].Count > 0)
             {
@@ -50,7 +50,7 @@ namespace DiscordConnector.LeaderBoards
                 leaderFields.Add(Tuple.Create("Pings", LeaderBoard.RankedCountResultToString(rankings[Statistic.Ping])));
             }
 
-            string discordContent = MessageTransformer.FormatLeaderboardHeader(
+            string discordContent = MessageTransformer.FormatLeaderBoardHeader(
                 settings.DisplayedHeading, settings.NumberListings
             );
 
@@ -60,7 +60,7 @@ namespace DiscordConnector.LeaderBoards
             // DiscordApi.SendMessage($"```json\n{json}\n```");
         }
 
-        private Dictionary<Statistic, List<CountResult>> makeRankings(LeaderboardConfigReference settings)
+        private Dictionary<Statistic, List<CountResult>> makeRankings(LeaderBoardConfigReference settings)
         {
             if (settings.TimeRange == TimeRange.AllTime)
             {
@@ -71,7 +71,7 @@ namespace DiscordConnector.LeaderBoards
             return TimeBasedRankings(settings, BeginEndDate.Item1, BeginEndDate.Item2);
         }
 
-        private Dictionary<Statistic, List<CountResult>> AllRankings(LeaderboardConfigReference settings)
+        private Dictionary<Statistic, List<CountResult>> AllRankings(LeaderBoardConfigReference settings)
         {
             Dictionary<Statistic, List<CountResult>> Dict = new Dictionary<Statistic, List<CountResult>>();
             if (settings.Type == LeaderBoards.Ordering.Descending)
@@ -126,7 +126,7 @@ namespace DiscordConnector.LeaderBoards
         }
 
 
-        private Dictionary<Statistic, List<CountResult>> TimeBasedRankings(LeaderboardConfigReference settings, System.DateTime startDate, System.DateTime endDate)
+        private Dictionary<Statistic, List<CountResult>> TimeBasedRankings(LeaderBoardConfigReference settings, System.DateTime startDate, System.DateTime endDate)
         {
             Dictionary<Statistic, List<CountResult>> Dict = new Dictionary<Statistic, List<CountResult>>();
             if (settings.Type == LeaderBoards.Ordering.Descending)
