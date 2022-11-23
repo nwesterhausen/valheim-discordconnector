@@ -11,6 +11,7 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 - Set more than one message for each type and have one randomly chosen!
 - Record number of logins/deaths/pings and flavor the Discord messages
 - Works with non-dedicated server (games opened to lan from the client)
+- Configure custom leader boards to be sent periodically, listing rankings for any of the tracked stats
 
 ### Supported Message Notifications
 
@@ -28,64 +29,32 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 
 See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnector/projects/1) as a Github project.
 
-- Fancier Discord messages
-- Discord bot integration?
 - Multiple webhook support
-- More statistics able to be sent
+- More statistics trackable/able to be sent
+- New day messages
 
 ## Changelog
 
-### Version 2.0.5
-
-Features:
-
-- Adds a config option to format how position data is formatted
-- Adds a config option to format how the automatically-appended position data is formatted
-- Adds a new variable which can be used in any messages: `%WORLD_NAME%` turns into the name of the world.
-
-Changes:
-
-- `%POS%` now renders without the enclosing parentheses.
-
-### Version 2.0.4
-
-Features:
-
-- Adds a config option to enable sending non-player shouts to Discord. This is in the main config file and disabled by default.
-
-### Version 2.0.3
-
-Other Changes:
-
-- Set BepInEx dependency to exactly 5.4.19 instead of 5.* (this stops a warning from showing up)
-
-### Version 2.0.2
+### Version 2.1.0
 
 A full leaderboard overhaul is in the version. The previous settings for the statistic leaderboards are depreciated in favor of configuration defined statistic leaderboard settings. Look in the `discordconnector-leaderboards.cfg` file and configure any number of the 4 leaderboards to present the kind of data you want. In addition to multiple leaderboards, there are now time-based filters for the leaderboards; restrict them to today or this week or leave them set to all-time. By default, all leaderboards are disabled. If you were using a leaderboard before, you will have to set up a leaderboard to accomplish what you were sending before and enable it. Sorry for the inconvenience but this was the safest tradeoff.
 
 Also relating to statistic leaderboards, there is a new statistic available for the leaderboards, 'Time Online' which uses the saved 'join' and 'leave' records to estimate a player's time on the server and present that as a value. This obviously doesn't work if you had disabled one or the other pieces of tracking (either disabled recording 'join' or 'leave' stats in the toggles config file). This values are calculated when the leaderboard is created but that should be OK since it is in a non-blocking task call.
 
-- Detect if a shout is by a non-player and gracefully exit.
+The new Active Player's Announcement can be configured to announce server activity at a pre-defined interval. Configurable stats for it include players currently online, unique players online today, unique players online this week and unique players all time. It will use the same method set in the main config file (`discordconnector.cfg`) for how to determine individual players to count unique players for these time spans.
 
-### Version 2.0.1
+Additionally, the configuration files are nested in a subdirectory now. This is from a request on the plugin repository. When loading 2.1.0 (or future versions), the Discord Connector config files that are in the `BepInEx/config` directory will be automatically moved to the subdirectory and loaded from there. The subdirectory is `BepInEx/config/games.nwest.valheim.discordconnector`, and the config files themselves have shortened filenames. The records database is also moved to this subdirectory and renamed `records.db`.
 
-With this update, we bring back Steam_ID variable inclusion and leaderboard message sending (respecting your config settings). I recommend you replace your `discordconnector.valheim.nwest.games-records.db` database, since the records will not line up and will be essentially soft-reset because the column name changed with the different type of data. Steam IDs are prefaced with 'Steam_' now, so you could migrate your stat database with a bit of effort. I believe this could all be done with queries inside the LiteDB Query Tool.
+Features:
 
-Fixes:
+- Adds new tracked stat for time on server
+- Adds dynamically configured leaderboards
+- Adds an Active Players Announcement (disabled by default)
 
-- Periodic leaderboard messages sending will now respect your config value instead of never sending
-- The STEAMID variable works again. An alias is the PLAYERID variable, which does the same thing -- they both provide the full player id, so `Steam_<SteamID>` or `XBox_<XBoxID>`
+Changes:
 
-Breaking changes:
-
-- Player IDs are tracked in the stat database using a new column name, which resets any stat tracking because the player ID is used to resolve to a single player by combining with the character name.
-
-### Version 2.0.0
-
-Previous version broke with the new updates to Valheim using the PlayFab server stuff. Previously, the steam ID was grabbed directly from the socket but that doesn't work anymore. To get something workable (the other messages work), I have removed the code which tried to get the SteamID and disabled leaderboard sending.
-
-Breaking changes:
-
-- Removed steamid variable (internally) and tracking stats by steamid. This broke with the PlayFab changes to Valheim. It will be a bit involved to figure out how to deliver the same thing again, so if you have an idea or seen it done in another mod, please reach out with a Github Issue or ping on Discord.
-- Leaderboard records will reset and a new database with suffix '-records2.db' will be saved anew. This is because what is being tracked is changed (used to be steamid, now it is using the character id).
-- Periodic leaderboard messages will not send, ignoring the setting in the config (for now). This is until a more reliable method of determining players apart.
+- Configuration files are now nested in a subdirectory (first run will migrate them automatically)
+- Database file moved into the subdirectory (first run will migrate it automatically)
+- `config-debug.json` file is dumped to subdirectory after config load to be useful for debugging issues with the plugin (sensitive info is redacted, i.e. the webhook url)
+- Multiple-choice config options use Enums on the backend now instead of Strings (may affect `discordconnector.cfg`: How to discern players in Record Retrieval)
+- Building the plugin with the optimization flag present; in my tests, startup time of a Valheim server with just DiscordConnector installed was quicker

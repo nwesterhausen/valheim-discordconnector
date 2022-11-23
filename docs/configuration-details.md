@@ -23,8 +23,8 @@ Filename `discordconnector.cfg`
 | Webhook URL                                             | (none)  | The main Discord webhook URL to send notifications/messages to.                                                                                  |
 | Use fancier discord messages                            | false   | Set to true to enable using embeds in the Discord messages. If left false, all messages will remain plain strings (except for the leaderboard).  |
 | Allow positions to be sent                              | true    | Set to false to prevent any positions/coordinates from being sent. If this is true, it can be overridden per message in the toggles config file. |
-| Ignored players                                         | (none)  | List of player names to never send a discord message for (they also won't be tracked in stats). This list should be semicolon (`;`) separated.    |
-| Ignored players (Regex)                                 | (none)  | Regex which player names are matched against to determine to not send a discord message for (they also won't be tracked in stats)                 |
+| Ignored players                                         | (none)  | List of player names to never send a discord message for (they also won't be tracked in stats). This list should be semicolon (`;`) separated.   |
+| Ignored players (Regex)                                 | (none)  | Regex which player names are matched against to determine to not send a discord message for (they also won't be tracked in stats)                |
 | Collect stats                                           | true    | When this setting is enabled, DiscordConnector will record basic stats (leave, join, ping, shout, death) about players.                          |
 | Send leaderboard updates                                | false   | If you set this to true, that will enable DiscordConnector to send a leaderboard for stats to Discord on the set interval                        |
 | Leaderboard update interval                             | 600     | Time in minutes between each leaderboard update sent to Discord.                                                                                 |
@@ -63,10 +63,10 @@ You may assign strings to these variables to reference them in any messages.
 
 Some variables can be configured. Mainly the positional information.
 
-| Option | Default | Description |
-| -- | -- | -- |
-| POS Variable Formatting | `%X%, %Y%, %Z%` | Change how the %POS% variable is formatted.
-| Auto-Appended POS Format | `Coords: (%POS%)` | Change this to modify how Discord Connector automatically appends the POS data.
+| Option                   | Default           | Description                                                                     |
+| ------------------------ | ----------------- | ------------------------------------------------------------------------------- |
+| POS Variable Formatting  | `%X%, %Y%, %Z%`   | Change how the %POS% variable is formatted.                                     |
+| Auto-Appended POS Format | `Coords: (%POS%)` | Change this to modify how Discord Connector automatically appends the POS data. |
 
 !!! info
 
@@ -239,7 +239,7 @@ Each leader board lets you set these options:
 
 | Option                  | Default                    | Description                                                                                                |
 | ----------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Enabled                 | false                      | Enable or disable this leader board                                                                         |
+| Enabled                 | false                      | Enable or disable this leader board                                                                        |
 | Leader Board Time Range | All Time                   | Set the time restriction of this leader board to one of the [time range values](#leader-board-time-ranges) |
 | Number of Rankings      | 3                          | How many rankings to include in the leader board.                                                          |
 | Type                    | Most to Least (Descending) | Can be either "Most to Least (Descending)" or "Least to Most (Ascending)"                                  |
@@ -258,7 +258,7 @@ In the "Leader Board Heading," the following variables are available:
 | -------- | ------------------------------------------------- |
 | `%N`     | The value of "Number of Rankings" (by default: 3) |
 
-### Leader Board Time Ranges
+#### Leader Board Time Ranges
 
 | Option                           | Description                                             |
 | -------------------------------- | ------------------------------------------------------- |
@@ -268,3 +268,16 @@ In the "Leader Board Heading," the following variables are available:
 | Past 7 Days                      | Include only the past 7 days (inclusive of today)       |
 | Current Week, Sunday to Saturday | Include all records from this week (inclusive of today) |
 | Current Week, Monday to Sunday   | Include all records from this week (inclusive of today) |
+
+### Active Player Announcement Configuration
+
+These options are available:
+
+| Option                                   | Default | Description                                                                                                            |
+| ---------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Enabled                                  | false   | Enable or disable this leader board                                                                                    |
+| Sending Period                           | 600     | How many minutes to wait before sending the leader board. 600 minutes is the old default of 10 hours.                  |
+| Include Currently Online Players         | true    | Enable or disable currently online players as part of the active players announcement                                  |
+| Include Unique Players for Today         | true    | Enable or disable unique online players for today as part of the active players announcement                           |
+| Include Unique Players for the Past Week | true    | Enable or disable unique online players for the past week (including today) as part of the active players announcement |
+| Include Unique Players from All Time     | true    | Enable or disable unique online players from all time as part of the active players announcement                       |  |
