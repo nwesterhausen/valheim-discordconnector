@@ -34,11 +34,6 @@ namespace DiscordConnector.Records
         /// Sum of time between player join and leaves
         /// </summary>
         public const string TimeOnline = "time_online";
-        /// <summary>
-        /// Count of individual players who have played on the server 
-        /// (considered unique based on <see cref="MainConfig.RecordRetrievalDiscernmentMethod"/>)
-        /// </summary>
-        public const string UniquePlayers = "unique_players";
 
         /// <summary>
         /// Categories that are known how to be queried using the <see cref="Helper"/>
@@ -51,7 +46,6 @@ namespace DiscordConnector.Records
             Ping,
             Shout,
             TimeOnline,
-            UniquePlayers,
         };
     }
 
@@ -203,6 +197,40 @@ namespace DiscordConnector.Records
 
             // Return results limited ot the number desired
             return queryResults.GetRange(0, n);
+        }
+
+        /// <summary>
+        /// Query the database for a count of all values for the category <paramref name="key"/>, limited to <paramref name="timeRange" />
+        /// </summary>
+        /// <param name="key">Which category to get count from</param>
+        /// <param name="timeRange">Time range to restrict count to</param>
+        /// <returns>Number of records that fit category within the time range</returns>
+        internal static int CountUniquePlayers(string key, TimeRange timeRange)
+        {
+            Tuple<DateTime, DateTime> dates = DateHelper.StartEndDatesForTimeRange(timeRange);
+            return CountUniquePlayers(key, dates.Item1, dates.Item2);
+        }
+
+        /// <summary>
+        /// Query the database for a count of all values for the category <paramref name="key"/>, limited to <paramref name="timeRange" />
+        /// </summary>
+        /// <param name="key">Which category to get count from</param>
+        /// <param name="startDate">Earliest valid date for the stat records used to gather the results</param>
+        /// <param name="endDate">Latest valid date for the stat records used to gather the results</param>
+        /// <returns>Number of records that fit category within the time range</returns>
+        internal static int CountUniquePlayers(string key, System.DateTime startDate, System.DateTime endDate)
+        {
+            // Validate key
+            if (Array.IndexOf<string>(Records.Categories.All, key) == -1)
+            {
+                Plugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting total unique players.");
+                Plugin.StaticLogger.LogDebug("Zero returned because of invalid key.");
+                return 0;
+            }
+
+            List<CountResult> allCounted = Plugin.StaticDatabase.CountRecordsBetweenDatesGrouped(key, startDate, endDate);
+
+            return allCounted.Count;
         }
     }
 }
