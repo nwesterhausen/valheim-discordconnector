@@ -41,6 +41,7 @@ Features:
 
 - Adds a config option to format how position data is formatted
 - Adds a config option to format how the automatically-appended position data is formatted
+- Adds a new variable which can be used in any messages: `%WORLD_NAME%` turns into the name of the world.
 
 Changes:
 
