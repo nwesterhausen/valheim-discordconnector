@@ -207,6 +207,22 @@ namespace DiscordConnector.Records
         /// <returns>Number of records that fit category within the time range</returns>
         internal static int CountUniquePlayers(string key, TimeRange timeRange)
         {
+            // Validate key
+            if (Array.IndexOf<string>(Records.Categories.All, key) == -1)
+            {
+                Plugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting total unique players.");
+                Plugin.StaticLogger.LogDebug("Zero returned because of invalid key.");
+                return 0;
+            }
+
+            // Simplify the all time record gathering
+            if (timeRange == TimeRange.AllTime)
+            {
+                List<CountResult> results = Plugin.StaticDatabase.CountAllRecordsGrouped(key);
+                return results.Count;
+            }
+
+            // All others expand out the time to a range for querying
             Tuple<DateTime, DateTime> dates = DateHelper.StartEndDatesForTimeRange(timeRange);
             return CountUniquePlayers(key, dates.Item1, dates.Item2);
         }
