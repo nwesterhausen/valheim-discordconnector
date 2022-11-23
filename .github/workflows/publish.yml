@@ -1,0 +1,39 @@
+name: Publish Thunderstore
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Release
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Attach release artifacts
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "/home/runner/work/valheim-discordconnector/valheim-discordconnector/bin/DiscordConnector.zip"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup tcli
+        run: |
+          wget -O tcli.tar.gz https://github.com/thunderstore-io/thunderstore-cli/releases/download/0.1.4/tcli-0.1.4-linux-x64.tar.gz
+          tar xvf tcli.tar.gz
+          sudo mv -v tcli-0.1.4-linux-x64/tcli ./tcli
+          ./tcli help || true
+      - name: Publish package to Thunderstore
+        working-directory: Metadata
+        run: |
+          ../tcli publish --token ${{ secrets.THUNDERSTORE_TOKEN }} --file "../bin/DiscordConnector.zip"

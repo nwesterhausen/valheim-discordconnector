@@ -24,6 +24,30 @@ Changes:
 - `config-debug.json` file is dumped to subdirectory after config load to be useful for debugging issues with the plugin
 - Multiple-choice config options use Enums on the backend now instead of Strings (may reset your playerLookupPreference setting)
 
+### Version 2.0.5
+
+Features:
+
+- Adds a config option to format how position data is formatted
+- Adds a config option to format how the automatically-appended position data is formatted
+- Adds a new variable which can be used in any messages: `%WORLD_NAME%` turns into the name of the world.
+
+Changes:
+
+- `%POS%` now renders without the enclosing parentheses.
+
+### Version 2.0.4
+
+Features:
+
+- Adds a config option to enable sending non-player shouts to Discord. This is in the main config file and disabled by default.
+
+### Version 2.0.3
+
+Other Changes:
+
+- Set BepInEx dependency to exactly 5.4.19 instead of 5.* (this stops a warning from showing up)
+
 ### Version 2.0.2
 
 If a shout is performed by a player that isn't a real player (like a mod), it would break the shout call from working. This is because Discord Connector was trying to lookup the player's details and encountering null. The plugin now checks for that and returns early if null is found.
@@ -38,7 +62,7 @@ With this update, we bring back Steam_ID variable inclusion and leaderboard mess
 
 Fixes:
 
-- Periodic leaderboard messages sending will now respect your config value intead of never sending
+- Periodic leaderboard messages sending will now respect your config value instead of never sending
 - The STEAMID variable works again. An alias is the PLAYERID variable, which does the same thing -- they both provide the full player id, so `Steam_<SteamID>` or `XBox_<XBoxID>`
 
 Breaking changes:
@@ -53,7 +77,7 @@ Breaking changes:
 
 - Removed steamid variable (internally) and tracking stats by steamid. This broke with the PlayFab changes to Valheim. It will be a bit involved to figure out how to deliver the same thing again, so if you have an idea or seen it done in another mod, please reach out with a Github Issue or ping on Discord.
 - Leaderboard records will reset and a new database with suffix '-records2.db' will be saved anew. This is because what is being tracked is changed (used to be steamid, now it is using the character id).
-- Perodic leaderboard messages will not send, ignoring the setting in the config (for now). This is until a more reliable method of determining players apart.
+- Periodic leaderboard messages will not send, ignoring the setting in the config (for now). This is until a more reliable method of determining players apart.
 
 ### Version 1.8.0
 
@@ -168,7 +192,7 @@ not migrate the data.
 For the migration steps, it will be outputting log information (at INFO
 level) with how many records were migrated and which steps completed.
 
-- Ranked Lowest Player Leaderbaord
+- Ranked Lowest Player Leaderboard
 
 Added an inverse of the Top Player leaderboard.
 
@@ -238,7 +262,7 @@ Breaking Changes:
 
 Features:
 
-- Additional leaderboard options. The existing leaerboard option will now default to sending top 3 players for what is enabled.
+- Additional leaderboard options. The existing leaderboard option will now default to sending top 3 players for what is enabled.
   You can enable a highest and lowest leaderboard for each tracked stat now. All leaderboards get sent on the same interval.
 
 ### Version 1.2.2
@@ -336,7 +360,7 @@ This is fixed and you can have join messages disabled and death messages enabled
 Features:
 
 - %PLAYER_NAME% is replaced in messages with the player name, allowing you to change
-  where in the message the playe is mentioned (Thanks @Digitalroot)
+  where in the message the player is mentioned (Thanks @Digitalroot)
 - Configurable Ping and Shout messages
 
 Fixes:
@@ -426,7 +450,7 @@ when you log in, it adds a little context: "John joined the game for the 1st tim
 "Stuart arrives. Previous logins: 15". The context additions are not yet created but
 record-keeping is ready and makes sense to get it started as soon as possible.
 
-If you want to disable the record keeping in its entirity, set the Collect Player Stats
+If you want to disable the record keeping in its entirety, set the Collect Player Stats
 config value to false. This will prevent any records from being saved or written to disk.
 
 ### Version 0.5.0
@@ -480,7 +504,7 @@ are not broadcast and instead it is only network messages.
 ### Version 0.2.0
 
 - Use config values to set what messages get sent for what actions
-- More granualarity with Enable/Disable for existing messages
+- More granularity with Enable/Disable for existing messages
 
 ### Version 0.1.2
 

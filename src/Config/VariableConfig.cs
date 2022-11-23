@@ -1,4 +1,5 @@
-﻿using BepInEx.Configuration;
+﻿using System;
+using BepInEx.Configuration;
 
 namespace DiscordConnector.Config
 {
@@ -10,6 +11,7 @@ namespace DiscordConnector.Config
 
         // config header strings
         private const string VARIABLE_SETTINGS = "Variable Definition";
+        private const string DYNAMIC_VARIABLE_CONFIG = "Variables.DynamicConfig";
 
         // Variable Definition
         private ConfigEntry<string> userVar;
@@ -22,6 +24,8 @@ namespace DiscordConnector.Config
         private ConfigEntry<string> userVar7;
         private ConfigEntry<string> userVar8;
         private ConfigEntry<string> userVar9;
+        private ConfigEntry<string> posVarFormat;
+        private ConfigEntry<string> appendedPosFormat;
 
         public VariableConfig(ConfigFile configFile)
         {
@@ -79,12 +83,26 @@ namespace DiscordConnector.Config
                 "",
                 "This variable can be reference in any of the message content settings with %VAR10%");
 
+            posVarFormat = config.Bind<string>(DYNAMIC_VARIABLE_CONFIG,
+                "POS Variable Formatting",
+                "%X%, %Y%, %Z%",
+                "Modify this to change how the %POS% variable gets displayed." + Environment.NewLine +
+                "You can use %X%, %Y%, and %Z% in this value to customize how the %POS% gets sent.");
+            appendedPosFormat = config.Bind<string>(DYNAMIC_VARIABLE_CONFIG,
+                "Auto-Appended POS Format",
+                "Coords: (%POS%)",
+                "This defines how the automatic inclusion of the position data is included. This gets appended to the messages sent." + Environment.NewLine +
+                "If you prefer to embed the POS inside the message instead of embedding it, you can modify the messages in the message config " + Environment.NewLine +
+                "to include the %POS% variable. This POS message only gets appended on the message if no %POS% is in the message getting sent " + Environment.NewLine +
+                "but you have sent position data enabled for that message.");
+
             config.Save();
         }
 
         public string ConfigAsJson()
         {
             string jsonString = "{";
+            jsonString += "\"User-Defined\":{";
             jsonString += $"\"userVar\":\"{UserVariable}\",";
             jsonString += $"\"userVar1\":\"{UserVariable1}\",";
             jsonString += $"\"userVar2\":\"{UserVariable2}\",";
@@ -95,6 +113,11 @@ namespace DiscordConnector.Config
             jsonString += $"\"userVar7\":\"{UserVariable7}\",";
             jsonString += $"\"userVar8\":\"{UserVariable8}\",";
             jsonString += $"\"userVar9\":\"{UserVariable9}\"";
+            jsonString += "},";
+            jsonString += "\"Dynamic-Configured\":{";
+            jsonString += $"\"posVarFormat\":\"{PosVarFormat}\",";
+            jsonString += $"\"appendedPosFormat\":\"{AppendedPosFormat}\"";
+            jsonString += "}";
             jsonString += "}";
             return jsonString;
         }
@@ -109,5 +132,7 @@ namespace DiscordConnector.Config
         public string UserVariable7 => userVar7.Value;
         public string UserVariable8 => userVar8.Value;
         public string UserVariable9 => userVar9.Value;
+        public string PosVarFormat => posVarFormat.Value;
+        public string AppendedPosFormat => appendedPosFormat.Value;
     }
 }

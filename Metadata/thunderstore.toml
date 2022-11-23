@@ -1,0 +1,27 @@
+[config]
+schemaVersion = "0.0.1"
+
+[package]
+namespace = "nwesterhausen"
+name = "DiscordConnector"
+versionNumber = "2.0.5"
+description = "Connects your Valheim server to a Discord webhook. Works for both dedicated and client-hosted servers."
+websiteUrl = "https://discordconnector.valheim.nwest.games/"
+containsNsfwContent = false
+
+[package.dependencies]
+denikson-BepInExPack_Valheim = "5.4.1901"
+
+[build]
+icon = "./icon.png"
+readme = "./README.md"
+outdir = "./build"
+
+[[build.copy]]
+source = "./dist"
+target = ""
+
+[publish]
+repository = "https://thunderstore.io"
+communities = ["valheim"]
+categories = []

@@ -11,7 +11,7 @@ A plugin to connect your Valheim server to Discord.
 - Record number of logins/deaths/pings and flavor the Discord messages
 - Works with non-dedicated server (games opened to lan from the client)
 
-### Supported Message Notificaitons
+### Supported Message Notifications
 
 - Server startup (server starting, loading the world)
 - Server started (world loaded, ready to join)

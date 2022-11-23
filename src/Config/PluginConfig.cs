@@ -178,6 +178,7 @@ namespace DiscordConnector
         public MainConfig.RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => mainConfig.RecordRetrievalDiscernmentMethod;
         public List<string> MutedPlayers => mainConfig.MutedPlayers;
         public Regex MutedPlayersRegex => mainConfig.MutedPlayersRegex;
+        public bool AllowNonPlayerShoutLogging => mainConfig.AllowNonPlayerShoutLogging;
 
 
         // Messages.Server
@@ -224,6 +225,10 @@ namespace DiscordConnector
         public string UserVariable7 => variableConfig.UserVariable7;
         public string UserVariable8 => variableConfig.UserVariable8;
         public string UserVariable9 => variableConfig.UserVariable9;
+
+        // Configured Dynamic Variables
+        public string PosVarFormat => variableConfig.PosVarFormat;
+        public string AppendedPosFormat => variableConfig.AppendedPosFormat;
 
         // Debug Toggles
         public bool DebugEveryPlayerPosCheck => togglesConfig.DebugEveryPlayerPosCheck;

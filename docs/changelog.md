@@ -24,6 +24,30 @@ Changes:
 - `config-debug.json` file is dumped to subdirectory after config load to be useful for debugging issues with the plugin
 - Multiple-choice config options use Enums on the backend now instead of Strings (may reset your playerLookupPreference setting)
 
+### Version 2.0.5
+
+Features:
+
+- Adds a config option to format how position data is formatted
+- Adds a config option to format how the automatically-appended position data is formatted
+- Adds a new variable which can be used in any messages: `%WORLD_NAME%` turns into the name of the world.
+
+Changes:
+
+- `%POS%` now renders without the enclosing parentheses.
+
+### Version 2.0.4
+
+Features:
+
+- Adds a config option to enable sending non-player shouts to Discord. This is in the main config file and disabled by default.
+
+### Version 2.0.3
+
+Other Changes:
+
+- Set BepInEx dependency to exactly 5.4.19 instead of 5.* (this stops a warning from showing up)
+
 ### Version 2.0.2
 
 If a shout is performed by a player that isn't a real player (like a mod), it would break the shout call from working. This is because Discord Connector was trying to lookup the player's details and encountering null. The plugin now checks for that and returns early if null is found.

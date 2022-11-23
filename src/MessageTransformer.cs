@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace DiscordConnector
 {
@@ -25,9 +26,16 @@ namespace DiscordConnector
         private const string EVENT_MSG = "%EVENT_MSG%";
         private const string EVENT_PLAYERS = "%PLAYERS%";
         private const string N = "%N%";
+        private const string WORLD_NAME = "%WORLD_NAME%";
+        private const string WORLD_SEED_NAME = "%WORLD_SEED_NAME%";
+        private const string WORLD_SEED = "%WORLD_SEED%";
+
+        private static Regex OpenCaretRegex = new Regex(@"<[\w=]+>");
+        private static Regex CloseCaretRegex = new Regex(@"</[\w]+>");
+
         private static string ReplaceVariables(string rawMessage)
         {
-            return rawMessage
+            return ReplaceDynamicVariables(rawMessage)
                 .Replace(VAR, Plugin.StaticConfig.UserVariable)
                 .Replace(VAR_1, Plugin.StaticConfig.UserVariable1)
                 .Replace(VAR_2, Plugin.StaticConfig.UserVariable2)
@@ -40,6 +48,15 @@ namespace DiscordConnector
                 .Replace(VAR_9, Plugin.StaticConfig.UserVariable9)
                 .Replace(PUBLIC_IP, Plugin.PublicIpAddress);
         }
+        private static string ReplaceDynamicVariables(string rawMessage)
+        {
+            string world_name = "";
+            Plugin.StaticServerInfo.TryGetValue(Plugin.ServerInfo.WorldName, out world_name);
+
+            return rawMessage
+                .Replace(WORLD_NAME, world_name);
+        }
+
         public static string FormatServerMessage(string rawMessage)
         {
             return MessageTransformer.ReplaceVariables(rawMessage);
@@ -109,6 +126,51 @@ namespace DiscordConnector
         {
             return MessageTransformer.ReplaceVariables(rawMessage)
                 .Replace(N, n.ToString());
+        }
+
+        /// <summary>
+        /// Remove caret formatting from a string. This is used to strip special color codes away from user names.
+        /// 
+        /// For example, some mods can send messages as shouts in the game. They may try to color the name of the user:
+        ///     `<color=cyan>[Admin]</color> vadmin`
+        /// This function strips away any caret formatting, making the string "plain text"
+        ///     `[Admin] vadmin`
+        /// 
+        /// </summary>
+        /// <param name="str">String to strip caret formatting from</param>
+        /// <returns>Same string but without the caret formatting</returns>
+        public static string CleanCaretFormatting(string str)
+        {
+            // regex.Replace(input, sub, 1);
+            string result = OpenCaretRegex.Replace(str, @"", 1);
+            result = CloseCaretRegex.Replace(result, @"", 1);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Format a vector3 position into the formatted version used by discord connector
+        /// </summary>
+        /// <param name="vec3">Position vector to turn into string</param>
+        /// <returns>String following the formatting laid out in the variable config file.</returns>
+        public static string FormatVector3AsPos(Vector3 vec3)
+        {
+            return Plugin.StaticConfig.PosVarFormat
+                .Replace("%X%", vec3.x.ToString("F1"))
+                .Replace("%Y%", vec3.y.ToString("F1"))
+                .Replace("%Z%", vec3.z.ToString("F1"));
+        }
+
+        /// <summary>
+        /// Format the appended position data using the config values.
+        /// </summary>
+        /// <param name="vec3">Position vector to include</param>
+        /// <returns>String to append with the position information</returns>
+        public static string FormatAppendedPos(Vector3 vec3)
+        {
+            string posStr = FormatVector3AsPos(vec3);
+            return Plugin.StaticConfig.AppendedPosFormat
+                .Replace(POS, posStr);
         }
     }
 }

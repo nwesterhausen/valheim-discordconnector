@@ -33,6 +33,7 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> sendPositionsToggle;
         private ConfigEntry<bool> announcePlayerFirsts;
         private ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
+        private ConfigEntry<bool> allowNonPlayerShoutLogging;
 
         public MainConfig(ConfigFile configFile)
         {
@@ -114,6 +115,12 @@ namespace DiscordConnector.Config
                 RetrieveBySteamID + Environment.NewLine +
                 RetrieveByNameAndSteamID
             );
+
+            allowNonPlayerShoutLogging = config.Bind<bool>(MAIN_SETTINGS,
+                "Send Non-Player Shouts to Discord",
+                false,
+                "Enable this setting to have shouts which are performed by other mods/the server/non-players to be sent to Discord as well." + Environment.NewLine +
+                "Note: These are still subject to censure by the muted player regex and list.");
 
 
             config.Save();
