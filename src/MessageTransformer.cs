@@ -26,12 +26,16 @@ namespace DiscordConnector
         private const string EVENT_MSG = "%EVENT_MSG%";
         private const string EVENT_PLAYERS = "%PLAYERS%";
         private const string N = "%N%";
+        private const string WORLD_NAME = "%WORLD_NAME%";
+        private const string WORLD_SEED_NAME = "%WORLD_SEED_NAME%";
+        private const string WORLD_SEED = "%WORLD_SEED%";
 
         private static Regex OpenCaretRegex = new Regex(@"<[\w=]+>");
         private static Regex CloseCaretRegex = new Regex(@"</[\w]+>");
+
         private static string ReplaceVariables(string rawMessage)
         {
-            return rawMessage
+            return ReplaceDynamicVariables(rawMessage)
                 .Replace(VAR, Plugin.StaticConfig.UserVariable)
                 .Replace(VAR_1, Plugin.StaticConfig.UserVariable1)
                 .Replace(VAR_2, Plugin.StaticConfig.UserVariable2)
@@ -44,6 +48,15 @@ namespace DiscordConnector
                 .Replace(VAR_9, Plugin.StaticConfig.UserVariable9)
                 .Replace(PUBLIC_IP, Plugin.PublicIpAddress);
         }
+        private static string ReplaceDynamicVariables(string rawMessage)
+        {
+            string world_name = "";
+            Plugin.StaticServerInfo.TryGetValue(Plugin.ServerInfo.WorldName, out world_name);
+
+            return rawMessage
+                .Replace(WORLD_NAME, world_name);
+        }
+
         public static string FormatServerMessage(string rawMessage)
         {
             return MessageTransformer.ReplaceVariables(rawMessage);
