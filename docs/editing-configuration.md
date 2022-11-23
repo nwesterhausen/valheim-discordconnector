@@ -1,6 +1,8 @@
+# How to Edit the Configuration
+
 ## Editing the config using R2Modman
 
-With R2Modman open to the profile you are using for the server, 
+With R2Modman open to the profile you are using for the server,
 
 1. Go to Config Editor
 2. Click on the DiscordConnector config

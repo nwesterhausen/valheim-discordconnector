@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿using System.Collections.Generic;
+using BepInEx;
 using BepInEx.Logging;
 using DiscordConnector.Records;
 using HarmonyLib;
@@ -16,6 +17,20 @@ namespace DiscordConnector
         internal static Leaderboard StaticLeaderboards;
         internal static EventWatcher StaticEventWatcher;
         internal static ConfigWatcher StaticConfigWatcher;
+        internal enum ServerInfo
+        {
+            WorldName,
+            WorldSeed,
+            WorldSeedName
+        }
+        internal static Dictionary<ServerInfo, string> StaticServerInfo;
+        internal enum ServerSetup
+        {
+            IsServer,
+            IsOpenServer,
+            IsPublicServer,
+        }
+        internal static Dictionary<ServerSetup, bool> StaticServerSetup;
         internal static string PublicIpAddress;
         private Harmony _harmony;
 
@@ -25,6 +40,8 @@ namespace DiscordConnector
             StaticConfig = new PluginConfig(Config);
             StaticDatabase = new Records.Database(Paths.GameRootPath);
             StaticLeaderboards = new Leaderboard();
+            StaticServerInfo = new Dictionary<ServerInfo, string>();
+            StaticServerSetup = new Dictionary<ServerSetup, bool>();
 
             StaticConfigWatcher = new ConfigWatcher();
         }
