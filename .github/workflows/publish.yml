@@ -24,7 +24,7 @@ jobs:
       - name: Attach release artifacts
         uses: softprops/action-gh-release@v1
         with:
-          files: "../DiscordConnector.zip"
+          files: "/home/runner/work/valheim-discordconnector/valheim-discordconnector/bin/DiscordConnector.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup tcli
