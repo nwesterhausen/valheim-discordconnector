@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DiscordConnector.Leaderboards;
+using DiscordConnector.LeaderBoards;
 
 namespace DiscordConnector.Records
 {

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DiscordConnector.Leaderboards;
+using DiscordConnector.LeaderBoards;
 using LiteDB;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -575,7 +575,7 @@ namespace DiscordConnector.Records
             }
         }
 
-        public List<CountResult> CountAllRecordsGrouped(string key, Leaderboards.TimeRange timeRange)
+        public List<CountResult> CountAllRecordsGrouped(string key, LeaderBoards.TimeRange timeRange)
         {
             if (timeRange == TimeRange.AllTime)
             {

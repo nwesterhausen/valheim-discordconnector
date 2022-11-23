@@ -4,7 +4,7 @@ using DiscordConnector.Config;
 using DiscordConnector.Records;
 using Newtonsoft.Json;
 
-namespace DiscordConnector.Leaderboards
+namespace DiscordConnector.LeaderBoards
 {
     internal class Composer : Base
     {
@@ -13,7 +13,7 @@ namespace DiscordConnector.Leaderboards
         {
             leaderboardIdx = leaderboard;
         }
-        public override void SendLeaderboard()
+        public override void SendLeaderBoard()
         {
             if (leaderboardIdx > Plugin.StaticConfig.LeaderboardConfigs.Length || leaderboardIdx < 0)
             {
@@ -35,19 +35,19 @@ namespace DiscordConnector.Leaderboards
             List<Tuple<string, string>> leaderFields = new List<Tuple<string, string>>();
             if (rankings[Statistic.Death].Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Deaths", Leaderboard.RankedCountResultToString(rankings[Statistic.Death])));
+                leaderFields.Add(Tuple.Create("Deaths", LeaderBoard.RankedCountResultToString(rankings[Statistic.Death])));
             }
             if (rankings[Statistic.Session].Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Sessions", Leaderboard.RankedCountResultToString(rankings[Statistic.Session])));
+                leaderFields.Add(Tuple.Create("Sessions", LeaderBoard.RankedCountResultToString(rankings[Statistic.Session])));
             }
             if (rankings[Statistic.Shout].Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Shouts", Leaderboard.RankedCountResultToString(rankings[Statistic.Shout])));
+                leaderFields.Add(Tuple.Create("Shouts", LeaderBoard.RankedCountResultToString(rankings[Statistic.Shout])));
             }
             if (rankings[Statistic.Ping].Count > 0)
             {
-                leaderFields.Add(Tuple.Create("Pings", Leaderboard.RankedCountResultToString(rankings[Statistic.Ping])));
+                leaderFields.Add(Tuple.Create("Pings", LeaderBoard.RankedCountResultToString(rankings[Statistic.Ping])));
             }
 
             string discordContent = MessageTransformer.FormatLeaderboardHeader(
@@ -74,7 +74,7 @@ namespace DiscordConnector.Leaderboards
         private Dictionary<Statistic, List<CountResult>> AllRankings(LeaderboardConfigReference settings)
         {
             Dictionary<Statistic, List<CountResult>> Dict = new Dictionary<Statistic, List<CountResult>>();
-            if (settings.Type == Leaderboards.Ordering.Descending)
+            if (settings.Type == LeaderBoards.Ordering.Descending)
             {
                 if (settings.Deaths)
                 {
@@ -97,7 +97,7 @@ namespace DiscordConnector.Leaderboards
                     Dict.Add(Statistic.TimeOnline, Records.Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings));
                 }
             }
-            if (settings.Type == Leaderboards.Ordering.Ascending)
+            if (settings.Type == LeaderBoards.Ordering.Ascending)
             {
                 if (settings.Deaths)
                 {
@@ -129,7 +129,7 @@ namespace DiscordConnector.Leaderboards
         private Dictionary<Statistic, List<CountResult>> TimeBasedRankings(LeaderboardConfigReference settings, System.DateTime startDate, System.DateTime endDate)
         {
             Dictionary<Statistic, List<CountResult>> Dict = new Dictionary<Statistic, List<CountResult>>();
-            if (settings.Type == Leaderboards.Ordering.Descending)
+            if (settings.Type == LeaderBoards.Ordering.Descending)
             {
                 if (settings.Deaths)
                 {
@@ -152,7 +152,7 @@ namespace DiscordConnector.Leaderboards
                     Dict.Add(Statistic.TimeOnline, Records.Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings, startDate, endDate));
                 }
             }
-            if (settings.Type == Leaderboards.Ordering.Ascending)
+            if (settings.Type == LeaderBoards.Ordering.Ascending)
             {
                 if (settings.Deaths)
                 {

@@ -4,26 +4,26 @@ using System.Timers;
 
 namespace DiscordConnector
 {
-    internal class Leaderboard
+    internal class LeaderBoard
     {
-        private Leaderboards.Base leaderboard1;
-        private Leaderboards.Base leaderboard2;
-        private Leaderboards.Base leaderboard3;
-        private Leaderboards.Base leaderboard4;
-        public static readonly int MAX_LEADERBOARD_SIZE = 16;
+        private LeaderBoards.Base leaderBoard1;
+        private LeaderBoards.Base leaderBoard2;
+        private LeaderBoards.Base leaderBoard3;
+        private LeaderBoards.Base leaderBoard4;
+        public static readonly int MAX_LEADER_BOARD_SIZE = 16;
 
-        public Leaderboard()
+        public LeaderBoard()
         {
-            leaderboard1 = new Leaderboards.Composer(0);
-            leaderboard2 = new Leaderboards.Composer(1);
-            leaderboard3 = new Leaderboards.Composer(2);
-            leaderboard4 = new Leaderboards.Composer(3);
+            leaderBoard1 = new LeaderBoards.Composer(0);
+            leaderBoard2 = new LeaderBoards.Composer(1);
+            leaderBoard3 = new LeaderBoards.Composer(2);
+            leaderBoard4 = new LeaderBoards.Composer(3);
         }
 
-        public Leaderboards.Base Leaderboard1 => leaderboard1;
-        public Leaderboards.Base Leaderboard2 => leaderboard2;
-        public Leaderboards.Base Leaderboard3 => leaderboard3;
-        public Leaderboards.Base Leaderboard4 => leaderboard4;
+        public LeaderBoards.Base LeaderBoard1 => leaderBoard1;
+        public LeaderBoards.Base LeaderBoard2 => leaderBoard2;
+        public LeaderBoards.Base LeaderBoard3 => leaderBoard3;
+        public LeaderBoards.Base LeaderBoard4 => leaderBoard4;
 
         /// <summary>
         /// Takes a sorted list <paramref name="rankings"/> and returns a string listing each member on a line prepended with 1, 2, 3, etc.
@@ -42,25 +42,25 @@ namespace DiscordConnector
     }
 }
 
-namespace DiscordConnector.Leaderboards
+namespace DiscordConnector.LeaderBoards
 {
     internal abstract class Base
     {
         /// <summary>
-        /// An interface for sending the leaderboard as a timer event.
+        /// An interface for sending the leader board as a timer event.
         /// </summary>
-        public void SendLeaderboardOnTimer(object sender, ElapsedEventArgs elapsedEventArgs)
+        public void SendLeaderBoardOnTimer(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             System.Threading.Tasks.Task.Run(() =>
             {
-                this.SendLeaderboard();
+                this.SendLeaderBoard();
             });
         }
 
         /// <summary>
-        /// Send the leaderboard to the DiscordAPI
+        /// Send the leader board to the DiscordAPI
         /// </summary>
-        public abstract void SendLeaderboard();
+        public abstract void SendLeaderBoard();
     }
 
     public enum TimeRange
@@ -138,7 +138,7 @@ namespace DiscordConnector.Leaderboards
                     // If we are on sunday, fix to show "current" week still 
                     if (today3.DayOfWeek == System.DayOfWeek.Sunday)
                     {
-                        monday = today3.AddDays(-6); // Sunday - 6 = previuos monday
+                        monday = today3.AddDays(-6); // Sunday - 6 = previous monday
                         sunday = today3; // Sunday is today
                     }
 

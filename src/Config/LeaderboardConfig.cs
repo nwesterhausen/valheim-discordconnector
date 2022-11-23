@@ -5,8 +5,8 @@ namespace DiscordConnector.Config
 {
     public class LeaderboardConfigReference
     {
-        public Leaderboards.Ordering Type;
-        public Leaderboards.TimeRange TimeRange;
+        public LeaderBoards.Ordering Type;
+        public LeaderBoards.TimeRange TimeRange;
         public int NumberListings;
         public bool Enabled;
         public int PeriodInMinutes;
@@ -20,8 +20,8 @@ namespace DiscordConnector.Config
     internal class LeaderboardConfigValues
     {
         // Each leaderboard has these values to configure
-        public ConfigEntry<Leaderboards.Ordering> type;
-        public ConfigEntry<Leaderboards.TimeRange> timeRange;
+        public ConfigEntry<LeaderBoards.Ordering> type;
+        public ConfigEntry<LeaderBoards.TimeRange> timeRange;
         public ConfigEntry<int> numberListings;
         public ConfigEntry<bool> enabled;
         public ConfigEntry<int> periodInMinutes;
@@ -37,25 +37,25 @@ namespace DiscordConnector.Config
         public static readonly string EnableDescription = "Enable or disable this leaderboard.";
 
         public static readonly string TimeRangeTitle = "Leaderboard Time Range";
-        public static readonly Leaderboards.TimeRange TimeRangeDefault = Leaderboards.TimeRange.AllTime;
+        public static readonly LeaderBoards.TimeRange TimeRangeDefault = LeaderBoards.TimeRange.AllTime;
         public static readonly string TimeRangeDescription = "A more restrictive filter of time can be applied to the leaderboard. This restricts it to tally up statistics within the range specified.";
-        public static readonly string TimeRangeDescription1 = $"{Leaderboards.TimeRange.AllTime}: Apply no time restriction to the leaderboard, use all available records.";
-        public static readonly string TimeRangeDescription2 = $"{Leaderboards.TimeRange.Today}: Restrict leaderboard to recorded events from today.";
-        public static readonly string TimeRangeDescription3 = $"{Leaderboards.TimeRange.Yesterday}: Restrict leaderboard to recorded events from yesterday.";
-        public static readonly string TimeRangeDescription4 = $"{Leaderboards.TimeRange.PastWeek}: Restrict leaderboard to recorded events from the past week (including today).";
-        public static readonly string TimeRangeDescription5 = $"{Leaderboards.TimeRange.WeekSundayToSaturday}: Restrict leaderboard to recorded events from the current week, beginning on Sunday and ending Saturday.";
-        public static readonly string TimeRangeDescription6 = $"{Leaderboards.TimeRange.WeekMondayToSunday}: Restrict leaderboard to recorded events from the current week, beginning on Monday and ending Sunday.";
+        public static readonly string TimeRangeDescription1 = $"{LeaderBoards.TimeRange.AllTime}: Apply no time restriction to the leaderboard, use all available records.";
+        public static readonly string TimeRangeDescription2 = $"{LeaderBoards.TimeRange.Today}: Restrict leaderboard to recorded events from today.";
+        public static readonly string TimeRangeDescription3 = $"{LeaderBoards.TimeRange.Yesterday}: Restrict leaderboard to recorded events from yesterday.";
+        public static readonly string TimeRangeDescription4 = $"{LeaderBoards.TimeRange.PastWeek}: Restrict leaderboard to recorded events from the past week (including today).";
+        public static readonly string TimeRangeDescription5 = $"{LeaderBoards.TimeRange.WeekSundayToSaturday}: Restrict leaderboard to recorded events from the current week, beginning on Sunday and ending Saturday.";
+        public static readonly string TimeRangeDescription6 = $"{LeaderBoards.TimeRange.WeekMondayToSunday}: Restrict leaderboard to recorded events from the current week, beginning on Monday and ending Sunday.";
 
         public static readonly string NumberListingsTitle = "Number of Rankings";
         public static readonly int NumberListingsDefault = 3;
         public static readonly string NumberListingsDescription = "Specify a number of places in the leaderboard. Setting this can help prevent a very long leaderboard in the case of active servers.";
-        public static readonly string NumberListingsDescription1 = $"Setting to 0 (zero) results in limiting to the hard-coded maximum of {Leaderboard.MAX_LEADERBOARD_SIZE}.";
+        public static readonly string NumberListingsDescription1 = $"Setting to 0 (zero) results in limiting to the hard-coded maximum of {LeaderBoard.MAX_LEADER_BOARD_SIZE}.";
 
         public static readonly string TypeTitle = "Type";
-        public static readonly Leaderboards.Ordering TypeDefault = Leaderboards.Ordering.Descending;
+        public static readonly LeaderBoards.Ordering TypeDefault = LeaderBoards.Ordering.Descending;
         public static readonly string TypeDescription = "Choose what type of leaderboard this should be. There are 2 options:";
-        public static readonly string TypeDescription1 = $"{Leaderboards.Ordering.Descending}:\"Number of Rankings\" players (with at least 1 record) are listed in descending order";
-        public static readonly string TypeDescription2 = $"{Leaderboards.Ordering.Ascending}:  \"Number of Rankings\" players (with at least 1 record) are listed in ascending order";
+        public static readonly string TypeDescription1 = $"{LeaderBoards.Ordering.Descending}:\"Number of Rankings\" players (with at least 1 record) are listed in descending order";
+        public static readonly string TypeDescription2 = $"{LeaderBoards.Ordering.Ascending}:  \"Number of Rankings\" players (with at least 1 record) are listed in ascending order";
 
         public static readonly string PeriodTitle = "Sending Period";
         public static readonly int PeriodDefault = 600;
@@ -99,7 +99,7 @@ namespace DiscordConnector.Config
                 DisplayedHeadingDescription + System.Environment.NewLine +
                 DisplayedHeadingDescription1);
 
-            timeRange = config.Bind<Leaderboards.TimeRange>(header,
+            timeRange = config.Bind<LeaderBoards.TimeRange>(header,
                 TimeRangeTitle,
                 TimeRangeDefault,
                 TimeRangeDescription + System.Environment.NewLine +
@@ -118,7 +118,7 @@ namespace DiscordConnector.Config
                 PeriodDescription1
             );
 
-            type = config.Bind<Leaderboards.Ordering>(header,
+            type = config.Bind<LeaderBoards.Ordering>(header,
                 TypeTitle,
                 TypeDefault,
                 TypeDescription + System.Environment.NewLine +
@@ -132,7 +132,7 @@ namespace DiscordConnector.Config
                 new ConfigDescription(
                     NumberListingsDescription + System.Environment.NewLine +
                     NumberListingsDescription1,
-                new AcceptableValueRange<int>(0, Leaderboard.MAX_LEADERBOARD_SIZE * 3)
+                new AcceptableValueRange<int>(0, LeaderBoard.MAX_LEADER_BOARD_SIZE * 3)
             ));
 
             deaths = config.Bind<bool>(header,
@@ -226,7 +226,7 @@ namespace DiscordConnector.Config
                 Type = leaderboard1.type.Value,
                 TimeRange = leaderboard1.timeRange.Value,
                 DisplayedHeading = leaderboard1.displayedHeading.Value,
-                NumberListings = leaderboard1.numberListings.Value == 0 ? Leaderboard.MAX_LEADERBOARD_SIZE : leaderboard1.numberListings.Value,
+                NumberListings = leaderboard1.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderboard1.numberListings.Value,
                 Enabled = leaderboard1.enabled.Value,
                 PeriodInMinutes = leaderboard1.periodInMinutes.Value,
                 Deaths = leaderboard1.deaths.Value,
@@ -240,7 +240,7 @@ namespace DiscordConnector.Config
                 Type = leaderboard2.type.Value,
                 TimeRange = leaderboard2.timeRange.Value,
                 DisplayedHeading = leaderboard2.displayedHeading.Value,
-                NumberListings = leaderboard2.numberListings.Value == 0 ? Leaderboard.MAX_LEADERBOARD_SIZE : leaderboard2.numberListings.Value,
+                NumberListings = leaderboard2.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderboard2.numberListings.Value,
                 Enabled = leaderboard2.enabled.Value,
                 PeriodInMinutes = leaderboard2.periodInMinutes.Value,
                 Deaths = leaderboard2.deaths.Value,
@@ -254,7 +254,7 @@ namespace DiscordConnector.Config
                 Type = leaderboard3.type.Value,
                 TimeRange = leaderboard3.timeRange.Value,
                 DisplayedHeading = leaderboard3.displayedHeading.Value,
-                NumberListings = leaderboard3.numberListings.Value == 0 ? Leaderboard.MAX_LEADERBOARD_SIZE : leaderboard3.numberListings.Value,
+                NumberListings = leaderboard3.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderboard3.numberListings.Value,
                 Enabled = leaderboard3.enabled.Value,
                 PeriodInMinutes = leaderboard3.periodInMinutes.Value,
                 Deaths = leaderboard3.deaths.Value,
@@ -268,7 +268,7 @@ namespace DiscordConnector.Config
                 Type = leaderboard4.type.Value,
                 TimeRange = leaderboard4.timeRange.Value,
                 DisplayedHeading = leaderboard4.displayedHeading.Value,
-                NumberListings = leaderboard4.numberListings.Value == 0 ? Leaderboard.MAX_LEADERBOARD_SIZE : leaderboard4.numberListings.Value,
+                NumberListings = leaderboard4.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderboard4.numberListings.Value,
                 Enabled = leaderboard4.enabled.Value,
                 PeriodInMinutes = leaderboard4.periodInMinutes.Value,
                 Deaths = leaderboard4.deaths.Value,
@@ -282,7 +282,7 @@ namespace DiscordConnector.Config
                 Type = leaderboard5.type.Value,
                 TimeRange = leaderboard5.timeRange.Value,
                 DisplayedHeading = leaderboard5.displayedHeading.Value,
-                NumberListings = leaderboard5.numberListings.Value == 0 ? Leaderboard.MAX_LEADERBOARD_SIZE : leaderboard5.numberListings.Value,
+                NumberListings = leaderboard5.numberListings.Value == 0 ? LeaderBoard.MAX_LEADER_BOARD_SIZE : leaderboard5.numberListings.Value,
                 Enabled = leaderboard5.enabled.Value,
                 PeriodInMinutes = leaderboard5.periodInMinutes.Value,
                 Deaths = leaderboard5.deaths.Value,
