@@ -151,6 +151,7 @@ namespace DiscordConnector.Config
         public Regex MutedPlayersRegex => mutedPlayersRegex;
         public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
         public RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
+        public bool AllowNonPlayerShoutLogging => allowNonPlayerShoutLogging.Value;
 
     }
 }
