@@ -4,6 +4,13 @@ A full changelog for reference.
 
 ## History
 
+### Version 2.0.6
+
+Fixes:
+
+- Fixes plugin crash that could occur if the game was initiated more than once.
+- Removed extraneous discord message on server load
+
 ### Version 2.0.5
 
 Features:
