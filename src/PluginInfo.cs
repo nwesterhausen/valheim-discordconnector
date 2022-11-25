@@ -17,7 +17,7 @@ namespace DiscordConnector
     {
         public const string PLUGIN_ID = "games.nwest.valheim.discordconnector";
         public const string PLUGIN_NAME = "Valheim Discord Connector";
-        public const string PLUGIN_VERSION = "2.0.6";
+        public const string PLUGIN_VERSION = "2.0.7";
         public const string PLUGIN_REPO_SHORT = "github: nwesterhausen/valheim-discordconnector";
         public const string PLUGIN_AUTHOR = "Nicholas Westerhausen";
     }
