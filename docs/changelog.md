@@ -28,6 +28,13 @@ Changes:
 - Multiple-choice config options use Enums on the backend now instead of Strings (may affect `discordconnector.cfg`: How to discern players in Record Retrieval)
 - Building the plugin with the optimization flag present; in my tests, startup time of a Valheim server with just DiscordConnector installed was quicker
 
+### Version 2.0.6
+
+Fixes:
+
+- Fixes plugin crash that could occur if the game was initiated more than once.
+- Removed extraneous discord message on server load
+
 ### Version 2.0.5
 
 Features:
