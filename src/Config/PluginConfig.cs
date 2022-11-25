@@ -14,7 +14,7 @@ namespace DiscordConnector
         private VariableConfig variableConfig;
         private LeaderBoardConfig leaderBoardConfig;
         private Dictionary<string, Regex> filenameDictionaryRegex;
-        private string configPath;
+        public readonly string configPath;
 
         private static string[] configExtensions = new string[]{
             "messages",
@@ -23,6 +23,12 @@ namespace DiscordConnector
             "toggles"
         };
 
+        /// <summary>
+        /// In 2.1.0, moving to using a subdirectory for config files, since there are a handful of different files to manage and the feature was requested.
+        /// This method will make the new config sub-directory (if it doesn't exist) and then move the DiscordConnector config files into the new config
+        /// sub-directory. If the files already exist in the new sub-directory, then this will log a warning for each config that exists there, since they
+        /// should not exist there yet!
+        /// </summary>
         internal void migrateConfigIfNeeded()
         {
             if (!Directory.Exists(configPath))
@@ -36,7 +42,16 @@ namespace DiscordConnector
                 if (File.Exists(oldConfig))
                 {
                     string newConfig = Path.Combine(configPath, $"{PluginInfo.SHORT_PLUGIN_ID}-{extension}.cfg");
-                    File.Move(oldConfig, newConfig);
+                    if (File.Exists(newConfig))
+                    {
+                        // There already exists a config in the destination, which is weird because configs also exist in the old location
+                        Plugin.StaticLogger.LogWarning($"Expected to be moving {extension} config from pre-2.1.0 location to new config location, but already exists!");
+                    }
+                    else
+                    {
+                        // Migrate the file if it doesn't already exist there.
+                        File.Move(oldConfig, newConfig);
+                    }
                 }
             }
 
@@ -45,7 +60,16 @@ namespace DiscordConnector
             if (File.Exists(oldMainConfig))
             {
                 string newConfig = Path.Combine(configPath, $"{PluginInfo.SHORT_PLUGIN_ID}.cfg");
-                File.Move(oldMainConfig, newConfig);
+                if (File.Exists(newConfig))
+                {
+                    // There already exists a config in the destination, which is weird because configs also exist in the old location
+                    Plugin.StaticLogger.LogWarning($"Expected to be moving the main config from pre-2.1.0 location to new config location, but already exists!");
+                }
+                else
+                {
+                    // Migrate the file if it doesn't already exist there.
+                    File.Move(oldMainConfig, newConfig);
+                }
             }
         }
 

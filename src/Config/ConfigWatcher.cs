@@ -22,9 +22,9 @@ namespace DiscordConnector
             watcher.Changed += OnChanged;
             watcher.Error += OnError;
 
-            watcher.Path = BepInEx.Paths.ConfigPath;
+            watcher.Path = Plugin.StaticConfig.configPath;
 
-            watcher.Filter = "games.nwest.valheim.discordconnector*.cfg";
+            watcher.Filter = "discordconnector*.cfg";
             watcher.IncludeSubdirectories = true;
             watcher.EnableRaisingEvents = true;
 
