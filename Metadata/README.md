@@ -35,6 +35,12 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+### Version 2.0.7
+
+Changes:
+
+- Further guards against null-reference exceptions
+
 ### Version 2.0.6
 
 Fixes:

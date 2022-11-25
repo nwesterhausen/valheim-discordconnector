@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using HarmonyLib;
 
 namespace DiscordConnector.Patches
@@ -30,59 +31,21 @@ namespace DiscordConnector.Patches
         {
             private static void Postfix(ref bool server, ref bool openServer, ref bool publicServer, ref string serverName, ref string password, ref World world)
             {
-                if (Plugin.StaticServerSetup.ContainsKey(Plugin.ServerSetup.IsServer))
+                try
                 {
                     Plugin.StaticServerSetup[Plugin.ServerSetup.IsServer] = server == true;
-                }
-                else
-                {
-                    Plugin.StaticServerSetup.Add(Plugin.ServerSetup.IsServer, server == true);
-                }
-
-                if (Plugin.StaticServerSetup.ContainsKey(Plugin.ServerSetup.IsOpenServer))
-                {
                     Plugin.StaticServerSetup[Plugin.ServerSetup.IsOpenServer] = openServer == true;
-                }
-                else
-                {
-                    Plugin.StaticServerSetup.Add(Plugin.ServerSetup.IsOpenServer, openServer == true);
-                }
-
-                if (Plugin.StaticServerSetup.ContainsKey(Plugin.ServerSetup.IsPublicServer))
-                {
                     Plugin.StaticServerSetup[Plugin.ServerSetup.IsPublicServer] = publicServer == true;
-                }
-                else
-                {
-                    Plugin.StaticServerSetup.Add(Plugin.ServerSetup.IsPublicServer, publicServer == true);
-                }
-
-                if (Plugin.StaticServerInfo.ContainsKey(Plugin.ServerInfo.WorldName))
-                {
                     Plugin.StaticServerInfo[Plugin.ServerInfo.WorldName] = $"{world.m_name}";
-                }
-                else
-                {
-                    Plugin.StaticServerInfo.Add(Plugin.ServerInfo.WorldName, $"{world.m_name}");
-                }
-
-                if (Plugin.StaticServerInfo.ContainsKey(Plugin.ServerInfo.WorldSeed))
-                {
                     Plugin.StaticServerInfo[Plugin.ServerInfo.WorldSeed] = $"{world.m_seed}";
-                }
-                else
-                {
-                    Plugin.StaticServerInfo.Add(Plugin.ServerInfo.WorldSeed, $"{world.m_seed}");
-                }
-
-                if (Plugin.StaticServerInfo.ContainsKey(Plugin.ServerInfo.WorldSeedName))
-                {
                     Plugin.StaticServerInfo[Plugin.ServerInfo.WorldSeedName] = $"{world.m_seedName}";
                 }
-                else
+                catch (NullReferenceException e)
                 {
-                    Plugin.StaticServerInfo.Add(Plugin.ServerInfo.WorldSeedName, $"{world.m_seedName}");
+                    Plugin.StaticLogger.LogInfo($"Skipped loading world details due to {e.Message}");
+                    Plugin.StaticLogger.LogDebug(e);
                 }
+
             }
         }
 

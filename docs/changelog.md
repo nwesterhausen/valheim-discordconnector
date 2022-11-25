@@ -4,6 +4,12 @@ A full changelog
 
 ## History
 
+### Version 2.0.7
+
+Changes:
+
+- Further guards against null-reference exceptions
+
 ### Version 2.0.6
 
 Fixes:

@@ -44,6 +44,14 @@ namespace DiscordConnector
             StaticServerSetup = new Dictionary<ServerSetup, bool>();
 
             StaticConfigWatcher = new ConfigWatcher();
+
+            // Initialize the server details.
+            Plugin.StaticServerSetup.Add(Plugin.ServerSetup.IsServer, true);
+            Plugin.StaticServerSetup.Add(Plugin.ServerSetup.IsOpenServer, true);
+            Plugin.StaticServerSetup.Add(Plugin.ServerSetup.IsPublicServer, true);
+            Plugin.StaticServerInfo.Add(Plugin.ServerInfo.WorldName, "");
+            Plugin.StaticServerInfo.Add(Plugin.ServerInfo.WorldSeed, "");
+            Plugin.StaticServerInfo.Add(Plugin.ServerInfo.WorldSeedName, "");
         }
 
         private void Awake()
