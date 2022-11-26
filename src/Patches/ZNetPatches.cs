@@ -26,29 +26,6 @@ namespace DiscordConnector.Patches
             }
         }
 
-        [HarmonyPatch(typeof(ZNet), nameof(ZNet.SetServer))]
-        internal class SetServer
-        {
-            private static void Postfix(ref bool server, ref bool openServer, ref bool publicServer, ref string serverName, ref string password, ref World world)
-            {
-                try
-                {
-                    Plugin.StaticServerSetup[Plugin.ServerSetup.IsServer] = server == true;
-                    Plugin.StaticServerSetup[Plugin.ServerSetup.IsOpenServer] = openServer == true;
-                    Plugin.StaticServerSetup[Plugin.ServerSetup.IsPublicServer] = publicServer == true;
-                    Plugin.StaticServerInfo[Plugin.ServerInfo.WorldName] = $"{world.m_name}";
-                    Plugin.StaticServerInfo[Plugin.ServerInfo.WorldSeed] = $"{world.m_seed}";
-                    Plugin.StaticServerInfo[Plugin.ServerInfo.WorldSeedName] = $"{world.m_seedName}";
-                }
-                catch (NullReferenceException e)
-                {
-                    Plugin.StaticLogger.LogInfo($"Skipped loading world details due to {e.Message}");
-                    Plugin.StaticLogger.LogDebug(e);
-                }
-
-            }
-        }
-
         [HarmonyPatch(typeof(ZNet), nameof(ZNet.SaveWorld))]
         internal class SaveWorld
         {

@@ -27,8 +27,6 @@ namespace DiscordConnector
         private const string EVENT_PLAYERS = "%PLAYERS%";
         private const string N = "%N%";
         private const string WORLD_NAME = "%WORLD_NAME%";
-        private const string WORLD_SEED_NAME = "%WORLD_SEED_NAME%";
-        private const string WORLD_SEED = "%WORLD_SEED%";
 
         private static Regex OpenCaretRegex = new Regex(@"<[\w=]+>");
         private static Regex CloseCaretRegex = new Regex(@"</[\w]+>");
@@ -51,8 +49,15 @@ namespace DiscordConnector
         private static string ReplaceDynamicVariables(string rawMessage)
         {
             string world_name = "";
-            Plugin.StaticServerInfo.TryGetValue(Plugin.ServerInfo.WorldName, out world_name);
-
+            try
+            {
+                world_name = ZNet.instance.GetWorldName();
+            }
+            catch (System.Exception e)
+            {
+                Plugin.StaticLogger.LogDebug($"Unable to get World Name from ZNet. {e.Message}");
+                Plugin.StaticLogger.LogDebug(e);
+            }
             return rawMessage
                 .Replace(WORLD_NAME, world_name);
         }

@@ -4,6 +4,12 @@ A full changelog for reference.
 
 ## History
 
+### Version 2.0.8
+
+Changes:
+
+- `%WORLD_NAME%` will now only replace with world name once server has started up to avoid an issue with Key Manager
+
 ### Version 2.0.7
 
 Changes:
