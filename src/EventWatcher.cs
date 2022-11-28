@@ -173,7 +173,7 @@ namespace DiscordConnector
                     }
                 }
 
-                if (Status.Pos != Vector3.zeroVector)
+                if (Status.Pos != Vector3.zero)
                 {
                     PreviousEventStartMessage = Status.StartMessage;
                     PreviousEventEndMessage = Status.EndMessage;

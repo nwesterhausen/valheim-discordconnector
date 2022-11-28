@@ -12,16 +12,42 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BepInEx.Analyzers" Version="1.0.4" PrivateAssets="all" />
-    <PackageReference Include="BepInEx.Core" Version="5.4.19" />
     <PackageReference Include="LiteDB" Version="5.*" />
     <PackageReference Include="Newtonsoft.Json" Version="13.*" />
-    <PackageReference Include="UnityEngine.Modules" Version="2019.4.24" IncludeAssets="compile" />
-    <PackageReference Include="Valheim.GameLibs" Version="*-*" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Set the path to the game folder. This is used when including references below -->
+    <GamePath Condition="$(GamePath) == ''">G:\SteamLibrary\steamapps\common\Valheim</GamePath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- These dependencies already thinned out to only what's needed for DiscordConnector (not sure if it matters) -->
+    <!-- Harmony and BepInEx dependency -->
+    <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>$(GamePath)\BepInEx\core\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx, Version=5.4.19.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>$(GamePath)\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
+    <!-- Valheim Assembly Dependencies -->
+    <Reference Include="assembly_guiutils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>$(GamePath)\valheim_Data\Managed\publicized_assemblies\assembly_guiutils_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_valheim, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>$(GamePath)\valheim_Data\Managed\publicized_assemblies\assembly_valheim_publicized.dll</HintPath>
+    </Reference>
+    <!-- Unity Engine Dependencies -->
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>$(GamePath)\unstripped_corlib\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>$(GamePath)\unstripped_corlib\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <Target Name="CreatePluginDir" AfterTargets="PrepareForBuild">
