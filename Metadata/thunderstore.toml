@@ -15,11 +15,11 @@ denikson-BepInExPack_Valheim = "5.4.1901"
 [build]
 icon = "./icon.png"
 readme = "./README.md"
-outdir = "./build"
+outdir = "./release"
 
 [[build.copy]]
-source = "./dist"
-target = ""
+source = "../bin/DiscordConnector"
+target = "./"
 
 [publish]
 repository = "https://thunderstore.io"
