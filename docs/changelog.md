@@ -28,6 +28,18 @@ Changes:
 - Multiple-choice config options use Enums on the backend now instead of Strings (may affect `discordconnector.cfg`: How to discern players in Record Retrieval)
 - Building the plugin with the optimization flag present; in my tests, startup time of a Valheim server with just DiscordConnector installed was quicker
 
+### Version 2.0.8
+
+Changes:
+
+- `%WORLD_NAME%` will now only replace with world name once server has started up to avoid an issue with Key Manager
+
+### Version 2.0.7
+
+Changes:
+
+- Further guards against null-reference exceptions
+
 ### Version 2.0.6
 
 Fixes:
