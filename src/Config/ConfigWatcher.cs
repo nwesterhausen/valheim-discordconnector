@@ -14,6 +14,7 @@ namespace DiscordConnector
         /// exactly how the files are named.
         /// </summary>
         private static Regex watchedConfigFilesRegex = new Regex(@"discordconnector?[\w\-]*\.cfg$");
+        private static Regex configExtensionMatcherRegex = new Regex(@"discordconnector-(\w+)\.cfg$");
         /// <summary>
         /// Date when the last change to any config file was detected.
         /// </summary>
@@ -66,15 +67,31 @@ namespace DiscordConnector
                 var myConfigFiles = Directory.EnumerateFiles(Plugin.StaticConfig.configPath).Where(file => watchedConfigFilesRegex.IsMatch(file));
                 foreach (String filename in myConfigFiles)
                 {
-                    // Print filename into a string
-                    String fullPath = $"{filename}";
+                    string extension = ConfigExtensionFromFilename(filename);
                     // Put the filename str and the hash of the file into the dictionary
-                    _fileHashDictionary.Add(fullPath, DiscordConnector.Hashing.GetMD5Checksum(filename));
+                    _fileHashDictionary.Add(extension, DiscordConnector.Hashing.GetMD5Checksum(filename));
                 }
 
                 Plugin.StaticLogger.LogDebug($"Initialization of file hash dictionary completed.");
                 Plugin.StaticLogger.LogDebug(string.Join(Environment.NewLine, _fileHashDictionary));
             });
+        }
+
+        /// <summary>
+        /// Get the config file extension from the config file path
+        /// </summary>
+        /// <param name="filename">Filename or full file path to extract config file extension from</param>
+        /// <returns>The extension slug for the config file</returns>
+        private static string ConfigExtensionFromFilename(string filename)
+        {
+            // Determine config extension
+            string extension = "main";
+            var extensionMatch = configExtensionMatcherRegex.Match(filename);
+            if (extensionMatch.Success && extensionMatch.Groups.Count > 1)
+            {
+                extension = extensionMatch.Groups[1].Value;
+            }
+            return extension;
         }
 
         /// <summary>
@@ -91,22 +108,24 @@ namespace DiscordConnector
                 return;
             }
 
-            Plugin.StaticLogger.LogInfo($"Changed: {e.FullPath}");
+            String configExtension = ConfigExtensionFromFilename(e.FullPath);
+
+            Plugin.StaticLogger.LogDebug($"Detected change of {configExtension} config file");
 
             // Hash the changed file
             String fileHash = DiscordConnector.Hashing.GetMD5Checksum(e.FullPath);
 
             // Create an entry if we haven't yet
-            if (!_fileHashDictionary.ContainsKey(e.FullPath))
+            if (!_fileHashDictionary.ContainsKey(configExtension))
             {
                 Plugin.StaticLogger.LogWarning("Unexpectedly encountered unhashed config file!");
-                Plugin.StaticLogger.LogInfo($"Added {e.FullPath} to config hash dictionary.");
-                _fileHashDictionary.Add(e.FullPath, fileHash);
+                Plugin.StaticLogger.LogDebug($"Added {configExtension} config to config hash dictionary.");
+                _fileHashDictionary.Add(configExtension, fileHash);
                 return;
             }
 
             // Check if current hash differs from stored hash.
-            if (String.Equals(_fileHashDictionary[e.FullPath], fileHash))
+            if (String.Equals(_fileHashDictionary[configExtension], fileHash))
             {
                 Plugin.StaticLogger.LogDebug("Changes to file were determined to be inconsequential.");
                 return;
@@ -120,7 +139,7 @@ namespace DiscordConnector
             }
 
             // Tell the plugin to reload the config file
-            Plugin.StaticConfig.ReloadConfig(e.FullPath);
+            Plugin.StaticConfig.ReloadConfig(configExtension);
             lastChangeDetected = DateTime.Now; // Update last changed date
         }
 

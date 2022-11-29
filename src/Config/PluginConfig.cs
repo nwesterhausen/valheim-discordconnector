@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using BepInEx.Configuration;
@@ -13,14 +14,17 @@ namespace DiscordConnector
         private TogglesConfig togglesConfig;
         private VariableConfig variableConfig;
         private LeaderBoardConfig leaderBoardConfig;
-        private Dictionary<string, Regex> filenameDictionaryRegex;
         public readonly string configPath;
 
-        private static string[] configExtensions = new string[]{
+        /// <summary>
+        /// Valid extensions for the config files, plus a reference for main.
+        /// </summary>
+        internal static string[] ConfigExtensions = new string[]{
             "messages",
             "variables",
             "leaderBoard",
-            "toggles"
+            "toggles",
+            "main"
         };
 
         /// <summary>
@@ -36,12 +40,20 @@ namespace DiscordConnector
                 Directory.CreateDirectory(configPath);
             }
 
-            foreach (string extension in configExtensions)
+            foreach (string extension in ConfigExtensions)
             {
                 string oldConfig = Path.Combine(BepInEx.Paths.ConfigPath, $"{PluginInfo.PLUGIN_ID}-{extension}.cfg");
+                string newConfig = Path.Combine(configPath, $"{PluginInfo.SHORT_PLUGIN_ID}-{extension}.cfg");
+                // Main config has special handling (no -main extension on it)
+                if (extension.Equals("main"))
+                {
+                    // Main config uses no extensions
+                    oldConfig = Path.Combine(BepInEx.Paths.ConfigPath, $"{PluginInfo.PLUGIN_ID}.cfg");
+                    newConfig = Path.Combine(configPath, $"{PluginInfo.SHORT_PLUGIN_ID}.cfg");
+                }
+
                 if (File.Exists(oldConfig))
                 {
-                    string newConfig = Path.Combine(configPath, $"{PluginInfo.SHORT_PLUGIN_ID}-{extension}.cfg");
                     if (File.Exists(newConfig))
                     {
                         // There already exists a config in the destination, which is weird because configs also exist in the old location
@@ -52,23 +64,6 @@ namespace DiscordConnector
                         // Migrate the file if it doesn't already exist there.
                         File.Move(oldConfig, newConfig);
                     }
-                }
-            }
-
-            // Check the base config file separately
-            string oldMainConfig = Path.Combine(BepInEx.Paths.ConfigPath, $"{PluginInfo.PLUGIN_ID}.cfg");
-            if (File.Exists(oldMainConfig))
-            {
-                string newConfig = Path.Combine(configPath, $"{PluginInfo.SHORT_PLUGIN_ID}.cfg");
-                if (File.Exists(newConfig))
-                {
-                    // There already exists a config in the destination, which is weird because configs also exist in the old location
-                    Plugin.StaticLogger.LogWarning($"Expected to be moving the main config from pre-2.1.0 location to new config location, but already exists!");
-                }
-                else
-                {
-                    // Migrate the file if it doesn't already exist there.
-                    File.Move(oldMainConfig, newConfig);
                 }
             }
         }
@@ -109,13 +104,6 @@ namespace DiscordConnector
             Plugin.StaticLogger.LogDebug("Configuration Loaded");
             Plugin.StaticLogger.LogDebug($"Muted Players Regex pattern ('a^' is default for no matches): {mainConfig.MutedPlayersRegex.ToString()}");
             DumpConfigAsJson();
-
-            filenameDictionaryRegex = new Dictionary<string, Regex>();
-            filenameDictionaryRegex.Add("main", new Regex(@"games.nwest.valheim.discordconnector\.cfg$"));
-            filenameDictionaryRegex.Add("messages", new Regex(@"games.nwest.valheim.discordconnector-message\.cfg$"));
-            filenameDictionaryRegex.Add("toggles", new Regex(@"games.nwest.valheim.discordconnector-toggles\.cfg$"));
-            filenameDictionaryRegex.Add("variables", new Regex(@"games.nwest.valheim.discordconnector-variables\.cfg$"));
-            filenameDictionaryRegex.Add("leaderBoard", new Regex(@"games.nwest.valheim.discordconnector-leaderBoard\.cfg$"));
         }
 
         public void ReloadConfig()
@@ -127,31 +115,31 @@ namespace DiscordConnector
             leaderBoardConfig.ReloadConfig();
         }
 
-        public void ReloadConfig(string configPath)
+        /// <summary>
+        /// Reload a config by specifying the configKey (one of )
+        /// </summary>
+        /// <param name="configExt">Config extension to reload</param>
+        public void ReloadConfig(string configExt)
         {
-            if (filenameDictionaryRegex["main"].IsMatch(configPath))
+            switch (configExt)
             {
-                mainConfig.ReloadConfig();
-            }
-
-            if (filenameDictionaryRegex["messages"].IsMatch(configPath))
-            {
-                messagesConfig.ReloadConfig();
-            }
-
-            if (filenameDictionaryRegex["toggles"].IsMatch(configPath))
-            {
-                togglesConfig.ReloadConfig();
-            }
-
-            if (filenameDictionaryRegex["variables"].IsMatch(configPath))
-            {
-                variableConfig.ReloadConfig();
-            }
-
-            if (filenameDictionaryRegex["leaderBoard"].IsMatch(configPath))
-            {
-                leaderBoardConfig.ReloadConfig();
+                case "main":
+                    mainConfig.ReloadConfig();
+                    return;
+                case "messages":
+                    messagesConfig.ReloadConfig();
+                    return;
+                case "toggles":
+                    togglesConfig.ReloadConfig();
+                    return;
+                case "variables":
+                    variableConfig.ReloadConfig();
+                    return;
+                case "leaderBoard":
+                    leaderBoardConfig.ReloadConfig();
+                    return;
+                default:
+                    return;
             }
         }
 
