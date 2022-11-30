@@ -14,5 +14,6 @@
     "thedefside",
     "Valheim",
     "Xithyr"
-  ]
+  ],
+  "conventionalCommits.scopes": ["metadata"]
 }
