@@ -47,7 +47,7 @@ Additionally, the configuration files are nested in a subdirectory now. This is 
 
 Features:
 
-- Adds new tracked stat for time on server (only works if you have enabled join and leave stats)
+- Adds new tracked stat for time on server (only works if you have enabled join and leave stats) *The duration provided will probably be inaccurate*
 - Adds dynamically configured leaderboards (disabled by default)
 - Adds an Active Players Announcement (disabled by default)
 
