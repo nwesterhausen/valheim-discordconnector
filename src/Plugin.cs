@@ -1,5 +1,4 @@
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using System;
 using BepInEx;
 using BepInEx.Logging;
 using DiscordConnector.Records;
@@ -18,7 +17,24 @@ namespace DiscordConnector
         internal static LeaderBoard StaticLeaderBoards;
         internal static EventWatcher StaticEventWatcher;
         internal static ConfigWatcher StaticConfigWatcher;
-        internal static string PublicIpAddress;
+        internal static string PublicIpAddress
+        {
+            /// <summary>
+            /// Return the public IP address if we already know it. If we don't know it, find out.
+            /// We avoid always getting the IP address to only get it when needed.
+            /// </summary>
+            /// <value>The public IP address of the server</value>
+            get
+            {
+                if (!String.IsNullOrEmpty(_publicIpAddress))
+                {
+                    return _publicIpAddress;
+                }
+                _publicIpAddress = IpifyAPI.PublicIpAddress();
+                return _publicIpAddress;
+            }
+        }
+        private static string _publicIpAddress;
         private Harmony _harmony;
 
         public Plugin()
@@ -29,6 +45,8 @@ namespace DiscordConnector
             StaticLeaderBoards = new LeaderBoard();
 
             StaticConfigWatcher = new ConfigWatcher();
+
+            _publicIpAddress = "";
         }
 
         private void Awake()
@@ -107,12 +125,6 @@ namespace DiscordConnector
                 playerActivityTimer.Interval = 60 * 1000 * StaticConfig.ActivePlayersAnnouncement.PeriodInMinutes;
                 playerActivityTimer.Start();
             }
-
-
-            Task.Run(() =>
-            {
-                PublicIpAddress = IpifyAPI.PublicIpAddress();
-            }).ConfigureAwait(false);
 
             _harmony = Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, PluginInfo.PLUGIN_ID);
         }
