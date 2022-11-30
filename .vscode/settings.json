@@ -3,6 +3,7 @@
     "aequasi",
     "Bepin",
     "Bson",
+    "denikson",
     "Digitalroot",
     "discordconnector",
     "ipify",
@@ -13,8 +14,10 @@
     "PUBLICIP",
     "r2modman",
     "Roadmap",
+    "softprops",
     "Spidey",
     "STEAMID",
+    "tcli",
     "thedefside",
     "Thunderstore",
     "valheim",
@@ -24,5 +27,5 @@
     "ZDOID",
     "ZDOS"
   ],
-  "conventionalCommits.scopes": ["metadata"]
+  "conventionalCommits.scopes": ["metadata", "gh-actions", "release"]
 }

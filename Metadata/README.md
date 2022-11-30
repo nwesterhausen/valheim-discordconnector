@@ -47,8 +47,8 @@ Additionally, the configuration files are nested in a subdirectory now. This is 
 
 Features:
 
-- Adds new tracked stat for time on server
-- Adds dynamically configured leaderboards
+- Adds new tracked stat for time on server (only works if you have enabled join and leave stats)
+- Adds dynamically configured leaderboards (disabled by default)
 - Adds an Active Players Announcement (disabled by default)
 
 Changes:
@@ -58,3 +58,4 @@ Changes:
 - `config-debug.json` file is dumped to subdirectory after config load to be useful for debugging issues with the plugin (sensitive info is redacted, i.e. the webhook url)
 - Multiple-choice config options use Enums on the backend now instead of Strings (may affect `discordconnector.cfg`: How to discern players in Record Retrieval)
 - Building the plugin with the optimization flag present; in my tests, startup time of a Valheim server with just DiscordConnector installed was quicker
+- Public IP is only queried if it is used (by including the %PUBLICIP% variable in a message)
