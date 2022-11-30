@@ -23,5 +23,6 @@
     "Xithyr",
     "ZDOID",
     "ZDOS"
-  ]
+  ],
+  "conventionalCommits.scopes": ["metadata"]
 }
