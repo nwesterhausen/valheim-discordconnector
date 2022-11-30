@@ -5,15 +5,23 @@ using BepInEx.Configuration;
 
 namespace DiscordConnector.Config
 {
-    public static class RetrievalDiscernmentMethods
-    {
-        public static readonly string BySteamID = "Treat each SteamID as a separate player";
-        public static readonly string ByNameAndSteamID = "Treat each SteamID:PlayerName combo as a separate player";
-        public static readonly string ByName = "Treat each PlayerName as a separate player";
-
-    }
     internal class MainConfig
     {
+        /// <summary>
+        /// Allowed methods for differentiating between players on the server
+        /// </summary>
+        public enum RetrievalDiscernmentMethods
+        {
+            [System.ComponentModel.Description(RetrieveBySteamID)]
+            PlayerId,
+            [System.ComponentModel.Description(RetrieveByNameAndSteamID)]
+            Name,
+            [System.ComponentModel.Description(RetrieveByName)]
+            NameAndPlayerId,
+        }
+        public const string RetrieveBySteamID = "PlayerId: Treat each PlayerId as a separate player";
+        public const string RetrieveByNameAndSteamID = "NameAndPlayerId: Treat each [PlayerId:CharacterName] combo as a separate player";
+        public const string RetrieveByName = "Name: Treat each CharacterName as a separate player";
         private ConfigFile config;
         private static List<String> mutedPlayers;
         private static Regex mutedPlayersRegex;
@@ -24,13 +32,10 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> discordEmbedMessagesToggle;
         private ConfigEntry<string> mutedDiscordUserList;
         private ConfigEntry<string> mutedDiscordUserListRegex;
-        private ConfigEntry<bool> statsAnnouncementToggle;
-        private ConfigEntry<int> statsAnnouncementPeriod;
         private ConfigEntry<bool> collectStatsToggle;
         private ConfigEntry<bool> sendPositionsToggle;
         private ConfigEntry<bool> announcePlayerFirsts;
-        private ConfigEntry<int> numberRankingsListed;
-        private ConfigEntry<string> playerLookupPreference;
+        private ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
         private ConfigEntry<bool> allowNonPlayerShoutLogging;
 
         public MainConfig(ConfigFile configFile)
@@ -100,37 +105,19 @@ namespace DiscordConnector.Config
                 true,
                 "Disable this setting to disable all stat collection. (Overwrites any individual setting.)");
 
-            statsAnnouncementToggle = config.Bind<bool>(MAIN_SETTINGS,
-                "Periodic Player Stats Notifications",
-                false,
-                "Disable this setting to disable all stat announcements (i.e. leader board messages). (Overwrites any individual setting.)" + Environment.NewLine +
-                "EX: Top Player Deaths: etc etc Top Player Joins: etc etc");
-
-            statsAnnouncementPeriod = config.Bind<int>(MAIN_SETTINGS,
-                "Player Stats Notifications Period",
-                600,
-                "Set the number of minutes between a leader board announcement sent to discord." + Environment.NewLine +
-                "This time starts when the server is started. Default is set to 10 hours (600 minutes).");
-
             announcePlayerFirsts = config.Bind<bool>(MAIN_SETTINGS,
                 "Announce Player Firsts",
                 true,
                 "Disable this setting to disable all extra announcements the first time each player does something. (Overwrites any individual setting.)");
 
-            numberRankingsListed = config.Bind<int>(MAIN_SETTINGS,
-                "How many places to list in the top ranking leaderboards",
-                3,
-                "Set how many places (1st, 2nd, 3rd by default) to display when sending the ranked leaderboard.");
-
-            playerLookupPreference = config.Bind<string>(MAIN_SETTINGS,
+            playerLookupPreference = config.Bind<RetrievalDiscernmentMethods>(MAIN_SETTINGS,
                 "How to discern players in Record Retrieval",
-                RetrievalDiscernmentMethods.BySteamID,
-                new ConfigDescription("Choose a method for how players will be separated from the results of a record query.",
-                new AcceptableValueList<string>(new string[] {
-                    RetrievalDiscernmentMethods.BySteamID,
-                    RetrievalDiscernmentMethods.ByName,
-                    RetrievalDiscernmentMethods.ByNameAndSteamID
-                })));
+                RetrievalDiscernmentMethods.PlayerId,
+                "Choose a method for how players will be separated from the results of a record query (used for statistic leader boards)." + Environment.NewLine +
+                RetrieveByName + Environment.NewLine +
+                RetrieveBySteamID + Environment.NewLine +
+                RetrieveByNameAndSteamID
+            );
 
             allowNonPlayerShoutLogging = config.Bind<bool>(MAIN_SETTINGS,
                 "Send Non-Player Shouts to Discord",
@@ -151,29 +138,22 @@ namespace DiscordConnector.Config
             jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserList.Value}\",";
             jsonString += $"\"ignoredPlayersRegex\":\"{mutedDiscordUserListRegex.Value}\"";
             jsonString += "},";
-            jsonString += $"\"periodicLeaderboardEnabled\":\"{StatsAnnouncementEnabled}\",";
-            jsonString += $"\"periodicLeaderboardPeriodSeconds\":{StatsAnnouncementPeriod},";
             jsonString += $"\"collectStatsEnabled\":\"{CollectStatsEnabled}\",";
             jsonString += $"\"sendPositionsEnabled\":\"{SendPositionsEnabled}\",";
             jsonString += $"\"announcePlayerFirsts\":\"{AnnouncePlayerFirsts}\",";
-            jsonString += $"\"numberRankingsListed\":\"{IncludedNumberOfRankings}\",";
-            jsonString += $"\"playerLookupPreference\":\"{RecordRetrievalDiscernmentMethod}\",";
-            jsonString += $"\"allowNonPlayerShoutLogging\":\"{AllowNonPlayerShoutLogging}\"";
+            jsonString += $"\"playerLookupPreference\":\"{RecordRetrievalDiscernmentMethod}\"";
             jsonString += "}";
             return jsonString;
         }
 
         public string WebHookURL => webhookUrl.Value;
-        public bool StatsAnnouncementEnabled => statsAnnouncementToggle.Value;
-        public int StatsAnnouncementPeriod => statsAnnouncementPeriod.Value;
         public bool CollectStatsEnabled => collectStatsToggle.Value;
         public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
         public bool SendPositionsEnabled => sendPositionsToggle.Value;
         public List<string> MutedPlayers => mutedPlayers;
         public Regex MutedPlayersRegex => mutedPlayersRegex;
         public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
-        public int IncludedNumberOfRankings => numberRankingsListed.Value;
-        public string RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
+        public RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
         public bool AllowNonPlayerShoutLogging => allowNonPlayerShoutLogging.Value;
 
     }

@@ -1,18 +1,31 @@
 {
   "cSpell.words": [
+    "aequasi",
+    "Bepin",
+    "Bson",
+    "denikson",
     "Digitalroot",
     "discordconnector",
     "ipify",
+    "Ipify",
     "Leaderboard",
     "leaderboards",
     "PLAYERID",
     "PUBLICIP",
     "r2modman",
     "Roadmap",
+    "softprops",
     "Spidey",
     "STEAMID",
+    "tcli",
     "thedefside",
+    "Thunderstore",
+    "valheim",
     "Valheim",
-    "Xithyr"
-  ]
+    "Worldof",
+    "Xithyr",
+    "ZDOID",
+    "ZDOS"
+  ],
+  "conventionalCommits.scopes": ["metadata", "gh-actions", "release"]
 }

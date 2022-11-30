@@ -7,8 +7,7 @@
     <LangVersion>latest</LangVersion>
     <OutputType>Library</OutputType>
     <Optimize>true</Optimize>
-  </PropertyGroup>
-  <PropertyGroup>
+    <Deterministic>true</Deterministic>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
@@ -20,23 +19,23 @@
     <PackageReference Include="UnityEngine.Modules" Version="2019.4.24" IncludeAssets="compile" />
     <PackageReference Include="Valheim.GameLibs" Version="*-*" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
 
-   <Target Name="CreatePluginDir" AfterTargets="PrepareForBuild">
+  <Target Name="CreatePluginDir" AfterTargets="PrepareForBuild">
     <MakeDir Directories="$(ProjectDir)bin/DiscordConnector" Condition="!Exists('$(ProjectDir)bin/DiscordConnector')" />
     <MakeDir Directories="$(ProjectDir)bin/DiscordConnector/plugins" Condition="!Exists('$(ProjectDir)bin/DiscordConnector/plugins')" />
   </Target>
 
   <Target Name="CopyPluginFiles" AfterTargets="Build">
     <ItemGroup>
-      <BuiltLibraryAndDeps Include="$(ProjectDir)bin/Debug/net48/DiscordConnector.dll" />
+      <BuiltLibraryAndDeps Include="$(TargetDir)DiscordConnector.dll" />
       <!-- Include Newtonsoft.Json dependency -->
-      <BuiltLibraryAndDeps Include="$(ProjectDir)lib/Newtonsoft.Json/*.dll" />
+      <BuiltLibraryAndDeps Include="$(TargetDir)Newtonsoft.Json/*.dll" />
       <!-- Include LiteDB dependency -->
-      <BuiltLibraryAndDeps Include="$(ProjectDir)bin/Debug/net48/LiteDB.dll" />
+      <BuiltLibraryAndDeps Include="$(TargetDir)LiteDB.dll" />
       <!-- Metadata files for Thunderstore -->
       <ThunderstoreMetadata Include="$(ProjectDir)Metadata/manifest.json" />
       <ThunderstoreMetadata Include="$(ProjectDir)Metadata/icon.png" />
