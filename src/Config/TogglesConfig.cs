@@ -12,10 +12,6 @@ namespace DiscordConnector.Config
         private const string MESSAGES_TOGGLES = "Toggles.Messages";
         private const string POSITION_TOGGLES = "Toggles.Position";
         private const string STATS_TOGGLES = "Toggles.Stats";
-        private const string LEADERBOARD_TOGGLES = "Toggles.Leaderboard";
-        private const string LEADERBOARD_BOTTOM_N_TOGGLES = "Toggles.InverseLeaderboard";
-        private const string LEADERBOARD_TOGGLES_HIGHEST = "Toggles.Leaderboard.Highest";
-        private const string LEADERBOARD_TOGGLES_LOWEST = "Toggles.Leaderboard.Lowest";
         private const string PLAYER_FIRSTS_TOGGLES = "Toggles.PlayerFirsts";
         private const string DEBUG_TOGGLES = "Toggles.DebugMessages";
 
@@ -52,30 +48,6 @@ namespace DiscordConnector.Config
         private ConfigEntry<bool> collectStatsDeaths;
         private ConfigEntry<bool> collectStatsShouts;
         private ConfigEntry<bool> collectStatsPings;
-
-        // Send Leaderboard Settings (highest)
-        private ConfigEntry<bool> sendMostSessionLeaderboard;
-        private ConfigEntry<bool> sendMostPingLeaderboard;
-        private ConfigEntry<bool> sendMostDeathLeaderboard;
-        private ConfigEntry<bool> sendMostShoutLeaderboard;
-
-        // Send Leaderboard Settings (lowest)
-        private ConfigEntry<bool> sendLeastSessionLeaderboard;
-        private ConfigEntry<bool> sendLeastPingLeaderboard;
-        private ConfigEntry<bool> sendLeastDeathLeaderboard;
-        private ConfigEntry<bool> sendLeastShoutLeaderboard;
-
-        // Send Leaderboard Settings (rankings)
-        private ConfigEntry<bool> sendSessionRankingLeaderboard;
-        private ConfigEntry<bool> sendPingRankingLeaderboard;
-        private ConfigEntry<bool> sendDeathRankingLeaderboard;
-        private ConfigEntry<bool> sendShoutRankingLeaderboard;
-
-        // Send Leaderboard Settings (inverse rankings)
-        private ConfigEntry<bool> sendSessionInverseRankingLeaderboard;
-        private ConfigEntry<bool> sendPingInverseRankingLeaderboard;
-        private ConfigEntry<bool> sendDeathInverseRankingLeaderboard;
-        private ConfigEntry<bool> sendShoutInverseRankingLeaderboard;
 
         // Player-firsts Settings
         private ConfigEntry<bool> announcePlayerFirstDeath;
@@ -224,60 +196,6 @@ namespace DiscordConnector.Config
                 true,
                 "If enabled, will allow collection of the number of times a player has shouted.");
 
-            // Leaderboard
-            sendDeathRankingLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
-                "Send Periodic Leaderboard for Player Deaths",
-                true,
-                "If enabled, will send a ranked leaderboard for player deaths at the interval.");
-            sendPingRankingLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
-                "Send Periodic Leaderboard for Player Pings",
-                false,
-                "If enabled, will send a ranked leaderboard for player pings at the interval.");
-            sendSessionRankingLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
-                "Send Periodic Leaderboard for Player Sessions",
-                false,
-                "If enabled, will send a ranked leaderboard for player sessions at the interval.");
-            sendShoutRankingLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES,
-                "Send Periodic Leaderboard for Player Shouts",
-                false,
-                "If enabled, will send a ranked leaderboard for player shouts at the interval.");
-
-            // Leaderboard for Highest
-            sendMostDeathLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_HIGHEST,
-                "Include Most Deaths in Periodic Leaderboard",
-                true,
-                "If enabled, will include player with the most deaths at the interval.");
-            sendMostPingLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_HIGHEST,
-                "Include Most Pings in Periodic Leaderboard",
-                false,
-                "If enabled, will include player with the most pings at the interval.");
-            sendMostSessionLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_HIGHEST,
-                "Include Most Sessions in Periodic Leaderboard",
-                false,
-                "If enabled, will include player with the most sessions at the interval.");
-            sendMostShoutLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_HIGHEST,
-                "Include Most Shouts in Periodic Leaderboard",
-                false,
-                "If enabled, will include player with the most shouts at the interval.");
-
-            // Leaderboard for Lowest
-            sendLeastDeathLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_LOWEST,
-                "Include Least Deaths in Periodic Leaderboard",
-                true,
-                "If enabled, will include player with the least deaths at the interval.");
-            sendLeastPingLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_LOWEST,
-                "Include Least Pings in Periodic Leaderboard",
-                false,
-                "If enabled, will include player with the least pings at the interval.");
-            sendLeastSessionLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_LOWEST,
-                "Include Least Sessions in Periodic Leaderboard",
-                false,
-                "If enabled, will include player with the least sessions at the interval.");
-            sendLeastShoutLeaderboard = config.Bind<bool>(LEADERBOARD_TOGGLES_LOWEST,
-                "Include Least Shouts in Periodic Leaderboard",
-                false,
-                "If enabled, will include player with the least shouts at the interval.");
-
             // Player Firsts
             announcePlayerFirstDeath = config.Bind<bool>(PLAYER_FIRSTS_TOGGLES,
                 "Send a Message for the First Death of a Player",
@@ -322,24 +240,6 @@ namespace DiscordConnector.Config
                     false,
                     "If enabled, this will write a log message at the DEBUG level with logs generated while executing database methods.");
 
-            // LEADERBOARD_BOTTOM_N_TOGGLES
-            sendDeathInverseRankingLeaderboard = config.Bind<bool>(LEADERBOARD_BOTTOM_N_TOGGLES,
-                "Send Periodic Inverse Leaderboard for Player Deaths",
-                true,
-                "If enabled, will send a ranked leaderboard (least to most) for player deaths at the interval.");
-            sendPingInverseRankingLeaderboard = config.Bind<bool>(LEADERBOARD_BOTTOM_N_TOGGLES,
-                "Send Periodic Inverse Leaderboard for Player Pings",
-                false,
-                "If enabled, will send a ranked leaderboard (least to most) for player pings at the interval.");
-            sendSessionInverseRankingLeaderboard = config.Bind<bool>(LEADERBOARD_BOTTOM_N_TOGGLES,
-                "Send Periodic Inverse Leaderboard for Player Sessions",
-                false,
-                "If enabled, will send a ranked leaderboard (least to most) for player sessions at the interval.");
-            sendShoutInverseRankingLeaderboard = config.Bind<bool>(LEADERBOARD_BOTTOM_N_TOGGLES,
-                "Send Periodic Inverse Leaderboard for Player Shouts",
-                false,
-                "If enabled, will send a ranked leaderboard (least to most) for player shouts at the interval.");
-
             config.Save();
         }
 
@@ -382,27 +282,6 @@ namespace DiscordConnector.Config
             jsonString += $"\"statsShoutEnabled\":\"{StatsShoutEnabled}\"";
             jsonString += "},";
 
-            jsonString += $"\"{LEADERBOARD_TOGGLES}\":{{";
-            jsonString += $"\"leaderboardDeathEnabled\":\"{RankedDeathLeaderboardEnabled}\",";
-            jsonString += $"\"leaderboardPingEnabled\":\"{RankedPingLeaderboardEnabled}\",";
-            jsonString += $"\"leaderboardShoutEnabled\":\"{RankedShoutLeaderboardEnabled}\",";
-            jsonString += $"\"leaderboardSessionEnabled\":\"{RankedSessionLeaderboardEnabled}\"";
-            jsonString += "},";
-
-            jsonString += $"\"{LEADERBOARD_TOGGLES_HIGHEST}\":{{";
-            jsonString += $"\"sendMostSessionLeaderboard\":\"{MostSessionLeaderboardEnabled}\",";
-            jsonString += $"\"sendMostPingLeaderboard\":\"{MostPingLeaderboardEnabled}\",";
-            jsonString += $"\"sendMostDeathLeaderboard\":\"{MostDeathLeaderboardEnabled}\",";
-            jsonString += $"\"sendMostShoutLeaderboard\":\"{MostShoutLeaderboardEnabled}\"";
-            jsonString += "},";
-
-            jsonString += $"\"{LEADERBOARD_TOGGLES_LOWEST}\":{{";
-            jsonString += $"\"sendLeastSessionLeaderboard\":\"{LeastSessionLeaderboardEnabled}\",";
-            jsonString += $"\"sendLeastPingLeaderboard\":\"{LeastPingLeaderboardEnabled}\",";
-            jsonString += $"\"sendLeastDeathLeaderboard\":\"{LeastDeathLeaderboardEnabled}\",";
-            jsonString += $"\"sendLeastShoutLeaderboard\":\"{LeastShoutLeaderboardEnabled}\"";
-            jsonString += "},";
-
             jsonString += $"\"{PLAYER_FIRSTS_TOGGLES}\":{{";
             jsonString += $"\"announceFirstDeathEnabled\":\"{AnnouncePlayerFirstDeathEnabled}\",";
             jsonString += $"\"announceFirstJoinEnabled\":\"{AnnouncePlayerFirstJoinEnabled}\",";
@@ -418,13 +297,6 @@ namespace DiscordConnector.Config
             jsonString += $"\"debugDatabaseMethods\":\"{DebugDatabaseMethods}\",";
             jsonString += $"\"debugHttpRequestResponses\":\"{DebugHttpRequestResponse}\"";
             jsonString += "},";
-
-            jsonString += $"\"{LEADERBOARD_BOTTOM_N_TOGGLES}\":{{";
-            jsonString += $"\"leaderboardInverseDeathEnabled\":\"{InverseRankedDeathLeaderboardEnabled}\",";
-            jsonString += $"\"leaderboardInversePingEnabled\":\"{InverseRankedPingLeaderboardEnabled}\",";
-            jsonString += $"\"leaderboardInverseShoutEnabled\":\"{InverseRankedShoutLeaderboardEnabled}\",";
-            jsonString += $"\"leaderboardInverseSessionEnabled\":\"{InverseRankedSessionLeaderboardEnabled}\"";
-            jsonString += "}";
 
             jsonString += "}";
             return jsonString;
@@ -450,18 +322,6 @@ namespace DiscordConnector.Config
         public bool StatsLeaveEnabled => collectStatsLeaves.Value;
         public bool StatsPingEnabled => collectStatsPings.Value;
         public bool StatsShoutEnabled => collectStatsShouts.Value;
-        public bool RankedDeathLeaderboardEnabled => sendDeathRankingLeaderboard.Value;
-        public bool RankedPingLeaderboardEnabled => sendPingRankingLeaderboard.Value;
-        public bool RankedSessionLeaderboardEnabled => sendSessionRankingLeaderboard.Value;
-        public bool RankedShoutLeaderboardEnabled => sendShoutRankingLeaderboard.Value;
-        public bool MostSessionLeaderboardEnabled => sendMostSessionLeaderboard.Value;
-        public bool MostPingLeaderboardEnabled => sendMostPingLeaderboard.Value;
-        public bool MostDeathLeaderboardEnabled => sendMostDeathLeaderboard.Value;
-        public bool MostShoutLeaderboardEnabled => sendMostShoutLeaderboard.Value;
-        public bool LeastSessionLeaderboardEnabled => sendLeastSessionLeaderboard.Value;
-        public bool LeastPingLeaderboardEnabled => sendLeastPingLeaderboard.Value;
-        public bool LeastDeathLeaderboardEnabled => sendLeastDeathLeaderboard.Value;
-        public bool LeastShoutLeaderboardEnabled => sendLeastShoutLeaderboard.Value;
         public bool AnnouncePlayerFirstDeathEnabled => announcePlayerFirstDeath.Value;
         public bool AnnouncePlayerFirstJoinEnabled => announcePlayerFirstJoin.Value;
         public bool AnnouncePlayerFirstLeaveEnabled => announcePlayerFirstLeave.Value;
@@ -480,9 +340,5 @@ namespace DiscordConnector.Config
         public bool DebugEveryEventChange => debugEventChanges.Value;
         public bool DebugHttpRequestResponse => debugHttpRequestResponses.Value;
         public bool DebugDatabaseMethods => debugDatabaseMethods.Value;
-        public bool InverseRankedDeathLeaderboardEnabled => sendDeathInverseRankingLeaderboard.Value;
-        public bool InverseRankedPingLeaderboardEnabled => sendPingInverseRankingLeaderboard.Value;
-        public bool InverseRankedSessionLeaderboardEnabled => sendSessionInverseRankingLeaderboard.Value;
-        public bool InverseRankedShoutLeaderboardEnabled => sendShoutInverseRankingLeaderboard.Value;
     }
 }

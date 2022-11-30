@@ -19,7 +19,7 @@ namespace DiscordConnector
             WebRequest request = WebRequest.Create(ENDPOINT);
             request.Method = "GET";
 
-            // Wrap firing the response in a TRY/CATCH and on an exception, abandon trying to retreive the public IP
+            // Wrap firing the response in a TRY/CATCH and on an exception, abandon trying to retrieve the public IP
             try
             {
                 WebResponse response = request.GetResponse();

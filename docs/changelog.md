@@ -4,6 +4,30 @@ A full changelog
 
 ## History
 
+### Version 2.1.0
+
+A full leaderboard overhaul is in the version. The previous settings for the statistic leaderboards are depreciated in favor of configuration defined statistic leaderboard settings. Look in the `discordconnector-leaderboards.cfg` file and configure any number of the 4 leaderboards to present the kind of data you want. In addition to multiple leaderboards, there are now time-based filters for the leaderboards; restrict them to today or this week or leave them set to all-time. By default, all leaderboards are disabled. If you were using a leaderboard before, you will have to set up a leaderboard to accomplish what you were sending before and enable it. Sorry for the inconvenience but this was the safest tradeoff.
+
+Also relating to statistic leaderboards, there is a new statistic available for the leaderboards, 'Time Online' which uses the saved 'join' and 'leave' records to estimate a player's time on the server and present that as a value. This obviously doesn't work if you had disabled one or the other pieces of tracking (either disabled recording 'join' or 'leave' stats in the toggles config file). This values are calculated when the leaderboard is created but that should be OK since it is in a non-blocking task call.
+
+The new Active Player's Announcement can be configured to announce server activity at a pre-defined interval. Configurable stats for it include players currently online, unique players online today, unique players online this week and unique players all time. It will use the same method set in the main config file (`discordconnector.cfg`) for how to determine individual players to count unique players for these time spans.
+
+Additionally, the configuration files are nested in a subdirectory now. This is from a request on the plugin repository. When loading 2.1.0 (or future versions), the Discord Connector config files that are in the `BepInEx/config` directory will be automatically moved to the subdirectory and loaded from there. The subdirectory is `BepInEx/config/games.nwest.valheim.discordconnector`, and the config files themselves have shortened filenames. The records database is also moved to this subdirectory and renamed `records.db`.
+
+Features:
+
+- Adds new tracked stat for time on server
+- Adds dynamically configured leaderboards
+- Adds an Active Players Announcement (disabled by default)
+
+Changes:
+
+- Configuration files are now nested in a subdirectory (first run will migrate them automatically)
+- Database file moved into the subdirectory (first run will migrate it automatically)
+- `config-debug.json` file is dumped to subdirectory after config load to be useful for debugging issues with the plugin (sensitive info is redacted, i.e. the webhook url)
+- Multiple-choice config options use Enums on the backend now instead of Strings (may affect `discordconnector.cfg`: How to discern players in Record Retrieval)
+- Building the plugin with the optimization flag present; in my tests, startup time of a Valheim server with just DiscordConnector installed was quicker
+
 ### Version 2.0.8
 
 Changes:
@@ -57,12 +81,12 @@ Fixes:
 
 ### Version 2.0.1
 
-With this update, we bring back Steam_ID variable inclusion and leaderboard message sending (respecting your config settings). I recommend you replace your `discordconnector.valheim.nwest.games-records.db` database, since the records will not line up and will be essentially soft-reset because the column name changed with the different type of data. Steam IDs are prefaced with 'Steam_' now, so you could migrate your stat database with a bit of effort. I believe this could all be done with queries inside the LiteDB Query Tool.
+With this update, we bring back Steam_ID variable inclusion and leader board message sending (respecting your config settings). I recommend you replace your `discordconnector.valheim.nwest.games-records.db` database, since the records will not line up and will be essentially soft-reset because the column name changed with the different type of data. Steam IDs are prefaced with 'Steam_' now, so you could migrate your stat database with a bit of effort. I believe this could all be done with queries inside the LiteDB Query Tool.
 
 Fixes:
 
-- Periodic leaderboard messages sending will now respect your config value instead of never sending
-- The STEAMID variable works again. An alias is the PLAYERID variable, which does the same thing -- they both provide the full player id, so `Steam_<SteamID>` or `XBox_<XBoxID>`
+- Periodic leader board messages sending will now respect your config value instead of never sending
+- The `%STEAMID%` variable works again. An alias is the `%PLAYERID%` variable, which does the same thing -- they both provide the full player id, so `Steam_<SteamID>` or `XBox_<XBoxID>`
 
 Breaking changes:
 
@@ -70,13 +94,13 @@ Breaking changes:
 
 ### Version 2.0.0
 
-Previous version broke with the new updates to Valheim using the PlayFab server stuff. Previously, the steam ID was grabbed directly from the socket but that doesn't work anymore. To get something workable (the other messages work), I have removed the code which tried to get the SteamID and disabled leaderboard sending.
+Previous version broke with the new updates to Valheim using the PlayFab server stuff. Previously, the steam ID was grabbed directly from the socket but that doesn't work anymore. To get something workable (the other messages work), I have removed the code which tried to get the SteamID and disabled leader board sending.
 
 Breaking changes:
 
 - Removed steamid variable (internally) and tracking stats by steamid. This broke with the PlayFab changes to Valheim. It will be a bit involved to figure out how to deliver the same thing again, so if you have an idea or seen it done in another mod, please reach out with a Github Issue or ping on Discord.
-- Leaderboard records will reset and a new database with suffix '-records2.db' will be saved anew. This is because what is being tracked is changed (used to be steamid, now it is using the character id).
-- Periodic leaderboard messages will not send, ignoring the setting in the config (for now). This is until a more reliable method of determining players apart.
+- Leader board records will reset and a new database with suffix '-records2.db' will be saved anew. This is because what is being tracked is changed (used to be steamid, now it is using the character id).
+- Periodic leader board messages will not send, ignoring the setting in the config (for now). This is until a more reliable method of determining players apart.
 
 ### Version 1.8.0
 
@@ -138,13 +162,13 @@ Breaking Changes:
 
 Fixes:
 
-- Leaderboard interval was half of what was configured (now is properly minutes)
+- Leader board interval was half of what was configured (now is properly minutes)
 
 ### Version 1.5.2
 
 Fixes:
 
-- Highest and Lowest leaderboards were not checking the correct tables
+- Highest and Lowest leader boards were not checking the correct tables
 - Configurable retrieval strategy for all records (either SteamID, PLayer Name, or both) -- always returns player names
 
 Due to how records.json recorded stats and the LiteDB, you will not be able to use the old records with strategies
@@ -154,7 +178,7 @@ involving the SteamID because prior to 1.5.0 we were not recording the SteamID w
 
 Fixes:
 
-- Toggles for the bottom n players leaderboards (inverse ranked leaderboards)
+- Toggles for the bottom n players leader boards (inverse ranked leader boards)
 
 ### Version 1.5.0
 
@@ -191,13 +215,13 @@ not migrate the data.
 For the migration steps, it will be outputting log information (at INFO
 level) with how many records were migrated and which steps completed.
 
-- Ranked Lowest Player Leaderboard
+- Ranked Lowest Player Leader board
 
-Added an inverse of the Top Player leaderboard.
+Added an inverse of the Top Player leader board.
 
-- Custom leaderboard heading messages
+- Custom leader board heading messages
 
-Added configuration for the messages sent at the top of the leaderboard
+Added configuration for the messages sent at the top of the leader board
 messages.
 
 - The variable `%PUBLICIP%` can be used in _any_ message configuration
@@ -228,7 +252,7 @@ Features:
 
 Fixes:
 
-- Least deaths leaderboard wasn't respecting the correct config entry. (THanks @thedefside)
+- Least deaths leader board wasn't respecting the correct config entry. (THanks @thedefside)
 
 ### Version 1.4.1
 
@@ -248,7 +272,7 @@ Features:
 
 Fixes:
 
-- Fixed an off-by-one error in the Top Players leaderboard (the default leaderboard) (Thanks @thedefside)
+- Fixed an off-by-one error in the Top Players leader board (the default leader board) (Thanks @thedefside)
 - Fixed configuration not referencing proper settings (Thanks @thedefside)
 - Fixed event messages (now properly functioning on dedicated servers)
 
@@ -261,8 +285,8 @@ Breaking Changes:
 
 Features:
 
-- Additional leaderboard options. The existing leaderboard option will now default to sending top 3 players for what is enabled.
-  You can enable a highest and lowest leaderboard for each tracked stat now. All leaderboards get sent on the same interval.
+- Additional leader board options. The existing leader board option will now default to sending top 3 players for what is enabled.
+  You can enable a highest and lowest leader board for each tracked stat now. All leader boards get sent on the same interval.
 
 ### Version 1.2.2
 
@@ -278,7 +302,7 @@ for the server.
 
 Fixes:
 
-- The leaderboard toggles were not working properly, behind the scenes they were all following the death leaderboard toggle
+- The leader board toggles were not working properly, behind the scenes they were all following the death leader board toggle
 
 A breaking change was found with the records.json in 1.2.0. The records.json file needs to have all `PlayerName` changed to `Key`.
 If you are seeing an error message in your logs from Discord Connector, this is the likely culprit (should see something about
@@ -370,7 +394,7 @@ Fixes:
 
 Fixes
 
-- Time interval for leaderboard in **minutes** not seconds.
+- Time interval for leader board in **minutes** not seconds.
 - Don't display a leave message for disconnects due to version mismatch
 
 ### Version 0.9.0
@@ -379,7 +403,7 @@ Default config options are updated to be true for all notification and coordinat
 
 Features:
 
-- Periodic stats leaderboard functionality (opt-in)
+- Periodic stats leader board functionality (opt-in)
 
 Fixes:
 

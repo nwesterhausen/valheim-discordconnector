@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System;
 using BepInEx;
 using BepInEx.Logging;
 using DiscordConnector.Records;
@@ -14,10 +14,27 @@ namespace DiscordConnector
         internal static ManualLogSource StaticLogger;
         internal static PluginConfig StaticConfig;
         internal static Database StaticDatabase;
-        internal static Leaderboard StaticLeaderboards;
+        internal static LeaderBoard StaticLeaderBoards;
         internal static EventWatcher StaticEventWatcher;
         internal static ConfigWatcher StaticConfigWatcher;
-        internal static string PublicIpAddress;
+        internal static string PublicIpAddress
+        {
+            /// <summary>
+            /// Return the public IP address if we already know it. If we don't know it, find out.
+            /// We avoid always getting the IP address to only get it when needed.
+            /// </summary>
+            /// <value>The public IP address of the server</value>
+            get
+            {
+                if (!String.IsNullOrEmpty(_publicIpAddress))
+                {
+                    return _publicIpAddress;
+                }
+                _publicIpAddress = IpifyAPI.PublicIpAddress();
+                return _publicIpAddress;
+            }
+        }
+        private static string _publicIpAddress;
         private Harmony _harmony;
 
         public Plugin()
@@ -25,9 +42,11 @@ namespace DiscordConnector
             StaticLogger = Logger;
             StaticConfig = new PluginConfig(Config);
             StaticDatabase = new Records.Database(Paths.GameRootPath);
-            StaticLeaderboards = new Leaderboard();
+            StaticLeaderBoards = new LeaderBoard();
 
             StaticConfigWatcher = new ConfigWatcher();
+
+            _publicIpAddress = "";
         }
 
         private void Awake()
@@ -48,20 +67,64 @@ namespace DiscordConnector
                 StaticLogger.LogWarning("No value set for WebHookURL! Plugin will run without using a main Discord webhook.");
             }
 
-            if (StaticConfig.StatsAnnouncementEnabled)
+            if (StaticConfig.LeaderBoards[0].Enabled)
             {
-                System.Timers.Timer leaderboardTimer = new System.Timers.Timer();
-                leaderboardTimer.Elapsed += StaticLeaderboards.OverallHighest.SendLeaderboardOnTimer;
-                leaderboardTimer.Elapsed += StaticLeaderboards.OverallLowest.SendLeaderboardOnTimer;
-                leaderboardTimer.Elapsed += StaticLeaderboards.TopPlayers.SendLeaderboardOnTimer;
-                leaderboardTimer.Elapsed += StaticLeaderboards.BottomPlayers.SendLeaderboardOnTimer;
+                System.Timers.Timer leaderBoard1Timer = new System.Timers.Timer();
+                leaderBoard1Timer.Elapsed += StaticLeaderBoards.LeaderBoard1.SendLeaderBoardOnTimer;
                 // Interval is learned from config file in minutes
-                leaderboardTimer.Interval = 60 * 1000 * StaticConfig.StatsAnnouncementPeriod;
-                Plugin.StaticLogger.LogDebug($"Enabling leaderboard timers with interval {leaderboardTimer.Interval}ms");
-                leaderboardTimer.Start();
+                leaderBoard1Timer.Interval = 60 * 1000 * StaticConfig.LeaderBoards[0].PeriodInMinutes;
+                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.1 timer with interval 1:{leaderBoard1Timer.Interval} ms");
+                leaderBoard1Timer.Start();
             }
 
-            PublicIpAddress = IpifyAPI.PublicIpAddress();
+            if (StaticConfig.LeaderBoards[1].Enabled)
+            {
+                System.Timers.Timer leaderBoard2Timer = new System.Timers.Timer();
+                leaderBoard2Timer.Elapsed += StaticLeaderBoards.LeaderBoard2.SendLeaderBoardOnTimer;
+                // Interval is learned from config file in minutes
+                leaderBoard2Timer.Interval = 60 * 1000 * StaticConfig.LeaderBoards[1].PeriodInMinutes;
+                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.2 timer with interval 1:{leaderBoard2Timer.Interval} ms");
+                leaderBoard2Timer.Start();
+            }
+
+            if (StaticConfig.LeaderBoards[2].Enabled)
+            {
+                System.Timers.Timer leaderBoard3Timer = new System.Timers.Timer();
+                leaderBoard3Timer.Elapsed += StaticLeaderBoards.LeaderBoard3.SendLeaderBoardOnTimer;
+                // Interval is learned from config file in minutes
+                leaderBoard3Timer.Interval = 60 * 1000 * StaticConfig.LeaderBoards[2].PeriodInMinutes;
+                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.3 timer with interval 1:{leaderBoard3Timer.Interval} ms");
+                leaderBoard3Timer.Start();
+            }
+
+            if (StaticConfig.LeaderBoards[3].Enabled)
+            {
+                System.Timers.Timer leaderBoard4Timer = new System.Timers.Timer();
+                leaderBoard4Timer.Elapsed += StaticLeaderBoards.LeaderBoard4.SendLeaderBoardOnTimer;
+                // Interval is learned from config file in minutes
+                leaderBoard4Timer.Interval = 60 * 1000 * StaticConfig.LeaderBoards[3].PeriodInMinutes;
+                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.4 timer with interval 1:{leaderBoard4Timer.Interval} ms");
+                leaderBoard4Timer.Start();
+            }
+
+            if (StaticConfig.LeaderBoards[4].Enabled)
+            {
+                System.Timers.Timer leaderBoard5Timer = new System.Timers.Timer();
+                leaderBoard5Timer.Elapsed += StaticLeaderBoards.LeaderBoard4.SendLeaderBoardOnTimer;
+                // Interval is learned from config file in minutes
+                leaderBoard5Timer.Interval = 60 * 1000 * StaticConfig.LeaderBoards[4].PeriodInMinutes;
+                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.4 timer with interval 1:{leaderBoard5Timer.Interval} ms");
+                leaderBoard5Timer.Start();
+            }
+
+            if (StaticConfig.ActivePlayersAnnouncement.Enabled)
+            {
+                System.Timers.Timer playerActivityTimer = new System.Timers.Timer();
+                playerActivityTimer.Elapsed += LeaderBoards.ActivePlayersAnnouncement.SendOnTimer;
+                // Interval is learned from config file in minutes
+                playerActivityTimer.Interval = 60 * 1000 * StaticConfig.ActivePlayersAnnouncement.PeriodInMinutes;
+                playerActivityTimer.Start();
+            }
 
             _harmony = Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, PluginInfo.PLUGIN_ID);
         }

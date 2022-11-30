@@ -216,7 +216,7 @@ namespace DiscordConnector
             if (Plugin.StaticConfig.EventStartMessageEnabled)
             {
                 string message = MessageTransformer.FormatEventStartMessage(
-                    Plugin.StaticConfig.EventResumedMesssage,
+                    Plugin.StaticConfig.EventResumedMessage,
                     Status.StartMessage,
                     Status.EndMessage
                 // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
@@ -233,7 +233,7 @@ namespace DiscordConnector
                 else
                 {
                     message = MessageTransformer.FormatEventStartMessage(
-                        Plugin.StaticConfig.EventResumedMesssage,
+                        Plugin.StaticConfig.EventResumedMessage,
                         Status.EndMessage,
                         Status.StartMessage,
                         // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
@@ -248,7 +248,7 @@ namespace DiscordConnector
             if (Plugin.StaticConfig.EventPausedMessageEnabled)
             {
                 string message = MessageTransformer.FormatEventMessage(
-                    Plugin.StaticConfig.EventPausedMesssage,
+                    Plugin.StaticConfig.EventPausedMessage,
                     Status.StartMessage,
                     Status.EndMessage
                 // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
@@ -265,7 +265,7 @@ namespace DiscordConnector
                 else
                 {
                     message = MessageTransformer.FormatEventMessage(
-                        Plugin.StaticConfig.EventPausedMesssage,
+                        Plugin.StaticConfig.EventPausedMessage,
                         Status.StartMessage,
                         Status.EndMessage,
                         // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
@@ -280,7 +280,7 @@ namespace DiscordConnector
             if (Plugin.StaticConfig.EventResumedMessageEnabled)
             {
                 string message = MessageTransformer.FormatEventMessage(
-                    Plugin.StaticConfig.EventResumedMesssage,
+                    Plugin.StaticConfig.EventResumedMessage,
                     Status.StartMessage,
                     Status.EndMessage
                 // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
@@ -297,7 +297,7 @@ namespace DiscordConnector
                 else
                 {
                     message = MessageTransformer.FormatEventMessage(
-                        Plugin.StaticConfig.EventResumedMesssage,
+                        Plugin.StaticConfig.EventResumedMessage,
                         Status.StartMessage,
                         Status.EndMessage,
                         // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
@@ -312,7 +312,7 @@ namespace DiscordConnector
             if (Plugin.StaticConfig.EventStopMessageEnabled)
             {
                 string message = MessageTransformer.FormatEventEndMessage(
-                    Plugin.StaticConfig.EventStopMesssage,
+                    Plugin.StaticConfig.EventStopMessage,
                     PreviousEventStartMessage,
                     PreviousEventEndMessage
                 // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
@@ -329,7 +329,7 @@ namespace DiscordConnector
                 else
                 {
                     message = MessageTransformer.FormatEventEndMessage(
-                        Plugin.StaticConfig.EventStopMesssage,
+                        Plugin.StaticConfig.EventStopMessage,
                         PreviousEventStartMessage,
                         PreviousEventEndMessage,
                         // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 

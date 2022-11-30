@@ -14,7 +14,7 @@ namespace DiscordConnector.Config
         private const string PLAYER_MESSAGES = "Messages.Player";
         private const string PLAYER_FIRSTS_MESSAGES = "Messages.PlayerFirsts";
         private const string EVENT_MESSAGES = "Messages.Events";
-        private const string BOARD_MESSAGES = "Messages.Leaderbaords";
+        private const string BOARD_MESSAGES = "Messages.LeaderBoards";
 
         // Server Messages
         private ConfigEntry<string> serverLaunchMessage;
@@ -44,10 +44,10 @@ namespace DiscordConnector.Config
         private ConfigEntry<string> eventResumedMessage;
 
         // Board Messages
-        private ConfigEntry<string> leaderboardTopPlayersMessage;
-        private ConfigEntry<string> leaderboardBottomPlayersMessage;
-        private ConfigEntry<string> leaderboardHighestPlayerMessage;
-        private ConfigEntry<string> leaderboardLowestPlayerMessage;
+        private ConfigEntry<string> leaderBoardTopPlayersMessage;
+        private ConfigEntry<string> leaderBoardBottomPlayersMessage;
+        private ConfigEntry<string> leaderBoardHighestPlayerMessage;
+        private ConfigEntry<string> leaderBoardLowestPlayerMessage;
 
         public MessagesConfig(ConfigFile configFile)
         {
@@ -182,25 +182,25 @@ namespace DiscordConnector.Config
                                                                                                                                               // "The special string %PLAYERS% will be replaced with a list of players in the event area."); //! Removed due to unreliability
 
             // Board Messages
-            leaderboardTopPlayersMessage = config.Bind<string>(BOARD_MESSAGES,
-                "Leaderboard Heading for Top N Players",
-                "Top %N% Player Leaderboards:",
-                "Set the message that is included as a heading when this leaderboard is sent." + Environment.NewLine +
+            leaderBoardTopPlayersMessage = config.Bind<string>(BOARD_MESSAGES,
+                "Leader Board Heading for Top N Players",
+                "Top %N% Player Leader Boards:",
+                "Set the message that is included as a heading when this leader board is sent." + Environment.NewLine +
                 "Include %N% to include the number of rankings returned (the configured number)");
-            leaderboardBottomPlayersMessage = config.Bind<string>(BOARD_MESSAGES,
-                "Leaderboard Heading for Bottom N Players",
-                "Bottom %N% Player Leaderboards:",
-                "Set the message that is included as a heading when this leaderboard is sent." + Environment.NewLine +
+            leaderBoardBottomPlayersMessage = config.Bind<string>(BOARD_MESSAGES,
+                "Leader Board Heading for Bottom N Players",
+                "Bottom %N% Player Leader Boards:",
+                "Set the message that is included as a heading when this leader board is sent." + Environment.NewLine +
                 "Include %N% to include the number of rankings returned (the configured number)");
-            leaderboardHighestPlayerMessage = config.Bind<string>(BOARD_MESSAGES,
-                "Leaderboard Heading for Highest Player",
+            leaderBoardHighestPlayerMessage = config.Bind<string>(BOARD_MESSAGES,
+                "Leader Board Heading for Highest Player",
                 "Top Performer",
-                "Set the message that is included as a heading when this leaderboard is sent." + Environment.NewLine +
+                "Set the message that is included as a heading when this leader board is sent." + Environment.NewLine +
                 "Include %N% to include the number of rankings returned (the configured number)");
-            leaderboardLowestPlayerMessage = config.Bind<string>(BOARD_MESSAGES,
-                "Leaderboard Heading for Lowest Player",
+            leaderBoardLowestPlayerMessage = config.Bind<string>(BOARD_MESSAGES,
+                "Leader Board Heading for Lowest Player",
                 "Bottom Performer",
-                "Set the message that is included as a heading when this leaderboard is sent." + Environment.NewLine +
+                "Set the message that is included as a heading when this leader board is sent." + Environment.NewLine +
                 "Include %N% to include the number of rankings returned (the configured number)");
 
             config.Save();
@@ -242,10 +242,10 @@ namespace DiscordConnector.Config
             jsonString += "},";
 
             jsonString += $"\"{BOARD_MESSAGES}\":{{";
-            jsonString += $"\"leaderboardTopPlayersMessage\":\"{leaderboardTopPlayersMessage.Value}\",";
-            jsonString += $"\"leaderboardBottomPlayersMessage\":\"{leaderboardBottomPlayersMessage.Value}\",";
-            jsonString += $"\"leaderboardHighestPlayerMessage\":\"{leaderboardHighestPlayerMessage.Value}\",";
-            jsonString += $"\"leaderboardLowestPlayerMessage\":\"{leaderboardLowestPlayerMessage.Value}\"";
+            jsonString += $"\"leaderBoardTopPlayersMessage\":\"{leaderBoardTopPlayersMessage.Value}\",";
+            jsonString += $"\"leaderBoardBottomPlayersMessage\":\"{leaderBoardBottomPlayersMessage.Value}\",";
+            jsonString += $"\"leaderBoardHighestPlayerMessage\":\"{leaderBoardHighestPlayerMessage.Value}\",";
+            jsonString += $"\"leaderBoardLowestPlayerMessage\":\"{leaderBoardLowestPlayerMessage.Value}\"";
             jsonString += "}";
 
             jsonString += "}";
@@ -290,15 +290,15 @@ namespace DiscordConnector.Config
         public string PlayerFirstShoutMessage => GetRandomStringFromValue(playerFirstShoutMessage);
 
         // Messages.Events
-        public string EventStartMesssage => GetRandomStringFromValue(eventStartMessage);
-        public string EventPausedMesssage => GetRandomStringFromValue(eventPausedMessage);
-        public string EventStopMesssage => GetRandomStringFromValue(eventStopMessage);
-        public string EventResumedMesssage => GetRandomStringFromValue(eventResumedMessage);
+        public string EventStartMessage => GetRandomStringFromValue(eventStartMessage);
+        public string EventPausedMessage => GetRandomStringFromValue(eventPausedMessage);
+        public string EventStopMessage => GetRandomStringFromValue(eventStopMessage);
+        public string EventResumedMessage => GetRandomStringFromValue(eventResumedMessage);
 
-        // Messages.Leaderboards
-        public string LeaderboardTopPlayerHeading => GetRandomStringFromValue(leaderboardTopPlayersMessage);
-        public string LeaderboardBottomPlayersHeading => GetRandomStringFromValue(leaderboardBottomPlayersMessage);
-        public string LeaderboardHighestHeading => GetRandomStringFromValue(leaderboardHighestPlayerMessage);
-        public string LeaderboardLowestHeading => GetRandomStringFromValue(leaderboardLowestPlayerMessage);
+        // Messages.LeaderBoards
+        public string LeaderBoardTopPlayerHeading => GetRandomStringFromValue(leaderBoardTopPlayersMessage);
+        public string LeaderBoardBottomPlayersHeading => GetRandomStringFromValue(leaderBoardBottomPlayersMessage);
+        public string LeaderBoardHighestHeading => GetRandomStringFromValue(leaderBoardHighestPlayerMessage);
+        public string LeaderBoardLowestHeading => GetRandomStringFromValue(leaderBoardLowestPlayerMessage);
     }
 }

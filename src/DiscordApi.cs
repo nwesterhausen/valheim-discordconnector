@@ -50,7 +50,7 @@ namespace DiscordConnector
         /// Send a <paramref name="message"/> with <paramref name="fields"/> to Discord.
         /// </summary>
         /// <param name="content">A string optionally formatted with Discord-approved markdown syntax.</param>
-        /// <param name="fields">Discord fields as defined in the API, as Tuples (fieldname, value)</param>
+        /// <param name="fields">Discord fields as defined in the API, as Tuples (field name, value)</param>
         public static void SendMessageWithFields(string content = null, List<Tuple<string, string>> fields = null)
         {
 

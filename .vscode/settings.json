@@ -1,8 +1,12 @@
 {
   "cSpell.words": [
+    "aequasi",
+    "Bepin",
+    "Bson",
     "Digitalroot",
     "discordconnector",
     "ipify",
+    "Ipify",
     "Leaderboard",
     "leaderboards",
     "PLAYERID",
@@ -12,8 +16,13 @@
     "Spidey",
     "STEAMID",
     "thedefside",
+    "Thunderstore",
+    "valheim",
     "Valheim",
-    "Xithyr"
+    "Worldof",
+    "Xithyr",
+    "ZDOID",
+    "ZDOS"
   ],
   "conventionalCommits.scopes": ["metadata"]
 }
