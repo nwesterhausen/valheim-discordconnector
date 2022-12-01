@@ -33,7 +33,7 @@
     <ItemGroup>
       <BuiltLibraryAndDeps Include="$(TargetDir)DiscordConnector.dll" />
       <!-- Include Newtonsoft.Json dependency -->
-      <BuiltLibraryAndDeps Include="$(TargetDir)Newtonsoft.Json/*.dll" />
+      <BuiltLibraryAndDeps Include="$(TargetDir)Newtonsoft.Json.dll" />
       <!-- Include LiteDB dependency -->
       <BuiltLibraryAndDeps Include="$(TargetDir)LiteDB.dll" />
       <!-- Metadata files for Thunderstore -->
