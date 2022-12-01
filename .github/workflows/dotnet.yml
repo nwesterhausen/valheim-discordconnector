@@ -20,7 +20,7 @@ jobs:
       - name: Download Dev Bundle (publicized dlls, etc)
         if: ${{ steps.cache-dev-bundle.outputs.cache-hit != 'true'}}
         run: |
-          wget -O dev-bundle.zip ${{ secrets. }}0.212.6.zip
+          wget -O dev-bundle.zip ${{ secrets.VDC_DEV_BUNDLE }}0.212.6.zip
           unzip -qq dev-bundle.zip -d /home/runner/dev-bundle
 
       - uses: actions/checkout@v3
