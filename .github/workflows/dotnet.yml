@@ -49,4 +49,4 @@ jobs:
           /home/runner/tcli-bin/tcli help || true
       - name: test tcli exists
         run: |
-          /home/runner/tcli-bin/tcli help
+          /home/runner/tcli-bin/tcli help || true
