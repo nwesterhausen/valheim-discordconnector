@@ -11,12 +11,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Dev Bundle Cache
+        id: cache-dev-bundle
+        uses: actions/cache@v3
+        with:
+          key: 0.212.6
+          path: /home/runner/dev-bundle
+      - name: Download Dev Bundle (publicized dlls, etc)
+        if: ${{ steps.cache-dev-bundle.outputs.cache-hit != 'true'}}
+        run: |
+          wget -O dev-bundle.zip ${{ secrets. }}0.212.6.zip
+          unzip -qq dev-bundle.zip -d /home/runner/dev-bundle
+
       - uses: actions/checkout@v3
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.x
-      - name: Restore dependencies
+      - name: Restore dependencies /p:GamePath=/home/runner/dev-bundle
         run: dotnet restore
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build --no-restore /p:GamePath=/home/runner/dev-bundle
