@@ -4,6 +4,12 @@ A full changelog for reference.
 
 ## History
 
+### Version 2.1.1
+
+Fixes:
+
+- Missing dependency in final bundle (error in csharp project file)
+
 ### Version 2.1.0
 
 A full leaderboard overhaul is in the version. The previous settings for the statistic leaderboards are depreciated in favor of configuration defined statistic leaderboard settings. Look in the `discordconnector-leaderboards.cfg` file and configure any number of the 4 leaderboards to present the kind of data you want. In addition to multiple leaderboards, there are now time-based filters for the leaderboards; restrict them to today or this week or leave them set to all-time. By default, all leaderboards are disabled. If you were using a leaderboard before, you will have to set up a leaderboard to accomplish what you were sending before and enable it. Sorry for the inconvenience but this was the safest tradeoff.
