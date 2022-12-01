@@ -18,19 +18,13 @@ See [the README](Metadata/README.md) for the plugin.
 
 See [the changelog](Metadata/CHANGELOG.md).
 
-## Development
-
-To contribute or modify for a PR etc, simply clone this repository. A good set of
-steps to follow to prepare your machine for development are listed in the
-[BepInEx docs](https://docs.bepinex.dev/master/articles/dev_guide/plugin_tutorial/1_setup.html)
-(essentially, make sure you have the .NET SDK setup, an IDE of your choice like
-vscode, and that you are prepared to test the compiled plugin after you build it).
-
 ### Building
+
+Before building, you must update the `GameDir` property in the `csproj` file.
 
 Use dotnet to restore and build the project. Post build, the compiled library and its
 dependencies get copied into `bin/DiscordConnector` which enables you to simply copy
-that folder into `$(GameDir)/BepinEx/plugins` for testing.
+that folder into `$(GameDir)/BePinEx/plugins` for testing.
 
 The compiled plugin will be in a zip ready for upload at `bin/DiscordConnector.zip`.
 

@@ -11,22 +11,59 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Set the path to the game folder. This is used when including references below -->
+    <GamePath Condition="$(GamePath) == ''">G:\SteamLibrary\steamapps\common\Valheim</GamePath>
+    <!-- Make the references to folders used in the build process a lot simpler -->
+    <BinDir>$(ProjectDir)bin/</BinDir>
+    <DiscordConnectorDir>$(BinDir)DiscordConnector/</DiscordConnectorDir>
+    <MetadataDir>$(ProjectDir)Metadata/</MetadataDir>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="BepInEx.Analyzers" Version="1.0.4" PrivateAssets="all" />
-    <PackageReference Include="BepInEx.Core" Version="5.4.19" />
     <PackageReference Include="LiteDB" Version="5.*" />
     <PackageReference Include="Newtonsoft.Json" Version="13.*" />
-    <PackageReference Include="UnityEngine.Modules" Version="2019.4.24" IncludeAssets="compile" />
-    <PackageReference Include="Valheim.GameLibs" Version="*-*" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
 
-  <Target Name="CreatePluginDir" AfterTargets="PrepareForBuild">
-    <MakeDir Directories="$(ProjectDir)bin/DiscordConnector" Condition="!Exists('$(ProjectDir)bin/DiscordConnector')" />
-    <MakeDir Directories="$(ProjectDir)bin/DiscordConnector/plugins" Condition="!Exists('$(ProjectDir)bin/DiscordConnector/plugins')" />
+  <ItemGroup>
+    <!-- These dependencies already thinned out to only what's needed for DiscordConnector (not sure if it matters) -->
+    <!-- Harmony and BepInEx dependency -->
+    <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>$(GamePath)\BepInEx\core\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx, Version=5.4.19.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>$(GamePath)\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
+    <!-- Valheim Assembly Dependencies -->
+    <Reference Include="assembly_guiutils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>$(GamePath)\valheim_Data\Managed\publicized_assemblies\assembly_guiutils_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_valheim, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>$(GamePath)\valheim_Data\Managed\publicized_assemblies\assembly_valheim_publicized.dll</HintPath>
+    </Reference>
+    <!-- Unity Engine Dependencies -->
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>$(GamePath)\unstripped_corlib\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>$(GamePath)\unstripped_corlib\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PreparePluginDir" AfterTargets="PrepareForBuild">
+    <!-- Create the artifact output location (if it doesn't exist) -->
+    <MakeDir Directories="$(DiscordConnectorDir)" Condition="!Exists('$(DiscordConnectorDir)')" />
+    <MakeDir Directories="$(DiscordConnectorDir)plugins" Condition="!Exists('$(DiscordConnectorDir)plugins')" />
+    <!-- Make a reference to children of the output location -->
+    <ItemGroup>
+      <OldBuildArtifacts Include="$(DiscordConnectorDir)**\*" />
+    </ItemGroup>
+    <!-- Delete any existing build artifacts -->
+    <Delete Files="@(OldBuildArtifacts)" />
   </Target>
 
   <Target Name="CopyPluginFiles" AfterTargets="Build">
@@ -37,19 +74,19 @@
       <!-- Include LiteDB dependency -->
       <BuiltLibraryAndDeps Include="$(TargetDir)LiteDB.dll" />
       <!-- Metadata files for Thunderstore -->
-      <ThunderstoreMetadata Include="$(ProjectDir)Metadata/manifest.json" />
-      <ThunderstoreMetadata Include="$(ProjectDir)Metadata/icon.png" />
-      <ThunderstoreMetadata Include="$(ProjectDir)Metadata/README.md" />
+      <ThunderstoreMetadata Include="$(MetadataDir)manifest.json" />
+      <ThunderstoreMetadata Include="$(MetadataDir)icon.png" />
+      <ThunderstoreMetadata Include="$(MetadataDir)README.md" />
     </ItemGroup>
     <!-- Plugin files go into a 'plugins' subdirectory -->
-    <Copy SourceFiles="@(BuiltLibraryAndDeps)" DestinationFolder="$(ProjectDir)bin/DiscordConnector/plugins" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(BuiltLibraryAndDeps)" DestinationFolder="$(DiscordConnectorDir)plugins" SkipUnchangedFiles="true" />
     <!-- Metadata files go into the base directory -->
-    <Copy SourceFiles="@(ThunderstoreMetadata)" DestinationFolder="$(ProjectDir)bin/DiscordConnector" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ThunderstoreMetadata)" DestinationFolder="$(DiscordConnectorDir)" SkipUnchangedFiles="true" />
   </Target>
 
   <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles">
     <!-- Remove the zip file if it exists, so that we can create a new one. -->
-    <Delete Files="$(ProjectDir)bin/DiscordConnector.zip" Condition="!Exists('$(ProjectDir)bin/bin/DiscordConnector.zip')" />
-    <ZipDirectory SourceDirectory="$(ProjectDir)bin/DiscordConnector" DestinationFile="$(ProjectDir)bin/DiscordConnector.zip" />
+    <Delete Files="$(BinDir)DiscordConnector.zip" Condition="Exists('$(BinDir)DiscordConnector.zip')" />
+    <ZipDirectory SourceDirectory="$(DiscordConnectorDir)" DestinationFile="$(BinDir)DiscordConnector.zip" />
   </Target>
 </Project>
