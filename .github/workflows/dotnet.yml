@@ -40,7 +40,6 @@ jobs:
         with:
           key: tcli-0.1.4
           path: /home/runner/tcli-bin
-
       - name: Setup tcli
         if: ${{ steps.cache-tcli.outputs.cache-hit != 'true'}}
         run: |
@@ -48,3 +47,6 @@ jobs:
           tar xvf tcli.tar.gz
           sudo mv -v tcli-0.1.4-linux-x64 tcli-bin
           /home/runner/tcli-bin/tcli help || true
+      - name: test tcli exists
+        run: |
+          /home/runner/tcli-bin/tcli help
