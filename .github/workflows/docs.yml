@@ -4,7 +4,7 @@ on:
     branches:
       - main
       - feature/documentation-site
-      - dev
+      - doc-change
 
 jobs:
   Build-Publish_Documentation:
