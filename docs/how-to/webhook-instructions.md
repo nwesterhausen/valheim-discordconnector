@@ -1,6 +1,4 @@
-# Webhook Instructions
-
-## How to get a Discord webhook
+# How to get a Discord webhook
 
 1. Make sure you have admin permission on the Discord server
 2. Find or create the text channel you want to have messages sent to
