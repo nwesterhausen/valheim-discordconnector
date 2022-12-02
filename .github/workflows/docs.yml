@@ -4,21 +4,35 @@ on:
     branches:
       - main
       - feature/documentation-site
+      - dev
 
 jobs:
   Build-Publish_Documentation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: pnpm
       # Build
-      - uses: Tiryoh/actions-mkdocs@v0
-        with:
-          requirements: "docs/.requirements.txt"
+      - name: Install Dependencies
+        run: |
+          pnpm install --frozen-lockfile
+      # Build
+      - name: Install Dependencies
+        run: |
+          pnpm docs:build
+
       # Upload
-      - uses: bacongobbler/azure-blob-storage-upload@v1.2.0
-        with:
-          container_name: $web
-          extra_args: "--destination-path discordconnector.valheim.nwest.games/ --overwrite"
-          connection_string: "${{ secrets.AZURE_CONNECTION_STRING }}"
-          source_dir: bin/mkdocs
-          sync: true
+      - run: ls docs/.vitepress/dist
+      # - uses: bacongobbler/azure-blob-storage-upload@v1.2.0
+      #   with:
+      #     container_name: $web
+      #     extra_args: "--destination-path discordconnector.valheim.nwest.games/ --overwrite"
+      #     connection_string: "${{ secrets.AZURE_CONNECTION_STRING }}"
+      #     source_dir: docs/.vitepress/dist
+      #     sync: true

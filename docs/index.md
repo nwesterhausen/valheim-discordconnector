@@ -1,33 +1,49 @@
-# About
+---
+layout: home
 
-A plugin to connect your Valheim server to Discord.
-
-## Features
-
-- Set your own webhook, lets you configure icon, title, and a target channel
-- Enable or Disable any messages
-- Set what text gets sent for most messages
-- Set more than one message for each type and have one randomly chosen!
-- Record number of logins/deaths/pings and flavor the Discord messages
-- Works with non-dedicated server (games opened to lan from the client)
-
-### Supported Message Notifications
-
-- Server startup (server starting, loading the world)
-- Server started (world loaded, ready to join)
-- Server shutting down (server stopping)
-- Player join
-- Player leave
-- Player shouting
-- Player pinging
-- Player death
-- Random events start/pause/resume/end
-
-### Roadmap
-
-See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnector/projects/1) as a Github project.
-
-- Fancier Discord messages
-- Discord bot integration
-- Multiple webhook support
-- More statistics able to be sent
+hero:
+  name: Discord Connector
+  text: Connect your Valheim Server to Discord
+  image:
+    src: /icon-xhdpi-transparent.png
+    alt: DiscordConnector
+  actions:
+    - theme: brand
+    # 375B7E
+      text: Get it on Thunderstore
+      link: https://valheim.thunderstore.io/package/nwesterhausen/DiscordConnector/
+    - theme: alt
+      text: Configuration Docs
+      link: /config/
+    - theme: alt
+      text: Help Guides
+      link: /how-to/webhook-instructions
+features:
+  - icon: 🔀
+    title: Randomize Messages
+    details: Randomize the text that gets sent for each message type you enable.
+  - icon: 🏆
+    title: Configurable Leaderboards
+    details: Set up a custom leaderboard to be sent with most active players or those who die the most!
+  - icon: 🗓️
+    title: World Events
+    details: Random world events can be announced
+  - icon: 📍
+    title: Players' Pings
+    details: Choose to send a message when players ping the map!
+  - icon: 🗺️
+    title: Server Status
+    details: Have the server send a message when it starts up, saves, and/or shuts down!
+  - icon: 🚪
+    title: Players Joining/Leaving
+    details: Have a message sent when players join or logoff the server.
+  - icon: ☠️
+    title: Players Dying
+    details: Send a message to Discord when someone dies!
+  - icon: 💬
+    title: Players Shouting
+    details: Player shouts in game can be sent
+  - icon: 🤫
+    title: Ignore Players
+    details: Choose to ignore messages from some players (maybe admins or modded NPCs) by name list or regular expression.
+---

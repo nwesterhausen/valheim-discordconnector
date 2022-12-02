@@ -1,16 +1,14 @@
 # Changelog
 
-A full changelog
+A full changelog of changes, dating all the way back to the first release.
 
-## History
-
-### Version 2.1.1
+## Version 2.1.1
 
 Fixes:
 
 - Missing dependency in final bundle (error in csharp project file)
 
-### Version 2.1.0
+## Version 2.1.0
 
 A full leaderboard overhaul is in the version. The previous settings for the statistic leaderboards are depreciated in favor of configuration defined statistic leaderboard settings. Look in the `discordconnector-leaderboards.cfg` file and configure any number of the 4 leaderboards to present the kind of data you want. In addition to multiple leaderboards, there are now time-based filters for the leaderboards; restrict them to today or this week or leave them set to all-time. By default, all leaderboards are disabled. If you were using a leaderboard before, you will have to set up a leaderboard to accomplish what you were sending before and enable it. Sorry for the inconvenience but this was the safest tradeoff.
 
@@ -35,26 +33,26 @@ Changes:
 - Building the plugin with the optimization flag present; in my tests, startup time of a Valheim server with just DiscordConnector installed was quicker
 - Public IP is only queried if it is used (by including the %PUBLICIP% variable in a message)
 
-### Version 2.0.8
+## Version 2.0.8
 
 Changes:
 
 - `%WORLD_NAME%` will now only replace with world name once server has started up to avoid an issue with Key Manager
 
-### Version 2.0.7
+## Version 2.0.7
 
 Changes:
 
 - Further guards against null-reference exceptions
 
-### Version 2.0.6
+## Version 2.0.6
 
 Fixes:
 
 - Fixes plugin crash that could occur if the game was initiated more than once.
 - Removed extraneous discord message on server load
 
-### Version 2.0.5
+## Version 2.0.5
 
 Features:
 
@@ -66,19 +64,19 @@ Changes:
 
 - `%POS%` now renders without the enclosing parentheses.
 
-### Version 2.0.4
+## Version 2.0.4
 
 Features:
 
 - Adds a config option to enable sending non-player shouts to Discord. This is in the main config file and disabled by default.
 
-### Version 2.0.3
+## Version 2.0.3
 
 Other Changes:
 
 - Set BepInEx dependency to exactly 5.4.19 instead of 5.* (this stops a warning from showing up)
 
-### Version 2.0.2
+## Version 2.0.2
 
 If a shout is performed by a player that isn't a real player (like a mod), it would break the shout call from working. This is because Discord Connector was trying to lookup the player's details and encountering null. The plugin now checks for that and returns early if null is found.
 
@@ -86,7 +84,7 @@ Fixes:
 
 - Detect if a shout is by a non-player and gracefully exit.
 
-### Version 2.0.1
+## Version 2.0.1
 
 With this update, we bring back Steam_ID variable inclusion and leader board message sending (respecting your config settings). I recommend you replace your `discordconnector.valheim.nwest.games-records.db` database, since the records will not line up and will be essentially soft-reset because the column name changed with the different type of data. Steam IDs are prefaced with 'Steam_' now, so you could migrate your stat database with a bit of effort. I believe this could all be done with queries inside the LiteDB Query Tool.
 
@@ -99,7 +97,7 @@ Breaking changes:
 
 - Player IDs are tracked in the stat database using a new column name, which resets any stat tracking because the player ID is used to resolve to a single player by combining with the character name.
 
-### Version 2.0.0
+## Version 2.0.0
 
 Previous version broke with the new updates to Valheim using the PlayFab server stuff. Previously, the steam ID was grabbed directly from the socket but that doesn't work anymore. To get something workable (the other messages work), I have removed the code which tried to get the SteamID and disabled leader board sending.
 
@@ -109,7 +107,7 @@ Breaking changes:
 - Leader board records will reset and a new database with suffix '-records2.db' will be saved anew. This is because what is being tracked is changed (used to be steamid, now it is using the character id).
 - Periodic leader board messages will not send, ignoring the setting in the config (for now). This is until a more reliable method of determining players apart.
 
-### Version 1.8.0
+## Version 1.8.0
 
 Features:
 
@@ -119,14 +117,14 @@ Fixes:
 
 - Handles the edge case when a toggle was enabled but the text in 'messages' for that toggle was blank, the plugin would crash. (e.g. if 'send shout' toggle was `true` but the 'shout message' was blank, in prior versions this would crash the plugin)
 
-### Version 1.7.1
+## Version 1.7.1
 
 Fixes:
 
 - Ignore player regex was matching everything if not set. Now if it is not set, it will match nothing.
 - Player shout messages were not including enough information for formatting. Now they properly include steamId and shout text.
 
-### Version 1.7.0
+## Version 1.7.0
 
 Features:
 
@@ -136,7 +134,7 @@ Other Changes:
 
 - Switched from ipify.org to [ipconfig.me](https://ifconfig.me) for grabbing public IP address
 
-### Version 1.6.1
+## Version 1.6.1
 
 Fixes:
 
@@ -144,7 +142,7 @@ Fixes:
 
 There was a typo that was affecting the way the config file was read. I didn't run into this in my testing on Windows but was able to duplicate this on Linux after it was reported. Thank you to those who reported this.
 
-### Version 1.6.0
+## Version 1.6.0
 
 Finally a new release! This on is mainly some small features and bugfixes from the github issues backlog.
 
@@ -165,13 +163,13 @@ Breaking Changes:
 
   If you need to make use of that automatic conversion, load the 1.5.3 version of the plugin once before upgrading.
 
-### Version 1.5.3
+## Version 1.5.3
 
 Fixes:
 
 - Leader board interval was half of what was configured (now is properly minutes)
 
-### Version 1.5.2
+## Version 1.5.2
 
 Fixes:
 
@@ -181,13 +179,13 @@ Fixes:
 Due to how records.json recorded stats and the LiteDB, you will not be able to use the old records with strategies
 involving the SteamID because prior to 1.5.0 we were not recording the SteamID with the record.
 
-### Version 1.5.1
+## Version 1.5.1
 
 Fixes:
 
 - Toggles for the bottom n players leader boards (inverse ranked leader boards)
 
-### Version 1.5.0
+## Version 1.5.0
 
 Features:
 
@@ -205,15 +203,11 @@ options for the users of this mod.
 It is set up to do a migration on first load of the updated plugin, the
 steps it follows for that is:
 
-    1. check if records.json (or configured name) exists
-    2. read all records from the file
-    3. parse the records
-    4. loop through all the records and add them to the database
-
-     Records added this way will have position of zero and a
-     steamid of 1.
-
-    5. move the records.json file to records.json.migrated
+1. check if records.json (or configured name) exists
+2. read all records from the file
+3. parse the records
+4. loop through all the records and add them to the database (Records added this way will have position of zero and a steamid of 1.)
+5. move the records.json file to records.json.migrated
 
 If you don't want to have it auto-migrate the records, rename your
 records.json or delete it. If the name does not match exactly it will
@@ -234,13 +228,13 @@ messages.
 - The variable `%PUBLICIP%` can be used in _any_ message configuration
   now.
 
-### Version 1.4.4
+## Version 1.4.4
 
 Fixes:
 
 - Position being sent with event messages even if event position was disabled in config
 
-### Version 1.4.3
+## Version 1.4.3
 
 Fixes:
 
@@ -255,19 +249,19 @@ Features:
 - Added toggles to enable/disable some event debug messages (all disabled by default)
 - Added a toggle to enable/disable a debug message with responses from the webhook (disabled by default)
 
-### Version 1.4.2
+## Version 1.4.2
 
 Fixes:
 
 - Least deaths leader board wasn't respecting the correct config entry. (THanks @thedefside)
 
-### Version 1.4.1
+## Version 1.4.1
 
 Fixes:
 
 - Removed the two debug logging calls for events -- sorry for the log spam!
 
-### Version 1.4.0
+## Version 1.4.0
 
 Features:
 
@@ -288,14 +282,14 @@ Breaking Changes:
 - If you used `%PLAYERS%` in any of the event messages, you need to remove it. With the changes required for the event messages
   functionality, it is not supportable at this time.
 
-### Version 1.3.0
+## Version 1.3.0
 
 Features:
 
 - Additional leader board options. The existing leader board option will now default to sending top 3 players for what is enabled.
   You can enable a highest and lowest leader board for each tracked stat now. All leader boards get sent on the same interval.
 
-### Version 1.2.2
+## Version 1.2.2
 
 Fixes:
 
@@ -305,7 +299,7 @@ Also this update modifies when the startup, shutting down, and shut down message
 of a pause because the startup message gets sent when the game is initialized instead of when the loading of the map starts
 for the server.
 
-### Version 1.2.1
+## Version 1.2.1
 
 Fixes:
 
@@ -327,7 +321,7 @@ records.json 1.2.0+ (PlayerName changed to Key)
 [{"Category":"death","Values":[{"Key":"Xithyr","Value":13} ...
 ```
 
-### Version 1.2.0
+## Version 1.2.0
 
 Features:
 
@@ -342,13 +336,13 @@ Features:
   the client running as a server. In those instances I verified that the messages were fired when events started, ended, paused or resumed. The
   resume message is the same as the start message by default because I couldn't think of a way to word it that made sense.
 
-### Version 1.1.1
+## Version 1.1.1
 
 Fix:
 
 - Stop and Loaded config values were using the same value as launched on the backend and not respecting the actual config.
 
-### Version 1.1.0
+## Version 1.1.0
 
 Features:
 
@@ -358,7 +352,7 @@ Fixes:
 
 - Configuration file comments should be clearer/easier to understand
 
-### Version 1.0.0
+## Version 1.0.0
 
 **Release 1.0.0 is a breaking release** since the structure of the configuration files completely changes. When you update you will need to modify the config
 to save your webhook again and to update any message customization you have done!
@@ -379,13 +373,13 @@ Other Changes:
 
 This version included a source code restructuring which should make it easier to maintain in the future.
 
-### Version 0.10.1
+## Version 0.10.1
 
 Hotfix: Message toggles don't act independently.
 
 This is fixed and you can have join messages disabled and death messages enabled and get death messages sent.
 
-### Version 0.10.0
+## Version 0.10.0
 
 Features:
 
@@ -397,14 +391,14 @@ Fixes:
 
 - More robust dedicated server detection (Thanks @Digitalroot)
 
-### Version 0.9.1
+## Version 0.9.1
 
 Fixes
 
 - Time interval for leader board in **minutes** not seconds.
 - Don't display a leave message for disconnects due to version mismatch
 
-### Version 0.9.0
+## Version 0.9.0
 
 Default config options are updated to be true for all notification and coordinates.
 
@@ -422,20 +416,20 @@ Improvements:
 
 - Loaded config is now debug logged to make debugging easier
 
-### Version 0.8.0
+## Version 0.8.0
 
 Added a Death detection and config options to enable/disable the messages as well as
 set either a single message or list of messages to be chosen from when sending a message.
 
-### Version 0.7.2, 0.7.3
+## Version 0.7.2, 0.7.3
 
 Hotfix for mis-packed plugin
 
-### Version 0.7.1
+## Version 0.7.1
 
 Added config option to ignore players when sending shout messages to Discord.
 
-### Version 0.7.0
+## Version 0.7.0
 
 Fixes:
 
@@ -450,7 +444,7 @@ Features:
   position data (disabled by default, I find it very busy when enabled atm)
 - added config option to enable/disable sending position with pings
 
-### Version 0.6.0
+## Version 0.6.0
 
 Enabled for both the client and server versions of Valheim.
 
@@ -462,7 +456,7 @@ Key differences if running a server from the client:
   world begins getting loaded to keep the functionality on the server and to enable
   similar functionality on the client.
 
-### Version 0.5.1
+## Version 0.5.1
 
 Fixes:
 
@@ -483,7 +477,7 @@ record-keeping is ready and makes sense to get it started as soon as possible.
 If you want to disable the record keeping in its entirety, set the Collect Player Stats
 config value to false. This will prevent any records from being saved or written to disk.
 
-### Version 0.5.0
+## Version 0.5.0
 
 Allows for randomized messages to get sent. If you want only one message to be sent
 (the existing functionality 0.4.0 and earlier), you don't need to change anything,
@@ -500,7 +494,7 @@ Breaking Changes:
 
 - If you used a semicolon in your message, it will be seen as multiple messages
 
-### Version 0.4.0
+## Version 0.4.0
 
 Features:
 
@@ -512,7 +506,7 @@ them on or off.
 
 This removes the PlayerArrival settings.
 
-### Version 0.3.0
+## Version 0.3.0
 
 Bug fixes:
 
@@ -531,16 +525,16 @@ All 3 are togglable and can have the position toggled separately.
 To include when players leave, more work has to be done because those events
 are not broadcast and instead it is only network messages.
 
-### Version 0.2.0
+## Version 0.2.0
 
 - Use config values to set what messages get sent for what actions
 - More granularity with Enable/Disable for existing messages
 
-### Version 0.1.2
+## Version 0.1.2
 
 Added link to a how-to guide for creating a discord webhook.
 
-### Version 0.1.1
+## Version 0.1.1
 
 Initial release. Configuration and sends messages on server startup and shutdown.
 Essentially a minimally viable product.
