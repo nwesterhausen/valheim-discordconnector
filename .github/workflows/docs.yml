@@ -3,22 +3,33 @@ on:
   push:
     branches:
       - main
-      - feature/documentation-site
 
 jobs:
   Build-Publish_Documentation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      # Build
-      - uses: Tiryoh/actions-mkdocs@v0
+      - uses: pnpm/action-setup@v2
         with:
-          requirements: "docs/.requirements.txt"
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: pnpm
+      # Build
+      - name: Install Dependencies
+        run: |
+          pnpm install --frozen-lockfile
+      # Build
+      - name: Install Dependencies
+        run: |
+          pnpm docs:build
+
       # Upload
       - uses: bacongobbler/azure-blob-storage-upload@v1.2.0
         with:
           container_name: $web
           extra_args: "--destination-path discordconnector.valheim.nwest.games/ --overwrite"
           connection_string: "${{ secrets.AZURE_CONNECTION_STRING }}"
-          source_dir: bin/mkdocs
+          source_dir: docs/.vitepress/dist
           sync: true

@@ -27,5 +27,11 @@
     "ZDOID",
     "ZDOS"
   ],
-  "conventionalCommits.scopes": ["metadata", "gh-actions", "release", "build"]
+  "conventionalCommits.scopes": [
+    "metadata",
+    "gh-actions",
+    "release",
+    "build",
+    "docs"
+  ]
 }

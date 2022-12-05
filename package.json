@@ -1,0 +1,20 @@
+{
+  "name": "valheim-discordconnector-docs",
+  "version": "1.0.0",
+  "description": "Vitepress-powered plugin website",
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "keywords": [
+    "vitepress",
+    "documentation"
+  ],
+  "author": "Nicholas Westerhausen",
+  "license": "MIT",
+  "devDependencies": {
+    "vitepress": "1.0.0-alpha.29",
+    "vue": "^3.2.45"
+  }
+}
