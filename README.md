@@ -16,7 +16,7 @@ See [the README](Metadata/README.md) for the plugin.
 
 ## Changelog
 
-See [the changelog](Metadata/CHANGELOG.md).
+See [the changelog](docs/changelog.md).
 
 ### Building
 
