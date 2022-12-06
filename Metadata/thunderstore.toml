@@ -24,4 +24,4 @@ target = "./"
 [publish]
 repository = "https://thunderstore.io"
 communities = ["valheim"]
-categories = ["mistlands-update", "server-side", "utility"]
+categories = []
