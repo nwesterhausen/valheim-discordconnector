@@ -1,6 +1,6 @@
 #
 
-![logo](/icon-xhdpi-wide-transparent.png)
+![logo](/icon-xhdpi-wide.png)
 
 A plugin to connect your Valheim server to Discord.
 
