@@ -35,6 +35,10 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+### Version 2.1.2
+
+Mistlands update.
+
 ### Version 2.1.1
 
 Fixes:

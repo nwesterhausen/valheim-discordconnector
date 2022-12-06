@@ -4,7 +4,7 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "nwesterhausen"
 name = "DiscordConnector"
-versionNumber = "2.1.1"
+versionNumber = "2.1.2"
 description = "Connects your Valheim server to a Discord webhook. Works for both dedicated and client-hosted servers."
 websiteUrl = "https://discordconnector.valheim.nwest.games/"
 containsNsfwContent = false
@@ -18,10 +18,10 @@ readme = "./README.md"
 outdir = "./build"
 
 [[build.copy]]
-source = "./dist"
-target = ""
+source = "../bin/DiscordConnector"
+target = "./"
 
 [publish]
 repository = "https://thunderstore.io"
 communities = ["valheim"]
-categories = []
+categories = ["mistlands-update", "server-side", "utility"]
