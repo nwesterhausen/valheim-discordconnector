@@ -2,6 +2,10 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.1.2
+
+Mistlands update.
+
 ## Version 2.1.1
 
 Fixes:

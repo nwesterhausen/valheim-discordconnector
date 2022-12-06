@@ -10,6 +10,7 @@
     "Ipify",
     "Leaderboard",
     "leaderboards",
+    "Mistlands",
     "PLAYERID",
     "PUBLICIP",
     "r2modman",
@@ -32,6 +33,7 @@
     "gh-actions",
     "release",
     "build",
-    "docs"
+    "docs",
+    "media"
   ]
 }
