@@ -15,6 +15,7 @@ namespace DiscordConnector
         private VariableConfig variableConfig;
         private LeaderBoardConfig leaderBoardConfig;
         public readonly string configPath;
+        const string ConfigJsonFilename = "config-dump.json";
 
         /// <summary>
         /// Valid extensions for the config files, plus a reference for main.
@@ -273,9 +274,9 @@ namespace DiscordConnector
 
             System.Threading.Tasks.Task.Run(() =>
             {
-                string configDump = Path.Combine(configPath, "config-debug.json");
+                string configDump = Path.Combine(configPath, ConfigJsonFilename);
                 File.WriteAllText(configDump, jsonString);
-                Plugin.StaticLogger.LogDebug("Dumped configuration files to JSON for debugging (if needed).");
+                Plugin.StaticLogger.LogDebug($"Dumped configuration files to {ConfigJsonFilename}");
             });
         }
     }
