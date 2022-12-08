@@ -35,6 +35,7 @@
     "build",
     "docs",
     "media",
-    "configs"
+    "configs",
+    "leaderboards"
   ]
 }
