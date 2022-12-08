@@ -362,11 +362,6 @@ namespace DiscordConnector.Records
                 results.Add(new CountResult(player.CharacterName, (int)onlineTime.TotalSeconds));
             }
 
-            Task.Run(() =>
-            {
-                DiscordApi.SendMessage(JsonConvert.SerializeObject(results));
-            });
-
             return results;
         }
 
@@ -530,11 +525,6 @@ namespace DiscordConnector.Records
                 // Append to list
                 results.Add(new CountResult(player.CharacterName, (int)onlineTime.TotalSeconds));
             }
-
-            Task.Run(() =>
-            {
-                DiscordApi.SendMessage(JsonConvert.SerializeObject(results));
-            });
 
             return results;
         }

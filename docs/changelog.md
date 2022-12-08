@@ -2,6 +2,12 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.1.3
+
+Fixes:
+
+- Extra JSON data was getting sent to Discord when some LiteDB lookups were happening
+
 ## Version 2.1.2
 
 Mistlands update.

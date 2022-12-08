@@ -35,6 +35,12 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+### Version 2.1.3
+
+Fixes:
+
+- Extra JSON data was getting sent to Discord when some LiteDB lookups were happening
+
 ### Version 2.1.2
 
 Mistlands update.

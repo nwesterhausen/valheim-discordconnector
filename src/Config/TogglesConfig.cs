@@ -296,7 +296,7 @@ namespace DiscordConnector.Config
             jsonString += $"\"debugEventChanges\":\"{DebugEveryEventChange}\",";
             jsonString += $"\"debugDatabaseMethods\":\"{DebugDatabaseMethods}\",";
             jsonString += $"\"debugHttpRequestResponses\":\"{DebugHttpRequestResponse}\"";
-            jsonString += "},";
+            jsonString += "}";
 
             jsonString += "}";
             return jsonString;

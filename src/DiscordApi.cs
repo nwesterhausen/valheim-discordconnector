@@ -53,16 +53,21 @@ namespace DiscordConnector
         /// <param name="fields">Discord fields as defined in the API, as Tuples (field name, value)</param>
         public static void SendMessageWithFields(string content = null, List<Tuple<string, string>> fields = null)
         {
-
+            // Guard against null/empty calls
             if (string.IsNullOrEmpty(content) && fields == null)
             {
                 content = "Uh-oh! An unexpectedly empty message was sent!";
             }
 
+            // Begin the payload object
             string payloadString = "{";
+            // If we have fields at all, put them as embedded fields
             if (fields != null)
             {
+                // Fields go under embed as array
                 payloadString += "\"embeds\":[{\"fields\":[";
+
+                // Convert the fields into JSON Strings
                 List<string> fieldStrings = new List<string>();
                 foreach (Tuple<string, string> t in fields)
                 {
@@ -72,19 +77,29 @@ namespace DiscordConnector
                         value = t.Item2
                     }));
                 }
+
+                // Put the field JSON strings into our payload object 
                 payloadString += string.Join(",", fieldStrings.ToArray());
                 payloadString += "]}]";
+
+                // Cautiously put a comma if there is content to add to the payload as well
                 if (content != null)
                 {
                     payloadString += ",";
                 }
             }
+
+            // If there is any content
             if (content != null)
             {
+                // Append the content to the payload
                 payloadString += $"\"content\":\"{content}\"";
             }
+
+            // Finish the payload JSON 
             payloadString += "}";
 
+            // Use our pre-existing method to send serialized JSON to discord
             SendSerializedJson(payloadString);
         }
 
@@ -95,15 +110,18 @@ namespace DiscordConnector
         internal static void SendSerializedJson(string serializedJson)
         {
             Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
+
+            // Guard against unset webhook
             if (string.IsNullOrEmpty(Plugin.StaticConfig.WebHookURL))
             {
                 Plugin.StaticLogger.LogInfo("No webhook set, not sending message.");
                 return;
             }
+
             // Responsible for sending a JSON string to the webhook.
             byte[] byteArray = Encoding.UTF8.GetBytes(serializedJson);
 
-
+            // Create a web request to send the payload to discord
             WebRequest request = WebRequest.Create(Plugin.StaticConfig.WebHookURL);
             request.Method = "POST";
             request.ContentType = "application/json";
@@ -112,10 +130,12 @@ namespace DiscordConnector
             // Dispatch the request to discord and the response processing to an async task
             Task.Run(() =>
             {
+                // We have to write the data to the request
                 Stream dataStream = request.GetRequestStream();
                 dataStream.Write(byteArray, 0, byteArray.Length);
                 dataStream.Close();
 
+                // Wait for a response to the web request
                 WebResponse response = request.GetResponse();
                 if (Plugin.StaticConfig.DebugHttpRequestResponse)
                 {
