@@ -2,6 +2,17 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.1.5
+
+Fixes:
+
+- Players leaving were being recorded as joining in the database
+
+Changes:
+
+- Web Request methods changed to used Async methods and `ContinueWith` instead of dispatching a task
+- `%PUBLIC_IP%` variable now gets its information by asking the server instead of finding out itself
+
 ## Version 2.1.4
 
 Fixes:

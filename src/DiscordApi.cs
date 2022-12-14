@@ -107,59 +107,30 @@ namespace DiscordConnector
         /// Sends <paramref name="serializedJson"/> to the webhook specified in configuration.
         /// </summary>
         /// <param name="serializedJson">Body data for the webhook as JSON serialized into a string</param>
-        internal static void SendSerializedJson(string serializedJson)
+        private static void SendSerializedJson(string serializedJson)
         {
             Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
 
-            // Guard against unset webhook
-            if (string.IsNullOrEmpty(Plugin.StaticConfig.WebHookURL))
+            // Guard against unset webhook or empty serialized json
+            if (string.IsNullOrEmpty(Plugin.StaticConfig.WebHookURL) || string.IsNullOrEmpty(serializedJson))
             {
-                Plugin.StaticLogger.LogInfo("No webhook set, not sending message.");
                 return;
             }
-
-            // Responsible for sending a JSON string to the webhook.
-            byte[] byteArray = Encoding.UTF8.GetBytes(serializedJson);
 
             // Create a web request to send the payload to discord
             WebRequest request = WebRequest.Create(Plugin.StaticConfig.WebHookURL);
             request.Method = "POST";
             request.ContentType = "application/json";
-            request.ContentLength = byteArray.Length;
 
-            // Dispatch the request to discord and the response processing to an async task
-            Task.Run(() =>
+            request.GetRequestStreamAsync().ContinueWith(requestStreamTask =>
             {
-                // We have to write the data to the request
-                Stream dataStream = request.GetRequestStream();
-                dataStream.Write(byteArray, 0, byteArray.Length);
-                dataStream.Close();
-
-                // Wait for a response to the web request
-                WebResponse response = request.GetResponse();
-                if (Plugin.StaticConfig.DebugHttpRequestResponse)
+                // Write JSON payload into request
+                using StreamWriter writer = new(requestStreamTask.Result);
+                writer.WriteAsync(serializedJson).ContinueWith(_ =>
                 {
-                    Plugin.StaticLogger.LogDebug($"Request Response Short Code: {((HttpWebResponse)response).StatusDescription}");
-                }
-
-                // Get the stream containing content returned by the server.
-                // The using block ensures the stream is automatically closed.
-                using (dataStream = response.GetResponseStream())
-                {
-                    // Open the stream using a StreamReader for easy access.
-                    StreamReader reader = new StreamReader(dataStream);
-                    // Read the content.
-                    string responseFromServer = reader.ReadToEnd();
-                    // Display the content.
-                    if (Plugin.StaticConfig.DebugHttpRequestResponse)
-                    {
-                        Plugin.StaticLogger.LogDebug($"Full response: {responseFromServer}");
-                    }
-                }
-
-                // Close the response.
-                response.Close();
-            }).ConfigureAwait(false);
+                    request.GetResponseAsync();
+                });
+            });
         }
     }
 
