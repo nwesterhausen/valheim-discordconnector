@@ -2,6 +2,12 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.1.5
+
+Changes:
+
+- Web Request methods changed to used Async methods and `ContinueWith` instead of dispatching a task
+
 ## Version 2.1.4
 
 Fixes:

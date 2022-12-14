@@ -35,6 +35,12 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+### Version 2.1.5
+
+Changes:
+
+- Web Request methods changed to used Async methods and `ContinueWith` instead of dispatching a task
+
 ### Version 2.1.4
 
 Fixes:
