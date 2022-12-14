@@ -1,5 +1,4 @@
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace DiscordConnector
@@ -174,7 +173,7 @@ namespace DiscordConnector
                 return;
             }
 
-            FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.PlayerLeavePosEnabled);
+            FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.PlayerDeathMessageEnabled);
         }
 
         /// <summary>
@@ -266,7 +265,7 @@ namespace DiscordConnector
                 return;
             }
 
-            FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.ChatPingPosEnabled, pos, text);
+            FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.ChatShoutPosEnabled, pos, text);
         }
 
         /// <summary>
