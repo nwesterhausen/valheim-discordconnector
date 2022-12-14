@@ -16,31 +16,34 @@ namespace DiscordConnector
         {
             string ipAddress = "";
 
-            WebRequest request = WebRequest.Create(ENDPOINT);
-            request.Method = "GET";
-
             // Wrap firing the response in a TRY/CATCH and on an exception, abandon trying to retrieve the public IP
             try
             {
-                WebResponse response = request.GetResponse();
-                Plugin.StaticLogger.LogDebug($"Response Short Code (ifconfig.me/ip): {((HttpWebResponse)response).StatusDescription}");
+                WebRequest request = WebRequest.Create(ENDPOINT);
+                request.Method = "GET";
 
-                // Get the stream containing content returned by the server.
-                // The using block ensures the stream is automatically closed.
-                using (Stream dataStream = response.GetResponseStream())
+                request.GetResponseAsync().ContinueWith(webResponseTask =>
                 {
-                    // Open the stream using a StreamReader for easy access.
-                    StreamReader reader = new StreamReader(dataStream);
-                    // Read the content.
-                    ipAddress = reader.ReadToEnd();
-                    // Display the content.
-                    Plugin.StaticLogger.LogDebug($"Full response (ifconfig.me/ip): {ipAddress}");
-                }
+                    WebResponse response = webResponseTask.Result;
+                    Plugin.StaticLogger.LogDebug($"Response Short Code (ifconfig.me/ip): {((HttpWebResponse)response).StatusDescription}");
 
-                // Close the response.
-                response.Close();
+                    // Get the stream containing content returned by the server.
+                    // The using block ensures the stream is automatically closed.
+                    using (Stream dataStream = response.GetResponseStream())
+                    {
+                        // Open the stream using a StreamReader for easy access.
+                        StreamReader reader = new StreamReader(dataStream);
+                        // Read the content.
+                        ipAddress = reader.ReadToEnd();
+                        // Display the content.
+                        Plugin.StaticLogger.LogDebug($"Full response (ifconfig.me/ip): {ipAddress}");
+                    }
 
-                return ipAddress;
+                    // Close the response.
+                    response.Close();
+
+                    return ipAddress;
+                });
             }
             catch (Exception e)
             {
