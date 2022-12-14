@@ -117,7 +117,7 @@ namespace DiscordConnector
             // If recording player leave statistics is enabled, save a record of player leaving
             if (Plugin.StaticConfig.StatsLeaveEnabled)
             {
-                Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Join, peer.m_playerName, playerHostName, peer.m_refPos);
+                Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Leave, peer.m_playerName, playerHostName, peer.m_refPos);
             }
 
 
