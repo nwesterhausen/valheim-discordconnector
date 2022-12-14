@@ -75,6 +75,35 @@ namespace DiscordConnector
         }
 
         /// <summary>
+        /// When a player is stuck on the joined list but they actually are disconnected (in the case of players that suddenly lose connection and are timed out),
+        /// force them to "leave" using the playerHostName and not using a ZNetPeer at all.
+        /// </summary>
+        public static void ForceLeave(string playerHostName)
+        {
+            if (!joinedPlayers.Remove(playerHostName))
+            {
+                Plugin.StaticLogger.LogDebug($"Tried force removing {playerHostName} from joined players but they were already gone.");
+                return;
+            }
+
+            string name = Plugin.StaticDatabase.GetLatestCharacterNameForPlayer(playerHostName);
+
+            // If recording player leave statistics is enabled, save a record of player leaving
+            if (Plugin.StaticConfig.StatsLeaveEnabled)
+            {
+                Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Leave, name, playerHostName);
+            }
+
+            if (Plugin.StaticConfig.PlayerLeaveMessageEnabled)
+            {
+                string preFormattedMessage = Plugin.StaticConfig.LeaveMessage;
+                preFormattedMessage.Replace("%POS%", "");
+                string finalMessage = MessageTransformer.FormatPlayerMessage(preFormattedMessage, name, playerHostName);
+                DiscordApi.SendMessage(finalMessage);
+            }
+        }
+
+        /// <summary>
         /// Perform the necessary steps for a player leaving the server.
         /// </summary>
         public static void Leave(ZNetPeer peer)
