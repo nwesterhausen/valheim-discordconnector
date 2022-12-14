@@ -35,6 +35,12 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+### Version 2.1.6
+
+Changes:
+
+- Regress web request async changes until more reliable method is determined.
+
 ### Version 2.1.5
 
 Fixes:
