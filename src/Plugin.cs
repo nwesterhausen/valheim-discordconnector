@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using BepInEx;
 using BepInEx.Logging;
 using DiscordConnector.Records;
@@ -30,7 +30,7 @@ namespace DiscordConnector
                 {
                     return _publicIpAddress;
                 }
-                _publicIpAddress = IpifyAPI.PublicIpAddress();
+                _publicIpAddress = ZNet.GetPublicIP();
                 return _publicIpAddress;
             }
         }
