@@ -107,7 +107,7 @@ namespace DiscordConnector
         /// Sends <paramref name="serializedJson"/> to the webhook specified in configuration.
         /// </summary>
         /// <param name="serializedJson">Body data for the webhook as JSON serialized into a string</param>
-        internal static void SendSerializedJson(string serializedJson)
+        private static void SendSerializedJson(string serializedJson)
         {
             Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
 
