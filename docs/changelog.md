@@ -2,6 +2,13 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.1.4
+
+Fixes:
+
+- Death messages were referencing "LeavePosEnabled" instead of "DeathPosEnabled"
+- Shout messages were referencing "PingPosEnabled" instead of "ShoutPosEnabled"
+
 ## Version 2.1.3
 
 Fixes:

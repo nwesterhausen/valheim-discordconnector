@@ -35,6 +35,13 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+### Version 2.1.4
+
+Fixes:
+
+- Death messages were referencing "LeavePosEnabled" instead of "DeathPosEnabled"
+- Shout messages were referencing "PingPosEnabled" instead of "ShoutPosEnabled"
+
 ### Version 2.1.3
 
 Fixes:
