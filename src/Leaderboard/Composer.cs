@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using DiscordConnector.Config;
 using DiscordConnector.Records;
-using Newtonsoft.Json;
 
 namespace DiscordConnector.LeaderBoards
 {
@@ -121,6 +120,9 @@ namespace DiscordConnector.LeaderBoards
                 }
             }
 
+            Plugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
+            printDict(Dict);
+
             return Dict;
 
         }
@@ -176,8 +178,24 @@ namespace DiscordConnector.LeaderBoards
                 }
             }
 
+            Plugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
+            printDict(Dict);
+
             return Dict;
 
+        }
+
+        private static void printDict(Dictionary<Statistic, List<CountResult>> dict)
+        {
+            foreach (KeyValuePair<Statistic, List<CountResult>> pair in dict)
+            {
+                string outStr = "";
+                foreach (var x in pair.Value)
+                {
+                    outStr += x.ToString() + ",";
+                }
+                Plugin.StaticLogger.LogDebug($"{pair.Key}: {outStr}");
+            }
         }
 
     }

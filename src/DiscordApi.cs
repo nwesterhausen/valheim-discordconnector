@@ -5,7 +5,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace DiscordConnector
 {
@@ -16,7 +15,7 @@ namespace DiscordConnector
         /// </summary>
         /// <param name="message">A string optionally formatted with Discord-approved markdown syntax.</param>
         /// <param name="pos">A 3-dimensional vector representing a position</param>
-        public static void SendMessage(string message, Vector3 pos)
+        public static void SendMessage(string message, UnityEngine.Vector3 pos)
         {
             if (Plugin.StaticConfig.DiscordEmbedsEnabled)
             {

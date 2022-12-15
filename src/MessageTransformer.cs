@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using UnityEngine;
 
 namespace DiscordConnector
 {
@@ -56,7 +55,6 @@ namespace DiscordConnector
             catch (System.Exception e)
             {
                 Plugin.StaticLogger.LogDebug($"Unable to get World Name from ZNet. {e.Message}");
-                Plugin.StaticLogger.LogDebug(e);
             }
             return rawMessage
                 .Replace(WORLD_NAME, world_name);
@@ -75,7 +73,7 @@ namespace DiscordConnector
                 .Replace(PLAYER_NAME, playerName);
         }
 
-        public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId, Vector3 pos)
+        public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId, UnityEngine.Vector3 pos)
         {
             return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerId)
                 .Replace(POS, $"{pos}");
@@ -85,7 +83,7 @@ namespace DiscordConnector
             return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerId)
                 .Replace(SHOUT, shout);
         }
-        public static string FormatPlayerMessage(string rawMessage, string playerName, string playerSteamId, string shout, Vector3 pos)
+        public static string FormatPlayerMessage(string rawMessage, string playerName, string playerSteamId, string shout, UnityEngine.Vector3 pos)
         {
             return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerSteamId, pos)
                 .Replace(SHOUT, shout);
@@ -97,7 +95,7 @@ namespace DiscordConnector
                 .Replace(EVENT_END_MSG, eventEndMsg);
             //.Replace(EVENT_PLAYERS, players); //! Removed until re can reliably poll player locations
         }
-        public static string FormatEventMessage(string rawMessage, string eventStartMsg, string eventEndMsg, Vector3 pos)
+        public static string FormatEventMessage(string rawMessage, string eventStartMsg, string eventEndMsg, UnityEngine.Vector3 pos)
         {
             return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg)
                 .Replace(POS, $"{pos}");
@@ -112,12 +110,12 @@ namespace DiscordConnector
             return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg)
                 .Replace(EVENT_MSG, eventEndMsg);
         }
-        public static string FormatEventStartMessage(string rawMessage, string eventStartMsg, string eventEndMsg, Vector3 pos)
+        public static string FormatEventStartMessage(string rawMessage, string eventStartMsg, string eventEndMsg, UnityEngine.Vector3 pos)
         {
             return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, pos)
                 .Replace(EVENT_MSG, eventStartMsg);
         }
-        public static string FormatEventEndMessage(string rawMessage, string eventStartMsg, string eventEndMsg, Vector3 pos)
+        public static string FormatEventEndMessage(string rawMessage, string eventStartMsg, string eventEndMsg, UnityEngine.Vector3 pos)
         {
             return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, pos)
                 .Replace(EVENT_MSG, eventEndMsg);
@@ -158,7 +156,7 @@ namespace DiscordConnector
         /// </summary>
         /// <param name="vec3">Position vector to turn into string</param>
         /// <returns>String following the formatting laid out in the variable config file.</returns>
-        public static string FormatVector3AsPos(Vector3 vec3)
+        public static string FormatVector3AsPos(UnityEngine.Vector3 vec3)
         {
             return Plugin.StaticConfig.PosVarFormat
                 .Replace("%X%", vec3.x.ToString("F1"))
@@ -171,7 +169,7 @@ namespace DiscordConnector
         /// </summary>
         /// <param name="vec3">Position vector to include</param>
         /// <returns>String to append with the position information</returns>
-        public static string FormatAppendedPos(Vector3 vec3)
+        public static string FormatAppendedPos(UnityEngine.Vector3 vec3)
         {
             string posStr = FormatVector3AsPos(vec3);
             return Plugin.StaticConfig.AppendedPosFormat

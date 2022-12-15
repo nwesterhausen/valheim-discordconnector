@@ -48,7 +48,6 @@ namespace DiscordConnector
 
             _publicIpAddress = "";
         }
-
         private void Awake()
         {
             // Plugin startup logic
@@ -73,7 +72,7 @@ namespace DiscordConnector
                 leaderBoard1Timer.Elapsed += StaticLeaderBoards.LeaderBoard1.SendLeaderBoardOnTimer;
                 // Interval is learned from config file in minutes
                 leaderBoard1Timer.Interval = 60 * 1000 * StaticConfig.LeaderBoards[0].PeriodInMinutes;
-                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.1 timer with interval 1:{leaderBoard1Timer.Interval} ms");
+                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.1 timer with interval {Strings.HumanReadableMs(leaderBoard1Timer.Interval)}");
                 leaderBoard1Timer.Start();
             }
 
@@ -83,7 +82,7 @@ namespace DiscordConnector
                 leaderBoard2Timer.Elapsed += StaticLeaderBoards.LeaderBoard2.SendLeaderBoardOnTimer;
                 // Interval is learned from config file in minutes
                 leaderBoard2Timer.Interval = 60 * 1000 * StaticConfig.LeaderBoards[1].PeriodInMinutes;
-                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.2 timer with interval 1:{leaderBoard2Timer.Interval} ms");
+                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.2 timer with interval {Strings.HumanReadableMs(leaderBoard2Timer.Interval)}");
                 leaderBoard2Timer.Start();
             }
 
@@ -93,7 +92,7 @@ namespace DiscordConnector
                 leaderBoard3Timer.Elapsed += StaticLeaderBoards.LeaderBoard3.SendLeaderBoardOnTimer;
                 // Interval is learned from config file in minutes
                 leaderBoard3Timer.Interval = 60 * 1000 * StaticConfig.LeaderBoards[2].PeriodInMinutes;
-                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.3 timer with interval 1:{leaderBoard3Timer.Interval} ms");
+                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.3 timer with interval {Strings.HumanReadableMs(leaderBoard3Timer.Interval)}");
                 leaderBoard3Timer.Start();
             }
 
@@ -103,7 +102,7 @@ namespace DiscordConnector
                 leaderBoard4Timer.Elapsed += StaticLeaderBoards.LeaderBoard4.SendLeaderBoardOnTimer;
                 // Interval is learned from config file in minutes
                 leaderBoard4Timer.Interval = 60 * 1000 * StaticConfig.LeaderBoards[3].PeriodInMinutes;
-                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.4 timer with interval 1:{leaderBoard4Timer.Interval} ms");
+                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.4 timer with interval {Strings.HumanReadableMs(leaderBoard4Timer.Interval)}");
                 leaderBoard4Timer.Start();
             }
 
@@ -113,7 +112,7 @@ namespace DiscordConnector
                 leaderBoard5Timer.Elapsed += StaticLeaderBoards.LeaderBoard4.SendLeaderBoardOnTimer;
                 // Interval is learned from config file in minutes
                 leaderBoard5Timer.Interval = 60 * 1000 * StaticConfig.LeaderBoards[4].PeriodInMinutes;
-                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.4 timer with interval 1:{leaderBoard5Timer.Interval} ms");
+                Plugin.StaticLogger.LogInfo($"Enabling LeaderBoard.5 timer with interval {Strings.HumanReadableMs(leaderBoard5Timer.Interval)}");
                 leaderBoard5Timer.Start();
             }
 
@@ -123,6 +122,7 @@ namespace DiscordConnector
                 playerActivityTimer.Elapsed += LeaderBoards.ActivePlayersAnnouncement.SendOnTimer;
                 // Interval is learned from config file in minutes
                 playerActivityTimer.Interval = 60 * 1000 * StaticConfig.ActivePlayersAnnouncement.PeriodInMinutes;
+                Plugin.StaticLogger.LogInfo($"Enabling Player Activity announcement with interval {Strings.HumanReadableMs(playerActivityTimer.Interval)}");
                 playerActivityTimer.Start();
             }
 
