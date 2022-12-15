@@ -1,6 +1,4 @@
-
-using System;
-using System.Timers;
+﻿using System.Timers;
 
 namespace DiscordConnector.LeaderBoards
 {

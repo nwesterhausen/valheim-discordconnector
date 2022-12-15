@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using BepInEx.Configuration;
 using DiscordConnector.Config;
+using BepInEx.Configuration;
 
 namespace DiscordConnector
 {

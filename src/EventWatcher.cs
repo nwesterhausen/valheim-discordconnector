@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Timers;
-using UnityEngine;
 
 namespace DiscordConnector
 {
@@ -28,7 +27,7 @@ namespace DiscordConnector
             public static float Duration => HaveActiveEvent ? Event.m_duration : 0;
             public static float Elapsed => HaveActiveEvent ? Event.m_time : 0;
             public static bool IsRunning => HaveActiveEvent ? RandEventSystem.instance.IsAnyPlayerInEventArea(Event) : false;
-            public static Vector3 Pos => HaveActiveEvent ? Event.m_pos : new Vector3(0, 0, 0);
+            public static UnityEngine.Vector3 Pos => HaveActiveEvent ? Event.m_pos : new UnityEngine.Vector3(0, 0, 0);
             public static string EndMessage => HaveActiveEvent ? Localization.instance.Localize(Event.m_endMessage) : "";
             public static string StartMessage => HaveActiveEvent ? Localization.instance.Localize(Event.m_startMessage) : "";
 
@@ -64,7 +63,7 @@ namespace DiscordConnector
         private bool WasRunning, HadActiveEvent;
         private float PreviousElapsed;
         private string PreviousEventStartMessage, PreviousEventEndMessage;
-        private Vector3 PreviousEventPos;
+        private UnityEngine.Vector3 PreviousEventPos;
         private System.Timers.Timer randEventTimer;
 
         public EventWatcher()
@@ -74,7 +73,7 @@ namespace DiscordConnector
             PreviousElapsed = 0;
             PreviousEventStartMessage = "";
             PreviousEventEndMessage = "";
-            PreviousEventPos = new Vector3();
+            PreviousEventPos = new UnityEngine.Vector3();
 
 
             randEventTimer = new System.Timers.Timer();
@@ -173,7 +172,7 @@ namespace DiscordConnector
                     }
                 }
 
-                if (Status.Pos != Vector3.zero)
+                if (Status.Pos != UnityEngine.Vector3.zero)
                 {
                     PreviousEventStartMessage = Status.StartMessage;
                     PreviousEventEndMessage = Status.EndMessage;

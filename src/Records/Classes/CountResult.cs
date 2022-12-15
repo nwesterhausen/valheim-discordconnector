@@ -73,5 +73,10 @@ namespace DiscordConnector.Records
             }
             return results;
         }
+
+        public override string ToString()
+        {
+            return $"{Name}: {Count}";
+        }
     }
 }

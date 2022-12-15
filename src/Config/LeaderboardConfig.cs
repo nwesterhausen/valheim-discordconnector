@@ -1,5 +1,4 @@
 ﻿using BepInEx.Configuration;
-
 namespace DiscordConnector.Config
 {
     internal class LeaderBoardConfig
