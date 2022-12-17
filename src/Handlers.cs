@@ -173,7 +173,7 @@ namespace DiscordConnector
                 return;
             }
 
-            FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.PlayerDeathMessageEnabled);
+            FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.PlayerDeathPosEnabled);
         }
 
         /// <summary>
