@@ -2,6 +2,12 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.1.7
+
+Fixes:
+
+- Death messages weren't respecting the POS enabled setting
+
 ## Version 2.1.6
 
 Changes:

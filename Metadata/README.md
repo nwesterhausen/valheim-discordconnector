@@ -35,6 +35,12 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+### Version 2.1.7
+
+Fixes:
+
+- Death messages weren't respecting the POS enabled setting
+
 ### Version 2.1.6
 
 Changes:
