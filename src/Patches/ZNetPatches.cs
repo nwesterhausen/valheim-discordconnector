@@ -1,70 +1,68 @@
 ﻿using System.Collections.Generic;
 using HarmonyLib;
 
-namespace DiscordConnector.Patches
+namespace DiscordConnector.Patches;
+internal class ZNetPatches
 {
-    internal class ZNetPatches
+
+    [HarmonyPatch(typeof(ZNet), nameof(ZNet.LoadWorld))]
+    internal class LoadWorld
     {
-
-        [HarmonyPatch(typeof(ZNet), nameof(ZNet.LoadWorld))]
-        internal class LoadWorld
+        private static void Postfix()
         {
-            private static void Postfix()
+            if (Plugin.StaticConfig.LoadedMessageEnabled)
             {
-                if (Plugin.StaticConfig.LoadedMessageEnabled)
-                {
-                    DiscordApi.SendMessage(
-                        MessageTransformer.FormatServerMessage(Plugin.StaticConfig.LoadedMessage)
-                    );
-                }
+                DiscordApi.SendMessage(
+                    MessageTransformer.FormatServerMessage(Plugin.StaticConfig.LoadedMessage)
+                );
+            }
 
-                if (Plugin.IsHeadless())
-                {
-                    Plugin.StaticEventWatcher.Activate();
-                }
+            if (Plugin.IsHeadless())
+            {
+                Plugin.StaticEventWatcher.Activate();
             }
         }
+    }
 
-        [HarmonyPatch(typeof(ZNet), nameof(ZNet.SaveWorld))]
-        internal class SaveWorld
+    [HarmonyPatch(typeof(ZNet), nameof(ZNet.SaveWorld))]
+    internal class SaveWorld
+    {
+        private static void Postfix(ref bool sync)
         {
-            private static void Postfix(ref bool sync)
+            if (Plugin.StaticConfig.WorldSaveMessageEnabled)
             {
-                if (Plugin.StaticConfig.WorldSaveMessageEnabled)
-                {
-                    DiscordApi.SendMessage(
-                        MessageTransformer.FormatServerMessage(Plugin.StaticConfig.SaveMessage)
-                    );
-                }
+                DiscordApi.SendMessage(
+                    MessageTransformer.FormatServerMessage(Plugin.StaticConfig.SaveMessage)
+                );
             }
         }
+    }
 
-        [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_CharacterID))]
-        internal class RPC_CharacterID
+    [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_CharacterID))]
+    internal class RPC_CharacterID
+    {
+        private static List<long> joinedPlayers = new List<long>();
+        private static void Postfix(ZRpc rpc, ZDOID characterID)
         {
-            private static List<long> joinedPlayers = new List<long>();
-            private static void Postfix(ZRpc rpc, ZDOID characterID)
+            ZNetPeer peer = ZNet.instance.GetPeer(rpc);
+            if (peer == null)
+            {
+                return;
+            }
+
+            Handlers.Join(peer);
+
+        }
+
+        [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_Disconnect))]
+        internal class RPC_Disconnect
+        {
+            private static void Prefix(ZRpc rpc)
             {
                 ZNetPeer peer = ZNet.instance.GetPeer(rpc);
-                if (peer == null)
+                if (peer != null && peer.m_uid != 0)
                 {
-                    return;
-                }
-
-                Handlers.Join(peer);
-
-            }
-
-            [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_Disconnect))]
-            internal class RPC_Disconnect
-            {
-                private static void Prefix(ZRpc rpc)
-                {
-                    ZNetPeer peer = ZNet.instance.GetPeer(rpc);
-                    if (peer != null && peer.m_uid != 0)
-                    {
-                        Handlers.Leave(peer);
-                    }
+                    Handlers.Leave(peer);
                 }
             }
         }

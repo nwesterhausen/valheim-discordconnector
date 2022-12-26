@@ -11,15 +11,13 @@ using DiscordConnector;
 [assembly: AssemblyCopyright("© 2022 " + PluginInfo.PLUGIN_AUTHOR + " Repository at " + PluginInfo.PLUGIN_REPO_SHORT)]
 #endregion
 
-namespace DiscordConnector
+namespace DiscordConnector;
+internal static class PluginInfo
 {
-    internal static class PluginInfo
-    {
-        public const string PLUGIN_ID = "games.nwest.valheim.discordconnector";
-        public const string PLUGIN_NAME = "Valheim Discord Connector";
-        public const string PLUGIN_VERSION = "2.1.7";
-        public const string PLUGIN_REPO_SHORT = "github: nwesterhausen/valheim-discordconnector";
-        public const string PLUGIN_AUTHOR = "Nicholas Westerhausen";
-        public const string SHORT_PLUGIN_ID = "discordconnector";
-    }
+    public const string PLUGIN_ID = "games.nwest.valheim.discordconnector";
+    public const string PLUGIN_NAME = "Valheim Discord Connector";
+    public const string PLUGIN_VERSION = "2.1.7";
+    public const string PLUGIN_REPO_SHORT = "github: nwesterhausen/valheim-discordconnector";
+    public const string PLUGIN_AUTHOR = "Nicholas Westerhausen";
+    public const string SHORT_PLUGIN_ID = "discordconnector";
 }

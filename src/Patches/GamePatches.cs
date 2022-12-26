@@ -1,50 +1,48 @@
 ﻿using HarmonyLib;
 
-namespace DiscordConnector.Patches
+namespace DiscordConnector.Patches;
+internal class GamePatches
 {
-    internal class GamePatches
-    {
 
-        [HarmonyPatch(typeof(Game), nameof(Game.Awake))]
-        internal class LoadWorld
+    [HarmonyPatch(typeof(Game), nameof(Game.Awake))]
+    internal class LoadWorld
+    {
+        private static void Prefix()
         {
-            private static void Prefix()
+            if (Plugin.StaticConfig.LaunchMessageEnabled)
             {
-                if (Plugin.StaticConfig.LaunchMessageEnabled)
-                {
-                    DiscordApi.SendMessage(
-                        MessageTransformer.FormatServerMessage(Plugin.StaticConfig.LaunchMessage)
-                    );
-                }
+                DiscordApi.SendMessage(
+                    MessageTransformer.FormatServerMessage(Plugin.StaticConfig.LaunchMessage)
+                );
             }
         }
+    }
 
 
-        [HarmonyPatch(typeof(Game), nameof(Game.OnApplicationQuit))]
-        internal class Shutdown
+    [HarmonyPatch(typeof(Game), nameof(Game.OnApplicationQuit))]
+    internal class Shutdown
+    {
+        [HarmonyBefore(new string[] { "HackShardGaming.WorldofValheimServerSideCharacters" })]
+        private static void Prefix()
         {
-            [HarmonyBefore(new string[] { "HackShardGaming.WorldofValheimServerSideCharacters" })]
-            private static void Prefix()
+            if (Plugin.StaticConfig.StopMessageEnabled)
             {
-                if (Plugin.StaticConfig.StopMessageEnabled)
-                {
-                    DiscordApi.SendMessage(
-                        MessageTransformer.FormatServerMessage(Plugin.StaticConfig.StopMessage)
-                    );
-                }
-                if (Plugin.IsHeadless())
-                {
-                    Plugin.StaticEventWatcher.Dispose();
-                }
+                DiscordApi.SendMessage(
+                    MessageTransformer.FormatServerMessage(Plugin.StaticConfig.StopMessage)
+                );
             }
-            private static void Postfix()
+            if (Plugin.IsHeadless())
             {
-                if (Plugin.StaticConfig.ShutdownMessageEnabled)
-                {
-                    DiscordApi.SendMessage(
-                        MessageTransformer.FormatServerMessage(Plugin.StaticConfig.ShutdownMessage)
-                    );
-                }
+                Plugin.StaticEventWatcher.Dispose();
+            }
+        }
+        private static void Postfix()
+        {
+            if (Plugin.StaticConfig.ShutdownMessageEnabled)
+            {
+                DiscordApi.SendMessage(
+                    MessageTransformer.FormatServerMessage(Plugin.StaticConfig.ShutdownMessage)
+                );
             }
         }
     }
