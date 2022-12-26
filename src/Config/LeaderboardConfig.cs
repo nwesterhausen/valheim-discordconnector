@@ -1,51 +1,50 @@
 ﻿using BepInEx.Configuration;
-namespace DiscordConnector.Config
+namespace DiscordConnector.Config;
+internal class LeaderBoardConfig
 {
-    internal class LeaderBoardConfig
+    private static ConfigFile config;
+
+    public static string ConfigExtension = "leaderBoards";
+
+    // config header strings
+    private const string LEADER_BOARD_1 = "LeaderBoard.1";
+    private const string LEADER_BOARD_2 = "LeaderBoard.2";
+    private const string LEADER_BOARD_3 = "LeaderBoard.3";
+    private const string LEADER_BOARD_4 = "LeaderBoard.4";
+    private const string LEADER_BOARD_5 = "LeaderBoard.5";
+    private const string ACTIVE_PLAYERS = "ActivePlayers.Announcement";
+
+    // Config Definitions
+    private LeaderBoardConfigValues leaderBoard1;
+    private LeaderBoardConfigValues leaderBoard2;
+    private LeaderBoardConfigValues leaderBoard3;
+    private LeaderBoardConfigValues leaderBoard4;
+    private LeaderBoardConfigValues leaderBoard5;
+    private LeaderBoardConfigReference[] _leaderBoards;
+    private ActivePlayersAnnouncementConfig activePlayersAnnouncementConfig;
+
+    public LeaderBoardConfig(ConfigFile configFile)
     {
-        private static ConfigFile config;
+        config = configFile;
+        LoadConfig();
+    }
 
-        public static string ConfigExtension = "leaderBoards";
+    public void ReloadConfig()
+    {
+        config.Reload();
+        config.Save();
+    }
+    private void LoadConfig()
+    {
+        leaderBoard1 = new LeaderBoardConfigValues(config, LEADER_BOARD_1);
+        leaderBoard2 = new LeaderBoardConfigValues(config, LEADER_BOARD_2);
+        leaderBoard3 = new LeaderBoardConfigValues(config, LEADER_BOARD_3);
+        leaderBoard4 = new LeaderBoardConfigValues(config, LEADER_BOARD_4);
+        leaderBoard5 = new LeaderBoardConfigValues(config, LEADER_BOARD_5);
+        activePlayersAnnouncementConfig = new ActivePlayersAnnouncementConfig(config, ACTIVE_PLAYERS);
 
-        // config header strings
-        private const string LEADER_BOARD_1 = "LeaderBoard.1";
-        private const string LEADER_BOARD_2 = "LeaderBoard.2";
-        private const string LEADER_BOARD_3 = "LeaderBoard.3";
-        private const string LEADER_BOARD_4 = "LeaderBoard.4";
-        private const string LEADER_BOARD_5 = "LeaderBoard.5";
-        private const string ACTIVE_PLAYERS = "ActivePlayers.Announcement";
-
-        // Config Definitions
-        private LeaderBoardConfigValues leaderBoard1;
-        private LeaderBoardConfigValues leaderBoard2;
-        private LeaderBoardConfigValues leaderBoard3;
-        private LeaderBoardConfigValues leaderBoard4;
-        private LeaderBoardConfigValues leaderBoard5;
-        private LeaderBoardConfigReference[] _leaderBoards;
-        private ActivePlayersAnnouncementConfig activePlayersAnnouncementConfig;
-
-        public LeaderBoardConfig(ConfigFile configFile)
-        {
-            config = configFile;
-            LoadConfig();
-        }
-
-        public void ReloadConfig()
-        {
-            config.Reload();
-            config.Save();
-        }
-        private void LoadConfig()
-        {
-            leaderBoard1 = new LeaderBoardConfigValues(config, LEADER_BOARD_1);
-            leaderBoard2 = new LeaderBoardConfigValues(config, LEADER_BOARD_2);
-            leaderBoard3 = new LeaderBoardConfigValues(config, LEADER_BOARD_3);
-            leaderBoard4 = new LeaderBoardConfigValues(config, LEADER_BOARD_4);
-            leaderBoard5 = new LeaderBoardConfigValues(config, LEADER_BOARD_5);
-            activePlayersAnnouncementConfig = new ActivePlayersAnnouncementConfig(config, ACTIVE_PLAYERS);
-
-            config.Save();
-            _leaderBoards = new LeaderBoardConfigReference[]{
+        config.Save();
+        _leaderBoards = new LeaderBoardConfigReference[]{
             new LeaderBoardConfigReference
             {
                 Type = leaderBoard1.type.Value,
@@ -117,22 +116,21 @@ namespace DiscordConnector.Config
                 TimeOnline = leaderBoard5.timeOnline.Value,
             }};
 
-        }
-
-        public string ConfigAsJson()
-        {
-            string jsonString = "{";
-            jsonString += $"\"leaderBoard1\":{leaderBoard1.ConfigAsJson()},";
-            jsonString += $"\"leaderBoard2\":{leaderBoard2.ConfigAsJson()},";
-            jsonString += $"\"leaderBoard3\":{leaderBoard3.ConfigAsJson()},";
-            jsonString += $"\"leaderBoard4\":{leaderBoard4.ConfigAsJson()},";
-            jsonString += $"\"leaderBoard5\":{leaderBoard5.ConfigAsJson()},";
-            jsonString += $"\"activePlayersAnnouncement\":{activePlayersAnnouncementConfig.ConfigAsJson()}";
-            jsonString += "}";
-            return jsonString;
-        }
-        // Variables
-        public LeaderBoardConfigReference[] LeaderBoards => _leaderBoards;
-        public ActivePlayersAnnouncementConfigValues ActivePlayersAnnouncement => activePlayersAnnouncementConfig.Value;
     }
+
+    public string ConfigAsJson()
+    {
+        string jsonString = "{";
+        jsonString += $"\"leaderBoard1\":{leaderBoard1.ConfigAsJson()},";
+        jsonString += $"\"leaderBoard2\":{leaderBoard2.ConfigAsJson()},";
+        jsonString += $"\"leaderBoard3\":{leaderBoard3.ConfigAsJson()},";
+        jsonString += $"\"leaderBoard4\":{leaderBoard4.ConfigAsJson()},";
+        jsonString += $"\"leaderBoard5\":{leaderBoard5.ConfigAsJson()},";
+        jsonString += $"\"activePlayersAnnouncement\":{activePlayersAnnouncementConfig.ConfigAsJson()}";
+        jsonString += "}";
+        return jsonString;
+    }
+    // Variables
+    public LeaderBoardConfigReference[] LeaderBoards => _leaderBoards;
+    public ActivePlayersAnnouncementConfigValues ActivePlayersAnnouncement => activePlayersAnnouncementConfig.Value;
 }
