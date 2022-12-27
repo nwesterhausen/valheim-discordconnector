@@ -2,6 +2,12 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.1.8
+
+Fixes:
+
+- Leader boards not being sent (but active players were)
+
 ## Version 2.1.7
 
 Fixes:
