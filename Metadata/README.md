@@ -35,6 +35,12 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+### Version 2.1.8
+
+Fixes:
+
+- Leader boards not being sent (but active players were)
+
 ### Version 2.1.7
 
 Fixes:
