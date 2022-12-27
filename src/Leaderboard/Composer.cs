@@ -33,21 +33,51 @@ namespace DiscordConnector.LeaderBoards
 
             // Build leader board for discord
             List<Tuple<string, string>> leaderFields = new List<Tuple<string, string>>();
-            if (rankings[Statistic.Death].Count > 0)
+
+            // Check if there are rankings for each statistic. If there are, we want to build and add it.
+            if (rankings.ContainsKey(Statistic.Death))
             {
-                leaderFields.Add(Tuple.Create("Deaths", LeaderBoard.RankedCountResultToString(rankings[Statistic.Death])));
+                List<CountResult> deathRankings;
+                if (rankings.TryGetValue(Statistic.Death, out deathRankings))
+                {
+                    if (deathRankings.Count > 0)
+                    {
+                        leaderFields.Add(Tuple.Create("Deaths", LeaderBoard.RankedCountResultToString(deathRankings)));
+                    }
+                }
             }
-            if (rankings[Statistic.Session].Count > 0)
+            if (rankings.ContainsKey(Statistic.Session))
             {
-                leaderFields.Add(Tuple.Create("Sessions", LeaderBoard.RankedCountResultToString(rankings[Statistic.Session])));
+                List<CountResult> sessionRankings;
+                if (rankings.TryGetValue(Statistic.Session, out sessionRankings))
+                {
+                    if (sessionRankings.Count > 0)
+                    {
+                        leaderFields.Add(Tuple.Create("Sessions", LeaderBoard.RankedCountResultToString(sessionRankings)));
+                    }
+                }
             }
-            if (rankings[Statistic.Shout].Count > 0)
+            if (rankings.ContainsKey(Statistic.Shout))
             {
-                leaderFields.Add(Tuple.Create("Shouts", LeaderBoard.RankedCountResultToString(rankings[Statistic.Shout])));
+                List<CountResult> shoutRankings;
+                if (rankings.TryGetValue(Statistic.Shout, out shoutRankings))
+                {
+                    if (shoutRankings.Count > 0)
+                    {
+                        leaderFields.Add(Tuple.Create("Shouts", LeaderBoard.RankedCountResultToString(shoutRankings)));
+                    }
+                }
             }
-            if (rankings[Statistic.Ping].Count > 0)
+            if (rankings.ContainsKey(Statistic.Ping))
             {
-                leaderFields.Add(Tuple.Create("Pings", LeaderBoard.RankedCountResultToString(rankings[Statistic.Ping])));
+                List<CountResult> pingRankings;
+                if (rankings.TryGetValue(Statistic.Ping, out pingRankings))
+                {
+                    if (pingRankings.Count > 0)
+                    {
+                        leaderFields.Add(Tuple.Create("Pings", LeaderBoard.RankedCountResultToString(pingRankings)));
+                    }
+                }
             }
 
             string discordContent = MessageTransformer.FormatLeaderBoardHeader(
