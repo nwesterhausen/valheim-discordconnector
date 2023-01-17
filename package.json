@@ -14,7 +14,7 @@
   "author": "Nicholas Westerhausen",
   "license": "MIT",
   "devDependencies": {
-    "vitepress": "1.0.0-alpha.29",
+    "vitepress": "1.0.0-alpha.36",
     "vue": "^3.2.45"
   }
 }
