@@ -32,4 +32,5 @@ jobs:
           extra_args: "--destination-path discordconnector.valheim.nwest.games/ --overwrite"
           connection_string: "${{ secrets.AZURE_CONNECTION_STRING }}"
           source_dir: docs/.vitepress/dist
-          sync: true
+          sync: "true"
+          overwrite: "true"
