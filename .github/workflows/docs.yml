@@ -28,9 +28,8 @@ jobs:
       # Upload
       - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
         with:
-          container_name: $web
-          extra_args: "--destination-path discordconnector.valheim.nwest.games/"
+          container_name: "$web"
+          extra_args: "--destination discordconnector.valheim.nwest.games/"
           connection_string: "${{ secrets.AZURE_CONNECTION_STRING }}"
-          source_dir: docs/.vitepress/dist
+          source_dir: "docs/.vitepress/dist"
           sync: "true"
-          overwrite: "true"
