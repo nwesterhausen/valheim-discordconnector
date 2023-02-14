@@ -72,8 +72,8 @@ class ConfigWatcher
                 _fileHashDictionary.Add(extension, DiscordConnector.Hashing.GetMD5Checksum(filename));
             }
 
-            Plugin.StaticLogger.LogDebug($"Initialization of file hash dictionary completed.");
-            Plugin.StaticLogger.LogDebug(string.Join(Environment.NewLine, _fileHashDictionary));
+            Plugin.StaticLogger.LogInfo($"Initialization of file hash dictionary completed.");
+            Plugin.StaticLogger.LogInfo(string.Join(Environment.NewLine, _fileHashDictionary));
         });
     }
 
@@ -110,7 +110,7 @@ class ConfigWatcher
 
         String configExtension = ConfigExtensionFromFilename(e.FullPath);
 
-        Plugin.StaticLogger.LogDebug($"Detected change of {configExtension} config file");
+        Plugin.StaticLogger.LogInfo($"Detected change of {configExtension} config file");
 
         // Hash the changed file
         String fileHash = DiscordConnector.Hashing.GetMD5Checksum(e.FullPath);
@@ -119,7 +119,7 @@ class ConfigWatcher
         if (!_fileHashDictionary.ContainsKey(configExtension))
         {
             Plugin.StaticLogger.LogWarning("Unexpectedly encountered unhashed config file!");
-            Plugin.StaticLogger.LogDebug($"Added {configExtension} config to config hash dictionary.");
+            Plugin.StaticLogger.LogInfo($"Added {configExtension} config to config hash dictionary.");
             _fileHashDictionary.Add(configExtension, fileHash);
             return;
         }
@@ -127,14 +127,14 @@ class ConfigWatcher
         // Check if current hash differs from stored hash.
         if (String.Equals(_fileHashDictionary[configExtension], fileHash))
         {
-            Plugin.StaticLogger.LogDebug("Changes to file were determined to be inconsequential.");
+            Plugin.StaticLogger.LogInfo("Changes to file were determined to be inconsequential.");
             return;
         }
 
         // Check if we are within a very short amount of time from last change. If so, ignore the change.
         if (lastChangeDetected.AddSeconds(DEBOUNCE_SECONDS) > DateTime.Now)
         {
-            Plugin.StaticLogger.LogDebug("Skipping config reload, within DEBOUNCE timing.");
+            Plugin.StaticLogger.LogInfo("Skipping config reload, within DEBOUNCE timing.");
             return;
         }
 

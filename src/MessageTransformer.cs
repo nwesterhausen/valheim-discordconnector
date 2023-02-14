@@ -53,7 +53,7 @@ internal static class MessageTransformer
         }
         catch (System.Exception e)
         {
-            Plugin.StaticLogger.LogDebug($"Unable to get World Name from ZNet. {e.Message}");
+            Plugin.StaticLogger.LogInfo($"Unable to get World Name from ZNet. {e.Message}");
         }
         return rawMessage
             .Replace(WORLD_NAME, world_name);

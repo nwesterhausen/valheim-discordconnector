@@ -68,7 +68,7 @@ internal class ChatPatches
                     }
                     break;
                 default:
-                    Plugin.StaticLogger.LogDebug(
+                    Plugin.StaticLogger.LogInfo(
                         $"Unmatched chat message. [{type}] {user}: {text} at {pos}"
                     );
                     break;

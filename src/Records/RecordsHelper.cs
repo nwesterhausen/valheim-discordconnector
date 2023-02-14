@@ -82,7 +82,7 @@ public static class Helper
         if (Array.IndexOf<string>(Records.Categories.All, key) == -1)
         {
             Plugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting top {n} results.");
-            Plugin.StaticLogger.LogDebug("Empty list returned because of invalid key.");
+            Plugin.StaticLogger.LogInfo("Empty list returned because of invalid key.");
             return new List<CountResult>();
         }
 
@@ -103,7 +103,7 @@ public static class Helper
         // Check if we are debugging all database calls, and print debug
         if (Plugin.StaticConfig.DebugDatabaseMethods)
         {
-            Plugin.StaticLogger.LogDebug($"TopNResultForCategory {key} n={n}, results={queryResults.Count}");
+            Plugin.StaticLogger.LogInfo($"TopNResultForCategory {key} n={n}, results={queryResults.Count}");
         }
 
         // If the amount of results is 0, no need to process further, just return.
@@ -155,7 +155,7 @@ public static class Helper
         if (Array.IndexOf<string>(Records.Categories.All, key) == -1)
         {
             Plugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting bottom {n} results.");
-            Plugin.StaticLogger.LogDebug("Empty list returned because of invalid key.");
+            Plugin.StaticLogger.LogInfo("Empty list returned because of invalid key.");
             return new List<CountResult>();
         }
 
@@ -176,7 +176,7 @@ public static class Helper
         // Check if we are debugging all database calls, and print debug
         if (Plugin.StaticConfig.DebugDatabaseMethods)
         {
-            Plugin.StaticLogger.LogDebug($"BottomNResultForCategory {key} n={n}, results={queryResults.Count}");
+            Plugin.StaticLogger.LogInfo($"BottomNResultForCategory {key} n={n}, results={queryResults.Count}");
         }
 
         // If the amount of results is 0, no need to process further, just return.
@@ -210,7 +210,7 @@ public static class Helper
         if (Array.IndexOf<string>(Records.Categories.All, key) == -1)
         {
             Plugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting total unique players.");
-            Plugin.StaticLogger.LogDebug("Zero returned because of invalid key.");
+            Plugin.StaticLogger.LogInfo("Zero returned because of invalid key.");
             return 0;
         }
 
@@ -239,7 +239,7 @@ public static class Helper
         if (Array.IndexOf<string>(Records.Categories.All, key) == -1)
         {
             Plugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting total unique players.");
-            Plugin.StaticLogger.LogDebug("Zero returned because of invalid key.");
+            Plugin.StaticLogger.LogInfo("Zero returned because of invalid key.");
             return 0;
         }
 

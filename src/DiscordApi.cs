@@ -107,7 +107,7 @@ class DiscordApi
     /// <param name="serializedJson">Body data for the webhook as JSON serialized into a string</param>
     private static void SendSerializedJson(string serializedJson)
     {
-        Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
+        Plugin.StaticLogger.LogInfo($"Trying webhook with payload: {serializedJson}");
 
         // Guard against unset webhook or empty serialized json
         if (string.IsNullOrEmpty(Plugin.StaticConfig.WebHookURL) || string.IsNullOrEmpty(serializedJson))
@@ -136,7 +136,7 @@ class DiscordApi
             WebResponse response = request.GetResponse();
             if (Plugin.StaticConfig.DebugHttpRequestResponse)
             {
-                Plugin.StaticLogger.LogDebug($"Request Response Short Code: {((HttpWebResponse)response).StatusDescription}");
+                Plugin.StaticLogger.LogInfo($"Request Response Short Code: {((HttpWebResponse)response).StatusDescription}");
             }
 
             // Get the stream containing content returned by the server.
@@ -150,7 +150,7 @@ class DiscordApi
                 // Display the content.
                 if (Plugin.StaticConfig.DebugHttpRequestResponse)
                 {
-                    Plugin.StaticLogger.LogDebug($"Full response: {responseFromServer}");
+                    Plugin.StaticLogger.LogInfo($"Full response: {responseFromServer}");
                 }
             }
 

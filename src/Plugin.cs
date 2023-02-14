@@ -51,7 +51,7 @@ public class Plugin : BaseUnityPlugin
     private void Awake()
     {
         // Plugin startup logic
-        StaticLogger.LogDebug($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
+        StaticLogger.LogInfo($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
         if (!IsHeadless())
         {
             StaticLogger.LogInfo("Not running on a dedicated server, some features may break -- please report them!");

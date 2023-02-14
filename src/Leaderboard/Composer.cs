@@ -149,7 +149,7 @@ internal class Composer : Base
             }
         }
 
-        Plugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
+        Plugin.StaticLogger.LogInfo($"Prepared to send leaderboard for {Dict.Keys.Count} values");
         printDict(Dict);
 
         return Dict;
@@ -207,7 +207,7 @@ internal class Composer : Base
             }
         }
 
-        Plugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
+        Plugin.StaticLogger.LogInfo($"Prepared to send leaderboard for {Dict.Keys.Count} values");
         printDict(Dict);
 
         return Dict;
@@ -223,7 +223,7 @@ internal class Composer : Base
             {
                 outStr += x.ToString() + ",";
             }
-            Plugin.StaticLogger.LogDebug($"{pair.Key}: {outStr}");
+            Plugin.StaticLogger.LogInfo($"{pair.Key}: {outStr}");
         }
     }
 

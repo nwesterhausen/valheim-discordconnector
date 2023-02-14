@@ -57,7 +57,7 @@ internal class Database
             try
             {
                 db = new LiteDatabase(DbPath);
-                Plugin.StaticLogger.LogDebug($"LiteDB Connection Established to {DbPath}");
+                Plugin.StaticLogger.LogInfo($"LiteDB Connection Established to {DbPath}");
 
                 // Grab references to the collections
                 DeathCollection = db.GetCollection<SimpleStat>("deaths");
@@ -71,13 +71,13 @@ internal class Database
                 Task.Run(() =>
                 {
                     EnsureIndicesOnCollections();
-                    Plugin.StaticLogger.LogDebug("Created indices on database collections");
+                    Plugin.StaticLogger.LogInfo("Created indices on database collections");
                 }).ConfigureAwait(false);
             }
             catch (System.IO.IOException e)
             {
                 Plugin.StaticLogger.LogError($"Unable to acquire un-shared access to {DbPath}");
-                Plugin.StaticLogger.LogDebug(e);
+                Plugin.StaticLogger.LogInfo(e);
             }
         }).ConfigureAwait(false);
     }
@@ -106,7 +106,7 @@ internal class Database
     /// </summary>
     public void Dispose()
     {
-        Plugin.StaticLogger.LogDebug("Closing LiteDB connection");
+        Plugin.StaticLogger.LogInfo("Closing LiteDB connection");
         db.Dispose();
     }
 
@@ -148,7 +148,7 @@ internal class Database
             if (PlayerToNameCollection.Exists(x => x.PlayerId.Equals(playerHostName)))
             {
                 // If the player record exists but only with the playerHostName, a new "latest" name is here
-                Plugin.StaticLogger.LogDebug($"Multiple characters from {playerHostName}, latest is {characterName}");
+                Plugin.StaticLogger.LogInfo($"Multiple characters from {playerHostName}, latest is {characterName}");
 
             }
             // Insert the player name record if it doesn't exist
@@ -196,7 +196,7 @@ internal class Database
                 InsertSimpleStatRecord(ShoutCollection, playerName, playerHostName, pos);
                 break;
             default:
-                Plugin.StaticLogger.LogDebug($"InsertSimpleStatRecord, invalid key '{key}'");
+                Plugin.StaticLogger.LogInfo($"InsertSimpleStatRecord, invalid key '{key}'");
                 break;
         }
     }
@@ -227,7 +227,7 @@ internal class Database
     {
         if (Plugin.StaticConfig.DebugDatabaseMethods)
         {
-            Plugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {playerHostName} begin");
+            Plugin.StaticLogger.LogInfo($"GetLatestNameForCharacterId {playerHostName} begin");
         }
 
         if (PlayerToNameCollection.Exists(x => x.PlayerId.Equals(playerHostName)))
@@ -261,19 +261,19 @@ internal class Database
         {
             if (Plugin.StaticConfig.DebugDatabaseMethods)
             {
-                Plugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {playerHostName} result = NONE");
+                Plugin.StaticLogger.LogInfo($"GetLatestNameForCharacterId {playerHostName} result = NONE");
             }
             return "undefined";
         }
         if (Plugin.StaticConfig.DebugDatabaseMethods)
         {
-            Plugin.StaticLogger.LogDebug($"nameQuery has {nameQuery.Count} results");
+            Plugin.StaticLogger.LogInfo($"nameQuery has {nameQuery.Count} results");
         }
         // simplify results to single record
         var result = nameQuery[0];
         if (Plugin.StaticConfig.DebugDatabaseMethods)
         {
-            Plugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {playerHostName} result = {result}");
+            Plugin.StaticLogger.LogInfo($"GetLatestNameForCharacterId {playerHostName} result = {result}");
         }
 
         Task.Run(() =>
@@ -308,7 +308,7 @@ internal class Database
             case Categories.TimeOnline:
                 return AllTimeOnlineRecordsGrouped();
             default:
-                Plugin.StaticLogger.LogDebug($"CountAllRecordsGrouped, invalid key '{key}'");
+                Plugin.StaticLogger.LogInfo($"CountAllRecordsGrouped, invalid key '{key}'");
                 return new List<CountResult>();
         }
     }
@@ -330,11 +330,11 @@ internal class Database
             SimpleStat[] leaves = LeaveCollection.Query().Where(x => x.PlayerId == player.PlayerId && x.Name == player.CharacterName).ToArray();
 
             // Compare their lengths
-            Plugin.StaticLogger.LogDebug($"{player.PlayerId} as {player.CharacterName} has {joins.Length} joins, {leaves.Length}");
+            Plugin.StaticLogger.LogInfo($"{player.PlayerId} as {player.CharacterName} has {joins.Length} joins, {leaves.Length}");
             int sessionDifference = joins.Length - leaves.Length;
             if (sessionDifference > 1)
             {
-                Plugin.StaticLogger.LogDebug($"{sessionDifference} more joins than leaves, timeOnline likely to be very inaccurate");
+                Plugin.StaticLogger.LogInfo($"{sessionDifference} more joins than leaves, timeOnline likely to be very inaccurate");
             }
             // Should either be equal to joins.Length or joins.Length - 1 (basically leaves.Length)
             int travelableLength = joins.Length - sessionDifference;
@@ -354,7 +354,7 @@ internal class Database
             }
 
             // Total time is then stored
-            Plugin.StaticLogger.LogDebug($"{onlineTime.ToString()} total online time.");
+            Plugin.StaticLogger.LogInfo($"{onlineTime.ToString()} total online time.");
 
             // Append to list
             results.Add(new CountResult(player.CharacterName, (int)onlineTime.TotalSeconds));
@@ -494,11 +494,11 @@ internal class Database
 
 
             // Compare their lengths
-            Plugin.StaticLogger.LogDebug($"{player.PlayerId} as {player.CharacterName} has {joins.Length} joins, {leaves.Length}");
+            Plugin.StaticLogger.LogInfo($"{player.PlayerId} as {player.CharacterName} has {joins.Length} joins, {leaves.Length}");
             int sessionDifference = joins.Length - leaves.Length;
             if (sessionDifference > 1)
             {
-                Plugin.StaticLogger.LogDebug($"{sessionDifference} more joins than leaves, timeOnline likely to be very inaccurate");
+                Plugin.StaticLogger.LogInfo($"{sessionDifference} more joins than leaves, timeOnline likely to be very inaccurate");
             }
             // Should either be equal to joins.Length or joins.Length - 1 (basically leaves.Length)
             int travelableLength = joins.Length - sessionDifference;
@@ -518,7 +518,7 @@ internal class Database
             }
 
             // Total time is then stored
-            Plugin.StaticLogger.LogDebug($"{onlineTime.ToString()} total online time.");
+            Plugin.StaticLogger.LogInfo($"{onlineTime.ToString()} total online time.");
 
             // Append to list
             results.Add(new CountResult(player.CharacterName, (int)onlineTime.TotalSeconds));
@@ -558,7 +558,7 @@ internal class Database
             case Categories.Shout:
                 return CountOfRecordsByName(ShoutCollection, playerName);
             default:
-                Plugin.StaticLogger.LogDebug($"CountOfRecordsBySteamId, invalid key '{key}'");
+                Plugin.StaticLogger.LogInfo($"CountOfRecordsBySteamId, invalid key '{key}'");
                 return -2;
         }
     }
@@ -591,7 +591,7 @@ internal class Database
             case Categories.TimeOnline:
                 return TimeOnlineRecordsWhereDate(startDate, endDate, inclusiveStart, inclusiveEnd);
             default:
-                Plugin.StaticLogger.LogDebug($"CountTodaysRecordsGrouped, invalid key '{key}'");
+                Plugin.StaticLogger.LogInfo($"CountTodaysRecordsGrouped, invalid key '{key}'");
                 return new List<CountResult>();
         }
 
@@ -607,7 +607,7 @@ internal class Database
         }
         catch
         {
-            Plugin.StaticLogger.LogDebug($"Error when trying to find {playerName} to count!");
+            Plugin.StaticLogger.LogInfo($"Error when trying to find {playerName} to count!");
             return -3;
         }
     }
@@ -623,14 +623,14 @@ internal class Database
     {
         if (Plugin.StaticConfig.DebugDatabaseMethods)
         {
-            Plugin.StaticLogger.LogDebug($"CountAllRecordsGrouped {Plugin.StaticConfig.RecordRetrievalDiscernmentMethod}");
+            Plugin.StaticLogger.LogInfo($"CountAllRecordsGrouped {Plugin.StaticConfig.RecordRetrievalDiscernmentMethod}");
         }
 
         if (collection.Count() == 0)
         {
             if (Plugin.StaticConfig.DebugDatabaseMethods)
             {
-                Plugin.StaticLogger.LogDebug("Collection is empty, skipping.");
+                Plugin.StaticLogger.LogInfo("Collection is empty, skipping.");
             }
             return new List<CountResult>();
         }
@@ -659,7 +659,7 @@ internal class Database
 
         if (Plugin.StaticConfig.DebugDatabaseMethods)
         {
-            Plugin.StaticLogger.LogDebug($"CountAllRecordsGrouped {result.Count} records returned");
+            Plugin.StaticLogger.LogInfo($"CountAllRecordsGrouped {result.Count} records returned");
         }
 
         return result;
@@ -681,14 +681,14 @@ internal class Database
     {
         if (Plugin.StaticConfig.DebugDatabaseMethods)
         {
-            Plugin.StaticLogger.LogDebug($"CountAllRecordsGroupsWhereDate {Plugin.StaticConfig.RecordRetrievalDiscernmentMethod} {startDate} {endDate}");
+            Plugin.StaticLogger.LogInfo($"CountAllRecordsGroupsWhereDate {Plugin.StaticConfig.RecordRetrievalDiscernmentMethod} {startDate} {endDate}");
         }
 
         if (collection.Count() == 0)
         {
             if (Plugin.StaticConfig.DebugDatabaseMethods)
             {
-                Plugin.StaticLogger.LogDebug("Collection is empty, skipping.");
+                Plugin.StaticLogger.LogInfo("Collection is empty, skipping.");
             }
             return new List<CountResult>();
         }
@@ -776,7 +776,7 @@ internal class Database
 
         if (Plugin.StaticConfig.DebugDatabaseMethods)
         {
-            Plugin.StaticLogger.LogDebug($"CountAllRecordsGroupsWhereDate {result.Count} records returned");
+            Plugin.StaticLogger.LogInfo($"CountAllRecordsGroupsWhereDate {result.Count} records returned");
         }
 
         return result;

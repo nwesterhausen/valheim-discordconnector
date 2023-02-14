@@ -29,7 +29,7 @@ internal static class Handlers
         // Try adding the player to the joinedPlayers list. If we are not able to add them, check if it's a dead player before doing nothing.
         if (!joinedPlayers.Add(playerHostName))
         {
-            Plugin.StaticLogger.LogDebug($"{playerHostName} already exists in list of joined players.");
+            Plugin.StaticLogger.LogInfo($"{playerHostName} already exists in list of joined players.");
 
             // Seems that player is dead if character ZDOID id is 0
             // m_characterID id=0 means dead, user_id always matches peer.m_uid
@@ -41,7 +41,7 @@ internal static class Handlers
             return;
         }
 
-        Plugin.StaticLogger.LogDebug($"Added player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) to joined player list.");
+        Plugin.StaticLogger.LogInfo($"Added player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) to joined player list.");
 
         // Create basic message pre-formatting
         string preFormattedMessage = "";
@@ -93,11 +93,11 @@ internal static class Handlers
         // Try removing the player to the joinedPlayers list. If we couldn't remove them, then do nothing.
         if (!joinedPlayers.Remove(playerHostName))
         {
-            Plugin.StaticLogger.LogDebug($"{playerHostName} did not exist in the list of joined players!");
+            Plugin.StaticLogger.LogInfo($"{playerHostName} did not exist in the list of joined players!");
             return;
         }
 
-        Plugin.StaticLogger.LogDebug($"Removed player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) from joined player list.");
+        Plugin.StaticLogger.LogInfo($"Removed player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) from joined player list.");
 
         // Create basic message pre-formatting
         string preFormattedMessage = "";
@@ -386,12 +386,12 @@ internal static class Handlers
             // Guard against chats that aren't shouts by non-players
             if (type != Talker.Type.Shout)
             {
-                Plugin.StaticLogger.LogDebug($"Ignored ping/join/leave from non-player {user}");
+                Plugin.StaticLogger.LogInfo($"Ignored ping/join/leave from non-player {user}");
                 return;
             }
 
             string nonPlayerHostName = "";
-            Plugin.StaticLogger.LogDebug($"Sending shout from '{user}' to discord: '{text}'");
+            Plugin.StaticLogger.LogInfo($"Sending shout from '{user}' to discord: '{text}'");
 
             // Only if we are sending shouts per the config should we send the shout
             if (Plugin.StaticConfig.ChatShoutEnabled)

@@ -37,7 +37,7 @@ public class CountResult
     {
         List<CountResult> results = new List<CountResult>();
 
-        if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"ConvertBsonDocumentCountToDotNet r={bsonDocuments.Count}"); }
+        if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogInfo($"ConvertBsonDocumentCountToDotNet r={bsonDocuments.Count}"); }
         foreach (BsonDocument doc in bsonDocuments)
         {
             if (!doc.ContainsKey("Count"))

@@ -88,11 +88,11 @@ internal class PluginConfig
         string variableConfigPath = Path.Combine(configPath, variableConfigFilename);
         string leaderBoardConfigPath = Path.Combine(configPath, leaderBoardConfigFilename);
 
-        Plugin.StaticLogger.LogDebug($"Main config: {mainConfigPath}");
-        Plugin.StaticLogger.LogDebug($"Messages config: {messagesConfigPath}");
-        Plugin.StaticLogger.LogDebug($"Toggles config: {togglesConfigPath}");
-        Plugin.StaticLogger.LogDebug($"Variable config: {variableConfigPath}");
-        Plugin.StaticLogger.LogDebug($"Leader board config: {leaderBoardConfigFilename}");
+        Plugin.StaticLogger.LogInfo($"Main config: {mainConfigPath}");
+        Plugin.StaticLogger.LogInfo($"Messages config: {messagesConfigPath}");
+        Plugin.StaticLogger.LogInfo($"Toggles config: {togglesConfigPath}");
+        Plugin.StaticLogger.LogInfo($"Variable config: {variableConfigPath}");
+        Plugin.StaticLogger.LogInfo($"Leader board config: {leaderBoardConfigFilename}");
 
         mainConfig = new MainConfig(new BepInEx.Configuration.ConfigFile(mainConfigPath, true));
         messagesConfig = new MessagesConfig(new BepInEx.Configuration.ConfigFile(messagesConfigPath, true));
@@ -100,8 +100,8 @@ internal class PluginConfig
         variableConfig = new VariableConfig(new BepInEx.Configuration.ConfigFile(variableConfigPath, true));
         leaderBoardConfig = new LeaderBoardConfig(new BepInEx.Configuration.ConfigFile(leaderBoardConfigPath, true));
 
-        Plugin.StaticLogger.LogDebug("Configuration Loaded");
-        Plugin.StaticLogger.LogDebug($"Muted Players Regex pattern ('a^' is default for no matches): {mainConfig.MutedPlayersRegex.ToString()}");
+        Plugin.StaticLogger.LogInfo("Configuration Loaded");
+        Plugin.StaticLogger.LogInfo($"Muted Players Regex pattern ('a^' is default for no matches): {mainConfig.MutedPlayersRegex.ToString()}");
         DumpConfigAsJson();
     }
 
@@ -274,7 +274,7 @@ internal class PluginConfig
         {
             string configDump = Path.Combine(configPath, ConfigJsonFilename);
             File.WriteAllText(configDump, jsonString);
-            Plugin.StaticLogger.LogDebug($"Dumped configuration files to {ConfigJsonFilename}");
+            Plugin.StaticLogger.LogInfo($"Dumped configuration files to {ConfigJsonFilename}");
         });
     }
 }

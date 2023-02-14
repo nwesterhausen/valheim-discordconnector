@@ -19,7 +19,7 @@ internal class RandEventPatches
             float time = __instance.m_time;
             float remaining = duration - time;
             Vector3 pos = __instance.m_pos;
-            Plugin.StaticLogger.LogDebug(
+            Plugin.StaticLogger.LogInfo(
                 $"Random event OnActivate {name}: {active} for {duration} at {pos}. (time: {time})"
             );
 
@@ -33,7 +33,7 @@ internal class RandEventPatches
                     involvedPlayers.Add(playerInfo.m_name);
                 }
             }
-            Plugin.StaticLogger.LogDebug(
+            Plugin.StaticLogger.LogInfo(
                 $"Involved players in event: {(string.Join(",", involvedPlayers.ToArray()))}"
             );
 
@@ -115,7 +115,7 @@ internal class RandEventPatches
             string name = __instance.m_name;
             float time = __instance.m_time;
             Vector3 pos = __instance.m_pos;
-            Plugin.StaticLogger.LogDebug(
+            Plugin.StaticLogger.LogInfo(
                 $"Random event OnDeactivate {name}: End?{active} for {duration} at {pos}. (time: {time})"
             );
 
@@ -127,7 +127,7 @@ internal class RandEventPatches
                     involvedPlayers.Add(playerInfo.m_name);
                 }
             }
-            Plugin.StaticLogger.LogDebug(
+            Plugin.StaticLogger.LogInfo(
                 $"Involved players in event: {(string.Join(",", involvedPlayers.ToArray()))}"
             );
 

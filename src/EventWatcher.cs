@@ -43,7 +43,7 @@ internal class EventWatcher
                 {
                     if (Plugin.StaticConfig.DebugEveryPlayerPosCheck)
                     {
-                        Plugin.StaticLogger.LogDebug($"Unable to check location for {playerInfo.m_name} because their location is not public.");
+                        Plugin.StaticLogger.LogInfo($"Unable to check location for {playerInfo.m_name} because their location is not public.");
                     }
                 }
                 else if (RandEventSystem.instance.IsInsideRandomEventArea(Event, playerInfo.m_position))
@@ -51,7 +51,7 @@ internal class EventWatcher
                     playerList.Add(playerInfo.m_name);
                     if (Plugin.StaticConfig.DebugEveryPlayerPosCheck)
                     {
-                        Plugin.StaticLogger.LogDebug($"{playerInfo.m_name} is at {playerInfo.m_position}");
+                        Plugin.StaticLogger.LogInfo($"{playerInfo.m_name} is at {playerInfo.m_position}");
                     }
                 }
             }
@@ -104,7 +104,7 @@ internal class EventWatcher
             $"Involved Players: {string.Join(",", Status.InvolvedPlayersList())}";
             if (Plugin.StaticConfig.DebugEveryEventCheck)
             {
-                Plugin.StaticLogger.LogDebug(message);
+                Plugin.StaticLogger.LogInfo(message);
             }
 
             if (Status.IsRunning)
@@ -123,7 +123,7 @@ internal class EventWatcher
                     TriggerEventStart();
                     if (Plugin.StaticConfig.DebugEveryEventChange)
                     {
-                        Plugin.StaticLogger.LogDebug(message);
+                        Plugin.StaticLogger.LogInfo(message);
                     }
                 }
 
@@ -141,7 +141,7 @@ internal class EventWatcher
                     TriggerEventResumed();
                     if (Plugin.StaticConfig.DebugEveryEventChange)
                     {
-                        Plugin.StaticLogger.LogDebug(message);
+                        Plugin.StaticLogger.LogInfo(message);
                     }
                 }
             }
@@ -166,7 +166,7 @@ internal class EventWatcher
                     TriggerEventPaused();
                     if (Plugin.StaticConfig.DebugEveryEventChange)
                     {
-                        Plugin.StaticLogger.LogDebug(message);
+                        Plugin.StaticLogger.LogInfo(message);
                     }
                 }
             }
@@ -182,7 +182,7 @@ internal class EventWatcher
         {
             if (Plugin.StaticConfig.DebugEveryEventCheck)
             {
-                Plugin.StaticLogger.LogDebug(
+                Plugin.StaticLogger.LogInfo(
                     $"PreviousEventStartMsg: {PreviousEventStartMessage}, PreviousEventEndMsg: {PreviousEventEndMessage}, PreviousEventPos: {PreviousEventPos}" + Environment.NewLine +
                     "Event check ran, no current events (or world isn't loaded yet)."
                 );
@@ -200,7 +200,7 @@ internal class EventWatcher
                 TriggerEventStop();
                 if (Plugin.StaticConfig.DebugEveryEventChange)
                 {
-                    Plugin.StaticLogger.LogDebug("Event stopped!");
+                    Plugin.StaticLogger.LogInfo("Event stopped!");
                 }
             }
         }
