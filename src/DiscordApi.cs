@@ -12,26 +12,28 @@ class DiscordApi
     /// <summary>
     /// Send a <paramref name="message"/> and a <paramref name="pos"/> to Discord.
     /// </summary>
+    /// <param name="ev">The event which triggered this message</param>
     /// <param name="message">A string optionally formatted with Discord-approved markdown syntax.</param>
     /// <param name="pos">A 3-dimensional vector representing a position</param>
-    public static void SendMessage(string message, UnityEngine.Vector3 pos)
+    public static void SendMessage(Webhook.Event ev, string message, UnityEngine.Vector3 pos)
     {
         if (Plugin.StaticConfig.DiscordEmbedsEnabled)
         {
-            SendMessageWithFields(message, new List<Tuple<string, string>> {
+            SendMessageWithFields(ev, message, new List<Tuple<string, string>> {
                     Tuple.Create("Coordinates",MessageTransformer.FormatVector3AsPos(pos))
                 });
         }
         else
         {
-            SendMessage($"{message} {MessageTransformer.FormatAppendedPos(pos)}");
+            SendMessage(ev, $"{message} {MessageTransformer.FormatAppendedPos(pos)}");
         }
     }
     /// <summary>
     /// Sends a <paramref name="message"/> to Discord.
     /// </summary>
+    /// <param name="ev">The event which triggered this message</param>
     /// <param name="message">A string optionally formatted with Discord-approved markdown syntax.</param>
-    public static void SendMessage(string message)
+    public static void SendMessage(Webhook.Event ev, string message)
     {
         // A simple string message
         var payload = new DiscordSimpleWebhook
@@ -41,15 +43,16 @@ class DiscordApi
 
         string payloadString = JsonConvert.SerializeObject(payload);
 
-        SendSerializedJson(payloadString);
+        SendSerializedJson(ev, payloadString);
     }
 
     /// <summary>
     /// Send a <paramref name="message"/> with <paramref name="fields"/> to Discord.
     /// </summary>
+    /// <param name="ev">The event which triggered this message</param>
     /// <param name="content">A string optionally formatted with Discord-approved markdown syntax.</param>
     /// <param name="fields">Discord fields as defined in the API, as Tuples (field name, value)</param>
-    public static void SendMessageWithFields(string content = null, List<Tuple<string, string>> fields = null)
+    public static void SendMessageWithFields(Webhook.Event ev, string content = null, List<Tuple<string, string>> fields = null)
     {
         // Guard against null/empty calls
         if (string.IsNullOrEmpty(content) && fields == null)
@@ -103,19 +106,25 @@ class DiscordApi
         payloadString += "}";
 
         // Use our pre-existing method to send serialized JSON to discord
-        SendSerializedJson(payloadString);
+        SendSerializedJson(ev, payloadString);
     }
 
     /// <summary>
     /// Sends <paramref name="serializedJson"/> to the webhook specified in configuration.
     /// </summary>
+    /// <param name="ev">The event which triggered this message</param>
     /// <param name="serializedJson">Body data for the webhook as JSON serialized into a string</param>
-    private static void SendSerializedJson(string serializedJson)
+    private static void SendSerializedJson(Webhook.Event ev, string serializedJson)
     {
-        Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
+        Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson} (event: {ev})");
+
+        if (ev == Webhook.Event.Other)
+        {
+            Plugin.StaticLogger.LogInfo($"Dispatching webhook for 3rd party plugin (configured as 'Other' in WebHook config)");
+        }
 
         // Guard against unset webhook or empty serialized json
-        if (string.IsNullOrEmpty(Plugin.StaticConfig.WebHookURL) || string.IsNullOrEmpty(serializedJson))
+        if ((string.IsNullOrEmpty(Plugin.StaticConfig.PrimaryWebhook.Url) && string.IsNullOrEmpty(Plugin.StaticConfig.SecondaryWebhook.Url)) || string.IsNullOrEmpty(serializedJson))
         {
             return;
         }
@@ -123,8 +132,26 @@ class DiscordApi
         // Responsible for sending a JSON string to the webhook.
         byte[] byteArray = Encoding.UTF8.GetBytes(serializedJson);
 
+        if (Plugin.StaticConfig.PrimaryWebhook.HasEvent(ev))
+        {
+            DispatchRequest(Plugin.StaticConfig.PrimaryWebhook, byteArray);
+        }
+        if (Plugin.StaticConfig.SecondaryWebhook.HasEvent(ev))
+        {
+            DispatchRequest(Plugin.StaticConfig.PrimaryWebhook, byteArray);
+        }
+    }
+
+    /// <summary>
+    /// Send a web request to discord.
+    /// </summary>
+    /// <param name="webhook">The webhook to use for the request</param>
+    /// <param name="byteArray">The payload as a byte array</param>
+    private static void DispatchRequest(WebhookEntry webhook, byte[] byteArray)
+    {
+
         // Create a web request to send the payload to discord
-        WebRequest request = WebRequest.Create(Plugin.StaticConfig.WebHookURL);
+        WebRequest request = WebRequest.Create(webhook.Url);
         request.Method = "POST";
         request.ContentType = "application/json";
         request.ContentLength = byteArray.Length;
@@ -162,6 +189,33 @@ class DiscordApi
             // Close the response.
             response.Close();
         }).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Send a <paramref name="message"/> and a <paramref name="pos"/> to Discord.
+    /// </summary>
+    /// <param name="message">A string optionally formatted with Discord-approved markdown syntax.</param>
+    /// <param name="pos">A 3-dimensional vector representing a position</param>
+    public static void SendMessage(string message, UnityEngine.Vector3 pos)
+    {
+        SendMessage(Webhook.Event.Other, message, pos);
+    }
+    /// <summary>
+    /// Sends a <paramref name="message"/> to Discord.
+    /// </summary>
+    /// <param name="message">A string optionally formatted with Discord-approved markdown syntax.</param>
+    public static void SendMessage(string message)
+    {
+        SendMessage(Webhook.Event.Other, message);
+    }
+    /// <summary>
+    /// Send a <paramref name="message"/> with <paramref name="fields"/> to Discord.
+    /// </summary>
+    /// <param name="content">A string optionally formatted with Discord-approved markdown syntax.</param>
+    /// <param name="fields">Discord fields as defined in the API, as Tuples (field name, value)</param>
+    public static void SendMessageWithFields(string content = null, List<Tuple<string, string>> fields = null)
+    {
+        SendMessageWithFields(Webhook.Event.Other, content, fields);
     }
 }
 

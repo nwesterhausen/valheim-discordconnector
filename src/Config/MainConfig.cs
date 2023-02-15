@@ -156,7 +156,10 @@ internal class MainConfig
     {
         string jsonString = "{";
         jsonString += "\"discord\":{";
-        jsonString += $"\"webhook\":\"{(string.IsNullOrEmpty(WebHookURL) ? "unset" : "REDACTED")}\",";
+        jsonString += $"\"webhook\":\"{(string.IsNullOrEmpty(webhookUrl.Value) ? "unset" : "REDACTED")}\",";
+        jsonString += $"\"webhookEvents\":\"{webhookEvents.Value}\",";
+        jsonString += $"\"webhook2\":\"{(string.IsNullOrEmpty(webhookUrl2.Value) ? "unset" : "REDACTED")}\",";
+        jsonString += $"\"webhookEvents\":\"{webhook2Events.Value}\",";
         jsonString += $"\"fancierMessages\":\"{DiscordEmbedsEnabled}\",";
         jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserList.Value}\",";
         jsonString += $"\"ignoredPlayersRegex\":\"{mutedDiscordUserListRegex.Value}\"";
@@ -169,7 +172,8 @@ internal class MainConfig
         return jsonString;
     }
 
-    public string WebHookURL => webhookUrl.Value;
+    public WebhookEntry PrimaryWebhook => new WebhookEntry { Url = webhookUrl.Value, FireOnEvents = Webhook.StringToEventList(webhookEvents.Value) };
+    public WebhookEntry SecondaryWebhook => new WebhookEntry { Url = webhookUrl2.Value, FireOnEvents = Webhook.StringToEventList(webhook2Events.Value) };
     public bool CollectStatsEnabled => collectStatsToggle.Value;
     public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
     public bool SendPositionsEnabled => sendPositionsToggle.Value;
