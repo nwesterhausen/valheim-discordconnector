@@ -29,11 +29,28 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 
 See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnector/projects/1) as a Github project.
 
-- Multiple webhook support
 - More statistics trackable/able to be sent
 - New day messages
 
 ## Changelog
+
+## Version 2.1.9
+
+Adds a requested feature for a second webhook. Both webhooks can be configured to accept messages of any type that Discord
+Connector sends, and by default (to be non-breaking) they will send all messages (which is the behavior of 2.1.8 and previous).
+Some plugins which may make use of Discord Connector's webhook to send messages can use the same method for sending and will
+be tagged as 'other' webhook events. For a full list of what webhook events can be configured, see the
+[documentation](https://discordconnector.valheim.nwest.games/config/main.html#webhook-events).
+
+Features:
+
+- Adds a second webhook entry
+- Adds webhook events configuration entries (webhooks can be configured to only send certain messages)
+
+Fixes:
+
+- Empty leaderboards now send an empty leaderboard (instead of not sending anything)
+- Configuration for how to differentiate players may have swapped the Name and NameAndPlayerId definitions
 
 ### Version 2.1.8
 

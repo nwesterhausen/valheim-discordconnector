@@ -5,7 +5,7 @@
 [![Build](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/dotnet.yml/badge.svg)](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/dotnet.yml)
 [![Publish](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/publish.yml/badge.svg)](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/publish.yml)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/nwesterhausen/valheim-discordconnector?label=Github%20Release&style=flat&labelColor=%2332393F)](https://github.com/nwesterhausen/valheim-discordconnector/releases/latest)
-[![Thunderstore.io](https://img.shields.io/badge/Thunderstore.io-2.1.8-%23375a7f?style=flat&labelColor=%2332393F)](https://valheim.thunderstore.io/package/nwesterhausen/DiscordConnector/)
+[![Thunderstore.io](https://img.shields.io/badge/Thunderstore.io-2.1.9-%23375a7f?style=flat&labelColor=%2332393F)](https://valheim.thunderstore.io/package/nwesterhausen/DiscordConnector/)
 [![NexusMods](https://img.shields.io/badge/NexusMods-2.0.6-%23D98F40?style=flat&labelColor=%2332393F)](https://www.nexusmods.com/valheim/mods/1551/)
 
 Connect your Valheim server to Discord. ([See website for installation or configuration instructions](https://discordconnector.valheim.nwest.games/)). This plugin is largely based on [valheim-discord-notifier](https://github.com/aequasi/valheim-discord-notifier), but this plugin supports randomized messages, muting players, and Discord message embeds.
