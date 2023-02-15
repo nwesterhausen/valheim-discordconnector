@@ -13,6 +13,7 @@ internal class ZNetPatches
             if (Plugin.StaticConfig.LoadedMessageEnabled)
             {
                 DiscordApi.SendMessage(
+                    Webhook.Event.ServerStart,
                     MessageTransformer.FormatServerMessage(Plugin.StaticConfig.LoadedMessage)
                 );
             }
@@ -32,6 +33,7 @@ internal class ZNetPatches
             if (Plugin.StaticConfig.WorldSaveMessageEnabled)
             {
                 DiscordApi.SendMessage(
+                    Webhook.Event.ServerSave,
                     MessageTransformer.FormatServerMessage(Plugin.StaticConfig.SaveMessage)
                 );
             }

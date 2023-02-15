@@ -181,7 +181,8 @@ internal class PluginConfig
     public bool EventResumedPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.EventResumedPosEnabled;
 
     // Main Config
-    public string WebHookURL => mainConfig.WebHookURL;
+    public WebhookEntry PrimaryWebhook => mainConfig.PrimaryWebhook;
+    public WebhookEntry SecondaryWebhook => mainConfig.SecondaryWebhook;
     public bool CollectStatsEnabled => mainConfig.CollectStatsEnabled;
     public bool DiscordEmbedsEnabled => mainConfig.DiscordEmbedsEnabled;
     public bool SendPositionsEnabled => mainConfig.SendPositionsEnabled;

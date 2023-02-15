@@ -61,7 +61,7 @@ public class Plugin : BaseUnityPlugin
             StaticEventWatcher = new EventWatcher();
         }
 
-        if (string.IsNullOrEmpty(StaticConfig.WebHookURL))
+        if (string.IsNullOrEmpty(StaticConfig.PrimaryWebhook.Url) && String.IsNullOrEmpty(StaticConfig.SecondaryWebhook.Url))
         {
             StaticLogger.LogWarning("No value set for WebHookURL! Plugin will run without using a main Discord webhook.");
         }

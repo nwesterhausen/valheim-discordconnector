@@ -22,6 +22,7 @@ internal static class Handlers
         // - If recording player join stats is enabled
         //     a. Save a record of the player joining
         // - Add player to the player list
+        Webhook.Event ev = Webhook.Event.PlayerJoin;
 
         // Get the player's hostname to use for record keeping and logging
         string playerHostName = $"{peer.m_socket.GetHostName()}";
@@ -49,6 +50,7 @@ internal static class Handlers
         if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Join, peer.m_playerName) == 0)
         {
             preFormattedMessage = Plugin.StaticConfig.PlayerFirstJoinMessage;
+            ev = Webhook.Event.PlayerFirstJoin;
         }
         // If sending messages for players joining is enabled
         else if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
@@ -70,7 +72,7 @@ internal static class Handlers
             return;
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.PlayerJoinPosEnabled);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.PlayerJoinPosEnabled, ev);
     }
 
     /// <summary>
@@ -86,6 +88,7 @@ internal static class Handlers
         // - If recording player leave stats is enabled
         //     a. Save a record of the player leaving
         // - Remove player from the player list
+        Webhook.Event ev = Webhook.Event.PlayerLeave;
 
         // Get the player's hostname to use for record keeping and logging
         string playerHostName = $"{peer.m_socket.GetHostName()}";
@@ -105,6 +108,7 @@ internal static class Handlers
         if (Plugin.StaticConfig.AnnouncePlayerFirstLeaveEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Leave, peer.m_playerName) == 0)
         {
             preFormattedMessage = Plugin.StaticConfig.PlayerFirstLeaveMessage;
+            ev = Webhook.Event.PlayerFirstLeave;
         }
         // If sending messages for players leaving is enabled
         else if (Plugin.StaticConfig.PlayerLeaveMessageEnabled)
@@ -126,7 +130,7 @@ internal static class Handlers
             return;
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.PlayerLeavePosEnabled);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.PlayerLeavePosEnabled, ev);
     }
 
     /// <summary>
@@ -142,6 +146,7 @@ internal static class Handlers
         // - If recording player death stats is enabled
         //     a. Save a record of the player dying
         // - Remove player from the player list
+        Webhook.Event ev = Webhook.Event.PlayerDeath;
 
         // Get the player's hostname to use for record keeping and logging
         string playerHostName = $"{peer.m_socket.GetHostName()}";
@@ -152,6 +157,7 @@ internal static class Handlers
         if (Plugin.StaticConfig.AnnouncePlayerFirstDeathEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Death, peer.m_playerName) == 0)
         {
             preFormattedMessage = Plugin.StaticConfig.PlayerFirstDeathMessage;
+            ev = Webhook.Event.PlayerFirstDeath;
         }
         // If sending messages for players dying is enabled
         else if (Plugin.StaticConfig.PlayerDeathMessageEnabled)
@@ -172,7 +178,7 @@ internal static class Handlers
             return;
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.PlayerDeathPosEnabled);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.PlayerDeathPosEnabled, ev);
     }
 
     /// <summary>
@@ -188,6 +194,7 @@ internal static class Handlers
         // - If recording player ping stats is enabled
         //     a. Save a record of the player pinging
         // - Remove player from the player list
+        Webhook.Event ev = Webhook.Event.PlayerPing;
 
         // Get the player's hostname to use for record keeping and logging
         string playerHostName = $"{peer.m_socket.GetHostName()}";
@@ -198,6 +205,7 @@ internal static class Handlers
         if (Plugin.StaticConfig.AnnouncePlayerFirstPingEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Ping, peer.m_playerName) == 0)
         {
             preFormattedMessage = Plugin.StaticConfig.PlayerFirstPingMessage;
+            ev = Webhook.Event.PlayerFirstPing;
         }
         // If sending messages for players pinging is enabled
         else if (Plugin.StaticConfig.ChatPingEnabled)
@@ -218,7 +226,7 @@ internal static class Handlers
             return;
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.ChatPingPosEnabled, pos);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.ChatPingPosEnabled, ev);
     }
 
 
@@ -234,6 +242,7 @@ internal static class Handlers
         //         i. Send a message to discord
         // - If recording player shout stats is enabled
         //     a. Save a record of the player shouting
+        Webhook.Event ev = Webhook.Event.PlayerShout;
 
         // Get the player's hostname to use for record keeping and logging
         string playerHostName = $"{peer.m_socket.GetHostName()}";
@@ -244,6 +253,7 @@ internal static class Handlers
         if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Shout, peer.m_playerName) == 0)
         {
             preFormattedMessage = Plugin.StaticConfig.PlayerFirstShoutMessage;
+            ev = Webhook.Event.PlayerFirstShout;
         }
         // If sending messages for players shouting is enabled
         else if (Plugin.StaticConfig.ChatShoutEnabled)
@@ -264,7 +274,7 @@ internal static class Handlers
             return;
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.ChatShoutPosEnabled, pos, text);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.ChatShoutPosEnabled, pos, text, ev);
     }
 
     /// <summary>
@@ -274,9 +284,9 @@ internal static class Handlers
     /// <param name="playerHostName">Player host name</param>
     /// <param name="preFormattedMessage">Raw message to format for sending to discord</param>
     /// <param name="posEnabled">If we are allowed to include the position data</param>
-    private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage, bool posEnabled)
+    private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage, bool posEnabled, Webhook.Event ev)
     {
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, posEnabled, peer.m_refPos);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, posEnabled, peer.m_refPos, ev);
     }
 
     /// <summary>
@@ -287,7 +297,7 @@ internal static class Handlers
     /// <param name="preFormattedMessage">Raw message to format for sending to discord</param>
     /// <param name="posEnabled">If we are allowed to include the position data</param>
     /// <param name="pos">Positional data to use in formatting</param>
-    private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage, bool posEnabled, Vector3 pos)
+    private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage, bool posEnabled, Vector3 pos, Webhook.Event ev)
     {
         // Format the message accordingly, depending if it has the %POS% variable or not
         string finalMessage;
@@ -313,13 +323,13 @@ internal static class Handlers
             if (Plugin.StaticConfig.DiscordEmbedsEnabled || !finalMessage.Contains("%POS%"))
             {
                 // Send the message to discord with an auto-appended POS (or as a POS embed if "fancier" discord messages are enabled)
-                DiscordApi.SendMessage(finalMessage, pos);
+                DiscordApi.SendMessage(ev, finalMessage, pos);
                 return;
             }
         }
 
         // Sending position data is not allowed OR the message doesn't contain the %POS% variable
-        DiscordApi.SendMessage(finalMessage);
+        DiscordApi.SendMessage(ev, finalMessage);
     }
 
 
@@ -335,7 +345,7 @@ internal static class Handlers
     /// <param name="posEnabled">If we are allowed to include the position data</param>
     /// <param name="pos">Positional data to use in formatting</param>
     /// <param name="text">Text that was sent</param>
-    private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage, bool posEnabled, Vector3 pos, string text)
+    private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage, bool posEnabled, Vector3 pos, string text, Webhook.Event ev)
     {
         // Format the message accordingly, depending if it has the %POS% variable or not
         string finalMessage;
@@ -361,13 +371,13 @@ internal static class Handlers
             if (Plugin.StaticConfig.DiscordEmbedsEnabled || !finalMessage.Contains("%POS%"))
             {
                 // Send the message to discord with an auto-appended POS (or as a POS embed if "fancier" discord messages are enabled)
-                DiscordApi.SendMessage(finalMessage, pos);
+                DiscordApi.SendMessage(ev, finalMessage, pos);
                 return;
             }
         }
 
         // Sending position data is not allowed OR the message doesn't contain the %POS% variable
-        DiscordApi.SendMessage(finalMessage);
+        DiscordApi.SendMessage(ev, finalMessage);
     }
 
     /// <summary>
@@ -407,7 +417,7 @@ internal static class Handlers
                     message.Replace("%POS%", "");
                 }
 
-                DiscordApi.SendMessage(message);
+                DiscordApi.SendMessage(Webhook.Event.PlayerShout, message);
             }
             // Exit the function since we sent the message
             return;

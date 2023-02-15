@@ -221,12 +221,12 @@ internal class EventWatcher
             );
             if (!Plugin.StaticConfig.EventStartPosEnabled)
             {
-                DiscordApi.SendMessage(message);
+                DiscordApi.SendMessage(Webhook.Event.EventStart, message);
                 return;
             }
             if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
             {
-                DiscordApi.SendMessage(message, Status.Pos);
+                DiscordApi.SendMessage(Webhook.Event.EventStart, message, Status.Pos);
             }
             else
             {
@@ -237,7 +237,7 @@ internal class EventWatcher
                     // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
                     Status.Pos
                 );
-                DiscordApi.SendMessage(message);
+                DiscordApi.SendMessage(Webhook.Event.EventStart, message);
             }
         }
     }
@@ -253,12 +253,12 @@ internal class EventWatcher
             );
             if (!Plugin.StaticConfig.EventPausedPosEnabled)
             {
-                DiscordApi.SendMessage(message);
+                DiscordApi.SendMessage(Webhook.Event.EventPaused, message);
                 return;
             }
             if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
             {
-                DiscordApi.SendMessage(message, Status.Pos);
+                DiscordApi.SendMessage(Webhook.Event.EventPaused, message, Status.Pos);
             }
             else
             {
@@ -269,7 +269,7 @@ internal class EventWatcher
                     // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
                     Status.Pos
                 );
-                DiscordApi.SendMessage(message);
+                DiscordApi.SendMessage(Webhook.Event.EventPaused, message);
             }
         }
     }
@@ -285,12 +285,12 @@ internal class EventWatcher
             );
             if (!Plugin.StaticConfig.EventResumedPosEnabled)
             {
-                DiscordApi.SendMessage(message);
+                DiscordApi.SendMessage(Webhook.Event.EventResumed, message);
                 return;
             }
             if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
             {
-                DiscordApi.SendMessage(message, Status.Pos);
+                DiscordApi.SendMessage(Webhook.Event.EventResumed, message, Status.Pos);
             }
             else
             {
@@ -301,7 +301,7 @@ internal class EventWatcher
                     // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
                     Status.Pos
                 );
-                DiscordApi.SendMessage(message);
+                DiscordApi.SendMessage(Webhook.Event.EventResumed, message);
             }
         }
     }
@@ -317,12 +317,12 @@ internal class EventWatcher
             );
             if (!Plugin.StaticConfig.EventStopPosEnabled)
             {
-                DiscordApi.SendMessage(message);
+                DiscordApi.SendMessage(Webhook.Event.EventStop, message);
                 return;
             }
             if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
             {
-                DiscordApi.SendMessage(message, PreviousEventPos);
+                DiscordApi.SendMessage(Webhook.Event.EventStop, message, PreviousEventPos);
             }
             else
             {
@@ -333,7 +333,7 @@ internal class EventWatcher
                     // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
                     PreviousEventPos
                 );
-                DiscordApi.SendMessage(message);
+                DiscordApi.SendMessage(Webhook.Event.EventStop, message);
             }
         }
     }

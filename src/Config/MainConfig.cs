@@ -14,9 +14,9 @@ internal class MainConfig
     {
         [System.ComponentModel.Description(RetrieveBySteamID)]
         PlayerId,
-        [System.ComponentModel.Description(RetrieveByNameAndSteamID)]
-        Name,
         [System.ComponentModel.Description(RetrieveByName)]
+        Name,
+        [System.ComponentModel.Description(RetrieveByNameAndSteamID)]
         NameAndPlayerId,
     }
     public const string RetrieveBySteamID = "PlayerId: Treat each PlayerId as a separate player";
@@ -29,6 +29,9 @@ internal class MainConfig
 
     // Main Settings
     private ConfigEntry<string> webhookUrl;
+    private ConfigEntry<string> webhookUrl2;
+    private ConfigEntry<string> webhookEvents;
+    private ConfigEntry<string> webhook2Events;
     private ConfigEntry<bool> discordEmbedMessagesToggle;
     private ConfigEntry<string> mutedDiscordUserList;
     private ConfigEntry<string> mutedDiscordUserListRegex;
@@ -37,6 +40,9 @@ internal class MainConfig
     private ConfigEntry<bool> announcePlayerFirsts;
     private ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
     private ConfigEntry<bool> allowNonPlayerShoutLogging;
+
+    private WebhookEntry primaryWebhook;
+    private WebhookEntry secondaryWebhook;
 
     public MainConfig(ConfigFile configFile)
     {
@@ -51,6 +57,9 @@ internal class MainConfig
         {
             mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
         }
+
+        primaryWebhook = new WebhookEntry { Url = webhookUrl.Value, FireOnEvents = Webhook.StringToEventList(webhookEvents.Value) };
+        secondaryWebhook = new WebhookEntry { Url = webhookUrl2.Value, FireOnEvents = Webhook.StringToEventList(webhook2Events.Value) };
     }
 
     public void ReloadConfig()
@@ -67,6 +76,9 @@ internal class MainConfig
         {
             mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
         }
+
+        primaryWebhook = new WebhookEntry { Url = webhookUrl.Value, FireOnEvents = Webhook.StringToEventList(webhookEvents.Value) };
+        secondaryWebhook = new WebhookEntry { Url = webhookUrl2.Value, FireOnEvents = Webhook.StringToEventList(webhook2Events.Value) };
     }
 
     private void LoadConfig()
@@ -77,6 +89,26 @@ internal class MainConfig
             "",
             "Discord channel webhook URL. For instructions, reference the 'MAKING A WEBHOOK' section of " + Environment.NewLine +
             "Discord's documentation: https://support.Discord.com/hc/en-us/articles/228383668-Intro-to-Webhook");
+
+        webhookEvents = config.Bind<string>(MAIN_SETTINGS,
+            "Webhook Events",
+            "ALL",
+            "Specify a subset of possible events to send to the primary webhook. Previously all events would go to the primary webhook." + Environment.NewLine +
+            "Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLifecycle;playerAll;playerFirstAll;leaderboardsAll;'" + Environment.NewLine +
+            "Full list of valid options here: https://discordconnector.valheim.nwest.games/config/main.html#webhook-events");
+
+        webhookUrl2 = config.Bind<string>(MAIN_SETTINGS,
+            "Secondary Webhook URL",
+            "",
+            "Discord channel webhook URL. For instructions, reference the 'MAKING A WEBHOOK' section of " + Environment.NewLine +
+            "Discord's documentation: https://support.Discord.com/hc/en-us/articles/228383668-Intro-to-Webhook");
+
+        webhook2Events = config.Bind<string>(MAIN_SETTINGS,
+            "Secondary Webhook Events",
+            "ALL",
+            "Specify a subset of possible events to send to the primary webhook. Previously all events would go to the primary webhook." + Environment.NewLine +
+            "Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLaunch;serverStart;serverSave;'" + Environment.NewLine +
+            "Full list of valid options here: https://discordconnector.valheim.nwest.games/config/main.html#webhook-events");
 
         discordEmbedMessagesToggle = config.Bind<bool>(MAIN_SETTINGS,
             "Use fancier discord messages",
@@ -133,7 +165,10 @@ internal class MainConfig
     {
         string jsonString = "{";
         jsonString += "\"discord\":{";
-        jsonString += $"\"webhook\":\"{(string.IsNullOrEmpty(WebHookURL) ? "unset" : "REDACTED")}\",";
+        jsonString += $"\"webhook\":\"{(string.IsNullOrEmpty(webhookUrl.Value) ? "unset" : "REDACTED")}\",";
+        jsonString += $"\"webhookEvents\":\"{webhookEvents.Value}\",";
+        jsonString += $"\"webhook2\":\"{(string.IsNullOrEmpty(webhookUrl2.Value) ? "unset" : "REDACTED")}\",";
+        jsonString += $"\"webhookEvents\":\"{webhook2Events.Value}\",";
         jsonString += $"\"fancierMessages\":\"{DiscordEmbedsEnabled}\",";
         jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserList.Value}\",";
         jsonString += $"\"ignoredPlayersRegex\":\"{mutedDiscordUserListRegex.Value}\"";
@@ -146,7 +181,8 @@ internal class MainConfig
         return jsonString;
     }
 
-    public string WebHookURL => webhookUrl.Value;
+    public WebhookEntry PrimaryWebhook => primaryWebhook;
+    public WebhookEntry SecondaryWebhook => secondaryWebhook;
     public bool CollectStatsEnabled => collectStatsToggle.Value;
     public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
     public bool SendPositionsEnabled => sendPositionsToggle.Value;
