@@ -1,7 +1,4 @@
-
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace DiscordConnector;
@@ -141,6 +138,11 @@ public class Webhook
             events.Add(StringToEvent(ev));
         }
 
+        foreach (Webhook.Event we in events)
+        {
+            Plugin.StaticLogger.LogDebug($"Added {we} to list");
+        }
+
         return events;
     }
 }
@@ -154,55 +156,76 @@ class WebhookEntry
     {
         if (FireOnEvents.Contains(Webhook.Event.ALL))
         {
+            Plugin.StaticLogger.LogDebug("Webhook has 'ALL' enabled");
             return true;
         }
 
         if (FireOnEvents.Contains(Webhook.Event.PlayerAll))
         {
-            return
+            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerAll");
+            if (
                 ev == Webhook.Event.PlayerDeath ||
                 ev == Webhook.Event.PlayerJoin ||
                 ev == Webhook.Event.PlayerLeave ||
                 ev == Webhook.Event.PlayerPing ||
-                ev == Webhook.Event.PlayerShout;
+                ev == Webhook.Event.PlayerShout)
+            {
+                return true;
+            }
         }
         if (FireOnEvents.Contains(Webhook.Event.PlayerFirstAll))
         {
-            return
+            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerFirstAll");
+            if (
                 ev == Webhook.Event.PlayerFirstDeath ||
                 ev == Webhook.Event.PlayerFirstJoin ||
                 ev == Webhook.Event.PlayerFirstLeave ||
                 ev == Webhook.Event.PlayerFirstPing ||
-                ev == Webhook.Event.PlayerFirstShout;
+                ev == Webhook.Event.PlayerFirstShout)
+            {
+                return true;
+            }
         }
         if (FireOnEvents.Contains(Webhook.Event.EventLifecycle))
         {
-            return
+            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of EventLifecycle");
+            if (
                 ev == Webhook.Event.EventStart ||
                 ev == Webhook.Event.EventStop ||
                 ev == Webhook.Event.EventResumed ||
-                ev == Webhook.Event.EventPaused;
+                ev == Webhook.Event.EventPaused)
+            {
+                return true;
+            }
         }
         if (FireOnEvents.Contains(Webhook.Event.ServerLifecycle))
         {
-            return
+            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of ServerLifecycle");
+            if (
                 ev == Webhook.Event.ServerLaunch ||
                 ev == Webhook.Event.ServerShutdown ||
                 ev == Webhook.Event.ServerStart ||
-                ev == Webhook.Event.ServerStop;
+                ev == Webhook.Event.ServerStop)
+            {
+                return true;
+            }
         }
         if (FireOnEvents.Contains(Webhook.Event.LeaderboardsAll))
         {
-            return
+            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of LeaderboardsAll");
+            if (
                 ev == Webhook.Event.ActivePlayers ||
                 ev == Webhook.Event.Leaderboard1 ||
                 ev == Webhook.Event.Leaderboard2 ||
                 ev == Webhook.Event.Leaderboard3 ||
                 ev == Webhook.Event.Leaderboard4 ||
-                ev == Webhook.Event.Leaderboard5;
+                ev == Webhook.Event.Leaderboard5)
+            {
+                return true;
+            }
         }
 
-
+        Plugin.StaticLogger.LogDebug($"Checking for exact match of {ev}");
         return FireOnEvents.Contains(ev);
     }
 }
