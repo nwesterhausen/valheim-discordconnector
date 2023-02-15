@@ -29,6 +29,9 @@ internal class MainConfig
 
     // Main Settings
     private ConfigEntry<string> webhookUrl;
+    private ConfigEntry<string> webhookUrl2;
+    private ConfigEntry<string> webhookEvents;
+    private ConfigEntry<string> webhook2Events;
     private ConfigEntry<bool> discordEmbedMessagesToggle;
     private ConfigEntry<string> mutedDiscordUserList;
     private ConfigEntry<string> mutedDiscordUserListRegex;
@@ -77,6 +80,26 @@ internal class MainConfig
             "",
             "Discord channel webhook URL. For instructions, reference the 'MAKING A WEBHOOK' section of " + Environment.NewLine +
             "Discord's documentation: https://support.Discord.com/hc/en-us/articles/228383668-Intro-to-Webhook");
+
+        webhookEvents = config.Bind<string>(MAIN_SETTINGS,
+            "Webhook Events",
+            "ALL",
+            "Specify a subset of possible events to send to the primary webhook. Previously all events would go to the primary webhook." + Environment.NewLine +
+            "Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLaunch;serverStart;serverSave;'" + Environment.NewLine +
+            "Full list of valid options here: https://discordconnector.valheim.nwest.games/config/main.html#webhook-events");
+
+        webhookUrl2 = config.Bind<string>(MAIN_SETTINGS,
+            "Secondary Webhook URL",
+            "",
+            "Discord channel webhook URL. For instructions, reference the 'MAKING A WEBHOOK' section of " + Environment.NewLine +
+            "Discord's documentation: https://support.Discord.com/hc/en-us/articles/228383668-Intro-to-Webhook");
+
+        webhook2Events = config.Bind<string>(MAIN_SETTINGS,
+            "Secondary Webhook Events",
+            "ALL",
+            "Specify a subset of possible events to send to the primary webhook. Previously all events would go to the primary webhook." + Environment.NewLine +
+            "Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLaunch;serverStart;serverSave;'" + Environment.NewLine +
+            "Full list of valid options here: https://discordconnector.valheim.nwest.games/config/main.html#webhook-events");
 
         discordEmbedMessagesToggle = config.Bind<bool>(MAIN_SETTINGS,
             "Use fancier discord messages",
