@@ -36,7 +36,9 @@ Here is a list of every accepted event for inclusion in the 'webhook event' sett
 ::: info "Specifying Events ≠ Enabling Messages"
 Adding an event to be send for a webhook does not enable Discord Connector to send that event. It only tells Discord Connector *where* to send the event message.
 
-Messages for these events have to be enabled in the toggles config file (as they were previously). Any of these messages which are enabled by default are notated as such in the 'Sent by Deafult' column.
+Messages for these events have to be enabled in the toggles config file (as they were previously). Any of these messages which are enabled by default are notated as such in the 'Enabled by Default' column.
+
+Take note that by default, the webhooks are set to 'ALL' which takes any messages which happen and sends them.
 :::
 
 | Event Code       | Corresponding Trigger                         | Enabled by Default |
