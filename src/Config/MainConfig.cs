@@ -14,9 +14,9 @@ internal class MainConfig
     {
         [System.ComponentModel.Description(RetrieveBySteamID)]
         PlayerId,
-        [System.ComponentModel.Description(RetrieveByNameAndSteamID)]
-        Name,
         [System.ComponentModel.Description(RetrieveByName)]
+        Name,
+        [System.ComponentModel.Description(RetrieveByNameAndSteamID)]
         NameAndPlayerId,
     }
     public const string RetrieveBySteamID = "PlayerId: Treat each PlayerId as a separate player";
