@@ -41,6 +41,9 @@ internal class MainConfig
     private ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
     private ConfigEntry<bool> allowNonPlayerShoutLogging;
 
+    private WebhookEntry primaryWebhook;
+    private WebhookEntry secondaryWebhook;
+
     public MainConfig(ConfigFile configFile)
     {
         config = configFile;
@@ -54,6 +57,9 @@ internal class MainConfig
         {
             mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
         }
+
+        primaryWebhook = new WebhookEntry { Url = webhookUrl.Value, FireOnEvents = Webhook.StringToEventList(webhookEvents.Value) };
+        secondaryWebhook = new WebhookEntry { Url = webhookUrl2.Value, FireOnEvents = Webhook.StringToEventList(webhook2Events.Value) };
     }
 
     public void ReloadConfig()
@@ -70,6 +76,9 @@ internal class MainConfig
         {
             mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
         }
+
+        primaryWebhook = new WebhookEntry { Url = webhookUrl.Value, FireOnEvents = Webhook.StringToEventList(webhookEvents.Value) };
+        secondaryWebhook = new WebhookEntry { Url = webhookUrl2.Value, FireOnEvents = Webhook.StringToEventList(webhook2Events.Value) };
     }
 
     private void LoadConfig()
@@ -172,8 +181,8 @@ internal class MainConfig
         return jsonString;
     }
 
-    public WebhookEntry PrimaryWebhook => new WebhookEntry { Url = webhookUrl.Value, FireOnEvents = Webhook.StringToEventList(webhookEvents.Value) };
-    public WebhookEntry SecondaryWebhook => new WebhookEntry { Url = webhookUrl2.Value, FireOnEvents = Webhook.StringToEventList(webhook2Events.Value) };
+    public WebhookEntry PrimaryWebhook => primaryWebhook;
+    public WebhookEntry SecondaryWebhook => secondaryWebhook;
     public bool CollectStatsEnabled => collectStatsToggle.Value;
     public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
     public bool SendPositionsEnabled => sendPositionsToggle.Value;
