@@ -94,7 +94,7 @@ internal class MainConfig
             "Webhook Events",
             "ALL",
             "Specify a subset of possible events to send to the primary webhook. Previously all events would go to the primary webhook." + Environment.NewLine +
-            "Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLaunch;serverStart;serverSave;'" + Environment.NewLine +
+            "Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLifecycle;playerAll;playerFirstAll;leaderboardsAll;'" + Environment.NewLine +
             "Full list of valid options here: https://discordconnector.valheim.nwest.games/config/main.html#webhook-events");
 
         webhookUrl2 = config.Bind<string>(MAIN_SETTINGS,
