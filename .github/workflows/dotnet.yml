@@ -1,6 +1,7 @@
 name: Build
 
 on:
+  workflow_dispatch:
   push:
     branches: [main, dev]
   pull_request:
@@ -16,14 +17,14 @@ jobs:
         id: cache-dev-bundle
         uses: actions/cache@v3
         with:
-          key: 0.212.7
+          key: 0.213.4
           path: /home/runner/dev-bundle
 
       # Populate build dependencies (if not cached)
       - name: Download Dev Bundle (publicized dlls, etc)
         if: ${{ steps.cache-dev-bundle.outputs.cache-hit != 'true'}}
         run: |
-          wget -O dev-bundle.zip ${{ secrets.VDC_DEV_BUNDLE }}0.212.7.zip
+          wget -O dev-bundle.zip ${{ secrets.VDC_DEV_BUNDLE }}0.213.4.zip
           unzip -qq dev-bundle.zip -d /home/runner/dev-bundle
 
       - uses: actions/checkout@v3
@@ -38,3 +39,16 @@ jobs:
       - name: Build
         # Specifying the "GamePath" as our build dependency directory (cached)
         run: dotnet build --no-restore -c Release /p:GamePath=/home/runner/dev-bundle -v n
+        
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          # Artifact name
+          name: DiscordConnector-artifact.zip
+          # A file, directory or wildcard pattern that describes what to upload
+          path: "/home/runner/work/valheim-discordconnector/valheim-discordconnector/bin/DiscordConnector.zip"
+          # The desired behavior if no files are found using the provided path.
+          
+          # Duration after which artifact will expire in days. 0 means using default retention.
+          # Minimum 1 day. Maximum 90 days unless changed from the repository settings page.
+          retention-days: 30

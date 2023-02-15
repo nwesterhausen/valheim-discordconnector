@@ -26,10 +26,10 @@ jobs:
           pnpm docs:build
 
       # Upload
-      - uses: bacongobbler/azure-blob-storage-upload@v1.2.0
+      - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
         with:
-          container_name: $web
-          extra_args: "--destination-path discordconnector.valheim.nwest.games/ --overwrite"
+          container_name: "$web"
+          extra_args: "--destination discordconnector.valheim.nwest.games/"
           connection_string: "${{ secrets.AZURE_CONNECTION_STRING }}"
-          source_dir: docs/.vitepress/dist
-          sync: true
+          source_dir: "docs/.vitepress/dist"
+          sync: "true"
