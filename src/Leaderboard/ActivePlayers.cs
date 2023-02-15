@@ -47,6 +47,7 @@ internal static class ActivePlayersAnnouncement
     /// </summary>
     private static void SendActivePlayersBoard()
     {
+        Webhook.Event ev = Webhook.Event.ActivePlayers;
         string formattedAnnouncement = $"**Active Players**\n";
         if (Plugin.StaticConfig.ActivePlayersAnnouncement.IncludeCurrentlyOnline)
         {
@@ -73,7 +74,7 @@ internal static class ActivePlayersAnnouncement
         }
 
 
-        DiscordApi.SendMessage(formattedAnnouncement);
+        DiscordApi.SendMessage(ev, formattedAnnouncement);
     }
 
     /// <summary>

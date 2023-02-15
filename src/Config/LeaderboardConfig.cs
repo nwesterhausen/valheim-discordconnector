@@ -58,6 +58,7 @@ internal class LeaderBoardConfig
                 Shouts = leaderBoard1.shouts.Value,
                 Pings = leaderBoard1.pings.Value,
                 TimeOnline = leaderBoard1.timeOnline.Value,
+                WebhookEvent = Webhook.Event.Leaderboard1,
             },
             new LeaderBoardConfigReference
             {
@@ -72,6 +73,7 @@ internal class LeaderBoardConfig
                 Shouts = leaderBoard2.shouts.Value,
                 Pings = leaderBoard2.pings.Value,
                 TimeOnline = leaderBoard2.timeOnline.Value,
+                WebhookEvent = Webhook.Event.Leaderboard2,
             },
             new LeaderBoardConfigReference
             {
@@ -86,6 +88,7 @@ internal class LeaderBoardConfig
                 Shouts = leaderBoard3.shouts.Value,
                 Pings = leaderBoard3.pings.Value,
                 TimeOnline = leaderBoard3.timeOnline.Value,
+                WebhookEvent = Webhook.Event.Leaderboard3,
             },
             new LeaderBoardConfigReference
             {
@@ -100,6 +103,7 @@ internal class LeaderBoardConfig
                 Shouts = leaderBoard4.shouts.Value,
                 Pings = leaderBoard4.pings.Value,
                 TimeOnline = leaderBoard4.timeOnline.Value,
+                WebhookEvent = Webhook.Event.Leaderboard4,
             },
             new LeaderBoardConfigReference
             {
@@ -114,6 +118,7 @@ internal class LeaderBoardConfig
                 Shouts = leaderBoard5.shouts.Value,
                 Pings = leaderBoard5.pings.Value,
                 TimeOnline = leaderBoard5.timeOnline.Value,
+                WebhookEvent = Webhook.Event.Leaderboard5,
             }};
 
     }

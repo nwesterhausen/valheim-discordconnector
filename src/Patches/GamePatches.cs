@@ -12,6 +12,7 @@ internal class GamePatches
             if (Plugin.StaticConfig.LaunchMessageEnabled)
             {
                 DiscordApi.SendMessage(
+                    Webhook.Event.ServerLaunch,
                     MessageTransformer.FormatServerMessage(Plugin.StaticConfig.LaunchMessage)
                 );
             }
@@ -28,6 +29,7 @@ internal class GamePatches
             if (Plugin.StaticConfig.StopMessageEnabled)
             {
                 DiscordApi.SendMessage(
+                    Webhook.Event.ServerStop,
                     MessageTransformer.FormatServerMessage(Plugin.StaticConfig.StopMessage)
                 );
             }
@@ -41,6 +43,7 @@ internal class GamePatches
             if (Plugin.StaticConfig.ShutdownMessageEnabled)
             {
                 DiscordApi.SendMessage(
+                    Webhook.Event.ServerShutdown,
                     MessageTransformer.FormatServerMessage(Plugin.StaticConfig.ShutdownMessage)
                 );
             }

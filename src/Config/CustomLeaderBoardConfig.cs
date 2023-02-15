@@ -177,4 +177,9 @@ public class LeaderBoardConfigReference
     public bool Pings;
     public bool TimeOnline;
     public string DisplayedHeading;
+
+    /// <summary>
+    /// The event to use when sending to the webhook.
+    /// </summary>
+    public Webhook.Event WebhookEvent;
 }

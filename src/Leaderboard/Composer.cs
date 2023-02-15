@@ -20,6 +20,7 @@ internal class Composer : Base
         }
 
         LeaderBoardConfigReference settings = Plugin.StaticConfig.LeaderBoards[leaderBoardIdx];
+        Webhook.Event ev = Plugin.StaticConfig.LeaderBoards[leaderBoardIdx].WebhookEvent;
 
         if (!settings.Enabled)
         {
@@ -82,7 +83,7 @@ internal class Composer : Base
             settings.DisplayedHeading, settings.NumberListings
         );
 
-        DiscordApi.SendMessageWithFields(discordContent, leaderFields);
+        DiscordApi.SendMessageWithFields(ev, discordContent, leaderFields);
 
         // string json = JsonConvert.SerializeObject(rankings, Formatting.Indented);
         // DiscordApi.SendMessage($"```json\n{json}\n```");

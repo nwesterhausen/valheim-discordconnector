@@ -63,6 +63,19 @@ Take note that by default, the webhooks are set to 'ALL' which takes any message
 | playerFirstPing  | A player pings the map for the first time     | No                 |
 | playerFirstDeath | A player dies for the first time              | Yes                |
 
+### Leaderboard Events
+
+These are events which represent sending the leaderboards
+
+| Event Code    | Corresponding Trigger          | Enabled by Default |
+| ------------- | ------------------------------ | ------------------ |
+| activePlayers | The active players leaderboard | No                 |
+| leaderboard1  | The custom leaderboard 1       | No                 |
+| leaderboard2  | The custom leaderboard 2       | No                 |
+| leaderboard3  | The custom leaderboard 3       | No                 |
+| leaderboard4  | The custom leaderboard 4       | No                 |
+| leaderboard5  | The custom leaderboard 5       | No                 |
+
 ### Special Case Events
 
 These are shorthand to represent multiple events.
@@ -74,3 +87,4 @@ These are shorthand to represent multiple events.
 | eventLifecycle  | Any event start, pause, resume, or stop/end messages are sent to this webhook | N/A                |
 | playerAll       | Any messages about player's activity are sent to this webhook                 | N/A                |
 | playerFirstAll  | Any message about a player's first X are sent to this webhook                 | N/A                |
+| leaderboardsAll | Any message for a leaderboard are sent to this webhook                        | N/A                |

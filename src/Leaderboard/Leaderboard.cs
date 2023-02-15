@@ -10,6 +10,7 @@ namespace DiscordConnector
         private LeaderBoards.Base leaderBoard2;
         private LeaderBoards.Base leaderBoard3;
         private LeaderBoards.Base leaderBoard4;
+        private LeaderBoards.Base leaderBoard5;
         public static readonly int MAX_LEADER_BOARD_SIZE = 16;
 
         public LeaderBoard()
@@ -18,12 +19,14 @@ namespace DiscordConnector
             leaderBoard2 = new LeaderBoards.Composer(1);
             leaderBoard3 = new LeaderBoards.Composer(2);
             leaderBoard4 = new LeaderBoards.Composer(3);
+            leaderBoard5 = new LeaderBoards.Composer(4);
         }
 
         public LeaderBoards.Base LeaderBoard1 => leaderBoard1;
         public LeaderBoards.Base LeaderBoard2 => leaderBoard2;
         public LeaderBoards.Base LeaderBoard3 => leaderBoard3;
         public LeaderBoards.Base LeaderBoard4 => leaderBoard4;
+        public LeaderBoards.Base LeaderBoard5 => leaderBoard5;
 
         /// <summary>
         /// Takes a sorted list <paramref name="rankings"/> and returns a string listing each member on a line prepended with 1, 2, 3, etc.

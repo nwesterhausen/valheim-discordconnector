@@ -28,11 +28,18 @@ public class Webhook
         PlayerFirstShout,
         PlayerFirstPing,
         PlayerFirstDeath,
+        ActivePlayers,
+        Leaderboard1,
+        Leaderboard2,
+        Leaderboard3,
+        Leaderboard4,
+        Leaderboard5,
         ALL,
         ServerLifecycle,
         EventLifecycle,
         PlayerAll,
         PlayerFirstAll,
+        LeaderboardsAll,
         None,
         Other,
     }
@@ -51,6 +58,8 @@ public class Webhook
                 return Event.PlayerAll;
             case "playerFirstAll":
                 return Event.PlayerFirstAll;
+            case "leaderboardsAll":
+                return Event.LeaderboardsAll;
 
             case "serverLaunch":
                 return Event.ServerLaunch;
@@ -94,6 +103,19 @@ public class Webhook
             case "playerFirstDeath":
                 return Event.PlayerFirstDeath;
 
+            case "activePlayers":
+                return Event.ActivePlayers;
+            case "leaderboard1":
+                return Event.Leaderboard1;
+            case "leaderboard2":
+                return Event.Leaderboard2;
+            case "leaderboard3":
+                return Event.Leaderboard3;
+            case "leaderboard4":
+                return Event.Leaderboard4;
+            case "leaderboard5":
+                return Event.Leaderboard5;
+
             default:
                 Plugin.StaticLogger.LogDebug($"Unmatched event token '{eventToken}'");
                 return Event.None;
@@ -130,6 +152,57 @@ class WebhookEntry
 
     internal bool HasEvent(Webhook.Event ev)
     {
-        return FireOnEvents.Contains(ev) || FireOnEvents.Contains(Webhook.Event.ALL);
+        if (FireOnEvents.Contains(Webhook.Event.ALL))
+        {
+            return true;
+        }
+
+        if (FireOnEvents.Contains(Webhook.Event.PlayerAll))
+        {
+            return
+                ev == Webhook.Event.PlayerDeath ||
+                ev == Webhook.Event.PlayerJoin ||
+                ev == Webhook.Event.PlayerLeave ||
+                ev == Webhook.Event.PlayerPing ||
+                ev == Webhook.Event.PlayerShout;
+        }
+        if (FireOnEvents.Contains(Webhook.Event.PlayerFirstAll))
+        {
+            return
+                ev == Webhook.Event.PlayerFirstDeath ||
+                ev == Webhook.Event.PlayerFirstJoin ||
+                ev == Webhook.Event.PlayerFirstLeave ||
+                ev == Webhook.Event.PlayerFirstPing ||
+                ev == Webhook.Event.PlayerFirstShout;
+        }
+        if (FireOnEvents.Contains(Webhook.Event.EventLifecycle))
+        {
+            return
+                ev == Webhook.Event.EventStart ||
+                ev == Webhook.Event.EventStop ||
+                ev == Webhook.Event.EventResumed ||
+                ev == Webhook.Event.EventPaused;
+        }
+        if (FireOnEvents.Contains(Webhook.Event.ServerLifecycle))
+        {
+            return
+                ev == Webhook.Event.ServerLaunch ||
+                ev == Webhook.Event.ServerShutdown ||
+                ev == Webhook.Event.ServerStart ||
+                ev == Webhook.Event.ServerStop;
+        }
+        if (FireOnEvents.Contains(Webhook.Event.LeaderboardsAll))
+        {
+            return
+                ev == Webhook.Event.ActivePlayers ||
+                ev == Webhook.Event.Leaderboard1 ||
+                ev == Webhook.Event.Leaderboard2 ||
+                ev == Webhook.Event.Leaderboard3 ||
+                ev == Webhook.Event.Leaderboard4 ||
+                ev == Webhook.Event.Leaderboard5;
+        }
+
+
+        return FireOnEvents.Contains(ev);
     }
 }

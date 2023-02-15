@@ -191,32 +191,32 @@ class DiscordApi
         }).ConfigureAwait(false);
     }
 
-    /// <summary>
-    /// Send a <paramref name="message"/> and a <paramref name="pos"/> to Discord.
-    /// </summary>
-    /// <param name="message">A string optionally formatted with Discord-approved markdown syntax.</param>
-    /// <param name="pos">A 3-dimensional vector representing a position</param>
-    public static void SendMessage(string message, UnityEngine.Vector3 pos)
-    {
-        SendMessage(Webhook.Event.Other, message, pos);
-    }
-    /// <summary>
-    /// Sends a <paramref name="message"/> to Discord.
-    /// </summary>
-    /// <param name="message">A string optionally formatted with Discord-approved markdown syntax.</param>
-    public static void SendMessage(string message)
-    {
-        SendMessage(Webhook.Event.Other, message);
-    }
-    /// <summary>
-    /// Send a <paramref name="message"/> with <paramref name="fields"/> to Discord.
-    /// </summary>
-    /// <param name="content">A string optionally formatted with Discord-approved markdown syntax.</param>
-    /// <param name="fields">Discord fields as defined in the API, as Tuples (field name, value)</param>
-    public static void SendMessageWithFields(string content = null, List<Tuple<string, string>> fields = null)
-    {
-        SendMessageWithFields(Webhook.Event.Other, content, fields);
-    }
+    // /// <summary>
+    // /// Send a <paramref name="message"/> and a <paramref name="pos"/> to Discord.
+    // /// </summary>
+    // /// <param name="message">A string optionally formatted with Discord-approved markdown syntax.</param>
+    // /// <param name="pos">A 3-dimensional vector representing a position</param>
+    // public static void SendMessage(string message, UnityEngine.Vector3 pos)
+    // {
+    //     SendMessage(Webhook.Event.Other, message, pos);
+    // }
+    // /// <summary>
+    // /// Sends a <paramref name="message"/> to Discord.
+    // /// </summary>
+    // /// <param name="message">A string optionally formatted with Discord-approved markdown syntax.</param>
+    // public static void SendMessage(string message)
+    // {
+    //     SendMessage(Webhook.Event.Other, message);
+    // }
+    // /// <summary>
+    // /// Send a <paramref name="message"/> with <paramref name="fields"/> to Discord.
+    // /// </summary>
+    // /// <param name="content">A string optionally formatted with Discord-approved markdown syntax.</param>
+    // /// <param name="fields">Discord fields as defined in the API, as Tuples (field name, value)</param>
+    // public static void SendMessageWithFields(string content = null, List<Tuple<string, string>> fields = null)
+    // {
+    //     SendMessageWithFields(Webhook.Event.Other, content, fields);
+    // }
 }
 
 internal class DiscordSimpleWebhook
