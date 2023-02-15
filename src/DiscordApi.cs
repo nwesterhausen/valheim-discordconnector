@@ -65,9 +65,6 @@ class DiscordApi
         // If we have fields at all, put them as embedded fields
         if (fields != null)
         {
-            // Fields go under embed as array
-            payloadString += "\"embeds\":[{\"fields\":[";
-
             // Convert the fields into JSON Strings
             List<string> fieldStrings = new List<string>();
             foreach (Tuple<string, string> t in fields)
