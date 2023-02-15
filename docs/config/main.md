@@ -80,11 +80,12 @@ These are events which represent sending the leaderboards
 
 These are shorthand to represent multiple events.
 
-| Event Code      | Corresponding Trigger                                                         | Enabled by Default |
-| --------------- | ----------------------------------------------------------------------------- | ------------------ |
-| ALL             | Any messages that are enabled are sent to this webhook                        | N/A                |
-| serverLifecycle | Any server launch, start, stop, shutdown messages are sent to this webhook    | N/A                |
-| eventLifecycle  | Any event start, pause, resume, or stop/end messages are sent to this webhook | N/A                |
-| playerAll       | Any messages about player's activity are sent to this webhook                 | N/A                |
-| playerFirstAll  | Any message about a player's first X are sent to this webhook                 | N/A                |
-| leaderboardsAll | Any message for a leaderboard are sent to this webhook                        | N/A                |
+| Event Code      | Corresponding Trigger                                                                                              | Enabled by Default |
+| --------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------ |
+| ALL             | All messages get sent to this webhook                                                                              | N/A                |
+| serverLifecycle | Any server launch, start, stop, shutdown messages are sent to this webhook                                         | N/A                |
+| eventLifecycle  | Any event start, pause, resume, or stop/end messages are sent to this webhook                                      | N/A                |
+| playerAll       | Any messages about player's activity are sent to this webhook                                                      | N/A                |
+| playerFirstAll  | Any message about a player's first X are sent to this webhook                                                      | N/A                |
+| leaderboardsAll | Any message for a leaderboard are sent to this webhook                                                             | N/A                |
+| other           | A few other mods/plugins utilize Discord Connector's webhook to send messages. Those get tagged as 'Other' events. | N/A                |
