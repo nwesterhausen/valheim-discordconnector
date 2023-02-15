@@ -76,14 +76,19 @@ class DiscordApi
                 }));
             }
 
-            // Put the field JSON strings into our payload object 
-            payloadString += string.Join(",", fieldStrings.ToArray());
-            payloadString += "]}]";
-
-            // Cautiously put a comma if there is content to add to the payload as well
-            if (content != null)
+            if (fieldStrings.Count > 0)
             {
-                payloadString += ",";
+                // Put the field JSON strings into our payload object 
+                // Fields go under embed as array
+                payloadString += "\"embeds\":[{\"fields\":[";
+                payloadString += string.Join(",", fieldStrings.ToArray());
+                payloadString += "]}]";
+
+                // Cautiously put a comma if there is content to add to the payload as well
+                if (content != null)
+                {
+                    payloadString += ",";
+                }
             }
         }
 
