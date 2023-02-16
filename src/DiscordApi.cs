@@ -148,6 +148,11 @@ class DiscordApi
     /// <param name="byteArray">The payload as a byte array</param>
     private static void DispatchRequest(WebhookEntry webhook, byte[] byteArray)
     {
+        if (string.IsNullOrEmpty(webhook.Url))
+        {
+            Plugin.StaticLogger.LogDebug($"Dispatch attempted with empty webhook - ignoring");
+            return;
+        }
 
         // Create a web request to send the payload to discord
         WebRequest request = WebRequest.Create(webhook.Url);
@@ -216,7 +221,7 @@ class DiscordApi
     {
         SendMessageWithFields(Webhook.Event.Other, content, fields);
     }
-    
+
     /// <summary>
     /// Sends <paramref name="serializedJson"/> to the webhook specified in configuration.
     /// </summary>
