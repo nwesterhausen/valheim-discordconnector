@@ -166,15 +166,16 @@ class WebhookEntry
     {
         if (string.IsNullOrEmpty(url))
         {
-            Plugin.StaticLogger.LogDebug($"Coerced null or empty webhook url to empty string.");
+            Plugin.StaticLogger.LogDebug($"Coerced null or empty webhook url to empty string. Ignoring event list.");
             Url = "";
-        }
-        else
-        {
-            Url = url;
+            FireOnEvents = new List<Webhook.Event>();
+            return;
         }
 
-        if (fireOnEvents == null || fireOnEvents.Count == 0) 
+        Url = url;
+
+
+        if (fireOnEvents == null || fireOnEvents.Count == 0)
         {
             Plugin.StaticLogger.LogDebug($"Coerced null or empty webhook event list to empty list.");
             FireOnEvents = new List<Webhook.Event>();
