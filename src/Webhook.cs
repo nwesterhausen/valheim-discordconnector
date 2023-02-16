@@ -152,6 +152,29 @@ class WebhookEntry
     public string Url { get; set; }
     public List<Webhook.Event> FireOnEvents { get; set; }
 
+    public WebhookEntry(string url, List<Webhook.Event> fireOnEvents)
+    {
+        if (string.IsNullOrEmpty(url))
+        {
+            Plugin.StaticLogger.LogDebug($"Coerced null or empty webhook url to empty string.");
+            Url = "";
+        }
+        else
+        {
+            Url = url;
+        }
+
+        if (fireOnEvents == null || fireOnEvents.Count === 0) 
+        {
+            Plugin.StaticLogger.LogDebug($"Coerced null or empty webhook event list to empty list.");
+            FireOnEvents = new List<Webhook.Event>();
+        }
+        else
+        {
+            FireOnEvents = fireOnEvents;
+        }
+    }
+
     internal bool HasEvent(Webhook.Event ev)
     {
         if (FireOnEvents.Contains(Webhook.Event.ALL))
