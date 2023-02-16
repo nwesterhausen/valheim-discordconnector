@@ -1,7 +1,6 @@
 # Discord Connector
 
 [![CodeQL](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/codeql-analysis.yml)
-[![Docs](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/docs.yml/badge.svg)](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/docs.yml)
 [![Build](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/dotnet.yml/badge.svg)](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/dotnet.yml)
 [![Publish](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/publish.yml/badge.svg)](https://github.com/nwesterhausen/valheim-discordconnector/actions/workflows/publish.yml)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/nwesterhausen/valheim-discordconnector?label=Github%20Release&style=flat&labelColor=%2332393F)](https://github.com/nwesterhausen/valheim-discordconnector/releases/latest)
