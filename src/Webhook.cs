@@ -188,6 +188,11 @@ class WebhookEntry
 
     internal bool HasEvent(Webhook.Event ev)
     {
+        if (FireOnEvents.Count == 0)
+        {
+            return false;
+        }
+
         if (FireOnEvents.Contains(Webhook.Event.ALL))
         {
             Plugin.StaticLogger.LogDebug("Webhook has 'ALL' enabled");
