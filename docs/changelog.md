@@ -2,6 +2,14 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.1.10
+
+Thanks a lot to everyone who reported and helped resolve this error. Missed it in my initial testing because I was eager to test both webhooks and didn't end up testing with only one set.
+
+Fixes:
+
+- Null pointer error which would spam when only 1 webhook was set
+
 ## Version 2.1.9
 
 Adds a requested feature for a second webhook. Both webhooks can be configured to accept messages of any type that Discord
