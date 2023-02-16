@@ -58,8 +58,8 @@ internal class MainConfig
             mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
         }
 
-        primaryWebhook = new WebhookEntry { Url = webhookUrl.Value, FireOnEvents = Webhook.StringToEventList(webhookEvents.Value) };
-        secondaryWebhook = new WebhookEntry { Url = webhookUrl2.Value, FireOnEvents = Webhook.StringToEventList(webhook2Events.Value) };
+        primaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value));
+        secondaryWebhook = new WebhookEntry(webhookUrl2.Value, Webhook.StringToEventList(webhook2Events.Value));
     }
 
     public void ReloadConfig()
@@ -77,8 +77,8 @@ internal class MainConfig
             mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
         }
 
-        primaryWebhook = new WebhookEntry { Url = webhookUrl.Value, FireOnEvents = Webhook.StringToEventList(webhookEvents.Value) };
-        secondaryWebhook = new WebhookEntry { Url = webhookUrl2.Value, FireOnEvents = Webhook.StringToEventList(webhook2Events.Value) };
+        primaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value));
+        secondaryWebhook = new WebhookEntry(webhookUrl2.Value, Webhook.StringToEventList(webhook2Events.Value));
     }
 
     private void LoadConfig()
@@ -168,7 +168,7 @@ internal class MainConfig
         jsonString += $"\"webhook\":\"{(string.IsNullOrEmpty(webhookUrl.Value) ? "unset" : "REDACTED")}\",";
         jsonString += $"\"webhookEvents\":\"{webhookEvents.Value}\",";
         jsonString += $"\"webhook2\":\"{(string.IsNullOrEmpty(webhookUrl2.Value) ? "unset" : "REDACTED")}\",";
-        jsonString += $"\"webhookEvents\":\"{webhook2Events.Value}\",";
+        jsonString += $"\"webhook2Events\":\"{webhook2Events.Value}\",";
         jsonString += $"\"fancierMessages\":\"{DiscordEmbedsEnabled}\",";
         jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserList.Value}\",";
         jsonString += $"\"ignoredPlayersRegex\":\"{mutedDiscordUserListRegex.Value}\"";
