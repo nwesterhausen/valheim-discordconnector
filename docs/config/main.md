@@ -76,6 +76,16 @@ These are events which represent sending the leaderboards
 | leaderboard4  | The custom leaderboard 4       | No                 |
 | leaderboard5  | The custom leaderboard 5       | No                 |
 
+### 3rd Party Events
+
+It's possible for other mods to hook into Discord Connector to send messages to Discord. As more get added to this list,
+they will be able to be specifically attached to a certain webhook.
+
+
+| Event Code    | Corresponding Trigger          |
+| ------------- | ------------------------------ |
+| cronjob       | Output from cronjob            |
+
 ### Special Case Events
 
 These are shorthand to represent multiple events.

@@ -39,6 +39,7 @@ public class Webhook
         LeaderboardsAll,
         None,
         Other,
+        CronJob,
     }
 
     public static Event StringToEvent(string eventToken)
@@ -113,6 +114,9 @@ public class Webhook
             case "leaderboard5":
                 return Event.Leaderboard5;
 
+            case "cronjob":
+                return Event.CronJob;
+
             default:
                 Plugin.StaticLogger.LogDebug($"Unmatched event token '{eventToken}'");
                 return Event.None;
@@ -121,6 +125,12 @@ public class Webhook
 
     public static List<Event> StringToEventList(string configEntry)
     {
+        //Guard against empty string
+        if (string.IsNullOrEmpty(configEntry))
+        {
+            return new List<Event>();
+        }
+
         //Clean string (remove all non-word non-semi-colon characters)
         string cleaned = Regex.Replace(configEntry, @"[^;\w]", "");
         Plugin.StaticLogger.LogDebug($"Webhooks: cleaned config entry '{configEntry}' => '{cleaned}'");
