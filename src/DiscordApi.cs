@@ -221,7 +221,7 @@ class DiscordApi
     /// Sends <paramref name="serializedJson"/> to the webhook specified in configuration.
     /// </summary>
     /// <param name="serializedJson">Body data for the webhook as JSON serialized into a string</param>
-    private static void SendSerializedJson(Webhook.Event ev, string serializedJson)
+    private static void SendSerializedJson(string serializedJson)
     {
         SendSerializedJson(Webhook.Event.Other, serializedJson);
     }
