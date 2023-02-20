@@ -17,27 +17,27 @@ jobs:
         id: cache-tcli
         uses: actions/cache@v3
         with:
-          key: tcli-0.1.4
+          key: tcli-${{ env.TCLI_VERSION }}
           path: /home/runner/tcli-bin
       - name: Dev Bundle Cache
         id: cache-dev-bundle
         uses: actions/cache@v3
         with:
-          key: 0.213.4
+          key: ${{ env.VALHEIM_VERSION }}
           path: /home/runner/dev-bundle
       # Populate build dependencies (if not cached)
       - name: Download Dev Bundle (publicized dlls, etc)
         if: ${{ steps.cache-dev-bundle.outputs.cache-hit != 'true'}}
         run: |
-          wget -O dev-bundle.zip ${{ secrets.VDC_DEV_BUNDLE }}0.213.4.zip
+          wget -O dev-bundle.zip ${{ secrets.VDC_DEV_BUNDLE }}${{ env.VALHEIM_VERSION }}.zip
           unzip -qq dev-bundle.zip -d /home/runner/dev-bundle
       # Download the tcli tool
       - name: Setup tcli
         if: ${{ steps.cache-tcli.outputs.cache-hit != 'true'}}
         run: |
-          wget -O tcli.tar.gz https://github.com/thunderstore-io/thunderstore-cli/releases/download/0.1.4/tcli-0.1.4-linux-x64.tar.gz
+          wget -O tcli.tar.gz https://github.com/thunderstore-io/thunderstore-cli/releases/download/${{ env.TCLI_VERSION }}/tcli-${{ env.TCLI_VERSION }}-linux-x64.tar.gz
           tar xvf tcli.tar.gz
-          sudo mv -v tcli-0.1.4-linux-x64 /home/runner/tcli-bin
+          sudo mv -v tcli-${{ env.TCLI_VERSION }}-linux-x64 /home/runner/tcli-bin
           /home/runner/tcli-bin/tcli help || true
       # The typical build script
       - uses: actions/checkout@v3
