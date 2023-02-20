@@ -17,14 +17,14 @@ jobs:
         id: cache-dev-bundle
         uses: actions/cache@v3
         with:
-          key: ${{ env.VALHEIM_VERSION }}
+          key: ${{ vars.VALHEIM_VERSION }}
           path: /home/runner/dev-bundle
 
       # Populate build dependencies (if not cached)
       - name: Download Build Dependencies Bundle
         if: ${{ steps.cache-dev-bundle.outputs.cache-hit != 'true'}}
         run: |
-          wget -O dev-bundle.zip ${{ secrets.VDC_DEV_BUNDLE }}${{ env.VALHEIM_VERSION }}.zip
+          wget -O dev-bundle.zip ${{ secrets.VDC_DEV_BUNDLE }}${{ vars.VALHEIM_VERSION }}.zip
           unzip -qq dev-bundle.zip -d /home/runner/dev-bundle
 
       - uses: actions/checkout@v3
