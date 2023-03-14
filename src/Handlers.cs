@@ -14,6 +14,11 @@ internal static class Handlers
     /// </summary>
     public static void Join(ZNetPeer peer)
     {
+        if (peer == null)
+        {
+            Plugin.StaticLogger.LogDebug("Handler:Join - Guarded against null peer");
+            return;
+        }
         // - If it's their first time:
         //     a. If first join announcements are enabled:
         //         i. Send a first join announcement to Discord
@@ -80,6 +85,11 @@ internal static class Handlers
     /// </summary>
     public static void Leave(ZNetPeer peer)
     {
+        if (peer == null)
+        {
+            Plugin.StaticLogger.LogDebug("Handler:Leave - Guarded against null peer");
+            return;
+        }
         // - If it's their first time:
         //     a. If first leave announcements are enabled:
         //         i. Send a first leave announcement to Discord
@@ -138,6 +148,11 @@ internal static class Handlers
     /// </summary>
     public static void Death(ZNetPeer peer)
     {
+        if (peer == null)
+        {
+            Plugin.StaticLogger.LogDebug("Handler:Death - Guarded against null peer");
+            return;
+        }
         // - If it's their first time:
         //     a. If first death announcements are enabled:
         //         i. Send a first death announcement to Discord
@@ -186,6 +201,11 @@ internal static class Handlers
     /// </summary>
     public static void Ping(ZNetPeer peer, Vector3 pos)
     {
+        if (peer == null)
+        {
+            Plugin.StaticLogger.LogDebug("Handler:Ping - Guarded against null peer");
+            return;
+        }
         // - If it's their first time:
         //     a. If first ping announcements are enabled:
         //         i. Send a first ping announcement to Discord
@@ -235,6 +255,11 @@ internal static class Handlers
     /// </summary>
     public static void Shout(ZNetPeer peer, Vector3 pos, string text)
     {
+        if (peer == null)
+        {
+            Plugin.StaticLogger.LogDebug("Handler:Shout - Guarded against null peer");
+            return;
+        }
         // - If it's their first time:
         //     a. If first shout announcements are enabled:
         //         i. Send a first shout announcement to Discord
@@ -382,7 +407,7 @@ internal static class Handlers
 
     /// <summary>
     /// Handle a non-player chat message. Currently only works for shouts.
-    /// 
+    /// /// 
     /// If allowed in the configuration, this will send a message to discord as if a player shouted. 
     /// </summary>
     /// <param name="type">Type of chat message</param>
