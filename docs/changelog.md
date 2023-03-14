@@ -2,6 +2,14 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.1.11
+
+This is for build 0.214.2 onward of Valheim. The signature of the chat messages was changed which was causing an argument out of bounds exception with Discord Connector.
+
+Fixes:
+
+- Argument out of bounds exception which was occurring.
+
 ## Version 2.1.10
 
 Thanks a lot to everyone who reported and helped resolve this error. Missed it in my initial testing because I was eager to test both webhooks and didn't end up testing with only one set.
