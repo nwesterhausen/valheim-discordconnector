@@ -21,25 +21,28 @@ internal class ChatPatches
         ///     The implementation here passes details of the chat message to one of the <see cref="Handlers"/> functions.
         /// </para>
         /// </remarks>
-        private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type, ref string user, ref string text, ref string senderNetworkUserId)
+        private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type, ref UserInfo user, ref string text, ref string senderNetworkUserId)
         {
-            if (string.IsNullOrEmpty(user))
+            Plugin.StaticLogger.LogDebug($"User details: name:{user.Name} gamerTag:{user.Gamertag} networkUserId:{user.NetworkUserId} DisplayName():{user.GetDisplayName(user.NetworkUserId)}");
+
+            string userName = user.Name;
+            if (string.IsNullOrEmpty(userName))
             {
                 Plugin.StaticLogger.LogInfo("Ignored shout from invalid user (null reference)");
                 return;
             }
-            if (Plugin.StaticConfig.MutedPlayers.IndexOf(user) >= 0 || Plugin.StaticConfig.MutedPlayersRegex.IsMatch(user))
+            if (Plugin.StaticConfig.MutedPlayers.IndexOf(userName) >= 0 || Plugin.StaticConfig.MutedPlayersRegex.IsMatch(userName))
             {
-                Plugin.StaticLogger.LogInfo($"Ignored shout from user on muted list. User: {user} Shout: {text}.");
+                Plugin.StaticLogger.LogInfo($"Ignored shout from user on muted list. User: {userName} Shout: {text}.");
                 return;
             }
 
-            ZNetPeer peer = ZNet.instance.GetPeerByPlayerName(user);
+            ZNetPeer peer = ZNet.instance.GetPeerByPlayerName(userName);
 
             // If peer or the peer socket is null, the message wasn't sent from a player
             if (peer == null || peer.m_socket == null)
             {
-                Handlers.NonPlayerChat(type, user, text);
+                Handlers.NonPlayerChat(type, userName, text);
                 return;
             }
 
@@ -69,7 +72,7 @@ internal class ChatPatches
                     break;
                 default:
                     Plugin.StaticLogger.LogDebug(
-                        $"Unmatched chat message. [{type}] {user}: {text} at {pos}"
+                        $"Unmatched chat message. [{type}] {userName}: {text} at {pos}"
                     );
                     break;
             }
