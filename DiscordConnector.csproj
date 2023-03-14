@@ -13,7 +13,7 @@
 
   <PropertyGroup>
     <!-- Set the path to the game folder. This is used when including references below -->
-    <GamePath Condition="$(GamePath) == ''">G:\Valheim\0.213.4</GamePath>
+    <GamePath Condition="$(GamePath) == ''">G:\Valheim\0.214.2</GamePath>
     <!-- Make the references to folders used in the build process a lot simpler -->
     <BinDir>$(ProjectDir)bin/</BinDir>
     <DiscordConnectorDir>$(BinDir)DiscordConnector/</DiscordConnectorDir>
