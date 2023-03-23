@@ -25,6 +25,7 @@
   <ItemGroup>
     <PackageReference Include="LiteDB" Version="5.*" />
     <PackageReference Include="Newtonsoft.Json" Version="13.*" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.117" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
@@ -64,6 +65,10 @@
     <MakeDir Directories="$(DiscordConnectorDir)" Condition="!Exists('$(DiscordConnectorDir)')" />
     <MakeDir Directories="$(DiscordConnectorDir)plugins"
       Condition="!Exists('$(DiscordConnectorDir)plugins')" />
+    <MakeDir Directories="$(DiscordConnectorDir)plugins/x64"
+      Condition="!Exists('$(DiscordConnectorDir)plugins/x64')" />
+    <MakeDir Directories="$(DiscordConnectorDir)plugins/x86"
+      Condition="!Exists('$(DiscordConnectorDir)plugins/x86')" />
     <!-- Make a reference to children of the output location -->
     <ItemGroup>
       <OldBuildArtifacts Include="$(DiscordConnectorDir)**\*" />
@@ -79,6 +84,10 @@
       <BuiltLibraryAndDeps Include="$(TargetDir)Newtonsoft.Json.dll" />
       <!-- Include LiteDB dependency -->
       <BuiltLibraryAndDeps Include="$(TargetDir)LiteDB.dll" />
+      <!-- Include System.Data.SQLite dependency -->
+      <BuiltLibraryAndDeps Include="$(TargetDir)System.Data.SQLite.dll" />
+      <!-- Include System.Transactions dependency -->
+      <BuiltLibraryAndDeps Include="$(ProjectDir)lib/System.Transactions.dll" />
       <!-- Metadata files for Thunderstore -->
       <ThunderstoreMetadata Include="$(MetadataDir)manifest.json" />
       <ThunderstoreMetadata Include="$(MetadataDir)icon.png" />
@@ -90,6 +99,11 @@
     <!-- Metadata files go into the base directory -->
     <Copy SourceFiles="@(ThunderstoreMetadata)" DestinationFolder="$(DiscordConnectorDir)"
       SkipUnchangedFiles="true" />
+    <!-- Interop Client DLLs -->
+    <Copy SourceFiles="$(TargetDir)x64/SQLite.Interop.dll"
+      DestinationFolder="$(DiscordConnectorDir)plugins/x64" />
+    <Copy SourceFiles="$(TargetDir)x86/SQLite.Interop.dll"
+      DestinationFolder="$(DiscordConnectorDir)plugins/x86" />
   </Target>
 
   <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles">
