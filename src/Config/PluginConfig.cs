@@ -191,6 +191,7 @@ internal class PluginConfig
     public List<string> MutedPlayers => mainConfig.MutedPlayers;
     public Regex MutedPlayersRegex => mainConfig.MutedPlayersRegex;
     public bool AllowNonPlayerShoutLogging => mainConfig.AllowNonPlayerShoutLogging;
+    public bool SQLiteEnabled => mainConfig.EnableSQLite;
 
 
     // Messages.Server

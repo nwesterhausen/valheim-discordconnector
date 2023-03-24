@@ -40,6 +40,7 @@ internal class MainConfig
     private ConfigEntry<bool> announcePlayerFirsts;
     private ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
     private ConfigEntry<bool> allowNonPlayerShoutLogging;
+    private ConfigEntry<bool> enableSQLite;
 
     private WebhookEntry primaryWebhook;
     private WebhookEntry secondaryWebhook;
@@ -157,6 +158,10 @@ internal class MainConfig
             "Enable this setting to have shouts which are performed by other mods/the server/non-players to be sent to Discord as well." + Environment.NewLine +
             "Note: These are still subject to censure by the muted player regex and list.");
 
+        enableSQLite = config.Bind<bool>(MAIN_SETTINGS,
+            "Enable SQLite Database",
+            false,
+            "Enable the new SQLite database backend and migrate (if necessary) from the previous version LiteDB backend.");
 
         config.Save();
     }
@@ -176,6 +181,7 @@ internal class MainConfig
         jsonString += $"\"collectStatsEnabled\":\"{CollectStatsEnabled}\",";
         jsonString += $"\"sendPositionsEnabled\":\"{SendPositionsEnabled}\",";
         jsonString += $"\"announcePlayerFirsts\":\"{AnnouncePlayerFirsts}\",";
+        jsonString += $"\"enableSQLite\":\"{EnableSQLite}\",";
         jsonString += $"\"playerLookupPreference\":\"{RecordRetrievalDiscernmentMethod}\"";
         jsonString += "}";
         return jsonString;
@@ -191,5 +197,6 @@ internal class MainConfig
     public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
     public RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
     public bool AllowNonPlayerShoutLogging => allowNonPlayerShoutLogging.Value;
+    public bool EnableSQLite => enableSQLite.Value;
 
 }

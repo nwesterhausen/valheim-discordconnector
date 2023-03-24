@@ -15,6 +15,7 @@ public class Plugin : BaseUnityPlugin
     internal static ManualLogSource StaticLogger;
     internal static PluginConfig StaticConfig;
     internal static Database StaticDatabase;
+    internal static SQLite.Database StaticDatabaseNEW;
     internal static LeaderBoard StaticLeaderBoards;
     internal static EventWatcher StaticEventWatcher;
     internal static ConfigWatcher StaticConfigWatcher;
@@ -46,38 +47,7 @@ public class Plugin : BaseUnityPlugin
         StaticLeaderBoards = new LeaderBoard();
 
         StaticConfigWatcher = new ConfigWatcher();
-
-
-        // Specify the path to the database file
-        string connectionString = $"Data Source={System.IO.Path.Combine(BepInEx.Paths.ConfigPath, PluginInfo.PLUGIN_ID, "test.sqlite3")}";
-
-        StaticLogger.LogWarning($"{connectionString}");
-        // Open a connection to the database// Create an SQL command to create a table
-        string sqlCreateTable = "CREATE TABLE myTable (id INTEGER PRIMARY KEY, name TEXT, age INTEGER)";
-
-        // Create an SQL command to insert a new row into the table
-        string sqlInsertRow = "INSERT INTO myTable (name, age) VALUES ('John', 30)";
-
-        // Open a connection to the database
-        using (var connection = new SQLiteConnection(connectionString))
-        {
-            connection.Open();
-
-            // Create the table by executing the create table command
-            using (var command = new SQLiteCommand(sqlCreateTable, connection))
-            {
-                command.ExecuteNonQuery();
-            }
-
-            // Insert a row into the table by executing the insert command
-            using (var command = new SQLiteCommand(sqlInsertRow, connection))
-            {
-                command.ExecuteNonQuery();
-            }
-
-            // Close the connection to the database
-            connection.Close();
-        }
+        StaticDatabaseNEW = new SQLite.Database();
 
         _publicIpAddress = "";
     }
@@ -86,8 +56,8 @@ public class Plugin : BaseUnityPlugin
         // Plugin startup logic
         StaticLogger.LogDebug($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
 
-        // TESTING
-        // YDatabase.CreateNewPlayerYaml("nicholas");
+        // Initialize Database
+        StaticDatabaseNEW.Awake();
 
 
         if (!IsHeadless())
@@ -171,6 +141,7 @@ public class Plugin : BaseUnityPlugin
     {
         _harmony.UnpatchSelf();
         StaticDatabase.Dispose();
+        StaticDatabaseNEW.Dispose();
     }
 
     /// <summary>
