@@ -72,7 +72,6 @@ internal class Database
     /// </summary>
     public Database()
     {
-
         // Setup the connection string
         string dbPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, PluginInfo.PLUGIN_ID, DB_NAME);
         DbConnectionString = $"Data Source={dbPath}";
@@ -97,6 +96,10 @@ internal class Database
 
         // Initialize (verify the migration status)
         Migrations.MigrationController.Migrate();
+
+        // Migrate data from LiteDB
+        var liteDbMigrator = new LiteDbMigrator();
+        liteDbMigrator.Migrate();
     }
 
 
@@ -555,17 +558,18 @@ internal class Database
     /// Inserts a player into the database if the player does not already exist.
     /// </summary>
     /// <param name="ZNetPeer">The peer for the player that you want to insert into the database.</param>
-    public void InsertPlayerIfNotExists(ZNetPeer peer)
+    /// <returns>The ID of the player, creating a new record if they don't exist, or 0 if insertion failed</returns>
+    public int InsertPlayerIfNotExists(ZNetPeer peer)
     {
         // Guard against null peer
-        if (peer == null) { return; }
+        if (peer == null) { return 0; }
         // Guard against null socket
-        if (peer.m_socket == null) { return; }
+        if (peer.m_socket == null) { return 0; }
 
         string playerHostName = peer.m_socket.GetHostName();
         string playerName = peer.m_playerName;
 
-        InsertPlayerIfNotExists(playerName, playerHostName);
+        return InsertPlayerIfNotExists(playerName, playerHostName);
     }
 
     /// <summary>
@@ -573,27 +577,51 @@ internal class Database
     /// </summary>
     /// <param name="name">The name of the player.</param>
     /// <param name="hostname">The hostname of the server.</param>
-    public void InsertPlayerIfNotExists(string name, string hostname)
+    /// <returns>The ID of the player, creating a new record if they don't exist, or 0 if insertion failed</returns>
+    public int InsertPlayerIfNotExists(string name, string hostname)
     {
+        // Guard against null parameters
+        if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(hostname))
+        {
+            Plugin.StaticLogger.LogWarning($"InsertPlayerIfNotExists: name or hostname is null or empty (name: {name}, hostname: {hostname})");
+            return 0;
+        }
 
+        int playerId = 0;
+        Plugin.StaticLogger.LogDebug($"Checking for existing player {hostname}:{name}");
         using (var command = new SQLiteCommand(connection))
         {
+            // First, check if the player exists
             command.CommandType = CommandType.Text;
-            command.CommandText = @"
-                INSERT INTO players (name, hostname)
-                SELECT @name, @hostname
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM players WHERE name = @name AND hostname = @hostname
-                );
-            ";
-
+            command.CommandText = "SELECT id FROM players WHERE name = @name AND hostname = @hostname";
             command.Parameters.AddWithValue("@name", name);
             command.Parameters.AddWithValue("@hostname", hostname);
 
-            command.ExecuteNonQuery();
+            var result = command.ExecuteScalar();
+
+            // check if the player already exists, and set playerId accordingly
+            if (result != null && result != DBNull.Value)
+            {
+                playerId = Convert.ToInt32(result);
+            }
+            else
+            {
+                // If the player doesn't exist, insert a new player
+                command.CommandText = @"
+                INSERT INTO players (name, hostname)
+                VALUES (@name, @hostname);
+            ";
+                command.ExecuteNonQuery();
+
+                // Retrieve the ID of the newly inserted player
+                command.CommandText = "SELECT last_insert_rowid()";
+                playerId = Convert.ToInt32(command.ExecuteScalar());
+            }
         }
 
+        return playerId;
     }
+
 
     /// <summary>
     /// Checks if this is the first event in the given category for the player.

@@ -42,7 +42,7 @@ public class Plugin : BaseUnityPlugin
     {
         StaticLogger = Logger;
         StaticConfig = new PluginConfig(Config);
-        StaticDatabase = new Records.Database(Paths.GameRootPath);
+        StaticDatabase = new Records.Database();
         StaticLeaderBoards = new LeaderBoard();
 
         StaticConfigWatcher = new ConfigWatcher();
@@ -56,8 +56,14 @@ public class Plugin : BaseUnityPlugin
         StaticLogger.LogDebug($"Plugin {PluginInfo.PLUGIN_ID} is loaded!");
 
         // Initialize Database
-        StaticDatabaseNEW.Awake();
-
+        if (StaticConfig.SQLiteEnabled)
+        {
+            StaticDatabaseNEW.Awake();
+        }
+        else
+        {
+            StaticDatabase.Initialize();
+        }
 
         if (!IsHeadless())
         {
@@ -139,8 +145,14 @@ public class Plugin : BaseUnityPlugin
     private void OnDestroy()
     {
         _harmony.UnpatchSelf();
-        StaticDatabase.Dispose();
-        StaticDatabaseNEW.Dispose();
+        if (StaticConfig.SQLiteEnabled)
+        {
+            StaticDatabaseNEW.Dispose();
+        }
+        else
+        {
+            StaticDatabase.Dispose();
+        }
     }
 
     /// <summary>

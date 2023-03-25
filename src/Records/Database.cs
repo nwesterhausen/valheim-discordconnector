@@ -28,7 +28,7 @@ internal class Database
     /// store the database, since that is something that is only known at runtime.
     /// </summary>
     /// <param name="rootStorePath">Directory to save the LiteDB database in.</param>
-    public Database(string rootStorePath)
+    public Database()
     {
         DbPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, PluginInfo.PLUGIN_ID, DB_NAME);
 
@@ -38,8 +38,6 @@ internal class Database
         {
             System.IO.File.Move(oldDatabase, DbPath);
         }
-
-        Initialize();
     }
 
     /// <summary>
