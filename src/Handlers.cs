@@ -68,6 +68,7 @@ internal static class Handlers
         if (Plugin.StaticConfig.StatsJoinEnabled)
         {
             Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Join, peer.m_playerName, playerHostName, peer.m_refPos);
+            if (Plugin.StaticConfig.SQLiteEnabled) { Plugin.StaticDatabaseNEW.Record(SQLite.StatCategory.Join, peer); }
         }
 
 
@@ -131,6 +132,7 @@ internal static class Handlers
         if (Plugin.StaticConfig.StatsLeaveEnabled)
         {
             Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Leave, peer.m_playerName, playerHostName, peer.m_refPos);
+            if (Plugin.StaticConfig.SQLiteEnabled) { Plugin.StaticDatabaseNEW.Record(SQLite.StatCategory.Leave, peer); }
         }
 
 
@@ -183,6 +185,7 @@ internal static class Handlers
         if (Plugin.StaticConfig.StatsDeathEnabled)
         {
             Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Death, peer.m_playerName, playerHostName, peer.m_refPos);
+            if (Plugin.StaticConfig.SQLiteEnabled) { Plugin.StaticDatabaseNEW.Record(SQLite.StatCategory.Death, peer); }
         }
 
 
@@ -236,6 +239,7 @@ internal static class Handlers
         if (Plugin.StaticConfig.StatsPingEnabled)
         {
             Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Ping, peer.m_playerName, playerHostName, pos);
+            if (Plugin.StaticConfig.SQLiteEnabled) { Plugin.StaticDatabaseNEW.Record(SQLite.StatCategory.Ping, peer, pingX: pos.x, pingY: pos.y, pingZ: pos.z); }
         }
 
 
@@ -289,6 +293,7 @@ internal static class Handlers
         if (Plugin.StaticConfig.StatsShoutEnabled)
         {
             Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Shout, peer.m_playerName, playerHostName, pos);
+            if (Plugin.StaticConfig.SQLiteEnabled) { Plugin.StaticDatabaseNEW.Record(SQLite.StatCategory.Shout, peer, shoutText: text); }
         }
 
 

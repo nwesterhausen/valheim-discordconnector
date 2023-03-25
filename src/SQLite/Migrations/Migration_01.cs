@@ -1,4 +1,4 @@
-
+﻿
 namespace DiscordConnector.SQLite.Migrations;
 
 class Migration_01 : IMigration

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.SQLite;
 using BepInEx;
 using BepInEx.Logging;
 using DiscordConnector.Records;
