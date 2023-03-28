@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SQLite;
-using DiscordConnector.Records;
+using DiscordConnector.SQLite.Models;
+using DiscordConnector.SQLite.Repositories;
 using LiteDB;
+using SQLite;
 
 namespace DiscordConnector.SQLite;
 
@@ -25,9 +26,16 @@ internal class LiteDbMigrator
     private string migratedLiteDbPath;
     private LiteDatabase liteDb;
 
-    internal LiteDbMigrator()
+    private PlayerRepository playerRepository;
+    private JoinRepository joinRepository;
+    private LeaveRepository leaveRepository;
+    private DeathRepository deathRepository;
+    private PingRepository pingRepository;
+    private ShoutRepository shoutRepository;
+
+    internal LiteDbMigrator(SQLiteConnection connection)
     {
-        sqliteConnection = Plugin.StaticDatabaseNEW.GetSQLiteConnection();
+        sqliteConnection = connection;
 
         liteDbPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, PluginInfo.PLUGIN_ID, LITE_DB_NAME);
         migratedLiteDbPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, PluginInfo.PLUGIN_ID, MIGRATED_LITE_DB_NAME);
@@ -39,6 +47,13 @@ internal class LiteDbMigrator
             return;
         }
         liteDb = new LiteDatabase(liteDbPath);
+
+        playerRepository = new PlayerRepository(connection);
+        joinRepository = new JoinRepository(connection);
+        leaveRepository = new LeaveRepository(connection);
+        deathRepository = new DeathRepository(connection);
+        pingRepository = new PingRepository(connection);
+        shoutRepository = new ShoutRepository(connection);
     }
     public void Migrate()
     {
@@ -98,33 +113,23 @@ internal class LiteDbMigrator
         // Get the LiteDB collection
         var currentCollection = liteDb.GetCollection<BsonDocument>(collectionName);
 
+        Plugin.StaticLogger.LogInfo($"Migrating {currentCollection.Count()} {collectionName} records from LiteDB to SQLite");
+
         // Iterate through LiteDB records
         foreach (var record in currentCollection.FindAll())
         {
             string playerName = record["Name"].AsString;
             string playerHostName = record["PlayerId"].AsString;
 
-            string playerKey = $"{playerHostName}:{playerName}";
+            // Get playerId
+            int current_playerId = playerRepository.GetIdByNameAndHostname(playerName, playerHostName);
 
-            // Check if player key exists in dictionary
-            if (!playerHostnamesToIds.ContainsKey(playerKey))
+            // Guard against bad inserts
+            if (current_playerId == 0)
             {
-                // Insert player into SQLite 'players' table and get playerId
-                int playerId = Plugin.StaticDatabaseNEW.InsertPlayerIfNotExists(playerName, playerHostName);
-
-                // Guard against bad inserts
-                if (playerId == 0)
-                {
-                    Plugin.StaticLogger.LogWarning($"liteDb migrate: failure inserting '{collectionName}' record on bad player info {playerKey}");
-                    continue;
-                }
-
-                // Add player to the dictionary
-                playerHostnamesToIds[playerKey] = playerId;
+                Plugin.StaticLogger.LogWarning($"liteDb migrate: failure inserting '{collectionName}' record on bad player info {playerHostName}:{playerName}");
+                continue;
             }
-
-            // Get playerId from the dictionary
-            int current_playerId = playerHostnamesToIds[playerKey];
 
             // Extract position and time information from the record
             double x = record["Pos"]["x"].AsDouble;
@@ -132,40 +137,70 @@ internal class LiteDbMigrator
             double z = record["Pos"]["z"].AsDouble;
             DateTime timestamp = record["Date"].AsDateTime;
 
-            // Prepare the SQL command
-            using (var command = new SQLiteCommand(sqliteConnection))
+            // Insert data into SQLite using the repositories
+            switch (tableName)
             {
-                command.CommandType = CommandType.Text;
-                command.CommandText = $@"
-                INSERT INTO {tableName} (player_id, x, y, z, {timestampColumn})
-                VALUES (@playerId, @x, @y, @z, @timestamp);
-            ";
-                // Modify command if destination is the 'pings' table
-                if (tableName.Equals("pings"))
-                {
-                    command.CommandText = $@"
-                INSERT INTO {tableName} (player_id, x, y, z, ping_x, ping_y, ping_z, {timestampColumn})
-                VALUES (@playerId, 0.0, 0.0, 0.0, @x, @y, @z, @timestamp);
-            ";
-                }
-                else if (tableName.Equals("shouts"))
-                {
-                    command.CommandText = $@"
-                INSERT INTO {tableName} (player_id, x, y, z, text, {timestampColumn})
-                VALUES (@playerId, @x, @y, @z, @shoutText, @timestamp);
-            ";
-                    command.Parameters.AddWithValue("@shoutText", "");
-                }
-
-                command.Parameters.AddWithValue("@playerId", current_playerId);
-                command.Parameters.AddWithValue("@x", x);
-                command.Parameters.AddWithValue("@y", y);
-                command.Parameters.AddWithValue("@z", z);
-                command.Parameters.AddWithValue("@timestamp", timestamp);
-
-                command.ExecuteNonQuery();
+                case "joins":
+                    joinRepository.Insert(new Join
+                    {
+                        PlayerId = current_playerId,
+                        X = x,
+                        Y = y,
+                        Z = z,
+                        JoinedAt = timestamp
+                    });
+                    break;
+                case "leaves":
+                    leaveRepository.Insert(new Leave
+                    {
+                        PlayerId = current_playerId,
+                        X = x,
+                        Y = y,
+                        Z = z,
+                        LeftAt = timestamp
+                    });
+                    break;
+                case "deaths":
+                    deathRepository.Insert(new Death
+                    {
+                        PlayerId = current_playerId,
+                        X = x,
+                        Y = y,
+                        Z = z,
+                        DiedAt = timestamp
+                    });
+                    break;
+                case "pings":
+                    pingRepository.Insert(new Ping
+                    {
+                        PlayerId = current_playerId,
+                        X = 0,
+                        Y = 0,
+                        Z = 0,
+                        PingX = x,
+                        PingY = y,
+                        PingZ = z,
+                        PingedAt = timestamp
+                    });
+                    break;
+                case "shouts":
+                    shoutRepository.Insert(new Shout
+                    {
+                        PlayerId = current_playerId,
+                        X = x,
+                        Y = y,
+                        Z = z,
+                        Text = "",
+                        ShoutedAt = timestamp
+                    });
+                    break;
+                default:
+                    Plugin.StaticLogger.LogDebug($"litedb migrate: Ignored invalid table name {tableName}");
+                    break;
             }
         }
+
+        Plugin.StaticLogger.LogInfo($"Migration of {collectionName} completed.");
     }
 
 }

@@ -1,48 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SQLite;
+using System.Linq;
+using DiscordConnector.SQLite.Repositories;
+using SQLite;
 
 namespace DiscordConnector.SQLite;
-
-/// <summary>
-/// Valid categories to record stats in the database for.
-/// </summary>
-public enum StatCategory
-{
-    Join,
-    Leave,
-    Death,
-    Ping,
-    Shout,
-}
-
-/// <summary>
-/// Class used to contain information destined for leaderboards and leaderboard creation.
-/// </summary>
-public class CountResult
-{
-    /// <summary>
-    /// The player's name.
-    /// </summary>
-    public string Name { get; }
-    /// <summary>
-    /// Total count of the events
-    /// </summary>
-    public int Count { get; }
-
-    /// <summary>
-    /// Constructor to create a CountResult (which is designed readonly)
-    /// </summary>
-    /// <param name="name">The player's name</param>
-    /// <param name="count">Count of events</param>
-    public CountResult(string name, int count)
-    {
-        Name = name;
-        Count = count;
-    }
-}
-
 /// <summary>
 /// Database class which connects to and handles reading/writing to/from a SQLite database.
 /// This is specifically to record player stats used by Discord Connector (joins, deaths, etc).
@@ -54,7 +17,7 @@ internal class Database
     /// <summary>
     /// Name of the discord connector SQLite database
     /// </summary>
-    private const string DB_NAME = "vdc_db.sqlite";
+    private const string DB_NAME = "discordconnector-db.sqlite";
     /// <summary>
     /// Connection string used to connect to the database.
     /// </summary>
@@ -64,6 +27,13 @@ internal class Database
     /// </summary>
     private SQLiteConnection connection;
 
+    private PlayerRepository playerRepository;
+    private JoinRepository joinRepository;
+    private LeaveRepository leaveRepository;
+    private DeathRepository deathRepository;
+    private PingRepository pingRepository;
+    private ShoutRepository shoutRepository;
+
 
     /// <summary>
     /// Set's up the database using the compiled string `"${PluginInfo.PLUGIN_ID}-records.db"`, which in this
@@ -72,13 +42,25 @@ internal class Database
     /// </summary>
     public Database()
     {
+        if (!Plugin.StaticConfig.SQLiteEnabled)
+        {
+            Plugin.StaticLogger.LogInfo("Enable the SQLite database to migrate and enable better record keeping.");
+            return;
+        }
+
         // Setup the connection string
         string dbPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, PluginInfo.PLUGIN_ID, DB_NAME);
         DbConnectionString = $"Data Source={dbPath}";
 
         // Open database connection
-        connection = new SQLiteConnection(DbConnectionString).OpenAndReturn();
-        Plugin.StaticLogger.LogInfo("Opened SQLite database connection");
+        connection = new SQLiteConnection(DbConnectionString);
+
+        playerRepository = new PlayerRepository(connection);
+        joinRepository = new JoinRepository(connection);
+        leaveRepository = new LeaveRepository(connection);
+        deathRepository = new DeathRepository(connection);
+        pingRepository = new PingRepository(connection);
+        shoutRepository = new ShoutRepository(connection);
     }
 
     /// <summary>
@@ -89,16 +71,11 @@ internal class Database
         if (!Plugin.StaticConfig.SQLiteEnabled)
         {
             Plugin.StaticLogger.LogInfo("Enable the SQLite database to migrate and enable better record keeping.");
-            connection.Close();
-            Plugin.StaticLogger.LogInfo("Closed SQLite connection");
             return;
         }
 
-        // Initialize (verify the migration status)
-        Migrations.MigrationController.Migrate();
-
         // Migrate data from LiteDB
-        var liteDbMigrator = new LiteDbMigrator();
+        var liteDbMigrator = new LiteDbMigrator(connection);
         liteDbMigrator.Migrate();
     }
 
@@ -115,313 +92,28 @@ internal class Database
         }
     }
 
-
-    /// <summary>
-    /// Executes a SQL statement that does not return a result set.
-    /// </summary>
-    /// <param name="sql">The SQL statement to execute.</param>
-    internal void ExecuteNonQuery(string sql)
-    {
-        if (!Plugin.StaticConfig.SQLiteEnabled) { return; }
-
-        using (var command = new SQLiteCommand(sql, connection))
-        {
-            command.ExecuteNonQuery();
-        }
-    }
-
-    /// <summary>
-    /// Get the direct SQLiteConnection object.
-    /// </summary>
-    internal SQLiteConnection GetSQLiteConnection()
-    {
-        return connection;
-    }
-
-
-    /// <summary>
-    /// Check if a table exists in the SQLite database.
-    /// </summary>
-    /// <param name="tableName">The name of the table you want to check for.</param>
-    internal bool TableExists(string tableName)
-    {
-        if (!Plugin.StaticConfig.SQLiteEnabled) { return false; }
-
-        using (var command = new SQLiteCommand($"SELECT name FROM sqlite_master WHERE type='table' AND name='{tableName}'", connection))
-        {
-            using (var reader = command.ExecuteReader())
-            {
-                return reader.Read();
-            }
-        }
-    }
-
-    /// <summary>
-    /// It returns id of the player in the database given the peer.
-    /// </summary>
-    /// <param name="ZNetPeer">The peer that you want to get the player ID from.</param>
-    internal int PlayerIdRefFromPeer(ZNetPeer peer)
-    {
-        // Guard against null peer
-        if (peer == null) { return -1; }
-        // Guard against null socket
-        if (peer.m_socket == null) { return -1; }
-
-        string playerHostName = peer.m_socket.GetHostName();
-        string playerName = peer.m_playerName;
-
-        return PlayerIdRefFromNameAndHostName(playerName, playerHostName);
-    }
-
-
-    /// <summary>
-    /// It returns id of the player in the database given their character name and host name.
-    /// </summary>
-    /// <param name="playerName">The name of the player you want to get the ID of.</param>
-    /// <param name="playerHostName">The hostname of the player.</param>
-    internal int PlayerIdRefFromNameAndHostName(string playerName, string playerHostName)
-    {
-        string idRetrievalSql;
-
-        // Assume is default case of playerId+playerName
-        if (Plugin.StaticConfig.RecordRetrievalDiscernmentMethod == Config.MainConfig.RetrievalDiscernmentMethods.PlayerId)
-        {
-            idRetrievalSql = "SELECT id FROM players WHERE hostname=@hostname";
-        }
-        else if (Plugin.StaticConfig.RecordRetrievalDiscernmentMethod == Config.MainConfig.RetrievalDiscernmentMethods.Name)
-        {
-            idRetrievalSql = "SELECT id FROM players WHERE name=@name";
-        }
-        else
-        {
-            idRetrievalSql = "SELECT id FROM players WHERE name=@name AND hostname=@hostname";
-        }
-
-        // Default to a non-valid player id
-        int matchingPlayerId = 0;
-
-        using (var command = new SQLiteCommand(connection))
-        {
-            command.CommandType = CommandType.Text;
-            command.CommandText = idRetrievalSql;
-
-            if (idRetrievalSql.Contains("@name"))
-            {
-                command.Parameters.AddWithValue("@name", playerName);
-            }
-            if (idRetrievalSql.Contains("@hostname"))
-            {
-                command.Parameters.AddWithValue("@hostname", playerHostName);
-            }
-
-            var result = command.ExecuteScalar();
-            if (result != DBNull.Value)
-            {
-                matchingPlayerId = Convert.ToInt32(result);
-            }
-        }
-
-        if (matchingPlayerId == 0)
-        {
-            Plugin.StaticLogger.LogInfo($"Failure to match a player in the database for {playerHostName}:{playerName}");
-            Plugin.StaticLogger.LogInfo($"Inserting new player record for player.");
-            InsertPlayerIfNotExists(playerName, playerHostName);
-            return PlayerIdRefFromNameAndHostName(playerName, playerHostName);
-        }
-        Plugin.StaticLogger.LogDebug($"Matched {playerHostName}:{playerName} to id:{matchingPlayerId}");
-        return matchingPlayerId;
-    }
-
-    /// <summary>
-    /// It inserts a join event into the game.
-    /// </summary>
-    /// <param name="playerId">The player's ID.</param>
-    /// <param name="x">The x coordinate of the player</param>
-    /// <param name="y">The yaw of the player.</param>
-    /// <param name="z">The z-coordinate of the player.</param>
-    internal void InsertJoin(int playerId, double x, double y, double z)
-    {
-
-        using (var command = new SQLiteCommand(connection))
-        {
-            command.CommandType = CommandType.Text;
-            command.CommandText = @"
-                    INSERT INTO joins (player_id, x, y, z)
-                    VALUES (@playerId, @x, @y, @z);
-                ";
-
-            command.Parameters.AddWithValue("@playerId", playerId);
-            command.Parameters.AddWithValue("@x", x);
-            command.Parameters.AddWithValue("@y", y);
-            command.Parameters.AddWithValue("@z", z);
-
-            command.ExecuteNonQuery();
-        }
-
-    }
-    /// <summary>
-    /// Inserts a leave event into the database
-    /// </summary>
-    /// <param name="playerId">The player's ID.</param>
-    /// <param name="x">The x coordinate of the player's position.</param>
-    /// <param name="y">The y coordinate of the player.</param>
-    /// <param name="z">The z coordinate of the player.</param>
-    internal void InsertLeave(int playerId, double x, double y, double z)
-    {
-
-        using (var command = new SQLiteCommand(connection))
-        {
-            command.CommandType = CommandType.Text;
-            command.CommandText = @"
-                    INSERT INTO leaves (player_id, x, y, z)
-                    VALUES (@playerId, @x, @y, @z);
-                ";
-
-            command.Parameters.AddWithValue("@playerId", playerId);
-            command.Parameters.AddWithValue("@x", x);
-            command.Parameters.AddWithValue("@y", y);
-            command.Parameters.AddWithValue("@z", z);
-
-            command.ExecuteNonQuery();
-        }
-
-    }
-    /// <summary>
-    /// Inserts a death event into the database
-    /// </summary>
-    /// <param name="playerId">The player's ID.</param>
-    /// <param name="x">The x coordinate of the player's death</param>
-    /// <param name="y">The y coordinate of the player's death.</param>
-    /// <param name="z">The z coordinate of the player's death.</param>
-    internal void InsertDeath(int playerId, double x, double y, double z)
-    {
-
-        using (var command = new SQLiteCommand(connection))
-        {
-            command.CommandType = CommandType.Text;
-            command.CommandText = @"
-                    INSERT INTO deaths (player_id, x, y, z)
-                    VALUES (@playerId, @x, @y, @z);
-                ";
-
-            command.Parameters.AddWithValue("@playerId", playerId);
-            command.Parameters.AddWithValue("@x", x);
-            command.Parameters.AddWithValue("@y", y);
-            command.Parameters.AddWithValue("@z", z);
-
-            command.ExecuteNonQuery();
-        }
-
-    }
-
-    /// <summary>
-    /// This function inserts a shout event into the database
-    /// </summary>
-    /// <param name="playerId">The player's ID.</param>
-    /// <param name="x">The x coordinate of the player who shouted.</param>
-    /// <param name="y">The Y coordinate of the player.</param>
-    /// <param name="z">The Z coordinate of the player.</param>
-    /// <param name="text">The text of the shout.</param>
-    internal void InsertShout(int playerId, double x, double y, double z, string text)
-    {
-
-        using (var command = new SQLiteCommand(connection))
-        {
-            command.CommandType = CommandType.Text;
-            command.CommandText = @"
-                    INSERT INTO shouts (player_id, x, y, z, text)
-                    VALUES (@playerId, @x, @y, @z, @text);
-                ";
-
-            command.Parameters.AddWithValue("@playerId", playerId);
-            command.Parameters.AddWithValue("@x", x);
-            command.Parameters.AddWithValue("@y", y);
-            command.Parameters.AddWithValue("@z", z);
-            command.Parameters.AddWithValue("@text", text);
-
-            command.ExecuteNonQuery();
-        }
-
-    }
-
-    /// <summary>
-    /// It inserts a ping event into the database.
-    /// </summary>
-    /// <param name="playerId">The player's ID.</param>
-    /// <param name="x">The x coordinate of the player</param>
-    /// <param name="y">The y coordinate of the player.</param>
-    /// <param name="z">The z coordinate of the player.</param>
-    /// <param name="pingX">The X coordinate of the ping</param>
-    /// <param name="pingY">The Y coordinate of the ping.</param>
-    /// <param name="pingZ">The Z coordinate of the ping.</param>
-    internal void InsertPing(int playerId, double x, double y, double z, double pingX, double pingY, double pingZ)
-    {
-
-        using (var command = new SQLiteCommand(connection))
-        {
-            command.CommandType = CommandType.Text;
-            command.CommandText = @"
-                    INSERT INTO pings (player_id, x, y, z, ping_x, ping_y, ping_z)
-                    VALUES (@playerId, @x, @y, @z, @pingX, @pingY, @pingZ);
-                ";
-
-            command.Parameters.AddWithValue("@playerId", playerId);
-            command.Parameters.AddWithValue("@x", x);
-            command.Parameters.AddWithValue("@y", y);
-            command.Parameters.AddWithValue("@z", z);
-            command.Parameters.AddWithValue("@pingX", pingX);
-            command.Parameters.AddWithValue("@pingY", pingY);
-            command.Parameters.AddWithValue("@pingZ", pingZ);
-
-            command.ExecuteNonQuery();
-        }
-
-    }
-
     /// <summary>
     /// It returns a list of CountResult objects for the given category.
     /// </summary>
     /// <param name="StatCategory">The category of stats you want to get.</param>
     public List<CountResult> GetStatCounts(StatCategory category)
     {
-        string tableName;
-        try
+        switch (category)
         {
-            tableName = TableNameFromCategory(category);
+            case StatCategory.Join:
+                return joinRepository.GetCountResults();
+            case StatCategory.Leave:
+                return leaveRepository.GetCountResults();
+            case StatCategory.Death:
+                return deathRepository.GetCountResults();
+            case StatCategory.Ping:
+                return pingRepository.GetCountResults();
+            case StatCategory.Shout:
+                return shoutRepository.GetCountResults();
+            default:
+                Plugin.StaticLogger.LogWarning($"Invalid StatCategory: {category}");
+                return new List<CountResult>();
         }
-        catch (ArgumentException ex)
-        {
-            // Handle the exception, e.g., log it, display a message to the user, or rethrow it
-            Plugin.StaticLogger.LogWarning($"GetStatCounts failure: {ex.Message}");
-            return new List<CountResult>();
-        }
-
-        var results = new List<CountResult>();
-
-
-        using (var command = new SQLiteCommand(connection))
-        {
-            command.CommandType = CommandType.Text;
-            command.CommandText = $@"
-                    SELECT p.name AS playerName, COUNT(t.id) AS totalCount
-                    FROM players p
-                    LEFT JOIN {tableName} t ON p.id = t.player_id
-                    GROUP BY p.id;
-                ";
-
-            using (var reader = command.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    string playerName = reader["playerName"].ToString();
-                    int totalCount = Convert.ToInt32(reader["totalCount"]);
-                    results.Add(new CountResult(playerName, totalCount));
-                }
-            }
-        }
-
-
-        return results;
     }
 
     /// <summary>
@@ -438,8 +130,16 @@ internal class Database
     /// <param name="shoutText">The text that the player shouted.</param>
     public void Record(StatCategory category, ZNetPeer peer, double pingX = 0.0, double pingY = 0.0, double pingZ = 0.0, string shoutText = null)
     {
-        int playerId = PlayerIdRefFromPeer(peer);
-        Record(category, playerId, peer.m_refPos.x, peer.m_refPos.y, peer.m_refPos.z, pingX, pingY, pingZ, shoutText);
+        if (peer == null || peer.m_socket == null)
+        {
+            Plugin.StaticLogger.LogDebug("Unable to insert new {category} record for null peer");
+            return;
+        }
+
+        string playerName = peer.m_playerName;
+        string playerHostName = peer.m_socket.GetHostName();
+
+        Record(category, playerName, playerHostName, peer.m_refPos.x, peer.m_refPos.y, peer.m_refPos.z, pingX, pingY, pingZ, shoutText);
     }
 
     /// <summary>
@@ -457,7 +157,8 @@ internal class Database
     /// <param name="shoutText">The text that the player shouted.</param>
     public void Record(StatCategory category, string playerName, string playerHostname, double x, double y, double z, double pingX = 0.0, double pingY = 0.0, double pingZ = 0.0, string shoutText = null)
     {
-        int playerId = PlayerIdRefFromNameAndHostName(playerName, playerHostname);
+        int playerId = playerRepository.GetIdByNameAndHostname(playerName, playerHostname);
+
         Record(category, playerId, x, y, z, pingX, pingY, pingZ, shoutText);
     }
 
@@ -478,24 +179,19 @@ internal class Database
         switch (category)
         {
             case StatCategory.Join:
-                InsertJoin(playerId, x, y, z);
+                joinRepository.Insert(playerId, x, y, z);
                 break;
             case StatCategory.Leave:
-                InsertLeave(playerId, x, y, z);
+                leaveRepository.Insert(playerId, x, y, z);
                 break;
             case StatCategory.Death:
-                InsertDeath(playerId, x, y, z);
+                deathRepository.Insert(playerId, x, y, z);
                 break;
             case StatCategory.Ping:
-                InsertPing(playerId, x, y, z, pingX, pingY, pingZ);
+                pingRepository.Insert(playerId, x, y, z, pingX, pingY, pingZ);
                 break;
             case StatCategory.Shout:
-                if (shoutText == null)
-                {
-                    Plugin.StaticLogger.LogWarning("The Shout category requires the 'shoutText' parameter.");
-                    return;
-                }
-                InsertShout(playerId, x, y, z, shoutText);
+                shoutRepository.Insert(playerId, x, y, z, shoutText);
                 break;
             default:
                 Plugin.StaticLogger.LogWarning($"Invalid StatCategory: {category}");
@@ -512,47 +208,34 @@ internal class Database
     {
         TimeSpan totalTime = TimeSpan.Zero;
 
+        var joinTimes = joinRepository.GetByPlayerId(playerId).OrderBy(j => j.JoinedAt).ToList();
+        var leaveTimes = leaveRepository.GetByPlayerId(playerId).OrderBy(l => l.LeftAt).ToList();
 
-        using (var command = new SQLiteCommand(connection))
+        DateTime? lastJoin = null;
+        DateTime? lastLeave = null;
+
+        foreach (var joinTime in joinTimes)
         {
-            command.CommandType = CommandType.Text;
-            command.CommandText = @"
-                    SELECT j.joined_at AS joinTime, l.left_at AS leaveTime
-                    FROM joins j
-                    INNER JOIN leaves l ON j.player_id = l.player_id AND l.left_at > j.joined_at
-                    WHERE j.player_id = @playerId
-                    ORDER BY j.joined_at, l.left_at;
-                ";
-
-            command.Parameters.AddWithValue("@playerId", playerId);
-
-            using (var reader = command.ExecuteReader())
+            if (lastJoin == null || joinTime.JoinedAt > lastLeave)
             {
-                DateTime? lastJoin = null;
-                DateTime? lastLeave = null;
+                lastJoin = joinTime.JoinedAt;
+            }
 
-                while (reader.Read())
-                {
-                    DateTime joinTime = Convert.ToDateTime(reader["joinTime"]);
-                    DateTime leaveTime = Convert.ToDateTime(reader["leaveTime"]);
+            var matchingLeave = leaveTimes.FirstOrDefault(l => l.LeftAt > joinTime.JoinedAt);
 
-                    if (lastJoin == null || joinTime > lastLeave)
-                    {
-                        lastJoin = joinTime;
-                    }
+            if (matchingLeave != null)
+            {
+                lastLeave = matchingLeave.LeftAt;
+                totalTime += lastLeave.Value - lastJoin.Value;
+                lastJoin = null;
 
-                    if (lastLeave == null || leaveTime > lastLeave)
-                    {
-                        lastLeave = leaveTime;
-                        totalTime += lastLeave.Value - lastJoin.Value;
-                        lastJoin = null;
-                    }
-                }
+                leaveTimes.Remove(matchingLeave);
             }
         }
 
         return totalTime;
     }
+
 
     /// <summary>
     /// Inserts a player into the database if the player does not already exist.
@@ -587,39 +270,7 @@ internal class Database
             return 0;
         }
 
-        int playerId = 0;
-        Plugin.StaticLogger.LogDebug($"Checking for existing player {hostname}:{name}");
-        using (var command = new SQLiteCommand(connection))
-        {
-            // First, check if the player exists
-            command.CommandType = CommandType.Text;
-            command.CommandText = "SELECT id FROM players WHERE name = @name AND hostname = @hostname";
-            command.Parameters.AddWithValue("@name", name);
-            command.Parameters.AddWithValue("@hostname", hostname);
-
-            var result = command.ExecuteScalar();
-
-            // check if the player already exists, and set playerId accordingly
-            if (result != null && result != DBNull.Value)
-            {
-                playerId = Convert.ToInt32(result);
-            }
-            else
-            {
-                // If the player doesn't exist, insert a new player
-                command.CommandText = @"
-                INSERT INTO players (name, hostname)
-                VALUES (@name, @hostname);
-            ";
-                command.ExecuteNonQuery();
-
-                // Retrieve the ID of the newly inserted player
-                command.CommandText = "SELECT last_insert_rowid()";
-                playerId = Convert.ToInt32(command.ExecuteScalar());
-            }
-        }
-
-        return playerId;
+        return playerRepository.Insert(name, hostname);
     }
 
 
@@ -630,8 +281,15 @@ internal class Database
     /// <param name="peer">The peer connection of the player</param>
     internal bool IsFirstForPlayer(StatCategory category, ZNetPeer peer)
     {
-        int playerId = PlayerIdRefFromPeer(peer);
-        return IsFirstForPlayer(category, playerId);
+        if (peer == null || peer.m_socket == null)
+        {
+            return false;
+        }
+
+        string playerName = peer.m_playerName;
+        string playerHostname = peer.m_socket.GetHostName();
+
+        return IsFirstForPlayer(category, playerName, playerHostname);
     }
 
 
@@ -643,7 +301,8 @@ internal class Database
     /// <param name="playerHostName">The hostname of the player.</param>
     internal bool IsFirstForPlayer(StatCategory category, string playerName, string playerHostName)
     {
-        int playerId = PlayerIdRefFromNameAndHostName(playerName, playerHostName);
+        int playerId = playerRepository.GetIdByNameAndHostname(playerName, playerHostName);
+
         return IsFirstForPlayer(category, playerId);
     }
 
@@ -654,56 +313,22 @@ internal class Database
     /// <param name="playerId">The player's ID.</param>
     internal bool IsFirstForPlayer(StatCategory category, int playerId)
     {
-        string tableName;
-        try
-        {
-            tableName = TableNameFromCategory(category);
-        }
-        catch (ArgumentException ex)
-        {
-            // Handle the exception, e.g., log it, display a message to the user, or rethrow it
-            Plugin.StaticLogger.LogWarning($"IsFirstForPlayer failure: {ex.Message}");
-            return false;
-        }
-
-
-        using (var command = new SQLiteCommand(connection))
-        {
-            command.CommandType = CommandType.Text;
-            command.CommandText = $@"
-                SELECT COUNT(*)
-                FROM {tableName}
-                WHERE player_id = @playerId;
-            ";
-
-            command.Parameters.AddWithValue("@playerId", playerId);
-
-            int count = Convert.ToInt32(command.ExecuteScalar());
-            return count == 0;
-        }
-    }
-
-
-    /// <summary>
-    /// It returns the name of the table that the category is stored in.
-    /// </summary>
-    /// <param name="StatCategory">The category of the stat you want to get the table name for.</param>
-    public string TableNameFromCategory(StatCategory category)
-    {
+        Plugin.StaticLogger.LogDebug($"Checking if total {category} for player:{playerId} is 0");
         switch (category)
         {
             case StatCategory.Join:
-                return "joins";
+                return joinRepository.GetByPlayerId(playerId).Count == 0;
             case StatCategory.Leave:
-                return "leaves";
+                return leaveRepository.GetByPlayerId(playerId).Count == 0;
             case StatCategory.Death:
-                return "deaths";
+                return deathRepository.GetByPlayerId(playerId).Count == 0;
             case StatCategory.Ping:
-                return "pings";
+                return pingRepository.GetByPlayerId(playerId).Count == 0;
             case StatCategory.Shout:
-                return "shouts";
+                return shoutRepository.GetByPlayerId(playerId).Count == 0;
             default:
-                throw new ArgumentException($"Invalid StatCategory: {category}");
+                Plugin.StaticLogger.LogWarning($"Invalid StatCategory: {category}");
+                return false;
         }
     }
 }
