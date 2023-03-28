@@ -2,6 +2,10 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.1.12
+
+Update to Valheim 0.214.300
+
 ## Version 2.1.11
 
 This is for build 0.214.2 onward of Valheim. The signature of the chat messages was changed which was causing an argument out of bounds exception with Discord Connector.
