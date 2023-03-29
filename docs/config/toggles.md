@@ -4,54 +4,240 @@ Filename `discordconnector-toggles.cfg`
 
 The toggle configuration is a collection of on/off switches for all the message types and all the extra data that can be sent with them. It's broken up into 3 sections, "Toggles.Messages" which turns on or off each type of message, "Toggles.Positions" which turns on or off sending player coordinates with messages, and "Toggles.Stats" which turns on or off collection of individual stats.
 
+## Toggles.DebugMessages
+
+### Debug Message for Every Event Check
+
+Type: `Boolean`, default value: `false`
+
+ If enabled, this will write a log message at the DEBUG level every time it checks for an event (every 1s).
+
+### Debug Message for Every Event Player Location Check
+
+Type: `Boolean`, default value: `false`
+
+ If enabled, this will write a log message at the DEBUG level every time the EventWatcher checks players' locations.
+
+### Debug Message for Every Event Change
+
+Type: `Boolean`, default value: `false`
+
+ If enabled, this will write a log message at the DEBUG level when a change in event status is detected.
+
+### Debug Message for HTTP Request Responses
+
+Type: `Boolean`, default value: `false`
+
+ If enabled, this will write a log message at the DEBUG level with the content of HTTP request responses. Nearly all of these requests are when data is sent to the Discord Webhook.
+
 ## Toggles.Messages
 
-| Option                        | Default | Description                                                                                |
-| ----------------------------- | ------- | ------------------------------------------------------------------------------------------ |
-| Send Launch Messages          | true    | If true, a message will be sent to Discord when the server launches                        |
-| Send Loaded Messages          | true    | If true, a message will be sent to Discord when the server is online and ready for players |
-| Send Shutdown Messages        | true    | If true, a message will be sent to Discord when the server shuts down                      |
-| Send World Save Notifications | true    | If true, a message will be sent to Discord when the server saves                           |
-| Send Player Join Messages     | true    | Set to true to send a message when a player joins the world                                |
-| Send Player Leave Messages    | true    | Set to true to send a message when a player leaves the world                               |
-| Send Player Death Messages    | true    | Set to true to send a message when a player dies                                           |
-| Send Player Shout Messages    | true    | Set to true to send a message when a player shouts                                         |
-| Send Player Ping Messages     | true    | Set to true to send a message when a player pings the map                                  |
-| Event Start Notifications     | true    | Set to true to send a message when and event starts                                        |
-| Event Stop Notifications      | true    | Set to true to send a message when and event stops                                         |
-| Event Paused Notifications    | true    | Set to true to send a message when and event is paused                                     |
-| Event Resumed Notifications   | true    | Set to true to send a message when and event is resumed                                    |
+### Debug Message for Database Methods
 
-## Toggles.Position
+Type: `Boolean`, default value: `false`
 
-| Option                                        | Default | Description                                                          |
-| --------------------------------------------- | ------- | -------------------------------------------------------------------- |
-| Send Position with Player Joins               | false   | Set to true to send a player's coordinates when they join the world  |
-| Send Position with Player Leaves              | false   | Set to true to send a player's coordinates when they leave the world |
-| Send Position with Player Pings               | true    | Set to true to send a player's coordinates when they ping on the map |
-| Send Position with Player Shouts              | false   | Set to true to send a player's coordinates when they shout in game   |
-| Send Position with Player Deaths              | true    | Set to true to send a player's coordinates when they die             |
-| Event Start Messages Position Notifications   | true    | Set to true to send the event coordinates when the event starts      |
-| Event Stop Messages Position Notifications    | true    | Set to true to send the event coordinates when the event stops       |
-| Event Paused Messages Position Notifications  | true    | Set to true to send the event coordinates when the event is paused   |
-| Event Resumed Messages Position Notifications | true    | Set to true to send the event coordinates when the event is resumed  |
+ If enabled, this will write a log message at the DEBUG level with logs generated while executing database methods.
 
-## Toggles.Stats
+### Server Launch Notifications
 
-| Option                        | Default | Description                                                  |
-| ----------------------------- | ------- | ------------------------------------------------------------ |
-| Allow recording player joins  | true    | Set to false to never record players joining in records.json |
-| Allow recording player leaves | true    | Set to false to never record players leaving in records.json |
-| Allow recording player pings  | true    | Set to false to never record player pings in records.json    |
-| Allow recording player shouts | true    | Set to false to never record player shouts in records.json   |
-| Allow recording player deaths | true    | Set to false to never record player deaths in records.json   |
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send a message to Discord when the server launches.
+
+### Server Loaded Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send a message to Discord when the server has loaded the map and is ready for connections.
+
+### Server Stopping Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send a message to Discord when the server begins shut down.
+
+### Server Shutdown Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send a message to Discord when the server has shut down.
+
+### Server World Save Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send a message to Discord when the server saves the world.
+
+### Chat Shout Messages Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send a message to Discord when a player shouts on the server.
+
+### Ping Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send a message to Discord when a player pings on the map.
+
+### Player Join Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send a message to Discord when a player joins the server.
+
+### Player Death Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send a message to Discord when a player dies on the server.
+
+### Player Leave Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send a message to Discord when a player leaves the server.
+
+### Event Start Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send a message to Discord when a random event starts on the server.
+
+### Event Stop Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send a message to Discord when a random event stops on the server.
+
+### Event Paused Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send a message to Discord when a random event is paused due to players leaving the area.
 
 ## Toggles.PlayerFirsts
 
-| Option                     | Default | Description                                                                                                                    |
-| -------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Send Player Join Messages  | true    | If enabled (and player-first announcements are enabled), will send an extra message on a player's first leave from the server. |
-| Send Player Leave Messages | false   | If enabled (and player-first announcements are enabled), will send an extra message on a player's first join to the server.    |
-| Send Player Death Messages | true    | If enabled (and player-first announcements are enabled), will send an extra message on a player's first death."                |
-| Send Player Shout Messages | false   | If enabled (and player-first announcements are enabled), will send an extra message on a player's first ping.                  |
-| Send Player Ping Messages  | false   | If enabled (and player-first announcements are enabled), will send an extra message on a player's first shout.                 |
+### Event Resumed Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send a message to Discord when a random event is resumed.
+
+### Send a Message for the First Death of a Player
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send an extra message on a player's first death.
+
+### Send a Message for the First Join of a Player
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will send an extra message on a player's first join to the server.
+
+### Send a Message for the First Leave of a Player
+
+Type: `Boolean`, default value: `false`
+
+ If enabled, this will send an extra message on a player's first leave from the server.
+
+### Send a Message for the First Ping of a Player
+
+Type: `Boolean`, default value: `false`
+
+ If enabled, this will send an extra message on a player's first ping.
+
+## Toggles.Position
+
+### Send a Message for the First Shout of a Player
+
+Type: `Boolean`, default value: `false`
+
+ If enabled, this will send an extra message on a player's first shout.
+
+### Include POS With Player Join
+
+Type: `Boolean`, default value: `false`
+
+ If enabled, this will include the coordinates of the player when they join.
+
+### Include POS With Player Leave
+
+Type: `Boolean`, default value: `false`
+
+ If enabled, this will include the coordinates of the player when they leave.
+
+### Include POS With Player Death
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will include the coordinates of the player when they die.
+
+### Ping Notifications Include Position
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, includes the coordinates of the ping.
+
+### Chat Shout Messages Position Notifications
+
+Type: `Boolean`, default value: `false`
+
+ If enabled, this will include the coordinates of the player when they shout.
+
+### Event Start Messages Position Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will include the coordinates of the random event when the start message is sent.
+
+### Event Stop Messages Position Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will include the coordinates of the random event when the stop message is sent.
+
+### Event Paused Messages Position Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will include the coordinates of the random event when the paused message is sent.
+
+## Toggles.Stats
+
+### Event Resumed Messages Position Notifications
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, this will include the coordinates of the random event when the resumed message is sent.
+
+### Collect and Send Player Death Stats
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, will allow collection of the number of times a player has died.
+
+### Collect and Send Player Join Stats
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, will allow collection of how many times a player has joined the game.
+
+### Collect and Send Player Leave Stats
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, will allow collection of how many times a player has left the game.
+
+### Collect and Send Player Ping Stats
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, will allow collection of the number of pings made by a player.
+
+### Collect and Send Player Shout Stats
+
+Type: `Boolean`, default value: `true`
+
+ If enabled, will allow collection of the number of times a player has shouted.

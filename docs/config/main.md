@@ -2,22 +2,61 @@
 
 Filename `discordconnector.cfg`
 
-| Option                                                  | Default | Description                                                                                                                                      |
-| ------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Webhook URL                                             | (none)  | The main Discord webhook URL to send notifications/messages to.                                                                                  |
-| Webhook Events                                          | ALL     | Semi-colon separated list of which [events](#webhook-events) to send to the primary webhook.                                                     |
-| Secondary Webhook URL                                   | (none)  | The main Discord webhook URL to send notifications/messages to.                                                                                  |
-| Secondary Webhook Events                                | (none)  | Semi-colon separated list of which [events](#webhook-events) to send to the primary webhook.                                                     |
-| Use fancier discord messages                            | false   | Set to true to enable using embeds in the Discord messages. If left false, all messages will remain plain strings (except for the leaderboard).  |
-| Allow positions to be sent                              | true    | Set to false to prevent any positions/coordinates from being sent. If this is true, it can be overridden per message in the toggles config file. |
-| Ignored players                                         | (none)  | List of player names to never send a discord message for (they also won't be tracked in stats). This list should be semicolon (`;`) separated.   |
-| Ignored players (Regex)                                 | (none)  | Regex which player names are matched against to determine to not send a discord message for (they also won't be tracked in stats)                |
-| Collect stats                                           | true    | When this setting is enabled, DiscordConnector will record basic stats (leave, join, ping, shout, death) about players.                          |
-| Send leaderboard updates                                | false   | If you set this to true, that will enable DiscordConnector to send a leaderboard for stats to Discord on the set interval                        |
-| Leaderboard update interval                             | 600     | Time in minutes between each leaderboard update sent to Discord.                                                                                 |
-| Announce Player Firsts                                  | true    | Disable this setting to disable all extra announcements the first time each player does something. (Overwrites any individual setting.)          |
-| How many places to list in the top ranking leaderboards | 3       | Set how many places (1st, 2nd, 3rd by default) to display when sending the ranked leaderboard.                                                   |
-| Send Non-Player Shouts to Discord                       | false   | Enable this setting to have shouts which are performed by other mods/the server/non-players to be sent to Discord as well.                       |
+## Main Settings
+
+### Webhook URL
+
+Type: `String`, default value: ``
+
+ Discord channel webhook URL. For instructions, reference the 'MAKING A WEBHOOK' section of [Discord's documentation](https://support.Discord.com/hc/en-us/articles/228383668-Intro-to-Webhook).
+
+### Webhook Events
+
+Type: `String`, default value: `ALL`
+
+ Specify a subset of possible events to send to the primary webhook. Previously all events would go to the primary webhook. Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLifecycle;playerAll;playerFirstAll;leaderboardsAll;' Full list of valid options [here](https://discordconnector.valheim.nwest.games/config/main.html#webhook-event-descriptions).
+
+### Secondary Webhook URL
+
+Type: `String`, default value: ``
+
+ Discord channel webhook URL. For instructions, reference the 'MAKING A WEBHOOK' section of [Discord's documentation](https://support.Discord.com/hc/en-us/articles/228383668-Intro-to-Webhook).
+
+### Secondary Webhook Events
+
+Type: `String`, default value: `ALL`
+
+ Specify a subset of possible events to send to the primary webhook. Previously all events would go to the primary webhook. Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLaunch;serverStart;serverSave;' Full list of valid options [here](https://discordconnector.valheim.nwest.games/config/main.html#webhook-event-descriptions).
+
+### Use fancier discord messages
+
+Type: `Boolean`, default value: `false`
+
+ Enable this setting to use embeds in the messages sent to Discord. Currently this will affect the position details for the messages.
+
+### Ignored Players
+
+Type: `String`, default value: ``
+
+ It may be that you have some players that you never want to send Discord messages for. Adding a player name to this list will ignore them. Format should be a semicolon-separated list: Stuart;John McJohnny;Weird-name1
+
+### Ignored Players (Regex)
+
+Type: `String`, default value: ``
+
+ It may be that you have some players that you never want to send Discord messages for. This option lets you provide a regular expression to filter out players if their name matches. Format should be a valid string for a .NET Regex (reference: [docs.microsoft.com](https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference))
+
+### Send Positions with Messages
+
+Type: `Boolean`, default value: `true`
+
+ Disable this setting to disable any positions/coordinates being sent with messages (e.g. players deaths or players joining/leaving). (Overwrites any individual setting.)
+
+### Collect Player Stats
+
+Type: `Boolean`, default value: `true`
+
+ Disable this setting to disable all stat collection. (Overwrites any individual setting.)
 
 ::: info "Stat Collection Details"
 Stat collection will create a file in the `discordconnector` config directory `records.db`, where it will record the number of times each player joins, leaves, dies, shouts or pings.
@@ -29,7 +68,27 @@ If this is false, it takes precedent over the "Send leader board updates" settin
 The stat collection database uses the [LiteDB](https://www.litedb.org/) library and if you are so inclined they offer a database gui which you can use to view/modify this database. (Find the LiteDB Editor on their site.)
 :::
 
-## Webhook Events
+### Announce Player Firsts
+
+Type: `Boolean`, default value: `true`
+
+ Disable this setting to disable all extra announcements the first time each player does something. (Overwrites any individual setting.)
+
+### How to discern players in Record Retrieval
+
+Type: `RetrievalDiscernmentMethods`, default value: `PlayerId`
+
+Acceptable values: `PlayerId`, `Name`, `NameAndPlayerId`
+
+ Choose a method for how players will be separated from the results of a record query (used for statistic leader boards). Name: Treat each CharacterName as a separate player PlayerId: Treat each PlayerId as a separate player NameAndPlayerId: Treat each [PlayerId:CharacterName] combo as a separate player
+
+### Send Non-Player Shouts to Discord
+
+Type: `Boolean`, default value: `false`
+
+ Enable this setting to have shouts which are performed by other mods/the server/non-players to be sent to Discord as well. Note: These are still subject to censure by the muted player regex and list.
+
+## Webhook Event Definitions
 
 Here is a list of every accepted event for inclusion in the 'webhook event' settings. These correspond pretty directly to the configurations in the messages config.
 
@@ -81,10 +140,9 @@ These are events which represent sending the leaderboards
 It's possible for other mods to hook into Discord Connector to send messages to Discord. As more get added to this list,
 they will be able to be specifically attached to a certain webhook.
 
-
-| Event Code    | Corresponding Trigger          |
-| ------------- | ------------------------------ |
-| cronjob       | Output from cronjob            |
+| Event Code | Corresponding Trigger |
+| ---------- | --------------------- |
+| cronjob    | Output from cronjob   |
 
 ### Special Case Events
 
