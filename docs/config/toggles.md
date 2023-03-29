@@ -6,20 +6,21 @@ The toggle configuration is a collection of on/off switches for all the message 
 
 ## Toggles.Messages
 
-| Option                      | Default | Description                                                                                |
-| --------------------------- | ------- | ------------------------------------------------------------------------------------------ |
-| Send Launch Messages        | true    | If true, a message will be sent to Discord when the server launches                        |
-| Send Loaded Messages        | true    | If true, a message will be sent to Discord when the server is online and ready for players |
-| Send Shutdown Messages      | true    | If true, a message will be sent to Discord when the server shuts down                      |
-| Send Player Join Messages   | true    | Set to true to send a message when a player joins the world                                |
-| Send Player Leave Messages  | true    | Set to true to send a message when a player leaves the world                               |
-| Send Player Death Messages  | true    | Set to true to send a message when a player dies                                           |
-| Send Player Shout Messages  | true    | Set to true to send a message when a player shouts                                         |
-| Send Player Ping Messages   | true    | Set to true to send a message when a player pings the map                                  |
-| Event Start Notifications   | true    | Set to true to send a message when and event starts                                        |
-| Event Stop Notifications    | true    | Set to true to send a message when and event stops                                         |
-| Event Paused Notifications  | true    | Set to true to send a message when and event is paused                                     |
-| Event Resumed Notifications | true    | Set to true to send a message when and event is resumed                                    |
+| Option                        | Default | Description                                                                                |
+| ----------------------------- | ------- | ------------------------------------------------------------------------------------------ |
+| Send Launch Messages          | true    | If true, a message will be sent to Discord when the server launches                        |
+| Send Loaded Messages          | true    | If true, a message will be sent to Discord when the server is online and ready for players |
+| Send Shutdown Messages        | true    | If true, a message will be sent to Discord when the server shuts down                      |
+| Send World Save Notifications | true    | If true, a message will be sent to Discord when the server saves                           |
+| Send Player Join Messages     | true    | Set to true to send a message when a player joins the world                                |
+| Send Player Leave Messages    | true    | Set to true to send a message when a player leaves the world                               |
+| Send Player Death Messages    | true    | Set to true to send a message when a player dies                                           |
+| Send Player Shout Messages    | true    | Set to true to send a message when a player shouts                                         |
+| Send Player Ping Messages     | true    | Set to true to send a message when a player pings the map                                  |
+| Event Start Notifications     | true    | Set to true to send a message when and event starts                                        |
+| Event Stop Notifications      | true    | Set to true to send a message when and event stops                                         |
+| Event Paused Notifications    | true    | Set to true to send a message when and event is paused                                     |
+| Event Resumed Notifications   | true    | Set to true to send a message when and event is resumed                                    |
 
 ## Toggles.Position
 
