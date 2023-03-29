@@ -30,4 +30,3 @@ Any of the variables in [Variable Definitions](/config/variables) from the varia
 - `%VAR10%`
 
 :::
-:::
