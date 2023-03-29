@@ -4,6 +4,7 @@ export default {
 
     themeConfig: {
         logo: '/logo.png',
+        outline: 3,
         nav: [
             { text: 'Changelog', link: '/changelog' },
             { text: 'Configuring', link: '/config/' },
