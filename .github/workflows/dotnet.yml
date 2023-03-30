@@ -9,6 +9,7 @@ on:
 
 jobs:
   build:
+    name: Compile and Upload Artifact
     runs-on: ubuntu-latest
 
     steps:
@@ -44,6 +45,8 @@ jobs:
           # Extract the deterministic hash from the compiled assembly
       - name: Extract Deterministic Hash
         run: |
+          # Install Mono if not already installed
+          sudo apt-get install -y mono-devel
           # Extract the hash from the compiled assembly
           DETERMINISTIC_HASH=$(ildasm /text /noil /out=- /metadata /public /typelist /nobar /rawbytes /assembly=/home/runner/work/valheim-discordconnector/valheim-discordconnector/bin/Release/net6.0/DiscordConnector.dll | grep "publickeytoken" | awk -F'= ' '{print $2}' | tr -d '[:space:]')
           echo "DETERMINISTIC_HASH=$DETERMINISTIC_HASH" >> $GITHUB_ENV
