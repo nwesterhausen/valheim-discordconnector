@@ -51,13 +51,13 @@ jobs:
       # Create the metadata.txt file
       - name: Create metadata.txt file
         run: |
-          echo "Commit Hash: $(git rev-parse HEAD)" >> metadata.txt
-          echo "Branch Name: $(git branch --show-current)" >> metadata.txt
-          echo "Compile Date: $(date +%Y-%m-%d)" >> metadata.txt
-          echo "Compile Time: $(date +%H:%M:%S)" >> metadata.txt
-          echo "Valheim Version: ${{ vars.VALHEIM_VERSION }}" >> metadata.txt
-          echo "Dotnet Version: $(dotnet --version)" >> metadata.txt
-          echo "Deterministic Hash: $DETERMINISTIC_HASH" >> metadata.txt
+          echo "Commit Hash: $(git rev-parse HEAD)" > /home/runner/work/metadata.txt
+          echo "Branch Name: $(git branch --show-current)" >> /home/runner/work/metadata.txt
+          echo "Compile Date: $(date +%Y-%m-%d)" >> /home/runner/work/metadata.txt
+          echo "Compile Time: $(date +%H:%M:%S)" >> /home/runner/work/metadata.txt
+          echo "Valheim Version: ${{ vars.VALHEIM_VERSION }}" >> /home/runner/work/metadata.txt
+          echo "Dotnet Version: $(dotnet --version)" >> /home/runner/work/metadata.txt
+          echo "Deterministic Hash: $DETERMINISTIC_HASH" >> /home/runner/work/metadata.txt
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3
@@ -67,7 +67,7 @@ jobs:
           # A file, directory or wildcard pattern that describes what to upload
           path: |
             /home/runner/work/valheim-discordconnector/valheim-discordconnector/bin/DiscordConnector.zip
-            /home/runner/work/metatdata.txt
+            /home/runner/work/metadata.txt
           # The desired behavior if no files are found using the provided path.
           # Duration after which artifact will expire in days. 0 means using default retention.
           # Minimum 1 day. Maximum 90 days unless changed from the repository settings page.
