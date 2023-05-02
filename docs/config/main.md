@@ -30,6 +30,12 @@ Specify a subset of possible events to send to the secondary webhook. Format sho
 
 A full list of valid options for this are [here](https://discordconnector.valheim.nwest.games/config/webhook.events.html).
 
+## Log Debug Messages
+
+Type: `Boolean`, default value: `false`
+
+Enable this setting to listen to debug messages from the mod. This will help with troubleshooting issues.
+
 ## Use fancier discord messages
 
 Type: `Boolean`, default value: `false`
