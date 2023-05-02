@@ -291,12 +291,16 @@ internal static class Handlers
             Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Shout, peer.m_playerName, playerHostName, pos);
         }
 
-
-
         // If sending messages for players shouting is completely disabled
         if (string.IsNullOrEmpty(preFormattedMessage))
         {
             return;
+        }
+
+        // Capitalize the entire shout if enabled
+        if (Plugin.StaticConfig.ChatShoutAllCaps)
+        {
+            text = text.ToUpper();
         }
 
         FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.ChatShoutPosEnabled, pos, text, ev);

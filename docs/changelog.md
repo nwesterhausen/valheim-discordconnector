@@ -6,7 +6,8 @@ A full changelog of changes, dating all the way back to the first release.
 
 Features:
 
-- Added the "Log Debug Messages" setting for improved troubleshooting
+- Added send shouts in all caps toggle.
+- Added the "Log Debug Messages" setting for improved troubleshooting.
 
 Fixes:
 
