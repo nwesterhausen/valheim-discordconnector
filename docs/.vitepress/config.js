@@ -15,7 +15,8 @@ export default {
                 items: [
                     { text: 'Get a Discord Webhook', link: '/how-to/webhook-instructions' },
                     { text: 'Edit Configuration in R2Modman', link: '/how-to/edit-config-r2modman' },
-                    { text: 'Edit Configuration Manually', link: '/how-to/edit-config-notepad' }
+                    { text: 'Edit Configuration Manually', link: '/how-to/edit-config-notepad' },
+                    { text: 'Troubleshooting', link: '/how-to/troubleshooting' }
                 ]
             }
         ],
