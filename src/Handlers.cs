@@ -300,7 +300,7 @@ internal static class Handlers
         // Capitalize the entire shout if enabled
         if (Plugin.StaticConfig.ChatShoutAllCaps)
         {
-            preFormattedMessage = preFormattedMessage.ToUpper();
+            text = text.ToUpper();
         }
 
         FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.ChatShoutPosEnabled, pos, text, ev);
