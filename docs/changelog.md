@@ -4,9 +4,14 @@ A full changelog of changes, dating all the way back to the first release.
 
 ## Version Next
 
-Feats:
+Features:
 
-- Added send shouts in all caps toggle
+- Added send shouts in all caps toggle.
+- Added the "Log Debug Messages" setting for improved troubleshooting.
+
+Fixes:
+
+- Updated build against Valheim 0.215.2
 
 ## Version 2.1.12
 

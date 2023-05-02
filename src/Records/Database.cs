@@ -77,7 +77,7 @@ internal class Database
             catch (System.IO.IOException e)
             {
                 Plugin.StaticLogger.LogError($"Unable to acquire un-shared access to {DbPath}");
-                Plugin.StaticLogger.LogDebug(e);
+                Plugin.StaticLogger.LogDebug(e.ToString());
             }
         }).ConfigureAwait(false);
     }
