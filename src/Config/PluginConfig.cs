@@ -159,8 +159,8 @@ internal class PluginConfig
     public bool EventStartMessageEnabled => togglesConfig.EventStartMessageEnabled;
     public bool EventStopMessageEnabled => togglesConfig.EventStopMessageEnabled;
     public bool EventPausedMessageEnabled => togglesConfig.EventPausedMessageEnabled;
-
     public bool EventResumedMessageEnabled => togglesConfig.EventResumedMessageEnabled;
+    public bool ChatShoutAllCaps => togglesConfig.ChatShoutAllCaps;
 
     // Toggles.Stats
     public bool StatsDeathEnabled => mainConfig.CollectStatsEnabled && togglesConfig.StatsDeathEnabled;

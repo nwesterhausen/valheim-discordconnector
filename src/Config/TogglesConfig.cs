@@ -29,6 +29,7 @@ internal class TogglesConfig
     private ConfigEntry<bool> eventPausedMessageToggle;
     private ConfigEntry<bool> eventStopMessageToggle;
     private ConfigEntry<bool> eventResumedMessageToggle;
+    private ConfigEntry<bool> chatShoutAllCaps;
 
     // Position Coordinates Toggles
     private ConfigEntry<bool> playerLeavePosToggle;
@@ -134,6 +135,10 @@ internal class TogglesConfig
             "Event Resumed Notifications",
             true,
             "If enabled, this will send a message to Discord when a random event is resumed.");
+        chatShoutAllCaps = config.Bind<bool>(MESSAGES_TOGGLES,
+            "Send All Caps Shout Messages",
+            false,
+            "If enabled, this will send all shout messages to Discord in all caps.");
 
         // Position Toggles
         playerJoinPosToggle = config.Bind<bool>(POSITION_TOGGLES,
@@ -258,7 +263,8 @@ internal class TogglesConfig
         jsonString += $"\"eventStartEnabled\":\"{EventStartMessageEnabled}\",";
         jsonString += $"\"eventPausedEnabled\":\"{EventStopMessageEnabled}\",";
         jsonString += $"\"eventStoppedEnabled\":\"{EventPausedMessageEnabled}\",";
-        jsonString += $"\"eventResumedEnabled\":\"{EventResumedMessageEnabled}\"";
+        jsonString += $"\"eventResumedEnabled\":\"{EventResumedMessageEnabled}\",";
+        jsonString += $"\"chatShoutAllCaps\":\"{ChatShoutAllCaps}\"";
         jsonString += "},";
 
         jsonString += $"\"{POSITION_TOGGLES}\":{{";
@@ -339,4 +345,5 @@ internal class TogglesConfig
     public bool DebugEveryEventChange => debugEventChanges.Value;
     public bool DebugHttpRequestResponse => debugHttpRequestResponses.Value;
     public bool DebugDatabaseMethods => debugDatabaseMethods.Value;
+    public bool ChatShoutAllCaps => chatShoutAllCaps.Value;
 }

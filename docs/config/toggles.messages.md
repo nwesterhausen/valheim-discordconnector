@@ -89,3 +89,9 @@ If enabled, this will send a message to Discord when a random event is paused du
 Type: `Boolean`, default value: `true`
 
 If enabled, this will send a message to Discord when a random event is resumed.
+
+## Chat Shout All Caps
+
+Type: `Boolean`, default value: `false`
+
+If enabled, this will send shouts to Discord in All Caps.

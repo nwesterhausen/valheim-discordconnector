@@ -2,6 +2,12 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version Next
+
+Feats:
+
+- Added send shouts in all caps toggle
+
 ## Version 2.1.12
 
 Update to Valheim 0.214.300
