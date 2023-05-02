@@ -1,6 +1,5 @@
 ﻿using System;
 using BepInEx;
-using BepInEx.Logging;
 using DiscordConnector.Records;
 using HarmonyLib;
 using UnityEngine;
@@ -11,7 +10,7 @@ namespace DiscordConnector;
 [BepInPlugin(PluginInfo.PLUGIN_ID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 public class Plugin : BaseUnityPlugin
 {
-    internal static ManualLogSource StaticLogger;
+    internal static VDCLogger StaticLogger;
     internal static PluginConfig StaticConfig;
     internal static Database StaticDatabase;
     internal static LeaderBoard StaticLeaderBoards;
@@ -39,7 +38,7 @@ public class Plugin : BaseUnityPlugin
 
     public Plugin()
     {
-        StaticLogger = Logger;
+        StaticLogger = new VDCLogger(Logger);
         StaticConfig = new PluginConfig(Config);
         StaticDatabase = new Records.Database(Paths.GameRootPath);
         StaticLeaderBoards = new LeaderBoard();
