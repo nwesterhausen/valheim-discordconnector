@@ -147,6 +147,6 @@ class ConfigWatcher
     /// Error passthrough for the config watcher.
     /// </summary>
     private static void OnError(object sender, ErrorEventArgs e) =>
-        Plugin.StaticLogger.LogError(e.GetException());
+        Plugin.StaticLogger.LogError(e.GetException().ToString());
 
 }

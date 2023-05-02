@@ -40,6 +40,7 @@ internal class MainConfig
     private ConfigEntry<bool> announcePlayerFirsts;
     private ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
     private ConfigEntry<bool> allowNonPlayerShoutLogging;
+    private ConfigEntry<bool> logDebugMessages;
 
     private WebhookEntry primaryWebhook;
     private WebhookEntry secondaryWebhook;
@@ -48,6 +49,9 @@ internal class MainConfig
     {
         config = configFile;
         LoadConfig();
+
+        Plugin.StaticLogger.SetLogLevel(logDebugMessages.Value);
+
         mutedPlayers = new List<string>(mutedDiscordUserList.Value.Split(';'));
         if (String.IsNullOrEmpty(mutedDiscordUserListRegex.Value))
         {
@@ -66,6 +70,8 @@ internal class MainConfig
     {
         config.Reload();
         config.Save();
+
+        Plugin.StaticLogger.SetLogLevel(logDebugMessages.Value);
 
         mutedPlayers = new List<string>(mutedDiscordUserList.Value.Split(';'));
         if (String.IsNullOrEmpty(mutedDiscordUserListRegex.Value))
@@ -109,6 +115,11 @@ internal class MainConfig
             "Specify a subset of possible events to send to the primary webhook. Previously all events would go to the primary webhook." + Environment.NewLine +
             "Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLaunch;serverStart;serverSave;'" + Environment.NewLine +
             "Full list of valid options here: https://discordconnector.valheim.nwest.games/config/main.html#webhook-events");
+
+        logDebugMessages = config.Bind<bool>(MAIN_SETTINGS,
+            "Log Debug Messages",
+            false,
+            "Enable this setting to listen to debug messages from the mod. This will help with troubleshooting issues.");
 
         discordEmbedMessagesToggle = config.Bind<bool>(MAIN_SETTINGS,
             "Use fancier discord messages",
@@ -169,6 +180,7 @@ internal class MainConfig
         jsonString += $"\"webhookEvents\":\"{webhookEvents.Value}\",";
         jsonString += $"\"webhook2\":\"{(string.IsNullOrEmpty(webhookUrl2.Value) ? "unset" : "REDACTED")}\",";
         jsonString += $"\"webhook2Events\":\"{webhook2Events.Value}\",";
+        jsonString += $"\"logDebugMessages\":\"{logDebugMessages.Value}\",";
         jsonString += $"\"fancierMessages\":\"{DiscordEmbedsEnabled}\",";
         jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserList.Value}\",";
         jsonString += $"\"ignoredPlayersRegex\":\"{mutedDiscordUserListRegex.Value}\"";
