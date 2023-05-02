@@ -34,6 +34,17 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+## Version 2.1.13
+
+Features:
+
+- Added send shouts in all caps toggle.
+- Added the "Log Debug Messages" setting for improved troubleshooting.
+
+Fixes:
+
+- Updated build against Valheim 0.215.2
+
 ## Version 2.1.12
 
 Update to Valheim 0.214.300
