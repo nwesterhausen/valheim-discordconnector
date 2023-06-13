@@ -39,7 +39,7 @@ internal static class Handlers
 
             // Seems that player is dead if character ZDOID id is 0
             // m_characterID id=0 means dead, user_id always matches peer.m_uid
-            if (peer.m_characterID.id != 0)
+            if (peer.m_characterID.ID != 0)
             {
                 Handlers.Death(peer);
             }
