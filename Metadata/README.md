@@ -34,6 +34,13 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+## Version 2.1.14
+
+Fixes:
+
+- error from ZDOID property changes preventing player actions being sent
+- bumps BepInEx dependency to latest on Thunderstore
+
 ## Version 2.1.13
 
 Features:

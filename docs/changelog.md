@@ -2,6 +2,13 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.1.14
+
+Fixes:
+
+- error from ZDOID property changes preventing player actions being sent
+- bumps BepInEx dependency to latest on Thunderstore
+
 ## Version 2.1.13
 
 Features:
