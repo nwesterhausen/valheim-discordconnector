@@ -41,6 +41,7 @@ internal class MainConfig
     private ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
     private ConfigEntry<bool> allowNonPlayerShoutLogging;
     private ConfigEntry<bool> logDebugMessages;
+    private ConfigEntry<bool> enableDiscordLogging;
 
     private WebhookEntry primaryWebhook;
     private WebhookEntry secondaryWebhook;
@@ -51,6 +52,7 @@ internal class MainConfig
         LoadConfig();
 
         Plugin.StaticLogger.SetLogLevel(logDebugMessages.Value);
+        Plugin.StaticLogger.SetDiscordMessages(enableDiscordLogging.Value);
 
         mutedPlayers = new List<string>(mutedDiscordUserList.Value.Split(';'));
         if (String.IsNullOrEmpty(mutedDiscordUserListRegex.Value))
@@ -72,6 +74,7 @@ internal class MainConfig
         config.Save();
 
         Plugin.StaticLogger.SetLogLevel(logDebugMessages.Value);
+        Plugin.StaticLogger.SetDiscordMessages(enableDiscordLogging.Value);
 
         mutedPlayers = new List<string>(mutedDiscordUserList.Value.Split(';'));
         if (String.IsNullOrEmpty(mutedDiscordUserListRegex.Value))
@@ -120,6 +123,12 @@ internal class MainConfig
             "Log Debug Messages",
             false,
             "Enable this setting to listen to debug messages from the mod. This will help with troubleshooting issues.");
+
+        enableDiscordLogging = config.Bind<bool>(MAIN_SETTINGS,
+            "Enable Discord Logging",
+            false,
+            "Enable this setting to send log messages to Discord. This will help with troubleshooting issues." + Environment.NewLine +
+            "Note: Logging must be enabled on the webhook for this to work. (Use the event 'Debug' to have log messages sent.)");
 
         discordEmbedMessagesToggle = config.Bind<bool>(MAIN_SETTINGS,
             "Use fancier discord messages",
@@ -181,6 +190,7 @@ internal class MainConfig
         jsonString += $"\"webhook2\":\"{(string.IsNullOrEmpty(webhookUrl2.Value) ? "unset" : "REDACTED")}\",";
         jsonString += $"\"webhook2Events\":\"{webhook2Events.Value}\",";
         jsonString += $"\"logDebugMessages\":\"{logDebugMessages.Value}\",";
+        jsonString += $"\"enableDiscordLogging\":\"{enableDiscordLogging.Value}\",";
         jsonString += $"\"fancierMessages\":\"{DiscordEmbedsEnabled}\",";
         jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserList.Value}\",";
         jsonString += $"\"ignoredPlayersRegex\":\"{mutedDiscordUserListRegex.Value}\"";

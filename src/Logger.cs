@@ -3,6 +3,7 @@ class VDCLogger
 {
     private static BepInEx.Logging.ManualLogSource _logger;
     private bool _logDebugMessages = false;
+    private bool _triggerDiscordMessages = false;
 
     public VDCLogger(BepInEx.Logging.ManualLogSource logger)
     {
@@ -15,12 +16,21 @@ class VDCLogger
         _logDebugMessages = logDebugMessages;
     }
 
-    public void LogDebug(string message)
+    internal void SetDiscordMessages(bool triggerDiscordMessages)
+    {
+        _triggerDiscordMessages = triggerDiscordMessages;
+    }
+
+    public void LogDebug(string message, bool neverTriggerDiscord = false)
     {
         _logger.LogDebug(message);
         if (_logDebugMessages)
         {
             _logger.LogInfo(message);
+        }
+        if (_triggerDiscordMessages && !neverTriggerDiscord)
+        {
+            DiscordApi.SendMessage(Webhook.Event.Debug, message);
         }
     }
 

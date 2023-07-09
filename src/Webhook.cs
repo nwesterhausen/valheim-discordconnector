@@ -37,6 +37,7 @@ public class Webhook
         PlayerAll,
         PlayerFirstAll,
         LeaderboardsAll,
+        Debug,
         None,
         Other,
         CronJob,
@@ -117,8 +118,11 @@ public class Webhook
             case "cronjob":
                 return Event.CronJob;
 
+            case "debug":
+                return Event.Debug;
+
             default:
-                Plugin.StaticLogger.LogDebug($"Unmatched event token '{eventToken}'");
+                Plugin.StaticLogger.LogDebug($"Unmatched event token '{eventToken}'", true);
                 return Event.None;
         }
     }
@@ -133,7 +137,7 @@ public class Webhook
 
         //Clean string (remove all non-word non-semi-colon characters)
         string cleaned = Regex.Replace(configEntry, @"[^;\w]", "");
-        Plugin.StaticLogger.LogDebug($"Webhooks: cleaned config entry '{configEntry}' => '{cleaned}'");
+        Plugin.StaticLogger.LogDebug($"Webhooks: cleaned config entry '{configEntry}' => '{cleaned}'", true);
 
         // Check for ALL case
         if (cleaned.Equals("ALL"))
@@ -150,7 +154,7 @@ public class Webhook
 
         foreach (Webhook.Event we in events)
         {
-            Plugin.StaticLogger.LogDebug($"Added {we} to list");
+            Plugin.StaticLogger.LogDebug($"Added {we} to list", true);
         }
 
         return events;
@@ -195,13 +199,13 @@ class WebhookEntry
 
         if (FireOnEvents.Contains(Webhook.Event.ALL))
         {
-            Plugin.StaticLogger.LogDebug("Webhook has 'ALL' enabled");
+            Plugin.StaticLogger.LogDebug("Webhook has 'ALL' enabled", true);
             return true;
         }
 
         if (FireOnEvents.Contains(Webhook.Event.PlayerAll))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerAll");
+            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerAll", true);
             if (
                 ev == Webhook.Event.PlayerDeath ||
                 ev == Webhook.Event.PlayerJoin ||
@@ -214,7 +218,7 @@ class WebhookEntry
         }
         if (FireOnEvents.Contains(Webhook.Event.PlayerFirstAll))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerFirstAll");
+            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerFirstAll", true);
             if (
                 ev == Webhook.Event.PlayerFirstDeath ||
                 ev == Webhook.Event.PlayerFirstJoin ||
@@ -227,7 +231,7 @@ class WebhookEntry
         }
         if (FireOnEvents.Contains(Webhook.Event.EventLifecycle))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of EventLifecycle");
+            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of EventLifecycle", true);
             if (
                 ev == Webhook.Event.EventStart ||
                 ev == Webhook.Event.EventStop ||
@@ -239,7 +243,7 @@ class WebhookEntry
         }
         if (FireOnEvents.Contains(Webhook.Event.ServerLifecycle))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of ServerLifecycle");
+            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of ServerLifecycle", true);
             if (
                 ev == Webhook.Event.ServerLaunch ||
                 ev == Webhook.Event.ServerShutdown ||
@@ -251,7 +255,7 @@ class WebhookEntry
         }
         if (FireOnEvents.Contains(Webhook.Event.LeaderboardsAll))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of LeaderboardsAll");
+            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of LeaderboardsAll", true);
             if (
                 ev == Webhook.Event.ActivePlayers ||
                 ev == Webhook.Event.Leaderboard1 ||
@@ -264,7 +268,7 @@ class WebhookEntry
             }
         }
 
-        Plugin.StaticLogger.LogDebug($"Checking for exact match of {ev}");
+        Plugin.StaticLogger.LogDebug($"Checking for exact match of {ev}", true);
         return FireOnEvents.Contains(ev);
     }
 }

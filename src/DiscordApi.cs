@@ -113,7 +113,7 @@ class DiscordApi
     /// <param name="serializedJson">Body data for the webhook as JSON serialized into a string</param>
     private static void SendSerializedJson(Webhook.Event ev, string serializedJson)
     {
-        Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson} (event: {ev})");
+        Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson} (event: {ev})", true);
 
         if (ev == Webhook.Event.Other)
         {
@@ -131,12 +131,12 @@ class DiscordApi
 
         if (Plugin.StaticConfig.PrimaryWebhook.HasEvent(ev))
         {
-            Plugin.StaticLogger.LogDebug($"Sending {ev} message to Primary Webhook");
+            Plugin.StaticLogger.LogDebug($"Sending {ev} message to Primary Webhook", true);
             DispatchRequest(Plugin.StaticConfig.PrimaryWebhook, byteArray);
         }
         if (Plugin.StaticConfig.SecondaryWebhook.HasEvent(ev))
         {
-            Plugin.StaticLogger.LogDebug($"Sending {ev} message to Secondary Webhook");
+            Plugin.StaticLogger.LogDebug($"Sending {ev} message to Secondary Webhook", true);
             DispatchRequest(Plugin.StaticConfig.SecondaryWebhook, byteArray);
         }
     }
@@ -150,7 +150,7 @@ class DiscordApi
     {
         if (string.IsNullOrEmpty(webhook.Url))
         {
-            Plugin.StaticLogger.LogDebug($"Dispatch attempted with empty webhook - ignoring");
+            Plugin.StaticLogger.LogDebug($"Dispatch attempted with empty webhook - ignoring", true);
             return;
         }
 
@@ -172,7 +172,7 @@ class DiscordApi
             WebResponse response = request.GetResponse();
             if (Plugin.StaticConfig.DebugHttpRequestResponse)
             {
-                Plugin.StaticLogger.LogDebug($"Request Response Short Code: {((HttpWebResponse)response).StatusDescription}");
+                Plugin.StaticLogger.LogDebug($"Request Response Short Code: {((HttpWebResponse)response).StatusDescription}", true);
             }
 
             // Get the stream containing content returned by the server.
@@ -186,7 +186,7 @@ class DiscordApi
                 // Display the content.
                 if (Plugin.StaticConfig.DebugHttpRequestResponse)
                 {
-                    Plugin.StaticLogger.LogDebug($"Full response: {responseFromServer}");
+                    Plugin.StaticLogger.LogDebug($"Full response: {responseFromServer}", true);
                 }
             }
 
