@@ -34,6 +34,12 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+## Version 2.1.16
+
+Fixes:
+
+- include additional JSON dependency
+
 ## Version 2.1.15
 
 Fixes:
