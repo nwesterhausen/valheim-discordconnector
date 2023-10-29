@@ -41,9 +41,16 @@ class DiscordApi
             content = message
         };
 
-        string payloadString = JsonConvert.SerializeObject(payload);
+        try
+        {
+            string payloadString = JsonConvert.SerializeObject(payload);
+            SendSerializedJson(ev, payloadString);
+        }
+        catch (Exception e)
+        {
+            Plugin.StaticLogger.LogWarning($"Error serializing payload: {e}");
+        }
 
-        SendSerializedJson(ev, payloadString);
     }
 
     /// <summary>
@@ -69,11 +76,18 @@ class DiscordApi
             List<string> fieldStrings = new List<string>();
             foreach (Tuple<string, string> t in fields)
             {
-                fieldStrings.Add(JsonConvert.SerializeObject(new DiscordField
+                try
                 {
-                    name = t.Item1,
-                    value = t.Item2
-                }));
+                    fieldStrings.Add(JsonConvert.SerializeObject(new DiscordField
+                    {
+                        name = t.Item1,
+                        value = t.Item2
+                    }));
+                }
+                catch (Exception e)
+                {
+                    Plugin.StaticLogger.LogWarning($"Error serializing field: {e}");
+                }
             }
 
             if (fieldStrings.Count > 0)

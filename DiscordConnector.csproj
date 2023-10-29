@@ -29,8 +29,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3"
-      PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,8 +53,7 @@
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(ValheimManagedLibs)\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference
-      Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(ValheimManagedLibs)\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -63,8 +61,7 @@
   <Target Name="PreparePluginDir" AfterTargets="PrepareForBuild">
     <!-- Create the artifact output location (if it doesn't exist) -->
     <MakeDir Directories="$(DiscordConnectorDir)" Condition="!Exists('$(DiscordConnectorDir)')" />
-    <MakeDir Directories="$(DiscordConnectorDir)plugins"
-      Condition="!Exists('$(DiscordConnectorDir)plugins')" />
+    <MakeDir Directories="$(DiscordConnectorDir)plugins" Condition="!Exists('$(DiscordConnectorDir)plugins')" />
     <!-- Make a reference to children of the output location -->
     <ItemGroup>
       <OldBuildArtifacts Include="$(DiscordConnectorDir)**\*" />
@@ -78,6 +75,7 @@
       <BuiltLibraryAndDeps Include="$(TargetDir)DiscordConnector.dll" />
       <!-- Include Newtonsoft.Json dependency -->
       <BuiltLibraryAndDeps Include="$(TargetDir)Newtonsoft.Json.dll" />
+      <BuiltLibraryAndDeps Include="$(ValheimManagedLibs)\System.Runtime.Serialization.dll"/>
       <!-- Include LiteDB dependency -->
       <BuiltLibraryAndDeps Include="$(TargetDir)LiteDB.dll" />
       <!-- Metadata files for Thunderstore -->
@@ -86,18 +84,14 @@
       <ThunderstoreMetadata Include="$(MetadataDir)README.md" />
     </ItemGroup>
     <!-- Plugin files go into a 'plugins' subdirectory -->
-    <Copy SourceFiles="@(BuiltLibraryAndDeps)" DestinationFolder="$(DiscordConnectorDir)plugins"
-      SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(BuiltLibraryAndDeps)" DestinationFolder="$(DiscordConnectorDir)plugins" SkipUnchangedFiles="true" />
     <!-- Metadata files go into the base directory -->
-    <Copy SourceFiles="@(ThunderstoreMetadata)" DestinationFolder="$(DiscordConnectorDir)"
-      SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ThunderstoreMetadata)" DestinationFolder="$(DiscordConnectorDir)" SkipUnchangedFiles="true" />
   </Target>
 
   <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles">
     <!-- Remove the zip file if it exists, so that we can create a new one. -->
-    <Delete Files="$(BinDir)DiscordConnector.zip"
-      Condition="Exists('$(BinDir)DiscordConnector.zip')" />
-    <ZipDirectory SourceDirectory="$(DiscordConnectorDir)"
-      DestinationFile="$(BinDir)DiscordConnector.zip" />
+    <Delete Files="$(BinDir)DiscordConnector.zip" Condition="Exists('$(BinDir)DiscordConnector.zip')" />
+    <ZipDirectory SourceDirectory="$(DiscordConnectorDir)" DestinationFile="$(BinDir)DiscordConnector.zip" />
   </Target>
 </Project>
