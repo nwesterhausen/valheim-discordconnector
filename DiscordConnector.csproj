@@ -13,11 +13,12 @@
 
   <PropertyGroup>
     <!-- Set the path to the game folder. This is used when including references below -->
-    <GamePath Condition="$(GamePath) == ''">G:\Valheim\0.216.9</GamePath>
+    <GamePath Condition="$(GamePath) == ''">G:\Valheim\0.217.27</GamePath>
     <!-- Make the references to folders used in the build process a lot simpler -->
     <BinDir>$(ProjectDir)bin/</BinDir>
     <DiscordConnectorDir>$(BinDir)DiscordConnector/</DiscordConnectorDir>
     <MetadataDir>$(ProjectDir)Metadata/</MetadataDir>
+    <ValheimManagedLibs>$(GamePath)\valheim_Data\Managed</ValheimManagedLibs>
     <!-- Setup publicized asssembly shorthand -->
     <PublicizedAssemblies>$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssemblies>
   </PropertyGroup>
@@ -39,7 +40,7 @@
     <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(GamePath)\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="BepInEx, Version=5.4.21.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="BepInEx, Version=5.4.22.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(GamePath)\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
     <!-- Valheim Assembly Dependencies -->
@@ -51,11 +52,11 @@
     </Reference>
     <!-- Unity Engine Dependencies -->
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(GamePath)\unstripped_corlib\UnityEngine.dll</HintPath>
+      <HintPath>$(ValheimManagedLibs)\UnityEngine.dll</HintPath>
     </Reference>
     <Reference
       Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(GamePath)\unstripped_corlib\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(ValheimManagedLibs)\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
   </ItemGroup>
 

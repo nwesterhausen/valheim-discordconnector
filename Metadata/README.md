@@ -34,6 +34,12 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+## Version 2.1.15
+
+Fixes:
+
+- updated to valheim 0.217.27 and new BepInEx 2201
+
 ## Version 2.1.14
 
 Fixes:
