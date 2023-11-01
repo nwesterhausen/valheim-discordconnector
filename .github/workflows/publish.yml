@@ -40,7 +40,7 @@ jobs:
           sudo mv -v tcli-${{ vars.TCLI_VERSION }}-linux-x64 /home/runner/tcli-bin
           /home/runner/tcli-bin/tcli help || true
       # The typical build script
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
