@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using HarmonyLib;
+﻿using HarmonyLib;
 
-namespace DiscordConnector.Patches
+namespace DiscordConnectorLite.Patches
 {
     internal class GamePatches
     {
@@ -32,10 +31,6 @@ namespace DiscordConnector.Patches
                     DiscordApi.SendMessage(
                         MessageTransformer.FormatServerMessage(Plugin.StaticConfig.StopMessage)
                     );
-                }
-                if (Plugin.RunningHeadless)
-                {
-                    Plugin.StaticEventWatcher.Dispose();
                 }
             }
             private static void Postfix()

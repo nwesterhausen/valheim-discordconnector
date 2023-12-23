@@ -1,8 +1,7 @@
-﻿
-using System.Net;
+﻿using System.Net;
 using Newtonsoft.Json;
 
-namespace DiscordConnector.Webhook
+namespace DiscordConnectorLite.Webhook
 {
     internal static class Responder
     {

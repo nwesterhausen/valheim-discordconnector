@@ -6,7 +6,7 @@ using System.Text;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace DiscordConnector
+namespace DiscordConnectorLite
 {
     class DiscordApi
     {
@@ -113,10 +113,7 @@ namespace DiscordConnector
             dataStream.Close();
 
             WebResponse response = request.GetResponse();
-            if (Plugin.StaticConfig.DebugHttpRequestResponse)
-            {
-                Plugin.StaticLogger.LogDebug($"Request Response Short Code: {((HttpWebResponse)response).StatusDescription}");
-            }
+
 
             // Get the stream containing content returned by the server.
             // The using block ensures the stream is automatically closed.
@@ -127,10 +124,6 @@ namespace DiscordConnector
                 // Read the content.
                 string responseFromServer = reader.ReadToEnd();
                 // Display the content.
-                if (Plugin.StaticConfig.DebugHttpRequestResponse)
-                {
-                    Plugin.StaticLogger.LogDebug($"Full response: {responseFromServer}");
-                }
             }
 
             // Close the response.

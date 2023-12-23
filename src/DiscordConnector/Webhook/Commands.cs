@@ -1,4 +1,4 @@
-﻿namespace DiscordConnector.Webhook
+﻿namespace DiscordConnectorLite.Webhook
 {
     /// <summary>
     /// Base command class, all command objects will include a command string.

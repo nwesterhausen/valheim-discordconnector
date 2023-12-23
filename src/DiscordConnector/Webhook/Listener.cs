@@ -5,9 +5,8 @@ using System.Net;
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using UnityEngine;
 
-namespace DiscordConnector.Webhook
+namespace DiscordConnectorLite.Webhook
 {
     internal class Listener
     {
@@ -53,6 +52,7 @@ namespace DiscordConnector.Webhook
 
         public static void ListenerCallback(IAsyncResult result)
         {
+            Plugin.StaticLogger.LogDebug($"{nameof(ListenerCallback)} Triggered");
             HttpListener listener = (HttpListener)result.AsyncState;
             // Call EndGetContext to complete the asynchronous operation.
             HttpListenerContext context = listener.EndGetContext(result);
@@ -86,6 +86,7 @@ namespace DiscordConnector.Webhook
                     Responder.SendResponse401(context.Response, new UnauthorizedResponse());
                     return;
                 }
+
                 string command = (string)parsedResponse["command"];
 
                 switch (command)
@@ -94,57 +95,42 @@ namespace DiscordConnector.Webhook
                         Responder.SendResponse200(context.Response, new Response());
                         break;
                     case "chat":
-                        Responder.SendResponse501(context.Response, new MessageResponse
-                        {
-                            message = $"Unable to implement atm."
-                        });
+                        Responder.SendResponse501(context.Response, new MessageResponse { message = $"Unable to implement atm." });
                         break;
                     case "leaderboard":
                         // StringCommand leaderboardCommand = parsedResponse.ToObject<StringCommand>();
-                        Responder.SendResponse501(context.Response, new MessageResponse
-                        {
-                            message = "Haven't devised a proper way to refer to the leaderboards yet."
-                        });
+                        Responder.SendResponse501(context.Response, new MessageResponse { message = "Haven't devised a proper way to refer to the leaderboards yet." });
                         break;
                     case "reload":
                         Plugin.StaticLogger.LogDebug("Received command on /discord to reload the configuration");
                         Plugin.StaticConfig.ReloadConfig();
-                        Responder.SendResponse200(context.Response, new MessageResponse
-                        {
-                            message = "Configuration reload command executed."
-                        });
+                        Responder.SendResponse200(context.Response, new MessageResponse { message = "Configuration reload command executed." });
                         break;
                     case "save":
                         Plugin.StaticLogger.LogDebug("Received command on /discord to save the game. Attempting ZNet.instance.SaveWorld(true)");
                         ZNet.instance.SaveWorld(true);
-                        Responder.SendResponse200(context.Response, new MessageResponse
-                        {
-                            message = "SaveWorld command called."
-                        });
+                        Responder.SendResponse200(context.Response, new MessageResponse { message = "SaveWorld command called." });
                         break;
                     case "shutdown":
-                        Responder.SendResponse501(context.Response, new MessageResponse
-                        {
-                            message = $"{command} not yet implemented"
-                        });
+                        Responder.SendResponse501(context.Response, new MessageResponse { message = $"{command} not yet implemented" });
                         break;
                     default:
                         Plugin.StaticLogger.LogDebug($"Unknown command: ${command}");
-                        Responder.SendResponse400(context.Response, new MessageResponse
-                        {
-                            message = $"unknown command {command}"
-                        });
+                        Responder.SendResponse400(context.Response, new MessageResponse { message = $"unknown command {command}" });
                         break;
                 }
             }
             catch (JsonSerializationException e)
             {
                 Plugin.StaticLogger.LogError(e);
-                Responder.SendResponse400(context.Response, new MessageResponse
-                {
-                    message = "invalid JSON body"
-                });
+                Responder.SendResponse400(context.Response, new MessageResponse { message = "invalid JSON body" });
 
+            }
+            catch (Exception exception)
+            {
+                Plugin.StaticLogger.LogError(exception.Message);
+                Plugin.StaticLogger.LogError(exception);
+                Responder.SendResponse500(context.Response, new MessageResponse { message = $"ERROR: {exception.Message}"});
             }
         }
 

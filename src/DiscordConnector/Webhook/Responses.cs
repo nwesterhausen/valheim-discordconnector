@@ -1,4 +1,4 @@
-﻿namespace DiscordConnector.Webhook
+﻿namespace DiscordConnectorLite.Webhook
 {
     /// <summary>
     /// Helper class definition which defines the structure of (valid) outgoing JSON

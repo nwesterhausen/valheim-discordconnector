@@ -4,11 +4,11 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 
-namespace DiscordConnector
+namespace DiscordConnectorLite
 {
     internal static class IpifyAPI
     {
-        private const string ENDPOINT = "https://api64.ipify.org";
+        private const string ENDPOINT = "https://api.ipify.org";
 
         /// <summary>
         /// Get your public IP address (either IPv4 or IPv6, preferring IPv4) according to https://api64.ipify.org
@@ -67,7 +67,7 @@ namespace DiscordConnector
         /// A More "Random" Random from .NET Matters 10/02/2019. https://docs.microsoft.com/en-us/archive/msdn-magazine/2007/september/net-matters-tales-from-the-cryptorandom
         /// An implementation of System.Random using RNGCryptoServiceProvider.
         /// </summary>
-        public class CryptoRandom : System.Random
+        private class CryptoRandom : System.Random
         {
             private RNGCryptoServiceProvider _rng =
                 new RNGCryptoServiceProvider();

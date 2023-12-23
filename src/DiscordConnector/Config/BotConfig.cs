@@ -1,7 +1,7 @@
 ﻿using System;
 using BepInEx.Configuration;
 
-namespace DiscordConnector.Config
+namespace DiscordConnectorLite.Config
 {
     internal class BotConfig
     {
@@ -44,11 +44,8 @@ namespace DiscordConnector.Config
         public string ConfigAsJson()
         {
             string jsonString = "{";
-
-
             jsonString += $"\"discordBotAuthorization\":\"REDACTED\",";
             jsonString += $"\"discordBotPort\":\"{DiscordBotPort}\"";
-
             jsonString += "}";
             return jsonString;
         }

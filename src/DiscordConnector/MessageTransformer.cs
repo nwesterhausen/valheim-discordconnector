@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace DiscordConnector
+namespace DiscordConnectorLite
 {
     internal static class MessageTransformer
     {

@@ -1,19 +1,18 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using DiscordConnectorLite.Config;
 using HarmonyLib;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace DiscordConnector
+namespace DiscordConnectorLite
 {
     [BepInPlugin(PluginInfo.PLUGIN_ID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     public class Plugin : BaseUnityPlugin
     {
         internal static ManualLogSource StaticLogger;
         internal static PluginConfig StaticConfig;
-        internal static Records StaticRecords;
-        internal static Leaderboard StaticLeaderboards;
-        internal static EventWatcher StaticEventWatcher;
         public static bool RunningHeadless;
         internal static string ServerStatus => $"{(RunningHeadless ? "Dedicated Server" : "Client-run Server")}; {ServerState}; {PublicIpAddress}; {ServerWorld}";
         internal static string PublicIpAddress, ServerState, ServerWorld;
@@ -26,13 +25,12 @@ namespace DiscordConnector
         {
             StaticLogger = Logger;
             StaticConfig = new PluginConfig(Config);
-            StaticRecords = new Records(Paths.GameRootPath);
-            StaticLeaderboards = new Leaderboard();
             ServerState = "not started";
             ServerWorld = "";
             PublicIpAddress = "";
         }
 
+        [UsedImplicitly]
         private void Awake()
         {
             // Plugin startup logic
@@ -42,25 +40,10 @@ namespace DiscordConnector
             {
                 StaticLogger.LogInfo("Not running on a dedicated server, some features may break -- please report them!");
             }
-            else
-            {
-                StaticEventWatcher = new EventWatcher();
-            }
 
             if (string.IsNullOrEmpty(StaticConfig.WebHookURL))
             {
                 StaticLogger.LogWarning("No value set for WebHookURL! Plugin will run without using a main Discord webhook.");
-            }
-
-            if (StaticConfig.StatsAnnouncementEnabled)
-            {
-                System.Timers.Timer leaderboardTimer = new System.Timers.Timer();
-                leaderboardTimer.Elapsed += StaticLeaderboards.OverallHighest.SendLeaderboardOnTimer;
-                leaderboardTimer.Elapsed += StaticLeaderboards.OverallLowest.SendLeaderboardOnTimer;
-                leaderboardTimer.Elapsed += StaticLeaderboards.TopPlayers.SendLeaderboardOnTimer;
-                // Interval is learned from config file in minutes
-                leaderboardTimer.Interval = 60 * 1000 * StaticConfig.StatsAnnouncementPeriod;
-                leaderboardTimer.Start();
             }
 
             PublicIpAddress = IpifyAPI.PublicIpAddress();
@@ -92,6 +75,6 @@ namespace DiscordConnector
         /// <summary>
         /// Works in Awake()
         /// </summary>
-        public static bool IsHeadless() => SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null;
+        private static bool IsHeadless() => SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null;
     }
 }

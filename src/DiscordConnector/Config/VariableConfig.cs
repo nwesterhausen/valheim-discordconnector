@@ -1,6 +1,6 @@
 ﻿using BepInEx.Configuration;
 
-namespace DiscordConnector.Config
+namespace DiscordConnectorLite.Config
 {
     internal class VariableConfig
     {
