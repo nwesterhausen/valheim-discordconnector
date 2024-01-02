@@ -70,7 +70,7 @@ jobs:
           wget -O dev-bundle.zip ${{ secrets.VDC_DEV_BUNDLE }}${{ vars.VALHEIM_VERSION }}.zip
           unzip -qq dev-bundle.zip -d /home/runner/dev-bundle
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 6.0.x
 
