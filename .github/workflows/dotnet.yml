@@ -41,7 +41,7 @@ jobs:
         run: dotnet build --no-restore -c Release /p:GamePath=/home/runner/dev-bundle -v n
 
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           # Artifact name
           name: DiscordConnector-artifact.zip
