@@ -2,6 +2,12 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.1.17
+
+Fixes:
+
+- Build against latest Valheim version
+
 ## Version 2.1.16
 
 Fixes:

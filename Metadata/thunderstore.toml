@@ -4,7 +4,7 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "nwesterhausen"
 name = "DiscordConnector"
-versionNumber = "2.1.16"
+versionNumber = "2.1.17"
 description = "Connects your Valheim server to a Discord webhook. Works for both dedicated and client-hosted servers."
 websiteUrl = "https://discordconnector.valheim.nwest.games/"
 containsNsfwContent = false
