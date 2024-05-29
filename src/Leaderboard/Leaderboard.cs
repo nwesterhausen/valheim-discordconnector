@@ -42,6 +42,38 @@ namespace DiscordConnector
             }
             return res;
         }
+
+        // https://stackoverflow.com/a/4423615/624900
+        private static string ToReadableString(TimeSpan span)
+        {
+            string formatted = string.Format("{0}{1}{2}{3}",
+                span.Duration().Days > 0 ? string.Format("{0:0} day{1}, ", span.Days, span.Days == 1 ? string.Empty : "s") : string.Empty,
+                span.Duration().Hours > 0 ? string.Format("{0:0} hour{1}, ", span.Hours, span.Hours == 1 ? string.Empty : "s") : string.Empty,
+                span.Duration().Minutes > 0 ? string.Format("{0:0} minute{1}, ", span.Minutes, span.Minutes == 1 ? string.Empty : "s") : string.Empty,
+                span.Duration().Seconds > 0 ? string.Format("{0:0} second{1}", span.Seconds, span.Seconds == 1 ? string.Empty : "s") : string.Empty);
+
+            if (formatted.EndsWith(", ")) formatted = formatted.Substring(0, formatted.Length - 2);
+
+            if (string.IsNullOrEmpty(formatted)) formatted = "0 seconds";
+
+            return formatted;
+        }
+
+        /// <summary>
+        /// Same as RankedCountResultToString but formats as a time duration, assuming integer seconds.
+        /// </summary>
+        /// <param name="rankings">A pre-sorted list of CountResults.</param>
+        /// <returns>String ready to send to discord listing each player and their duration.</returns>
+        public static string RankedSecondsToString(List<Records.CountResult> rankings)
+        {
+            string res = "";
+            for (int i = 0; i < rankings.Count; i++)
+            {
+                string formattedDuration = ToReadableString(TimeSpan.FromSeconds(rankings[i].Count));
+                res += $"{i + 1}: {rankings[i].Name}: {formattedDuration}{Environment.NewLine}";
+            }
+            return res;
+        }
     }
 }
 
