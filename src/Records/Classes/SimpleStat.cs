@@ -10,31 +10,23 @@ public class SimpleStat
     public string PlayerId { get; }
     public Position Pos { get; }
 
-    public SimpleStat(string name, string playerHostName)
+    public SimpleStat(string name, string playerId, float x, float y, float z)
+        : this(ObjectId.NewObjectId(), name, System.DateTime.Now, playerId, new Position(x, y, z))
     {
-        StatId = ObjectId.NewObjectId();
-        Name = name;
-        PlayerId = playerHostName;
-        Date = System.DateTime.Now;
-        Pos = new Position();
-    }
-
-    public SimpleStat(string name, string playerHostName, float x, float y, float z)
-    {
-        StatId = ObjectId.NewObjectId();
-        Name = name;
-        PlayerId = playerHostName;
-        Date = System.DateTime.Now;
-        Pos = new Position(x, y, z);
     }
 
     [BsonCtor]
-    public SimpleStat(ObjectId _id, string name, System.DateTime date, string playerHostName, Position pos)
+    public SimpleStat(ObjectId id, ObjectId statId, string name, System.DateTime date, string playerId, BsonDocument pos)
+        : this(statId, name, date, playerId, BsonMapper.Global.Deserialize<Position>(pos))
     {
-        StatId = _id;
+    }
+
+    public SimpleStat(ObjectId statId, string name, System.DateTime date, string playerId, Position pos)
+    {
+        StatId = statId;
         Name = name;
         Date = date;
-        PlayerId = playerHostName;
+        PlayerId = playerId;
         Pos = pos;
     }
 

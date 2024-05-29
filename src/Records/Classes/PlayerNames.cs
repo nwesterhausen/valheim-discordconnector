@@ -10,11 +10,17 @@ public class PlayerToName
     public System.DateTime InsertedDate { get; }
 
     public PlayerToName(string characterName, string playerHostName)
+        : this(ObjectId.NewObjectId(), characterName, playerHostName, System.DateTime.Now)
     {
-        _id = ObjectId.NewObjectId();
+    }
+
+    [BsonCtor]
+    public PlayerToName(ObjectId id, string characterName, string playerId, System.DateTime insertedDate)
+    {
+        _id = id;
         CharacterName = characterName;
-        PlayerId = playerHostName;
-        InsertedDate = System.DateTime.Now;
+        PlayerId = playerId;
+        InsertedDate = insertedDate;
     }
 
     public override string ToString()

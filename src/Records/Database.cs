@@ -1,6 +1,8 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using DiscordConnector.LeaderBoards;
 using LiteDB;
@@ -306,65 +308,21 @@ internal class Database
             case Categories.Shout:
                 return CountAllRecordsGrouped(ShoutCollection);
             case Categories.TimeOnline:
-                return AllTimeOnlineRecordsGrouped();
+                return TimeOnlineRecordsGrouped();
             default:
                 Plugin.StaticLogger.LogDebug($"CountAllRecordsGrouped, invalid key '{key}'");
                 return new List<CountResult>();
         }
     }
 
-    private List<CountResult> AllTimeOnlineRecordsGrouped()
+    private struct JoinLeaveTime
     {
-
-        PlayerToName[] players = PlayerToNameCollection.Query().ToArray();
-        List<CountResult> results = new List<CountResult>();
-
-        foreach (PlayerToName player in players)
-        {
-            // Create a spot to record total online time for player
-            Tuple<string, string> playerTuple = Tuple.Create(player.PlayerId, player.CharacterName);
-            System.TimeSpan onlineTime = System.TimeSpan.FromSeconds(0.0);
-
-            // Grab joins and leaves for player
-            SimpleStat[] joins = JoinCollection.Query().Where(x => x.PlayerId == player.PlayerId && x.Name == player.CharacterName).ToArray();
-            SimpleStat[] leaves = LeaveCollection.Query().Where(x => x.PlayerId == player.PlayerId && x.Name == player.CharacterName).ToArray();
-
-            // Compare their lengths
-            Plugin.StaticLogger.LogDebug($"{player.PlayerId} as {player.CharacterName} has {joins.Length} joins, {leaves.Length}");
-            int sessionDifference = joins.Length - leaves.Length;
-            if (sessionDifference > 1)
-            {
-                Plugin.StaticLogger.LogDebug($"{sessionDifference} more joins than leaves, timeOnline likely to be very inaccurate");
-            }
-            // Should either be equal to joins.Length or joins.Length - 1 (basically leaves.Length)
-            int travelableLength = joins.Length - sessionDifference;
-
-            // Add up time between each one.
-            for (int i = 0; i < travelableLength; i++)
-            {
-                // Get the dates
-                System.DateTime login = joins[i].Date;
-                System.DateTime logout = leaves[i].Date;
-
-                // Get the time between them
-                System.TimeSpan difference = logout.Subtract(login);
-
-                // Add that time to the player's total
-                onlineTime.Add(difference);
-            }
-
-            // Total time is then stored
-            Plugin.StaticLogger.LogDebug($"{onlineTime.ToString()} total online time.");
-
-            // Append to list
-            results.Add(new CountResult(player.CharacterName, (int)onlineTime.TotalSeconds));
-        }
-
-        return results;
+        public System.DateTime Time;
+        public bool IsJoin;
     }
 
     /// <summary>
-    /// Provides time online in seconds for all players within the date range provided. By default, it includes the start date.
+    /// Provides time online in seconds for all players within the date range provided. By default, it includes all time.
     /// 
     /// This looks through the provided simple stat table and counts up time differences between joins and leaves.
     /// </summary>
@@ -373,152 +331,74 @@ internal class Database
     /// <param name="inclusiveStart">Whether to include the start date or not in the returned results. If true, it will use `>=` for the startDate comparison; otherwise `>`.</param>
     /// <param name="inclusiveEnd">Whether to include the end date or not in the returned results. If true, it will use `<=` for the startDate comparison; otherwise `<`.</param>
     /// <returns>List of counts with CharacterName and Total (x) for the provided SimpleStat collection.</returns>
-    private List<CountResult> TimeOnlineRecordsWhereDate(System.DateTime startDate, System.DateTime endDate, bool inclusiveStart = true, bool inclusiveEnd = true)
+    private List<CountResult> TimeOnlineRecordsGrouped(System.DateTime? startDate = null, System.DateTime? endDate = null, bool inclusiveStart = true, bool inclusiveEnd = true)
     {
 
         PlayerToName[] players = PlayerToNameCollection.Query().ToArray();
-        List<CountResult> results = new List<CountResult>();
+        List<CountResult> results = new();
 
         foreach (PlayerToName player in players)
         {
-            // Create a spot to record total online time for player
-            Tuple<string, string> playerTuple = Tuple.Create(player.PlayerId, player.CharacterName);
+            // Create a spot to record total online time for player.
             System.TimeSpan onlineTime = System.TimeSpan.FromSeconds(0.0);
 
-            // Grab joins and leaves for player
-            SimpleStat[] joins;
-            SimpleStat[] leaves;
+            var joinsQuery = JoinCollection.Query().Where(x => x.PlayerId.Equals(player.PlayerId) && x.Name.Equals(player.CharacterName));
+            var leavesQuery = LeaveCollection.Query().Where(x => x.PlayerId.Equals(player.PlayerId) && x.Name.Equals(player.CharacterName));
 
-
-            if (inclusiveStart && inclusiveEnd)
+            Func<int, bool> startCompare = inclusiveStart ?
+                (x) => x >= 0 :
+                (x) => x > 0;
+            Func<int, bool> endCompare = inclusiveEnd ?
+                (x) => x <= 0 :
+                (x) => x < 0;
+            if (startDate != null)
             {
-                joins = JoinCollection.Query()
-                        // Filter to dates inclusively
-                        .Where(x => x.Date.Year >= startDate.Date.Year
-                            && x.Date.Month >= startDate.Date.Month
-                            && x.Date.Day >= startDate.Date.Day
-                            && x.Date.Year <= endDate.Date.Year
-                            && x.Date.Month <= endDate.Date.Month
-                            && x.Date.Day <= endDate.Date.Day)
-                        // Filter to player
-                        .Where(x => x.PlayerId == player.PlayerId && x.Name == player.CharacterName)
-                        .ToArray();
-                leaves = LeaveCollection.Query()
-                        // Filter to dates inclusively
-                        .Where(x => x.Date.Year >= startDate.Date.Year
-                            && x.Date.Month >= startDate.Date.Month
-                            && x.Date.Day >= startDate.Date.Day
-                            && x.Date.Year <= endDate.Date.Year
-                            && x.Date.Month <= endDate.Date.Month
-                            && x.Date.Day <= endDate.Date.Day)
-                        // Filter to player
-                        .Where(x => x.PlayerId == player.PlayerId && x.Name == player.CharacterName)
-                        .ToArray();
-
+                joinsQuery = joinsQuery.Where(x => startCompare(x.Date.CompareTo(startDate.GetValueOrDefault())));
             }
-            else if (inclusiveEnd)
+            if (endDate != null)
             {
-                joins = JoinCollection.Query()
-                        // Filter to dates: end date inclusively, start date exclusively
-                        .Where(x => x.Date.Year > startDate.Date.Year
-                            && x.Date.Month > startDate.Date.Month
-                            && x.Date.Day > startDate.Date.Day
-                            && x.Date.Year <= endDate.Date.Year
-                            && x.Date.Month <= endDate.Date.Month
-                            && x.Date.Day <= endDate.Date.Day)
-                        // Filter to player
-                        .Where(x => x.PlayerId == player.PlayerId && x.Name == player.CharacterName)
-                        .ToArray();
-                leaves = LeaveCollection.Query()
-                        // Filter to dates: end date inclusively, start date exclusively
-                        .Where(x => x.Date.Year > startDate.Date.Year
-                            && x.Date.Month > startDate.Date.Month
-                            && x.Date.Day > startDate.Date.Day
-                            && x.Date.Year <= endDate.Date.Year
-                            && x.Date.Month <= endDate.Date.Month
-                            && x.Date.Day <= endDate.Date.Day)
-                        // Filter to player
-                        .Where(x => x.PlayerId == player.PlayerId && x.Name == player.CharacterName)
-                        .ToArray();
-            }
-            else if (inclusiveStart)
-            {
-                joins = JoinCollection.Query()
-                        // Filter to dates: start date inclusively, end date exclusively
-                        .Where(x => x.Date.Year >= startDate.Date.Year
-                            && x.Date.Month >= startDate.Date.Month
-                            && x.Date.Day >= startDate.Date.Day
-                            && x.Date.Year < endDate.Date.Year
-                            && x.Date.Month < endDate.Date.Month
-                            && x.Date.Day < endDate.Date.Day)
-                        // Filter to player
-                        .Where(x => x.PlayerId == player.PlayerId && x.Name == player.CharacterName)
-                        .ToArray();
-                leaves = LeaveCollection.Query()
-                        // Filter to dates: start date inclusively, end date exclusively
-                        .Where(x => x.Date.Year >= startDate.Date.Year
-                            && x.Date.Month >= startDate.Date.Month
-                            && x.Date.Day >= startDate.Date.Day
-                            && x.Date.Year < endDate.Date.Year
-                            && x.Date.Month < endDate.Date.Month
-                            && x.Date.Day < endDate.Date.Day)
-                        // Filter to player
-                        .Where(x => x.PlayerId == player.PlayerId && x.Name == player.CharacterName)
-                        .ToArray();
-            }
-            else
-            {
-                joins = JoinCollection.Query()
-                        // Filter to dates exclusively
-                        .Where(x => x.Date.Year > startDate.Date.Year
-                            && x.Date.Month > startDate.Date.Month
-                            && x.Date.Day > startDate.Date.Day
-                            && x.Date.Year < endDate.Date.Year
-                            && x.Date.Month < endDate.Date.Month
-                            && x.Date.Day < endDate.Date.Day)
-                        // Filter to player
-                        .Where(x => x.PlayerId == player.PlayerId && x.Name == player.CharacterName)
-                        .ToArray();
-                leaves = LeaveCollection.Query()
-                        // Filter to dates exclusively
-                        .Where(x => x.Date.Year > startDate.Date.Year
-                            && x.Date.Month > startDate.Date.Month
-                            && x.Date.Day > startDate.Date.Day
-                            && x.Date.Year < endDate.Date.Year
-                            && x.Date.Month < endDate.Date.Month
-                            && x.Date.Day < endDate.Date.Day)
-                        // Filter to player
-                        .Where(x => x.PlayerId == player.PlayerId && x.Name == player.CharacterName)
-                        .ToArray();
+                joinsQuery = joinsQuery.Where(x => endCompare(x.Date.CompareTo(endDate.GetValueOrDefault())));
             }
 
+            // Grab joins and leaves for player and sort them by time.
+            JoinLeaveTime[] joins = Array.ConvertAll(joinsQuery.ToArray(),
+                stat => new JoinLeaveTime { Time = stat.Date, IsJoin = true });
+            JoinLeaveTime[] leaves = Array.ConvertAll(leavesQuery.ToArray(),
+                stat => new JoinLeaveTime { Time = stat.Date, IsJoin = false });
+            JoinLeaveTime[] sortedJoinLeaves = joins.Concat(leaves).OrderBy(j => j.Time).ToArray();
 
-            // Compare their lengths
-            Plugin.StaticLogger.LogDebug($"{player.PlayerId} as {player.CharacterName} has {joins.Length} joins, {leaves.Length}");
-            int sessionDifference = joins.Length - leaves.Length;
-            if (sessionDifference > 1)
-            {
-                Plugin.StaticLogger.LogDebug($"{sessionDifference} more joins than leaves, timeOnline likely to be very inaccurate");
-            }
-            // Should either be equal to joins.Length or joins.Length - 1 (basically leaves.Length)
-            int travelableLength = joins.Length - sessionDifference;
+            Plugin.StaticLogger.LogDebug($"{player.PlayerId} as {player.CharacterName} has {joins.Length} joins, {leaves.Length} leaves");
 
-            // Add up time between each one.
-            for (int i = 0; i < travelableLength; i++)
-            {
-                // Get the dates
-                System.DateTime login = joins[i].Date;
-                System.DateTime logout = leaves[i].Date;
-
-                // Get the time between them
-                System.TimeSpan difference = logout.Subtract(login);
-
-                // Add that time to the player's total
-                onlineTime.Add(difference);
+            System.DateTime? joinedTime = null;
+            foreach (JoinLeaveTime joinLeaveTime in sortedJoinLeaves) {
+                if (joinedTime == null)
+                {
+                    // Player is not currently joined, so expecting a join.
+                    if (joinLeaveTime.IsJoin)
+                    {
+                        joinedTime = joinLeaveTime.Time;
+                    } else
+                    {
+                        Plugin.StaticLogger.LogDebug($"Player {player.CharacterName} left at {joinLeaveTime.Time} but was not joined.");
+                    }
+                } else
+                {
+                    // Player is currently joined, expecting a leave.
+                    if (joinLeaveTime.IsJoin)
+                    {
+                        Plugin.StaticLogger.LogDebug($"Player {player.CharacterName} joined at {joinLeaveTime.Time} but was already joined at {joinedTime}");
+                        joinedTime = joinLeaveTime.Time;
+                    }
+                    else
+                    {
+                        onlineTime += joinLeaveTime.Time.Subtract(joinedTime ?? joinLeaveTime.Time);
+                        joinedTime = null;
+                    }
+                }
             }
 
             // Total time is then stored
-            Plugin.StaticLogger.LogDebug($"{onlineTime.ToString()} total online time.");
+            Plugin.StaticLogger.LogDebug($"{onlineTime} total online time.");
 
             // Append to list
             results.Add(new CountResult(player.CharacterName, (int)onlineTime.TotalSeconds));
@@ -589,7 +469,7 @@ internal class Database
             case Categories.Shout:
                 return CountAllRecordsGroupsWhereDate(ShoutCollection, startDate, endDate, inclusiveStart, inclusiveEnd);
             case Categories.TimeOnline:
-                return TimeOnlineRecordsWhereDate(startDate, endDate, inclusiveStart, inclusiveEnd);
+                return TimeOnlineRecordsGrouped(startDate, endDate, inclusiveStart, inclusiveEnd);
             default:
                 Plugin.StaticLogger.LogDebug($"CountTodaysRecordsGrouped, invalid key '{key}'");
                 return new List<CountResult>();
