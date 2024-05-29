@@ -246,7 +246,7 @@ internal static class Handlers
             return;
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.ChatPingPosEnabled, ev);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.ChatPingPosEnabled, pos, ev);
     }
 
 
