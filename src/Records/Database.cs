@@ -357,7 +357,7 @@ internal class Database
             }
             if (endDate != null)
             {
-                joinsQuery = joinsQuery.Where(x => startCompare(x.Date.CompareTo(endDate.GetValueOrDefault())));
+                joinsQuery = joinsQuery.Where(x => endCompare(x.Date.CompareTo(endDate.GetValueOrDefault())));
             }
 
             // Grab joins and leaves for player and sort them by time.
