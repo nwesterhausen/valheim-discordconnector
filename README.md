@@ -46,3 +46,15 @@ Thanks for the helpful contributions!
 - @jterrace
 
 Thanks for an excellent original plugin @aequasi!
+
+## Release Steps
+
+Before release, to bump the version the following needs changed:
+
+1. Update the version of the plugin in these files
+   - `src/PluginInfo.cs`
+   - `Metadata/DiscordConnector-Nexus.readme`
+   - `Metadata/manifest.json`
+   - `Metadata/thunderstore.toml`
+2. Finalize the changelog entry in `docs/changelog.md`
+3. Copy changelog notes into `Metadata/README.md`
