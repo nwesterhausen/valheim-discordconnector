@@ -78,6 +78,17 @@ internal class Composer : Base
                 }
             }
         }
+        if (rankings.ContainsKey(Statistic.TimeOnline))
+        {
+            List<CountResult> timeOnlineRankings;
+            if (rankings.TryGetValue(Statistic.TimeOnline, out timeOnlineRankings))
+            {
+                if (timeOnlineRankings.Count > 0)
+                {
+                    leaderFields.Add(Tuple.Create("Time Online", LeaderBoard.RankedSecondsToString(timeOnlineRankings)));
+                }
+            }
+        }
 
         string discordContent = MessageTransformer.FormatLeaderBoardHeader(
             settings.DisplayedHeading, settings.NumberListings

@@ -53,7 +53,7 @@ jobs:
         run: dotnet build --no-restore -c Release /p:GamePath=/home/runner/dev-bundle
       # Automatically attach the built plugin to the Github Release (which caused this action to run)
       - name: Attach release artifacts
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: "/home/runner/work/valheim-discordconnector/valheim-discordconnector/bin/DiscordConnector.zip"
         env:
