@@ -2,6 +2,18 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.2.0
+
+Features
+
+- Working time online leaderboard (@jterrace)
+
+Fixes
+
+- Build against the Ashlands update
+- Properly calculate time online (@jterrace)
+- Ping show the ping POS instead of player's POS (@jimw383)
+
 ## Version 2.1.17
 
 Fixes:

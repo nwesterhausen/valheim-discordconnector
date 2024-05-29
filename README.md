@@ -42,5 +42,7 @@ Thanks for the helpful contributions!
 - @Digitalroot
 - @nwesterhausen
 - @thedefside
+- @Jimw383
+- @jterrace
 
 Thanks for an excellent original plugin @aequasi!
