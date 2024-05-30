@@ -2,6 +2,13 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version upcoming
+
+Features
+
+- Server New Day event and message
+- `%DAY_NUMBER%` variable replacement
+
 ## Version 2.2.0
 
 Features

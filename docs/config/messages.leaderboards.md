@@ -1,9 +1,12 @@
 # Messages.LeaderBoards
 
-::: details Available Custom Variables
-These are defined in the [Custom Variables](/config/variables.html) config file.
+::: tip Available Dynamic Variables
 
-`%VAR1%`, `%VAR2%`, `%VAR3%`, `%VAR4%`, `%VAR5%`, `%VAR6%`, `%VAR7%`, `%VAR8%`, `%VAR9%`, `%VAR10%`
+| Variable            | Replaced with..                                                                           | Can be used in..    |
+| ------------------- | ----------------------------------------------------------------------------------------- | ------------------- |
+| `%VAR1%` - `VAR10%` | Custom variable value (defined in [Custom Variables](/config/variables.html) config file) | Any messages        |
+| `%PUBLICIP%`        | Server's public IP (according to the server)                                              | Any server messages |
+| `%DAY_NUMBER%`      | Current day number on server                                                              | Any messages        |
 :::
 
 ## Leader Board Heading for Top N Players

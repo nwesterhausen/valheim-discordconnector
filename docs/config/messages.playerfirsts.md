@@ -10,6 +10,15 @@
 | `%POS%`            | Player's coordinate position | Player join/leave/shout/ping/death messages. |
 :::
 
+::: tip Available Dynamic Variables
+
+| Variable            | Replaced with..                                                                           | Can be used in..    |
+| ------------------- | ----------------------------------------------------------------------------------------- | ------------------- |
+| `%VAR1%` - `VAR10%` | Custom variable value (defined in [Custom Variables](/config/variables.html) config file) | Any messages        |
+| `%PUBLICIP%`        | Server's public IP (according to the server)                                              | Any server messages |
+| `%DAY_NUMBER%`      | Current day number on server                                                              | Any messages        |
+:::
+
 :::details Random Messages
 All of the message options support having multiple messages defined in a semicolon (`;`) separated list. If you have multiple messages defined for these settings, one gets chosen at random when DiscordConnector decides to send the corresponding message.
 
