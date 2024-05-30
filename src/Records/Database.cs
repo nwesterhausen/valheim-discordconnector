@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using DiscordConnector.LeaderBoards;
 using LiteDB;
@@ -25,14 +24,20 @@ internal class Database
     private ILiteCollection<PlayerToName> PlayerToNameCollection;
 
     /// <summary>
-    /// Set's up the database using the compiled string `"${PluginInfo.PLUGIN_ID}-records.db"`, which in this
-    /// case is probably `games.nwest.valheim.discordconnector-records.db`. This method needs to know where to
-    /// store the database, since that is something that is only known at runtime.
+    /// Sets up the database path and initializes the database connection.
+    ///
+    /// This will set up the database path in a default location: `BepInEx/Config/{PluginInfo.PLUGIN_ID}/records.db`
     /// </summary>
     /// <param name="rootStorePath">Directory to save the LiteDB database in.</param>
     public Database(string rootStorePath)
     {
         DbPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, PluginInfo.PLUGIN_ID, DB_NAME);
+        // If rootStorePath has length and is not equal to the default path, use it instead.
+        // Note: Enabling this would cause the database to store with the game root instead (see Plugin.cs:43)
+        // if (rootStorePath.Length > 0 && rootStorePath != BepInEx.Paths.ConfigPath)
+        // {
+        //     DbPath = System.IO.Path.Combine(rootStorePath, DB_NAME);
+        // }
 
         // Check for database in old location and move if necessary
         string oldDatabase = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, $"{PluginInfo.PLUGIN_ID}-records.db");
@@ -46,11 +51,11 @@ internal class Database
 
     /// <summary>
     /// Method to initialize the database reference and content.
-    /// 
+    ///
     /// This method creates the database file (if it doesn't exist) and opens it for reading.
-    /// 
+    ///
     /// Because of how LiteDB works (it creates tables as needed), this method simply creates the collection handles
-    /// used later on as records get added to the database. 
+    /// used later on as records get added to the database.
     /// </summary>
     public void Initialize()
     {
@@ -123,7 +128,7 @@ internal class Database
     {
         Task.Run(() =>
         {
-            var newRecord = new SimpleStat(
+            SimpleStat newRecord = new SimpleStat(
                 playerName,
                 playerHostName,
                 pos.x, pos.y, pos.z
@@ -205,7 +210,7 @@ internal class Database
 
     /// <summary>
     /// Insert a simple stat record without position for the provided key into the LiteDB database.
-    /// 
+    ///
     /// This method simply wraps the positional InsertSimpleStatRecord method.
     /// </summary>
     /// <param name="key">What kind of record to insert</param>
@@ -218,7 +223,7 @@ internal class Database
 
     /// <summary>
     /// Returns the latest known character name for the given player identifier.
-    /// 
+    ///
     /// This first tries to find the name in the player_name table, and failing that references the join table with a query.
     /// If it has to use the join table to find the name, if it does find a valid name, it adds a record to the player_name
     /// table to make future lookups faster.
@@ -245,7 +250,7 @@ internal class Database
                     .First();
                 return playerInfo.CharacterName;
             }
-            catch (System.InvalidOperationException)
+            catch (InvalidOperationException)
             {
                 // We should never not find the record, since we check for exists above!
                 Plugin.StaticLogger.LogWarning($"Should have found {playerHostName} in player_name table but did not!");
@@ -254,7 +259,7 @@ internal class Database
 
         // Some manual query business to grab the name from the Join table. This section should only get reached for old records,
         // where the player has not logged in for a while.
-        var nameQuery = JoinCollection.Query()
+        List<BsonDocument> nameQuery = JoinCollection.Query()
             .Where(x => x.PlayerId.Equals(playerHostName))
             .OrderByDescending("Date")
             .Select("$.Name")
@@ -272,7 +277,7 @@ internal class Database
             Plugin.StaticLogger.LogDebug($"nameQuery has {nameQuery.Count} results");
         }
         // simplify results to single record
-        var result = nameQuery[0];
+        BsonDocument result = nameQuery[0];
         if (Plugin.StaticConfig.DebugDatabaseMethods)
         {
             Plugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {playerHostName} result = {result}");
@@ -317,13 +322,13 @@ internal class Database
 
     private struct JoinLeaveTime
     {
-        public System.DateTime Time;
+        public DateTime Time;
         public bool IsJoin;
     }
 
     /// <summary>
     /// Provides time online in seconds for all players within the date range provided. By default, it includes all time.
-    /// 
+    ///
     /// This looks through the provided simple stat table and counts up time differences between joins and leaves.
     /// </summary>
     /// <param name="startDate">Date to start including records from</param>
@@ -340,7 +345,7 @@ internal class Database
         foreach (PlayerToName player in players)
         {
             // Create a spot to record total online time for player.
-            System.TimeSpan onlineTime = System.TimeSpan.FromSeconds(0.0);
+            TimeSpan onlineTime = TimeSpan.FromSeconds(0.0);
 
             var joinsQuery = JoinCollection.Query().Where(x => x.PlayerId.Equals(player.PlayerId) && x.Name.Equals(player.CharacterName));
             var leavesQuery = LeaveCollection.Query().Where(x => x.PlayerId.Equals(player.PlayerId) && x.Name.Equals(player.CharacterName));
@@ -370,18 +375,21 @@ internal class Database
             Plugin.StaticLogger.LogDebug($"{player.PlayerId} as {player.CharacterName} has {joins.Length} joins, {leaves.Length} leaves");
 
             System.DateTime? joinedTime = null;
-            foreach (JoinLeaveTime joinLeaveTime in sortedJoinLeaves) {
+            foreach (JoinLeaveTime joinLeaveTime in sortedJoinLeaves)
+            {
                 if (joinedTime == null)
                 {
                     // Player is not currently joined, so expecting a join.
                     if (joinLeaveTime.IsJoin)
                     {
                         joinedTime = joinLeaveTime.Time;
-                    } else
+                    }
+                    else
                     {
                         Plugin.StaticLogger.LogDebug($"Player {player.CharacterName} left at {joinLeaveTime.Time} but was not joined.");
                     }
-                } else
+                }
+                else
                 {
                     // Player is currently joined, expecting a leave.
                     if (joinLeaveTime.IsJoin)
@@ -409,9 +417,9 @@ internal class Database
 
     /// <summary>
     /// Get the total count of records in the category for the player (by character name).
-    /// 
+    ///
     /// This can be used to figure out if its the first action the player has taken.
-    /// 
+    ///
     /// Returns -1 if collecting stats is disabled.
     /// Returns -2 if the specified category key is invalid
     /// Returns -3 if the collection in the database has an issue
@@ -450,7 +458,7 @@ internal class Database
             return CountAllRecordsGrouped(key);
         }
 
-        var BeginEndDate = DateHelper.StartEndDatesForTimeRange(timeRange);
+        Tuple<DateTime, DateTime> BeginEndDate = DateHelper.StartEndDatesForTimeRange(timeRange);
         return CountRecordsBetweenDatesGrouped(key, BeginEndDate.Item1, BeginEndDate.Item2);
     }
 
@@ -472,7 +480,7 @@ internal class Database
                 return TimeOnlineRecordsGrouped(startDate, endDate, inclusiveStart, inclusiveEnd);
             default:
                 Plugin.StaticLogger.LogDebug($"CountTodaysRecordsGrouped, invalid key '{key}'");
-                return new List<CountResult>();
+                return [];
         }
 
     }
@@ -494,7 +502,7 @@ internal class Database
 
     /// <summary>
     /// Return a list of leaders for the collection.
-    /// 
+    ///
     /// This looks through the provided simple stat table and counts up results for each player using the method defined in the config.
     /// </summary>
     /// <param name="collection">Simple stat collection to count player totals in</param>
@@ -512,7 +520,7 @@ internal class Database
             {
                 Plugin.StaticLogger.LogDebug("Collection is empty, skipping.");
             }
-            return new List<CountResult>();
+            return [];
         }
 
         // Config.RetrievalDiscernmentMethods.BySteamID by default (should be most common), conditionally check for others
@@ -530,7 +538,7 @@ internal class Database
             SelectClause = "{Name: @Key, Count: Count(*)}";
         }
 
-        var result = CountResult.ConvertFromBsonDocuments(
+        List<CountResult> result = CountResult.ConvertFromBsonDocuments(
             collection.Query()
                 .GroupBy(GroupByClause)
                 .Select(SelectClause)
@@ -548,7 +556,7 @@ internal class Database
 
     /// <summary>
     /// Provides count summaries for the collection within the date range provided. By default, it includes the start date.
-    /// 
+    ///
     /// This looks through the provided simple stat table and counts up results for each player using the method defined in the config.
     /// </summary>
     /// <param name="collection">Simple stat collection to count player totals in</param>
@@ -570,7 +578,7 @@ internal class Database
             {
                 Plugin.StaticLogger.LogDebug("Collection is empty, skipping.");
             }
-            return new List<CountResult>();
+            return [];
         }
 
         // Config.RetrievalDiscernmentMethods.BySteamID by default (should be most common), conditionally check for others
