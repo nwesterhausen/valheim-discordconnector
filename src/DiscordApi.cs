@@ -19,9 +19,9 @@ class DiscordApi
     {
         if (Plugin.StaticConfig.DiscordEmbedsEnabled)
         {
-            SendMessageWithFields(ev, message, new List<Tuple<string, string>> {
+            SendMessageWithFields(ev, message, [
                     Tuple.Create("Coordinates",MessageTransformer.FormatVector3AsPos(pos))
-                });
+                ]);
         }
         else
         {
@@ -36,7 +36,7 @@ class DiscordApi
     public static void SendMessage(Webhook.Event ev, string message)
     {
         // A simple string message
-        var payload = new DiscordSimpleWebhook
+        DiscordSimpleWebhook payload = new()
         {
             content = message
         };
@@ -73,7 +73,7 @@ class DiscordApi
         if (fields != null)
         {
             // Convert the fields into JSON Strings
-            List<string> fieldStrings = new List<string>();
+            List<string> fieldStrings = [];
             foreach (Tuple<string, string> t in fields)
             {
                 try
@@ -92,7 +92,7 @@ class DiscordApi
 
             if (fieldStrings.Count > 0)
             {
-                // Put the field JSON strings into our payload object 
+                // Put the field JSON strings into our payload object
                 // Fields go under embed as array
                 payloadString += "\"embeds\":[{\"fields\":[";
                 payloadString += string.Join(",", fieldStrings.ToArray());
@@ -113,7 +113,7 @@ class DiscordApi
             payloadString += $"\"content\":\"{content}\"";
         }
 
-        // Finish the payload JSON 
+        // Finish the payload JSON
         payloadString += "}";
 
         // Use our pre-existing method to send serialized JSON to discord
@@ -246,25 +246,77 @@ class DiscordApi
     }
 }
 
+/// <summary>
+/// Simple webhook object is used for messages that contain only a simple string.
+/// </summary>
 internal class DiscordSimpleWebhook
 {
+    /// <summary>
+    /// The message content to send to Discord. This is considered simple because it is not a series of embeds/fields.
+    ///
+    /// This works best for simple messages, and is used for most messages sent by the plugin.
+    ///
+    /// E.g. "Player joined the game", "Player left the game", etc.
+    /// </summary>
     public string content { get; set; }
 }
+
+/// <summary>
+/// Complex webhook object is used for messages that contain more than just a simple string.
+/// </summary>
 internal class DiscordComplexWebhook
 {
+    /// <summary>
+    /// Message content to send to Discord. This is considered complex because it contains multiple embeds/fields.
+    ///
+    /// This is used for POS embeds, and the leaderboards.
+    /// </summary>
     public DiscordEmbed embeds { get; set; }
 }
+
+/// <summary>
+/// A complex Discord message, containing more than just a simple string.
+///
+/// See https://discord.com/developers/docs/resources/channel#embed-object
+/// </summary>
 internal class DiscordEmbed
 {
 
 #nullable enable
+    /// <summary>
+    /// The title of the message.
+    /// </summary>
     public string? title { get; set; }
+    /// <summary>
+    /// The description of the message.
+    /// </summary>
     public string? description { get; set; }
+    /// <summary>
+    /// A list of fields to include in the message.
+    ///
+    /// For leaderboards, each leaderboard that is included is a field.
+    /// </summary>
     public List<DiscordField>? fields { get; set; }
 #nullable restore
 }
+
+/// <summary>
+/// A field for a Discord message, which allows for fancy formatting.
+///
+/// See https://discord.com/developers/docs/resources/channel#embed-object-embed-field-structure
+/// </summary>
 internal class DiscordField
 {
+    /// <summary>
+    /// Name of the field.
+    ///
+    /// These are just titled embedded values, where the name is the title. The value is a content string.
+    /// </summary>
     public string name { get; set; }
+    /// <summary>
+    /// The string content of the field.
+    ///
+    /// For example, the leaderboards are a list with `\n` as a separator, so they appear as an ordered list in Discord.
+    /// </summary>
     public string value { get; set; }
 }

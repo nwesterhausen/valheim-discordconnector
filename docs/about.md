@@ -18,6 +18,7 @@ A plugin to connect your Valheim server to Discord.
 - Server startup (server starting, loading the world)
 - Server started (world loaded, ready to join)
 - Server shutting down (server stopping)
+- New day starts on server
 - Player join
 - Player leave
 - Player shouting

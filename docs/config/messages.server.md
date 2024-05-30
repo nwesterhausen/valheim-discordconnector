@@ -1,9 +1,12 @@
 # Messages.Server
 
-::: tip Available Predefined Variables (Server)
-| Variable     | Replaced with..                                                        | Can be used in..    |
-| ------------ | ---------------------------------------------------------------------- | ------------------- |
-| `%PUBLICIP%` | Server's public IP (obtained from [ifconfig.me](https://ifconfig.me/)) | Any server messages |
+::: tip Available Dynamic Variables
+
+| Variable            | Replaced with..                                                                           | Can be used in..    |
+| ------------------- | ----------------------------------------------------------------------------------------- | ------------------- |
+| `%VAR1%` - `VAR10%` | Custom variable value (defined in [Custom Variables](/config/variables.html) config file) | Any messages        |
+| `%PUBLICIP%`        | Server's public IP (according to the server)                                              | Any server messages |
+| `%DAY_NUMBER%`      | Current day number on server                                                              | Any messages        |
 :::
 
 ## Server Launch Message
