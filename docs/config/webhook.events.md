@@ -26,6 +26,7 @@ Take note that some of these events are subsets of the [special cases](/config/w
 | serverStop       | Server beings stopping                        | Yes                |
 | serverShutdown   | Server has stopped                            | Yes                |
 | serverSave       | The world has been saved                      | Yes                |
+| serverNewDay     | A new day begins on the server                | Yes                |
 | eventStart       | An event starts                               | Yes                |
 | eventPaused      | An event pauses                               | Yes                |
 | eventResumed     | An event resumes                              | Yes                |

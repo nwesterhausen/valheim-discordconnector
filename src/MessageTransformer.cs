@@ -25,6 +25,7 @@ internal static class MessageTransformer
     private const string EVENT_PLAYERS = "%PLAYERS%";
     private const string N = "%N%";
     private const string WORLD_NAME = "%WORLD_NAME%";
+    private const string DAY_NUMBER = "%DAY_NUMBER%";
 
     private static Regex OpenCaretRegex = new Regex(@"<[\w=]+>");
     private static Regex CloseCaretRegex = new Regex(@"</[\w]+>");
@@ -42,7 +43,8 @@ internal static class MessageTransformer
             .Replace(VAR_7, Plugin.StaticConfig.UserVariable7)
             .Replace(VAR_8, Plugin.StaticConfig.UserVariable8)
             .Replace(VAR_9, Plugin.StaticConfig.UserVariable9)
-            .Replace(PUBLIC_IP, Plugin.PublicIpAddress);
+            .Replace(PUBLIC_IP, Plugin.PublicIpAddress)
+            .Replace(DAY_NUMBER, EnvMan.instance != null ? EnvMan.instance.GetCurrentDay().ToString() : DAY_NUMBER);
     }
     private static string ReplaceDynamicVariables(string rawMessage)
     {

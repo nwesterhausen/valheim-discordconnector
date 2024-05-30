@@ -40,6 +40,7 @@ public class Webhook
         None,
         Other,
         CronJob,
+        NewDayNumber,
     }
 
     public static Event StringToEvent(string eventToken)
@@ -116,6 +117,9 @@ public class Webhook
 
             case "cronjob":
                 return Event.CronJob;
+
+            case "newDayNumber":
+                return Event.NewDayNumber;
 
             default:
                 Plugin.StaticLogger.LogDebug($"Unmatched event token '{eventToken}'");
@@ -244,7 +248,8 @@ class WebhookEntry
                 ev == Webhook.Event.ServerLaunch ||
                 ev == Webhook.Event.ServerShutdown ||
                 ev == Webhook.Event.ServerStart ||
-                ev == Webhook.Event.ServerStop)
+                ev == Webhook.Event.ServerStop ||
+                ev == Webhook.Event.NewDayNumber)
             {
                 return true;
             }
