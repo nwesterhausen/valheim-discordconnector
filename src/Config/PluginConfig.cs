@@ -161,6 +161,7 @@ internal class PluginConfig
     public bool EventPausedMessageEnabled => togglesConfig.EventPausedMessageEnabled;
     public bool EventResumedMessageEnabled => togglesConfig.EventResumedMessageEnabled;
     public bool ChatShoutAllCaps => togglesConfig.ChatShoutAllCaps;
+    public bool NewDayNumberEnabled => togglesConfig.NewDayNumberEnabled;
 
     // Toggles.Stats
     public bool StatsDeathEnabled => mainConfig.CollectStatsEnabled && togglesConfig.StatsDeathEnabled;
@@ -199,6 +200,7 @@ internal class PluginConfig
     public string StopMessage => messagesConfig.StopMessage;
     public string ShutdownMessage => messagesConfig.ShutdownMessage;
     public string SaveMessage => messagesConfig.SaveMessage;
+    public string NewDayMessage => messagesConfig.NewDayMessage;
 
     // Messages.Players
     public string JoinMessage => messagesConfig.JoinMessage;

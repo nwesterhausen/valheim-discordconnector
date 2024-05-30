@@ -22,6 +22,7 @@ internal class MessagesConfig
     private ConfigEntry<string> serverStopMessage;
     private ConfigEntry<string> serverShutdownMessage;
     private ConfigEntry<string> serverSavedMessage;
+    private ConfigEntry<string> serverNewDayMessage;
 
     // Player Messages
     private ConfigEntry<string> playerJoinMessage;
@@ -95,6 +96,11 @@ internal class MessagesConfig
             "Set the message that will be sent when the server saves the world data." + Environment.NewLine +
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" + Environment.NewLine +
             "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
+        serverNewDayMessage = config.Bind<string>(SERVER_MESSAGES,
+            "Server New Day Message",
+            "Day Number %DAY_NUMBER%",
+            "Set the message that will be sent when a new day starts." + Environment.NewLine +
+            "The %DAY_NUMBER% variable gets replaced with the day number.");
 
         // Messages.Player
         playerJoinMessage = config.Bind<string>(PLAYER_MESSAGES,
@@ -216,6 +222,7 @@ internal class MessagesConfig
         jsonString += $"\"stopMessage\":\"{serverStopMessage.Value}\",";
         jsonString += $"\"shutdownMessage\":\"{serverShutdownMessage.Value}\",";
         jsonString += $"\"savedMessage\":\"{serverSavedMessage.Value}\"";
+        jsonString += $"\"serverNewDayMessage\":\"{serverNewDayMessage.Value}\"";
         jsonString += "},";
 
         jsonString += $"\"{PLAYER_MESSAGES}\":{{";
@@ -274,6 +281,7 @@ internal class MessagesConfig
     public string StopMessage => GetRandomStringFromValue(serverStopMessage);
     public string ShutdownMessage => GetRandomStringFromValue(serverShutdownMessage);
     public string SaveMessage => GetRandomStringFromValue(serverSavedMessage);
+    public string NewDayMessage => GetRandomStringFromValue(serverNewDayMessage);
 
     // Messages.Player
     public string JoinMessage => GetRandomStringFromValue(playerJoinMessage);

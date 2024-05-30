@@ -30,6 +30,7 @@ internal class TogglesConfig
     private ConfigEntry<bool> eventStopMessageToggle;
     private ConfigEntry<bool> eventResumedMessageToggle;
     private ConfigEntry<bool> chatShoutAllCaps;
+    private ConfigEntry<bool> newDayNumberToggle;
 
     // Position Coordinates Toggles
     private ConfigEntry<bool> playerLeavePosToggle;
@@ -139,6 +140,10 @@ internal class TogglesConfig
             "Send All Caps Shout Messages",
             false,
             "If enabled, this will send all shout messages to Discord in all caps.");
+        newDayNumberToggle = config.Bind<bool>(MESSAGES_TOGGLES,
+            "Send Message For New Day Number",
+            true,
+            "If enabled, this will send a message with the current day number on new days.");
 
         // Position Toggles
         playerJoinPosToggle = config.Bind<bool>(POSITION_TOGGLES,
@@ -265,6 +270,7 @@ internal class TogglesConfig
         jsonString += $"\"eventStoppedEnabled\":\"{EventPausedMessageEnabled}\",";
         jsonString += $"\"eventResumedEnabled\":\"{EventResumedMessageEnabled}\",";
         jsonString += $"\"chatShoutAllCaps\":\"{ChatShoutAllCaps}\"";
+        jsonString += $"\"newDayNumberToggle\":\"{NewDayNumberEnabled}\"";
         jsonString += "},";
 
         jsonString += $"\"{POSITION_TOGGLES}\":{{";
@@ -346,4 +352,5 @@ internal class TogglesConfig
     public bool DebugHttpRequestResponse => debugHttpRequestResponses.Value;
     public bool DebugDatabaseMethods => debugDatabaseMethods.Value;
     public bool ChatShoutAllCaps => chatShoutAllCaps.Value;
+    public bool NewDayNumberEnabled => newDayNumberToggle.Value;
 }
