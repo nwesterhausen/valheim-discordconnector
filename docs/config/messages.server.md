@@ -35,3 +35,9 @@ Set the message that will be sent when the server finishes shutting down. If you
 Type: `String`, default value: `The world has been saved.`
 
 Set the message that will be sent when the server saves the world data. If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';' If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.
+
+## Server New Day Message
+
+Type: `String`, default value: `Day Number %DAY_NUMBER%`
+
+Set the message that will be sent when a new day starts. The `%DAY_NUMBER%` variable gets replaced with the new day number (e.g. "Day Number 34").
