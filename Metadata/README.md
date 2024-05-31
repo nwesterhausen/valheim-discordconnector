@@ -34,6 +34,13 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Changelog
 
+## Version 2.2.1
+
+Features
+
+- Server New Day event and message (@jterrace)
+- `%DAY_NUMBER%` variable replacement (@jterrace)
+
 ## Version 2.2.0
 
 Features

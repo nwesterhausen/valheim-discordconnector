@@ -2,12 +2,12 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
-## Version upcoming
+## Version 2.2.1
 
 Features
 
-- Server New Day event and message
-- `%DAY_NUMBER%` variable replacement
+- Server New Day event and message (@jterrace)
+- `%DAY_NUMBER%` variable replacement (@jterrace)
 
 ## Version 2.2.0
 
