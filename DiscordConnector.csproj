@@ -19,7 +19,7 @@
     <DiscordConnectorDir>$(BinDir)DiscordConnector/</DiscordConnectorDir>
     <MetadataDir>$(ProjectDir)Metadata/</MetadataDir>
     <ValheimManagedLibs>$(GamePath)\valheim_Data\Managed</ValheimManagedLibs>
-    <!-- Setup publicized asssembly shorthand -->
+    <!-- Setup publicized assembly shorthand -->
     <PublicizedAssemblies>$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssemblies>
   </PropertyGroup>
 
