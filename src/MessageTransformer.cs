@@ -42,11 +42,48 @@ internal static class MessageTransformer
             .Replace(VAR_6, Plugin.StaticConfig.UserVariable6)
             .Replace(VAR_7, Plugin.StaticConfig.UserVariable7)
             .Replace(VAR_8, Plugin.StaticConfig.UserVariable8)
-            .Replace(VAR_9, Plugin.StaticConfig.UserVariable9)
-            .Replace(PUBLIC_IP, Plugin.PublicIpAddress)
+            .Replace(VAR_9, Plugin.StaticConfig.UserVariable9);
+    }
+
+    /// <summary>
+    /// Replace dynamic variables in the message. These are variables that are not static and need to be calculated at runtime.
+    /// </summary>
+    private static string ReplaceDynamicVariables(string rawMessage) {
+        // additionally add any other dynamic variables here..
+        string dynamicReplacedMessage = ReplacePublicIp(rawMessage);
+        dynamicReplacedMessage = ReplaceWorldName(dynamicReplacedMessage);
+        dynamicReplacedMessage = ReplaceDayNumber(dynamicReplacedMessage);
+
+        return dynamicReplacedMessage;
+    }
+
+    /// <summary>
+    /// Replace the day number in the message. Uses the EnvMan instance to get the current day.
+    /// </summary>
+    private static string ReplaceDayNumber(string rawMessage)
+    {
+        // as written, if no EnvMan instance is available, it will return the raw message with `%DAY_NUMBER%` still in it.
+        return rawMessage
             .Replace(DAY_NUMBER, EnvMan.instance != null ? EnvMan.instance.GetCurrentDay().ToString() : DAY_NUMBER);
     }
-    private static string ReplaceDynamicVariables(string rawMessage)
+
+    /// <summary>
+    /// Replace the public IP in the message. Uses the ZNet instance to get the public IP.
+    ///
+    /// Note that if this fails, it will return an empty string. Also some occasions, the ZNet class may fail to get
+    /// the public IP address. This is out of scope for this plugin, to avoid making our own assumptions about the
+    /// network configuration of the server.
+    /// </summary>
+    private static string ReplacePublicIp(string rawMessage)
+    {
+        return rawMessage
+            .Replace(PUBLIC_IP, ZNet.GetPublicIP());
+    }
+
+    /// <summary>
+    /// Replace the world name in the message. Uses the ZNet instance to get the world name.
+    /// </summary>
+    private static string ReplaceWorldName(string rawMessage)
     {
         string world_name = "";
         try
@@ -55,8 +92,9 @@ internal static class MessageTransformer
         }
         catch (System.Exception e)
         {
-            Plugin.StaticLogger.LogDebug($"Unable to get World Name from ZNet. {e.Message}");
+            Plugin.StaticLogger.LogError($"Unable to get World Name from ZNet. {e.Message}");
         }
+
         return rawMessage
             .Replace(WORLD_NAME, world_name);
     }
@@ -134,12 +172,12 @@ internal static class MessageTransformer
 
     /// <summary>
     /// Remove caret formatting from a string. This is used to strip special color codes away from user names.
-    /// 
+    ///
     /// For example, some mods can send messages as shouts in the game. They may try to color the name of the user:
     ///     `<color=cyan>[Admin]</color> vadmin`
     /// This function strips away any caret formatting, making the string "plain text"
     ///     `[Admin] vadmin`
-    /// 
+    ///
     /// </summary>
     /// <param name="str">String to strip caret formatting from</param>
     /// <returns>Same string but without the caret formatting</returns>
