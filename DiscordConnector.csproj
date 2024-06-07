@@ -13,13 +13,14 @@
 
   <PropertyGroup>
     <!-- Set the path to the game folder. This is used when including references below -->
-    <GamePath Condition="$(GamePath) == ''">G:\Valheim\0.218.15</GamePath>
+    <GamePath Condition="$(GamePath) == ''">/Users/nwesterhausen/Downloads/valheim_0.218.15</GamePath>
     <!-- Make the references to folders used in the build process a lot simpler -->
     <BinDir>$(ProjectDir)bin/</BinDir>
     <DiscordConnectorDir>$(BinDir)DiscordConnector/</DiscordConnectorDir>
     <MetadataDir>$(ProjectDir)Metadata/</MetadataDir>
+    <DocsDir>$(ProjectDir)docs/</DocsDir>
     <ValheimManagedLibs>$(GamePath)\valheim_Data\Managed</ValheimManagedLibs>
-    <!-- Setup publicized asssembly shorthand -->
+    <!-- Setup publicized assembly shorthand -->
     <PublicizedAssemblies>$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssemblies>
   </PropertyGroup>
 
@@ -92,6 +93,9 @@
     <!-- Metadata files go into the base directory -->
     <Copy SourceFiles="@(ThunderstoreMetadata)" DestinationFolder="$(DiscordConnectorDir)"
       SkipUnchangedFiles="true" />
+    <!-- Copying the changelog involves renaming to all uppercase -->
+    <Copy SourceFiles="$(DocsDir)changelog.md"
+      DestinationFiles="$(DiscordConnectorDir)CHANGELOG.md" SkipUnchangedFiles="true" />
   </Target>
 
   <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles">
