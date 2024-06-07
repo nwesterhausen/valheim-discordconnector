@@ -9,6 +9,7 @@
 | `%DAY_NUMBER%`      | Current day number on server                                                              | Any messages        |
 | `%WORLD_NAME%`      | World name of the world used on the server                                                | Any messages        |
 | `%NUM_PLAYERS%`     | Number of currently online players                                                        | Any messages        |
+| `%JOIN_CODE%`       | Server's join code (only if a join code exists, blank otherwise)                          | Any messages        |
 :::
 
 ## Server Launch Message

@@ -27,6 +27,7 @@ internal static class MessageTransformer
     private const string WORLD_NAME = "%WORLD_NAME%";
     private const string DAY_NUMBER = "%DAY_NUMBER%";
     private const string NUM_PLAYERS = "%NUM_PLAYERS%";
+    private const string JOIN_CODE = "%JOIN_CODE%";
 
     private static readonly Regex OpenCaretRegex = new(@"<[\w=]+>");
     private static readonly Regex CloseCaretRegex = new(@"</[\w]+>");
@@ -59,6 +60,7 @@ internal static class MessageTransformer
     ///     - `%WORLD_NAME%` with the name of the world
     ///     - `%DAY_NUMBER%` with the current day number
     ///     - `%NUM_PLAYERS%` with the number of players in the server
+    ///     - `%JOIN_CODE%` with the join code of the server
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     private static string ReplaceDynamicVariables(string rawMessage)
@@ -68,8 +70,19 @@ internal static class MessageTransformer
         dynamicReplacedMessage = ReplaceWorldName(dynamicReplacedMessage);
         dynamicReplacedMessage = ReplaceDayNumber(dynamicReplacedMessage);
         dynamicReplacedMessage = ReplaceNumPlayers(dynamicReplacedMessage);
+        dynamicReplacedMessage = ReplaceJoinCode(dynamicReplacedMessage);
 
         return dynamicReplacedMessage;
+    }
+
+    /// <summary>
+    /// Replace the join code in the message. Uses the ZPlayFabMatchmaking class to get the join code.
+    /// </summary>
+    /// <param name="rawMessage">Raw message to format</param>
+    private static string ReplaceJoinCode(string rawMessage)
+    {
+        return rawMessage
+            .Replace(JOIN_CODE, ZPlayFabMatchmaking.JoinCode);
     }
 
     /// <summary>
