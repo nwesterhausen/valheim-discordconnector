@@ -26,6 +26,7 @@ internal static class MessageTransformer
     private const string N = "%N%";
     private const string WORLD_NAME = "%WORLD_NAME%";
     private const string DAY_NUMBER = "%DAY_NUMBER%";
+    private const string NUM_PLAYERS = "%NUM_PLAYERS%";
 
     private static Regex OpenCaretRegex = new Regex(@"<[\w=]+>");
     private static Regex CloseCaretRegex = new Regex(@"</[\w]+>");
@@ -53,6 +54,7 @@ internal static class MessageTransformer
         string dynamicReplacedMessage = ReplacePublicIp(rawMessage);
         dynamicReplacedMessage = ReplaceWorldName(dynamicReplacedMessage);
         dynamicReplacedMessage = ReplaceDayNumber(dynamicReplacedMessage);
+        dynamicReplacedMessage = ReplaceNumPlayers(dynamicReplacedMessage);
 
         return dynamicReplacedMessage;
     }
@@ -65,6 +67,15 @@ internal static class MessageTransformer
         // as written, if no EnvMan instance is available, it will return the raw message with `%DAY_NUMBER%` still in it.
         return rawMessage
             .Replace(DAY_NUMBER, EnvMan.instance != null ? EnvMan.instance.GetCurrentDay().ToString() : DAY_NUMBER);
+    }
+
+    /// <summary>
+    /// Replace the number of players in the message. Uses the ZNet instance to get the number of players.
+    /// </summary>
+    private static string ReplaceNumPlayers(string rawMessage)
+    {
+        return rawMessage
+            .Replace(NUM_PLAYERS, ZNet.instance.GetNrOfPlayers().ToString());
     }
 
     /// <summary>
