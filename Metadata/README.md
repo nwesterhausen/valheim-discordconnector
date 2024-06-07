@@ -32,23 +32,22 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 - More statistics trackable/able to be sent
 - New day messages
 
-## Changelog
+## Abridged Changelog
 
-## Version 2.2.1
-
-Features
-
-- Server New Day event and message (@jterrace)
-- `%DAY_NUMBER%` variable replacement (@jterrace)
-
-## Version 2.2.0
+### Version 2.2.2
 
 Features
 
-- Working time online leaderboard (@jterrace)
+- add `%JOIN_CODE%` variable which will show the join code if crossplay is enabled
+- add `%NUM_PLAYERS%` variable which will show the number of online players
 
 Fixes
 
-- Build against the Ashlands update
-- Properly calculate time online (@jterrace)
-- Ping show the ping POS instead of player's POS (@jimw383)
+- updated the documentation to reflect how `%WORLD_NAME%`, `%PUBLIC_IP%`, and `%DAY_NUMBER%` can be
+in any messages and be replaced.
+
+Note: At server startup, some variables may not be available. They all should be available when server
+is launched, but the join code may take a bit longer to display -- more testing is needed to know exactly
+how much extra time it needs on average. If it is consistently unavailable, please file an issue and we
+can come up with either a delayed startup message or another event that fires when the code becomes not
+empty or changes.

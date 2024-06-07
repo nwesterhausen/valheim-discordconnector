@@ -2,6 +2,24 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.2.2
+
+Features
+
+- add `%JOIN_CODE%` variable which will show the join code if crossplay is enabled
+- add `%NUM_PLAYERS%` variable which will show the number of online players
+
+Fixes
+
+- updated the documentation to reflect how `%WORLD_NAME%`, `%PUBLIC_IP%`, and `%DAY_NUMBER%` can be
+in any messages and be replaced.
+
+Note: At server startup, some variables may not be available. They all should be available when server
+is launched, but the join code may take a bit longer to display -- more testing is needed to know exactly
+how much extra time it needs on average. If it is consistently unavailable, please file an issue and we
+can come up with either a delayed startup message or another event that fires when the code becomes not
+empty or changes.
+
 ## Version 2.2.1
 
 Features
