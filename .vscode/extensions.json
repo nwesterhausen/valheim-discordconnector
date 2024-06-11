@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "ms-dotnettools.vscode-dotnet-runtime",
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.csdevkit",
+    "k--kato.docomment",
+    "usernamehw.errorlens",
+    "ms-dotnettools.vscodeintellicode-csharp",
+    "yzhang.markdown-all-in-one",
+    "tekumara.typos-vscode"
+  ]
+}
