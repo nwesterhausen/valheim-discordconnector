@@ -246,6 +246,180 @@ class DiscordApi
     }
 }
 
+internal class DiscordExecuteWebhook
+{
+#nullable enable
+    /// <summary>
+    /// The message contents (up to 2000 characters). Required if `embeds` is not provided.
+    /// </summary>
+    public string? content { get; set; }
+    /// <summary>
+    /// Override the default username of the webhook.
+    /// </summary>
+    public string? username { get; set; }
+    /// <summary>
+    /// Override the default avatar of the webhook.
+    /// </summary>
+    public string? avatar_url { get; set; }
+    /// <summary>
+    /// An array of up to 10 embed objects. Required if `content` is not provided.
+    /// </summary>
+    public List<DiscordEmbed>? embeds { get; set; }
+    /// <summary>
+    /// Allowed mentions for the message.
+    /// </summary>
+    public AllowedMentions? allowed_mentions { get; set; }
+#nullable restore
+    // ! Any additional fields are also left out, as they are not used in this plugin.
+
+    /// <summary>
+    /// Create an empty DiscordExecuteWebhook object.
+    /// </summary>
+    public DiscordExecuteWebhook()
+    {
+        content = null;
+        username = null;
+        avatar_url = null;
+        embeds = null;
+        allowed_mentions = null;
+    }
+
+    /// <summary>
+    /// Create a DiscordExecuteWebhook object with a message content. This is the most common use case: a simple message.
+    /// </summary>
+    public DiscordExecuteWebhook(string content)
+    {
+        this.content = content;
+        username = null;
+        avatar_url = null;
+        embeds = null;
+        allowed_mentions = null;
+    }
+
+    /// <summary>
+    /// Set the
+}
+
+internal class AllowedMentions
+{
+    /// <summary>
+    /// An array of allowed mention types to parse from the content.
+    ///
+    /// Allowed mention types:
+    ///
+    /// `roles` - Role mentions
+    /// `users` - User mentions
+    /// `everyone` - @everyone/@here mentions
+    /// </summary>
+    /// <value>empty (none allowed)</value>
+    public List<string> parse { get; set; }
+    /// <summary>
+    /// Array of role_ids to mention (Max size of 100)
+    /// </summary>
+    /// <value>empty</value>
+    public List<string> roles { get; set; }
+    /// <summary>
+    /// Array of user_ids to mention (Max size of 100)
+    /// </summary>
+    /// <value>empty</value>
+    public List<string> users { get; set; }
+    /// <summary>
+    /// For replies, whether to mention the user being replied to.
+    /// </summary>
+    /// <value>false</value>
+    public bool replied_user { get; set; }
+
+    public AllowedMentions()
+    {
+        parse = [];
+        roles = [];
+        users = [];
+        replied_user = false;
+    }
+
+    /// <summary>
+    /// Enable `@everyone` and `@here` mentions.
+    /// </summary>
+    public void AllowEveryone()
+    {
+        if (!parse.Contains("everyone"))
+            parse.Add("everyone");
+    }
+
+    /// <summary>
+    /// Enable `@everyone` and `@here` mentions.
+    /// </summary>
+    public void AllowHere()
+    {
+        if (!parse.Contains("everyone"))
+            parse.Add("everyone");
+    }
+
+    /// <summary>
+    /// Add a role_id to the allowed mentions.
+    /// </summary>
+    /// <param name="role_id">The role_id to allow mentions for</param>
+    public void AllowRole(string role_id)
+    {
+        if (!roles.Contains(role_id))
+            roles.Add(role_id);
+    }
+
+    /// <summary>
+    /// Add a list of role_ids to the allowed mentions.
+    /// </summary>
+    /// <param name="role_ids">The role_ids to allow mentions for</param>
+    public void AllowRoles(List<string> role_ids)
+    {
+        foreach (string role_id in role_ids)
+        {
+            AllowRole(role_id);
+        }
+    }
+
+    /// <summary>
+    /// Remove a role_id from the allowed mentions.
+    /// </summary>
+    /// <param name="role_id">The role_id to disallow mentions for</param>
+    public void DisallowRole(string role_id)
+    {
+        if (roles.Contains(role_id))
+            roles.Remove(role_id);
+    }
+
+    /// <summary>
+    /// Add a user_id to the allowed mentions.
+    /// </summary>
+    /// <param name="user_id">The user_id to allow mentions for</param>
+    public void AllowUser(string user_id)
+    {
+        if (!users.Contains(user_id))
+            users.Add(user_id);
+    }
+
+    /// <summary>
+    /// Add a list of user_ids to the allowed mentions.
+    /// </summary>
+    /// <param name="user_ids">The user_ids to allow mentions for</param>
+    public void AllowUsers(List<string> user_ids)
+    {
+        foreach (string user_id in user_ids)
+        {
+            AllowUser(user_id);
+        }
+    }
+
+    /// <summary>
+    /// Remove a user_id from the allowed mentions.
+    /// </summary>
+    /// <param name="user_id">The user_id to disallow mentions for</param>
+    public void DisallowUser(string user_id)
+    {
+        if (users.Contains(user_id))
+            users.Remove(user_id);
+    }
+}
+
 /// <summary>
 /// Simple webhook object is used for messages that contain only a simple string.
 /// </summary>
