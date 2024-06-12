@@ -40,7 +40,7 @@ internal static class MessageTransformer
     /// <param name="rawMessage">Raw message to format</param>
     private static string ReplaceVariables(string rawMessage)
     {
-        return ReplaceDynamicVariables(rawMessage)
+        string customVariablesReplaced = rawMessage
             .Replace(VAR, Plugin.StaticConfig.UserVariable)
             .Replace(VAR_1, Plugin.StaticConfig.UserVariable1)
             .Replace(VAR_2, Plugin.StaticConfig.UserVariable2)
@@ -51,6 +51,8 @@ internal static class MessageTransformer
             .Replace(VAR_7, Plugin.StaticConfig.UserVariable7)
             .Replace(VAR_8, Plugin.StaticConfig.UserVariable8)
             .Replace(VAR_9, Plugin.StaticConfig.UserVariable9);
+
+        return ReplaceDynamicVariables(customVariablesReplaced)
     }
 
     /// <summary>
