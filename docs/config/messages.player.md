@@ -9,6 +9,7 @@
 | `%PLAYER_ID%`      | Player's Platform ID         | Player join/leave/shout/ping/death messages. |
 | `%SHOUT%`          | Text of the player's shout   | Player shout messages.                       |
 | `%POS%`            | Player's coordinate position | Player join/leave/shout/ping/death messages. |
+
 :::
 
 ::: tip Available Dynamic Variables
@@ -21,6 +22,7 @@
 | `%WORLD_NAME%`      | World name of the world used on the server                                                | Any messages        |
 | `%NUM_PLAYERS%`     | Number of currently online players                                                        | Any messages        |
 | `%JOIN_CODE%`       | Server's join code (only if a join code exists, blank otherwise)                          | Any messages        |
+
 :::
 
 :::details Random Messages
