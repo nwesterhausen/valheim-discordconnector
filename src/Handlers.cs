@@ -330,6 +330,7 @@ internal static class Handlers
     {
         // Format the message accordingly, depending if it has the %POS% variable or not
         string finalMessage;
+        bool isPlayerLeaving = ev == Webhook.Event.PlayerLeave || ev == Webhook.Event.PlayerFirstLeave;
         if (preFormattedMessage.Contains("%POS%"))
         {
             if (!posEnabled)
@@ -337,12 +338,12 @@ internal static class Handlers
                 preFormattedMessage.Replace("%POS%", "");
             }
 
-            finalMessage = MessageTransformer.FormatPlayerMessage(preFormattedMessage, peer.m_playerName, playerHostName, pos);
+            finalMessage = MessageTransformer.FormatPlayerMessage(preFormattedMessage, peer.m_playerName, playerHostName, pos, isPlayerLeaving);
 
         }
         else
         {
-            finalMessage = MessageTransformer.FormatPlayerMessage(preFormattedMessage, peer.m_playerName, playerHostName);
+            finalMessage = MessageTransformer.FormatPlayerMessage(preFormattedMessage, peer.m_playerName, playerHostName, isPlayerLeaving);
         }
 
         // If sending the position with the player join message is enabled
@@ -365,7 +366,7 @@ internal static class Handlers
 
     /// <summary>
     /// Finish formatting the message based on the positional data (if allowed) and dispatch it to the Discord webhook.
-    /// 
+    ///
     /// This method handles the text from shouts and other chat-adjacent things
     /// </summary>
     /// <param name="peer">Player peer reference</param>
@@ -411,8 +412,8 @@ internal static class Handlers
 
     /// <summary>
     /// Handle a non-player chat message. Currently only works for shouts.
-    /// /// 
-    /// If allowed in the configuration, this will send a message to discord as if a player shouted. 
+    /// ///
+    /// If allowed in the configuration, this will send a message to discord as if a player shouted.
     /// </summary>
     /// <param name="type">Type of chat message</param>
     /// <param name="user">Listed username of sender</param>
