@@ -20,7 +20,7 @@ Discord channel webhook URL. For instructions, reference the 'MAKING A WEBHOOK' 
 
 Type: `String`, default value: `ALL`
 
-Specify a subset of possible events to send to the primary webhook. Format should be the keyword 'ALL' or a semi-colon separated list, e.g. `serverLifecycle;playerAll;playerFirstAll;leaderboardsAll;`
+Specify a subset of possible events to send to this webhook. Format should be the keyword 'ALL' or a semi-colon separated list, e.g. `serverLifecycle;playerAll;playerFirstAll;leaderboardsAll;`
 
 A full list of valid options for this are [here](https://discord-connector.valheim.games.nwest.one/config/webhook.events.html).
 

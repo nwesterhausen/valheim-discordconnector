@@ -132,6 +132,7 @@ Choose a method for how players will be separated from the results of a record q
 | Name            | Treat each CharacterName as a separate player                  |
 | PlayerId        | Treat each PlayerId as a separate player                       |
 | NameAndPlayerId | Treat each [PlayerId:CharacterName] combo as a separate player |
+
 :::
 
 :::warning What is the PlayerID?
