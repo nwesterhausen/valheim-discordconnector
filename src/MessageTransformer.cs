@@ -52,7 +52,7 @@ internal static class MessageTransformer
             .Replace(VAR_8, Plugin.StaticConfig.UserVariable8)
             .Replace(VAR_9, Plugin.StaticConfig.UserVariable9);
 
-        return ReplaceDynamicVariables(customVariablesReplaced)
+        return ReplaceDynamicVariables(customVariablesReplaced);
     }
 
     /// <summary>
