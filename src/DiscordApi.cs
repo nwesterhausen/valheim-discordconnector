@@ -325,6 +325,11 @@ internal class DiscordExecuteWebhook
     {
         username = null;
         avatar_url = null;
+
+        if (!string.IsNullOrEmpty(Plugin.StaticConfig.DefaultWebhookUsernameOverride))
+        {
+            SetUsername(Plugin.StaticConfig.DefaultWebhookUsernameOverride);
+        }
     }
 
     /// <summary>

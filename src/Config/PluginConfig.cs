@@ -192,6 +192,7 @@ internal class PluginConfig
     public bool EventResumedPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.EventResumedPosEnabled;
 
     // Main Config
+    public string DefaultWebhookUsernameOverride => mainConfig.DefaultWebhookUsernameOverride;
     public WebhookEntry PrimaryWebhook => mainConfig.PrimaryWebhook;
     public WebhookEntry SecondaryWebhook => mainConfig.SecondaryWebhook;
     public bool CollectStatsEnabled => mainConfig.CollectStatsEnabled;

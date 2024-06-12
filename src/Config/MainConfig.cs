@@ -259,6 +259,7 @@ internal class MainConfig
         return jsonString;
     }
 
+    public string DefaultWebhookUsernameOverride => defaultWebhookUsernameOverride.Value;
     public WebhookEntry PrimaryWebhook => primaryWebhook;
     public WebhookEntry SecondaryWebhook => secondaryWebhook;
     public bool CollectStatsEnabled => collectStatsToggle.Value;
