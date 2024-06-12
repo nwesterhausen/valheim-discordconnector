@@ -118,17 +118,8 @@ internal static class MessageTransformer
     /// <param name="rawMessage">Raw message to format</param>
     private static string ReplacePublicIp(string rawMessage)
     {
-        string publicIp = "";
-        try
-        {
-            publicIp = ZNet.GetPublicIP();
-        }
-        catch (System.Exception e)
-        {
-            Plugin.StaticLogger.LogError($"Unable to get Public IP from ZNet. {e.Message}");
-        }
         return rawMessage
-            .Replace(PUBLIC_IP, publicIp);
+            .Replace(PUBLIC_IP, Plugin.PublicIpAddress);
     }
 
     /// <summary>

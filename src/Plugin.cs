@@ -29,7 +29,7 @@ public class Plugin : BaseUnityPlugin
             {
                 return _publicIpAddress;
             }
-            _publicIpAddress = ZNet.GetPublicIP();
+            _publicIpAddress = PublicIPChecker.GetPublicIP();
             return _publicIpAddress;
         }
     }

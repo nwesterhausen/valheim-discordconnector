@@ -34,3 +34,16 @@ internal static class Strings
             t.Milliseconds);
     }
 }
+
+internal static class PublicIPChecker
+{
+    /// <summary>
+    /// Get the public IP address of the server from https://ifconfig.me/ip
+    /// </summary>
+    /// <returns>The public IP address of the server</returns>
+    public static string GetPublicIP()
+    {
+        using System.Net.WebClient client = new();
+        return client.DownloadString("https://ifconfig.me/ip");
+    }
+}
