@@ -221,7 +221,7 @@ internal class MessagesConfig
         jsonString += $"\"startMessage\":\"{serverLoadedMessage.Value}\",";
         jsonString += $"\"stopMessage\":\"{serverStopMessage.Value}\",";
         jsonString += $"\"shutdownMessage\":\"{serverShutdownMessage.Value}\",";
-        jsonString += $"\"savedMessage\":\"{serverSavedMessage.Value}\"";
+        jsonString += $"\"savedMessage\":\"{serverSavedMessage.Value}\",";
         jsonString += $"\"serverNewDayMessage\":\"{serverNewDayMessage.Value}\"";
         jsonString += "},";
 

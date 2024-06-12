@@ -136,7 +136,7 @@ internal class ExtraWebhookConfig
 
     for (int i = 0; i < MAX_WEBHOOKS; i++)
     {
-      jsonString += $"\"webhookURL{i + 1}\": \"{webhookUrlList[i].Value}\",";
+      jsonString += $"\"webhookURL{i + 1}\": \"{(string.IsNullOrEmpty(webhookUrlList[i].Value) ? "unset" : "REDACTED")}\",";
       jsonString += $"\"webhookEvents{i + 1}\": \"{webhookEventsList[i].Value}\",";
       jsonString += $"\"webhookUsernameOverride{i + 1}\": \"{webhookUsernameOverrideList[i].Value}\",";
     }

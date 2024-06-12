@@ -285,7 +285,7 @@ internal class PluginConfig
         jsonString += $"\"Config.Messages\":{messagesConfig.ConfigAsJson()},";
         jsonString += $"\"Config.Toggles\":{togglesConfig.ConfigAsJson()},";
         jsonString += $"\"Config.Variables\":{variableConfig.ConfigAsJson()},";
-        jsonString += $"\"Config.LeaderBoard\":{leaderBoardConfig.ConfigAsJson()}";
+        jsonString += $"\"Config.LeaderBoard\":{leaderBoardConfig.ConfigAsJson()},";
         jsonString += $"\"Config.ExtraWebhooks\":{extraWebhookConfig.ConfigAsJson()}";
 
         jsonString += "}";

@@ -269,7 +269,7 @@ internal class TogglesConfig
         jsonString += $"\"eventPausedEnabled\":\"{EventStopMessageEnabled}\",";
         jsonString += $"\"eventStoppedEnabled\":\"{EventPausedMessageEnabled}\",";
         jsonString += $"\"eventResumedEnabled\":\"{EventResumedMessageEnabled}\",";
-        jsonString += $"\"chatShoutAllCaps\":\"{ChatShoutAllCaps}\"";
+        jsonString += $"\"chatShoutAllCaps\":\"{ChatShoutAllCaps}\",";
         jsonString += $"\"newDayNumberToggle\":\"{NewDayNumberEnabled}\"";
         jsonString += "},";
 
