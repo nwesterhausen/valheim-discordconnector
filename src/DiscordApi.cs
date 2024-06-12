@@ -36,21 +36,12 @@ class DiscordApi
     public static void SendMessage(Webhook.Event ev, string message)
     {
         // A simple string message
-        DiscordSimpleWebhook payload = new()
+        DiscordExecuteWebhook payload = new()
         {
             content = message
         };
 
-        try
-        {
-            string payloadString = JsonConvert.SerializeObject(payload);
-            SendSerializedJson(ev, payloadString);
-        }
-        catch (Exception e)
-        {
-            Plugin.StaticLogger.LogWarning($"Error serializing payload: {e}");
-        }
-
+        payload.SendFor(ev);
     }
 
     /// <summary>
@@ -67,57 +58,35 @@ class DiscordApi
             content = "Uh-oh! An unexpectedly empty message was sent!";
         }
 
-        // Begin the payload object
-        string payloadString = "{";
+        DiscordExecuteWebhook payload = new()
+        {
+            content = content
+        };
+
         // If we have fields at all, put them as embedded fields
         if (fields != null)
         {
+            payload.embeds = [];
+            List<DiscordField> discordFields = [];
             // Convert the fields into JSON Strings
             List<string> fieldStrings = [];
             foreach (Tuple<string, string> t in fields)
             {
-                try
+                discordFields.Add(new DiscordField
                 {
-                    fieldStrings.Add(JsonConvert.SerializeObject(new DiscordField
-                    {
-                        name = t.Item1,
-                        value = t.Item2
-                    }));
-                }
-                catch (Exception e)
-                {
-                    Plugin.StaticLogger.LogWarning($"Error serializing field: {e}");
-                }
+                    name = t.Item1,
+                    value = t.Item2
+                });
             }
 
-            if (fieldStrings.Count > 0)
+            // Add the fields to the payload
+            payload.embeds.Add(new DiscordEmbed
             {
-                // Put the field JSON strings into our payload object
-                // Fields go under embed as array
-                payloadString += "\"embeds\":[{\"fields\":[";
-                payloadString += string.Join(",", fieldStrings.ToArray());
-                payloadString += "]}]";
-
-                // Cautiously put a comma if there is content to add to the payload as well
-                if (content != null)
-                {
-                    payloadString += ",";
-                }
-            }
+                fields = discordFields
+            });
         }
 
-        // If there is any content
-        if (content != null)
-        {
-            // Append the content to the payload
-            payloadString += $"\"content\":\"{content}\"";
-        }
-
-        // Finish the payload JSON
-        payloadString += "}";
-
-        // Use our pre-existing method to send serialized JSON to discord
-        SendSerializedJson(ev, payloadString);
+        payload.SendFor(ev);
     }
 
     /// <summary>
@@ -125,9 +94,9 @@ class DiscordApi
     /// </summary>
     /// <param name="ev">The event which triggered this message</param>
     /// <param name="serializedJson">Body data for the webhook as JSON serialized into a string</param>
-    private static void SendSerializedJson(Webhook.Event ev, string serializedJson)
+    public static void SendSerializedJson(Webhook.Event ev, string serializedJson)
     {
-        Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson} (event: {ev})");
+        Plugin.StaticLogger.LogDebug($"Finding webhooks for event: (event: {ev})");
 
         if (ev == Webhook.Event.Other)
         {
@@ -153,6 +122,37 @@ class DiscordApi
             Plugin.StaticLogger.LogDebug($"Sending {ev} message to Secondary Webhook");
             DispatchRequest(Plugin.StaticConfig.SecondaryWebhook, byteArray);
         }
+
+        // Check for any extra webhooks that should be sent to
+        foreach (WebhookEntry webhook in Plugin.StaticConfig.ExtraWebhooks)
+        {
+            if (webhook.HasEvent(ev))
+            {
+                Plugin.StaticLogger.LogDebug($"Sending {ev} message to Extra Webhook: {webhook.Url}");
+                DispatchRequest(webhook, byteArray);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Sends serialized JSON to the <paramref name="webhook"/>.
+    /// </summary>
+    /// <param name="webhook">Webhook definition to receive the JSON</param>
+    /// <param name="serializedJson">Serialized JSON of the request to make</param>
+    public static void SendSerializedJson(WebhookEntry webhook, string serializedJson)
+    {
+        Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
+
+        // Guard against unset webhook or empty serialized json
+        if (string.IsNullOrEmpty(webhook.Url) || string.IsNullOrEmpty(serializedJson))
+        {
+            return;
+        }
+
+        // Responsible for sending a JSON string to the webhook.
+        byte[] byteArray = Encoding.UTF8.GetBytes(serializedJson);
+
+        DispatchRequest(webhook, byteArray);
     }
 
     /// <summary>
@@ -167,6 +167,7 @@ class DiscordApi
             Plugin.StaticLogger.LogDebug($"Dispatch attempted with empty webhook - ignoring");
             return;
         }
+        Plugin.StaticLogger.LogDebug($"Dispatching request to {webhook.Url}");
 
         // Create a web request to send the payload to discord
         WebRequest request = WebRequest.Create(webhook.Url);
@@ -246,32 +247,345 @@ class DiscordApi
     }
 }
 
-/// <summary>
-/// Simple webhook object is used for messages that contain only a simple string.
-/// </summary>
-internal class DiscordSimpleWebhook
+internal class DiscordExecuteWebhook
 {
+#nullable enable
     /// <summary>
-    /// The message content to send to Discord. This is considered simple because it is not a series of embeds/fields.
-    ///
-    /// This works best for simple messages, and is used for most messages sent by the plugin.
-    ///
-    /// E.g. "Player joined the game", "Player left the game", etc.
+    /// The message contents (up to 2000 characters). Required if `embeds` is not provided.
     /// </summary>
-    public string content { get; set; }
+    public string? content { get; set; }
+    /// <summary>
+    /// Override the default username of the webhook.
+    /// </summary>
+    public string? username { get; set; }
+    /// <summary>
+    /// Override the default avatar of the webhook.
+    /// </summary>
+    public string? avatar_url { get; set; }
+    /// <summary>
+    /// An array of up to 10 embed objects. Required if `content` is not provided.
+    /// </summary>
+    public List<DiscordEmbed>? embeds { get; set; }
+    /// <summary>
+    /// Allowed mentions for the message.
+    /// </summary>
+    public AllowedMentions? allowed_mentions { get; set; }
+#nullable restore
+    // ! Any additional fields are also left out, as they are not used in this plugin.
+
+    /// <summary>
+    /// Create an empty DiscordExecuteWebhook object.
+    /// </summary>
+    public DiscordExecuteWebhook()
+    {
+        // allowed mentions are set for all webhooks right now
+        allowed_mentions = new();
+
+        ResetOverrides();
+    }
+
+    /// <summary>
+    /// Set the username for the webhook.
+    /// </summary>
+    /// <param name="username">The username to set for the webhook</param>
+    public void SetUsername(string username)
+    {
+        this.username = username;
+    }
+
+    /// <summary>
+    /// Set the avatar URL for the webhook.
+    /// </summary>
+    /// <param name="avatar_url">The avatar URL to set for the webhook</param>
+    public void SetAvatarUrl(string avatar_url)
+    {
+        this.avatar_url = avatar_url;
+    }
+
+    /// <summary>
+    /// Validate that this object is ready to be serialized into JSON.
+    ///
+    /// This is a simple check to ensure that the object is not empty, and that it has at least one of the required fields.
+    /// </summary>
+    /// <returns>True if the object is valid, false otherwise</returns>
+    public bool IsValid()
+    {
+        return !string.IsNullOrEmpty(content) || embeds != null;
+    }
+
+    /// <summary>
+    /// Reset any overrides on the webhook.
+    /// </summary>
+    public void ResetOverrides()
+    {
+        username = null;
+        avatar_url = null;
+
+        if (!string.IsNullOrEmpty(Plugin.StaticConfig.DefaultWebhookUsernameOverride))
+        {
+            SetUsername(Plugin.StaticConfig.DefaultWebhookUsernameOverride);
+        }
+    }
+
+    /// <summary>
+    /// Send the message to Discord.
+    /// </summary>
+    /// <param name="ev">The event that triggered this message</param>
+    public void SendFor(Webhook.Event ev)
+    {
+        // If the object is not valid, do not send it
+        if (!IsValid())
+        {
+            Plugin.StaticLogger.LogWarning($"Attempted to send an invalid DiscordExecuteWebhook object:\n{this}");
+            return;
+        }
+
+        // Find any webhook events that match the event
+        try
+        {
+            if (Plugin.StaticConfig.PrimaryWebhook.HasEvent(ev))
+            {
+                Plugin.StaticLogger.LogDebug($"Sending {ev} message to Primary Webhook");
+                WebhookEntry primaryWebhook = Plugin.StaticConfig.PrimaryWebhook;
+                ResetOverrides();
+
+                if (primaryWebhook.HasUsernameOverride())
+                {
+                    SetUsername(primaryWebhook.UsernameOverride);
+                }
+                if (primaryWebhook.HasAvatarOverride())
+                {
+                    SetAvatarUrl(primaryWebhook.AvatarOverride);
+                }
+
+                DiscordApi.SendSerializedJson(primaryWebhook, JsonConvert.SerializeObject(this));
+
+            }
+            if (Plugin.StaticConfig.SecondaryWebhook.HasEvent(ev))
+            {
+                Plugin.StaticLogger.LogDebug($"Sending {ev} message to Secondary Webhook");
+                WebhookEntry secondaryWebhook = Plugin.StaticConfig.SecondaryWebhook;
+                ResetOverrides();
+
+                if (secondaryWebhook.HasUsernameOverride())
+                {
+                    SetUsername(secondaryWebhook.UsernameOverride);
+                }
+                if (secondaryWebhook.HasAvatarOverride())
+                {
+                    SetAvatarUrl(secondaryWebhook.AvatarOverride);
+                }
+
+                DiscordApi.SendSerializedJson(secondaryWebhook, JsonConvert.SerializeObject(this));
+
+            }
+            if (Plugin.StaticConfig.ExtraWebhooks != null)
+            {
+                foreach (WebhookEntry webhook in Plugin.StaticConfig.ExtraWebhooks)
+                {
+                    if (webhook.HasEvent(ev))
+                    {
+                        Plugin.StaticLogger.LogDebug($"Sending {ev} message to an Extra Webhook");
+                        ResetOverrides();
+
+                        if (webhook.HasUsernameOverride())
+                        {
+                            SetUsername(webhook.UsernameOverride);
+                        }
+                        if (webhook.HasAvatarOverride())
+                        {
+                            SetAvatarUrl(webhook.AvatarOverride);
+                        }
+
+                        DiscordApi.SendSerializedJson(webhook, JsonConvert.SerializeObject(this));
+
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Plugin.StaticLogger.LogWarning($"Error serializing payload: {e}");
+        }
+    }
 }
 
-/// <summary>
-/// Complex webhook object is used for messages that contain more than just a simple string.
-/// </summary>
-internal class DiscordComplexWebhook
+internal class AllowedMentions
 {
     /// <summary>
-    /// Message content to send to Discord. This is considered complex because it contains multiple embeds/fields.
+    /// An array of allowed mention types to parse from the content.
     ///
-    /// This is used for POS embeds, and the leaderboards.
+    /// Allowed mention types:
+    ///
+    /// `roles` - Role mentions
+    /// `users` - User mentions
+    /// `everyone` - @everyone/@here mentions
     /// </summary>
-    public DiscordEmbed embeds { get; set; }
+    /// <value>empty (none allowed)</value>
+    public List<string> parse { get; set; }
+    /// <summary>
+    /// Array of role_ids to mention (Max size of 100)
+    /// </summary>
+    /// <value>empty</value>
+    public List<string> roles { get; set; }
+    /// <summary>
+    /// Array of user_ids to mention (Max size of 100)
+    /// </summary>
+    /// <value>empty</value>
+    public List<string> users { get; set; }
+    /// <summary>
+    /// For replies, whether to mention the user being replied to.
+    /// </summary>
+    /// <value>false</value>
+    public bool replied_user { get; set; }
+
+    public AllowedMentions()
+    {
+        parse = [];
+        roles = [];
+        users = [];
+        replied_user = false;
+
+        // Update from config
+        if (Plugin.StaticConfig.AllowMentionsHereEveryone)
+        {
+            AllowEveryone();
+        }
+        if (Plugin.StaticConfig.AllowMentionsAnyRole)
+        {
+            AllowAnyRoles();
+        }
+        if (Plugin.StaticConfig.AllowMentionsAnyUser)
+        {
+            AllowAnyUsers();
+        }
+        if (Plugin.StaticConfig.AllowedRoleMentions.Count > 0)
+        {
+            AllowRoles(Plugin.StaticConfig.AllowedRoleMentions);
+        }
+        if (Plugin.StaticConfig.AllowedUserMentions.Count > 0)
+        {
+            AllowUsers(Plugin.StaticConfig.AllowedUserMentions);
+        }
+    }
+
+    /// <summary>
+    /// Enable `@everyone` and `@here` mentions.
+    /// </summary>
+    public void AllowEveryone()
+    {
+        if (!parse.Contains("everyone"))
+            parse.Add("everyone");
+    }
+
+    /// <summary>
+    /// Enable `@everyone` and `@here` mentions.
+    /// </summary>
+    public void AllowHere()
+    {
+        if (!parse.Contains("everyone"))
+            parse.Add("everyone");
+    }
+
+    /// <summary>
+    /// Add a role_id to the allowed mentions.
+    /// </summary>
+    /// <param name="role_id">The role_id to allow mentions for</param>
+    public void AllowRole(string role_id)
+    {
+        if (!roles.Contains(role_id))
+            roles.Add(role_id);
+    }
+
+    /// <summary>
+    /// Add a list of role_ids to the allowed mentions.
+    /// </summary>
+    /// <param name="role_ids">The role_ids to allow mentions for</param>
+    public void AllowRoles(List<string> role_ids)
+    {
+        foreach (string role_id in role_ids)
+        {
+            AllowRole(role_id);
+        }
+    }
+
+    /// <summary>
+    /// Remove a role_id from the allowed mentions.
+    /// </summary>
+    /// <param name="role_id">The role_id to disallow mentions for</param>
+    public void DisallowRole(string role_id)
+    {
+        if (roles.Contains(role_id))
+            roles.Remove(role_id);
+    }
+
+    /// <summary>
+    /// Add a user_id to the allowed mentions.
+    /// </summary>
+    /// <param name="user_id">The user_id to allow mentions for</param>
+    public void AllowUser(string user_id)
+    {
+        if (!users.Contains(user_id))
+            users.Add(user_id);
+    }
+
+    /// <summary>
+    /// Add a list of user_ids to the allowed mentions.
+    /// </summary>
+    /// <param name="user_ids">The user_ids to allow mentions for</param>
+    public void AllowUsers(List<string> user_ids)
+    {
+        foreach (string user_id in user_ids)
+        {
+            AllowUser(user_id);
+        }
+    }
+
+    /// <summary>
+    /// Remove a user_id from the allowed mentions.
+    /// </summary>
+    /// <param name="user_id">The user_id to disallow mentions for</param>
+    public void DisallowUser(string user_id)
+    {
+        if (users.Contains(user_id))
+            users.Remove(user_id);
+    }
+
+    /// <summary>
+    /// Allow any role mentions.
+    /// </summary>
+    public void AllowAnyRoles()
+    {
+        if (!parse.Contains("roles"))
+            parse.Add("roles");
+    }
+
+    /// <summary>
+    /// Allow any user mentions.
+    /// </summary>
+    public void AllowAnyUsers()
+    {
+        if (!parse.Contains("users"))
+            parse.Add("users");
+    }
+
+    /// <summary>
+    /// Disallow any role mentions. (Specific role_ids will still be allowed)
+    /// </summary>
+    public void DisallowAnyRoles()
+    {
+        if (parse.Contains("roles"))
+            parse.Remove("roles");
+    }
+
+    /// <summary>
+    /// Disallow any user mentions. (Specific user_ids will still be allowed)
+    /// </summary>
+    public void DisallowAnyUsers()
+    {
+        if (parse.Contains("users"))
+            parse.Remove("users");
+    }
 }
 
 /// <summary>
@@ -319,4 +633,11 @@ internal class DiscordField
     /// For example, the leaderboards are a list with `\n` as a separator, so they appear as an ordered list in Discord.
     /// </summary>
     public string value { get; set; }
+#nullable enable
+    /// <summary>
+    /// Whether or not this field should display inline.
+    /// </summary>
+    /// <value>false</value>
+    public bool? inline { get; set; }
+#nullable restore
 }

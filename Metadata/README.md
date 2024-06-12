@@ -1,7 +1,7 @@
 # Discord Connector
 
 Connect your Valheim server (dedicated or served from the game itself) to a Discord Webhook.
-(Find mod documentation on [the official website](https://discordconnector.valheim.nwest.games/).)
+(Find mod documentation on [the official website](https://discord-connector.valheim.games.nwest.one/).)
 
 ## Features
 
@@ -34,20 +34,17 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Abridged Changelog
 
-### Version 2.2.2
+### Version 2.3.0
 
 Features
 
-- add `%JOIN_CODE%` variable which will show the join code if crossplay is enabled
-- add `%NUM_PLAYERS%` variable which will show the number of online players
+- support up to 16 additional webhooks (adds a new config file, `discordconnector-extraWebhooks.cfg`)
+- support restricting/allowing Discord mentions in messages (`@here` and `@everyone` are disabled by default -- possibly a breaking change)
+- custom variables are now evaluated again for any embedded variables in the message
+- added new configuration values to allow specifying a custom username and avatar for each webhook (to override the Discord webhook settings)
+- added a configuration value that sets a default username for all webhooks (if not overridden)
 
 Fixes
 
-- updated the documentation to reflect how `%WORLD_NAME%`, `%PUBLIC_IP%`, and `%DAY_NUMBER%` can be
-in any messages and be replaced.
-
-Note: At server startup, some variables may not be available. They all should be available when server
-is launched, but the join code may take a bit longer to display -- more testing is needed to know exactly
-how much extra time it needs on average. If it is consistently unavailable, please file an issue and we
-can come up with either a delayed startup message or another event that fires when the code becomes not
-empty or changes.
+- no longer relies on the `ZNet.GetPublicIP()` method and instead gets the public IP on its own at server start.
+- `%NUM_PLAYERS%` proactively subtracts 1 if the event is a player leaving

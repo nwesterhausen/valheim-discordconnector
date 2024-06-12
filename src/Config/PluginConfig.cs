@@ -12,6 +12,7 @@ internal class PluginConfig
     private TogglesConfig togglesConfig;
     private VariableConfig variableConfig;
     private LeaderBoardConfig leaderBoardConfig;
+    private ExtraWebhookConfig extraWebhookConfig;
     public readonly string configPath;
     const string ConfigJsonFilename = "config-dump.json";
 
@@ -23,6 +24,7 @@ internal class PluginConfig
             "variables",
             "leaderBoard",
             "toggles",
+            "extraWebhooks",
             "main"
         };
 
@@ -81,24 +83,28 @@ internal class PluginConfig
         string togglesConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}-{TogglesConfig.ConfigExtension}.cfg";
         string variableConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}-{VariableConfig.ConfigExtension}.cfg";
         string leaderBoardConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}-{LeaderBoardConfig.ConfigExtension}.cfg";
+        string extraWebhooksConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}-{ExtraWebhookConfig.ConfigExtension}.cfg";
 
         string mainConfigPath = Path.Combine(configPath, mainConfigFilename);
         string messagesConfigPath = Path.Combine(configPath, messageConfigFilename);
         string togglesConfigPath = Path.Combine(configPath, togglesConfigFilename);
         string variableConfigPath = Path.Combine(configPath, variableConfigFilename);
         string leaderBoardConfigPath = Path.Combine(configPath, leaderBoardConfigFilename);
+        string extraWebhooksConfigPath = Path.Combine(configPath, extraWebhooksConfigFilename);
 
         Plugin.StaticLogger.LogDebug($"Main config: {mainConfigPath}");
         Plugin.StaticLogger.LogDebug($"Messages config: {messagesConfigPath}");
         Plugin.StaticLogger.LogDebug($"Toggles config: {togglesConfigPath}");
         Plugin.StaticLogger.LogDebug($"Variable config: {variableConfigPath}");
-        Plugin.StaticLogger.LogDebug($"Leader board config: {leaderBoardConfigFilename}");
+        Plugin.StaticLogger.LogDebug($"Leader board config: {leaderBoardConfigPath}");
+        Plugin.StaticLogger.LogDebug($"Extra Webhook config: {extraWebhooksConfigPath}");
 
         mainConfig = new MainConfig(new BepInEx.Configuration.ConfigFile(mainConfigPath, true));
         messagesConfig = new MessagesConfig(new BepInEx.Configuration.ConfigFile(messagesConfigPath, true));
         togglesConfig = new TogglesConfig(new BepInEx.Configuration.ConfigFile(togglesConfigPath, true));
         variableConfig = new VariableConfig(new BepInEx.Configuration.ConfigFile(variableConfigPath, true));
         leaderBoardConfig = new LeaderBoardConfig(new BepInEx.Configuration.ConfigFile(leaderBoardConfigPath, true));
+        extraWebhookConfig = new ExtraWebhookConfig(new BepInEx.Configuration.ConfigFile(extraWebhooksConfigPath, true));
 
         Plugin.StaticLogger.LogDebug("Configuration Loaded");
         Plugin.StaticLogger.LogDebug($"Muted Players Regex pattern ('a^' is default for no matches): {mainConfig.MutedPlayersRegex.ToString()}");
@@ -112,6 +118,7 @@ internal class PluginConfig
         togglesConfig.ReloadConfig();
         variableConfig.ReloadConfig();
         leaderBoardConfig.ReloadConfig();
+        extraWebhookConfig.ReloadConfig();
     }
 
     /// <summary>
@@ -136,6 +143,9 @@ internal class PluginConfig
                 return;
             case "leaderBoard":
                 leaderBoardConfig.ReloadConfig();
+                return;
+            case "extraWebhooks":
+                extraWebhookConfig.ReloadConfig();
                 return;
             default:
                 return;
@@ -182,6 +192,7 @@ internal class PluginConfig
     public bool EventResumedPosEnabled => mainConfig.SendPositionsEnabled && togglesConfig.EventResumedPosEnabled;
 
     // Main Config
+    public string DefaultWebhookUsernameOverride => mainConfig.DefaultWebhookUsernameOverride;
     public WebhookEntry PrimaryWebhook => mainConfig.PrimaryWebhook;
     public WebhookEntry SecondaryWebhook => mainConfig.SecondaryWebhook;
     public bool CollectStatsEnabled => mainConfig.CollectStatsEnabled;
@@ -192,6 +203,11 @@ internal class PluginConfig
     public List<string> MutedPlayers => mainConfig.MutedPlayers;
     public Regex MutedPlayersRegex => mainConfig.MutedPlayersRegex;
     public bool AllowNonPlayerShoutLogging => mainConfig.AllowNonPlayerShoutLogging;
+    public bool AllowMentionsHereEveryone => mainConfig.AllowMentionsHereEveryone;
+    public bool AllowMentionsAnyRole => mainConfig.AllowMentionsAnyRole;
+    public bool AllowMentionsAnyUser => mainConfig.AllowMentionsAnyUser;
+    public List<string> AllowedRoleMentions => mainConfig.AllowedRoleMentions;
+    public List<string> AllowedUserMentions => mainConfig.AllowedUserMentions;
 
 
     // Messages.Server
@@ -261,6 +277,12 @@ internal class PluginConfig
     public LeaderBoardConfigReference[] LeaderBoards => leaderBoardConfig.LeaderBoards;
     public ActivePlayersAnnouncementConfigValues ActivePlayersAnnouncement => leaderBoardConfig.ActivePlayersAnnouncement;
 
+    // Extra webhook config
+    public List<WebhookEntry> ExtraWebhooks => extraWebhookConfig.GetWebhookEntries();
+
+    /// <summary>
+    /// Writes the loaded configuration to a JSON file in the config directory.
+    /// </summary>
     public void DumpConfigAsJson()
     {
         string jsonString = "{";
@@ -269,7 +291,8 @@ internal class PluginConfig
         jsonString += $"\"Config.Messages\":{messagesConfig.ConfigAsJson()},";
         jsonString += $"\"Config.Toggles\":{togglesConfig.ConfigAsJson()},";
         jsonString += $"\"Config.Variables\":{variableConfig.ConfigAsJson()},";
-        jsonString += $"\"Config.LeaderBoard\":{leaderBoardConfig.ConfigAsJson()}";
+        jsonString += $"\"Config.LeaderBoard\":{leaderBoardConfig.ConfigAsJson()},";
+        jsonString += $"\"Config.ExtraWebhooks\":{extraWebhookConfig.ConfigAsJson()}";
 
         jsonString += "}";
 

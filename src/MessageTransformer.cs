@@ -38,9 +38,10 @@ internal static class MessageTransformer
     ///     - `%VAR1%` through `%VAR10%` with the user variables
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
-    private static string ReplaceVariables(string rawMessage)
+    /// <param name="subtractOne">Subtract one from the number of online players</param>
+    private static string ReplaceVariables(string rawMessage, bool subtractOne = false)
     {
-        return ReplaceDynamicVariables(rawMessage)
+        string customVariablesReplaced = rawMessage
             .Replace(VAR, Plugin.StaticConfig.UserVariable)
             .Replace(VAR_1, Plugin.StaticConfig.UserVariable1)
             .Replace(VAR_2, Plugin.StaticConfig.UserVariable2)
@@ -51,6 +52,8 @@ internal static class MessageTransformer
             .Replace(VAR_7, Plugin.StaticConfig.UserVariable7)
             .Replace(VAR_8, Plugin.StaticConfig.UserVariable8)
             .Replace(VAR_9, Plugin.StaticConfig.UserVariable9);
+
+        return ReplaceDynamicVariables(customVariablesReplaced, subtractOne);
     }
 
     /// <summary>
@@ -63,13 +66,14 @@ internal static class MessageTransformer
     ///     - `%JOIN_CODE%` with the join code of the server
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
-    private static string ReplaceDynamicVariables(string rawMessage)
+    /// <param name="subtractOne">Subtract one from the number of online players</param>
+    private static string ReplaceDynamicVariables(string rawMessage, bool subtractOne = false)
     {
         // additionally add any other dynamic variables here..
         string dynamicReplacedMessage = ReplacePublicIp(rawMessage);
         dynamicReplacedMessage = ReplaceWorldName(dynamicReplacedMessage);
         dynamicReplacedMessage = ReplaceDayNumber(dynamicReplacedMessage);
-        dynamicReplacedMessage = ReplaceNumPlayers(dynamicReplacedMessage);
+        dynamicReplacedMessage = ReplaceNumPlayers(dynamicReplacedMessage, subtractOne);
         dynamicReplacedMessage = ReplaceJoinCode(dynamicReplacedMessage);
 
         return dynamicReplacedMessage;
@@ -102,8 +106,15 @@ internal static class MessageTransformer
     /// This will only replace `%NUM_PLAYERS%` with the number of players if the ZNet instance is available.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
-    private static string ReplaceNumPlayers(string rawMessage)
+    /// <param name="subtractOne">Subtract one from the number of online players</param>
+    private static string ReplaceNumPlayers(string rawMessage, bool subtractOne = false)
     {
+        if (subtractOne)
+        {
+            return rawMessage
+                .Replace(NUM_PLAYERS, ZNet.instance != null ? (ZNet.instance.GetNrOfPlayers() - 1).ToString() : NUM_PLAYERS);
+        }
+
         return rawMessage
             .Replace(NUM_PLAYERS, ZNet.instance != null ? ZNet.instance.GetNrOfPlayers().ToString() : NUM_PLAYERS);
     }
@@ -118,17 +129,8 @@ internal static class MessageTransformer
     /// <param name="rawMessage">Raw message to format</param>
     private static string ReplacePublicIp(string rawMessage)
     {
-        string publicIp = "";
-        try
-        {
-            publicIp = ZNet.GetPublicIP();
-        }
-        catch (System.Exception e)
-        {
-            Plugin.StaticLogger.LogError($"Unable to get Public IP from ZNet. {e.Message}");
-        }
         return rawMessage
-            .Replace(PUBLIC_IP, publicIp);
+            .Replace(PUBLIC_IP, Plugin.PublicIpAddress);
     }
 
     /// <summary>
@@ -157,9 +159,10 @@ internal static class MessageTransformer
     /// <param name="rawMessage">Raw message to format</param>
     /// <param name="playerName">Name of the player</param>
     /// <param name="playerId">ID of the player</param>
-    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId)
+    /// <param name="subtractOne">(Optional) Subtract one from the number of online players</param>
+    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId, bool subtractOne = false)
     {
-        return MessageTransformer.ReplaceVariables(rawMessage)
+        return MessageTransformer.ReplaceVariables(rawMessage, subtractOne)
             .Replace(PLAYER_STEAMID, playerId)
             .Replace(PLAYER_ID, playerId)
             .Replace(PLAYER_NAME, playerName);
@@ -173,9 +176,10 @@ internal static class MessageTransformer
     /// <param name="playerName">Name of the player</param>
     /// <param name="playerId">ID of the player</param>
     /// <param name="pos">Position of the player</param>
-    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId, UnityEngine.Vector3 pos)
+    /// <param name="subtractOne">(Optional) Subtract one from the number of online players</param>
+    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId, UnityEngine.Vector3 pos, bool subtractOne = false)
     {
-        return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerId)
+        return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerId, subtractOne)
             .Replace(POS, $"{pos}");
     }
     /// <summary>
@@ -186,9 +190,10 @@ internal static class MessageTransformer
     /// <param name="playerName">Name of the player</param>
     /// <param name="playerId">ID of the player</param>
     /// <param name="shout">Shout message</param>
-    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId, string shout)
+    /// <param name="subtractOne">(Optional) Subtract one from the number of online players</param>
+    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId, string shout, bool subtractOne = false)
     {
-        return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerId)
+        return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerId, subtractOne)
             .Replace(SHOUT, shout);
     }
     /// <summary>
@@ -200,9 +205,10 @@ internal static class MessageTransformer
     /// <param name="playerSteamId">Steam ID of the player</param>
     /// <param name="shout">Shout message</param>
     /// <param name="pos">Position of the player</param>
-    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerSteamId, string shout, UnityEngine.Vector3 pos)
+    /// <param name="subtractOne">(Optional) Subtract one from the number of online players</param>
+    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerSteamId, string shout, UnityEngine.Vector3 pos, bool subtractOne = false)
     {
-        return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerSteamId, pos)
+        return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerSteamId, pos, subtractOne)
             .Replace(SHOUT, shout);
     }
     /// <summary>

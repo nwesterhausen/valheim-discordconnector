@@ -4,9 +4,9 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "nwesterhausen"
 name = "DiscordConnector"
-versionNumber = "2.2.2"
+versionNumber = "2.3.0"
 description = "Connects your Valheim server to a Discord webhook. Works for both dedicated and client-hosted servers."
-websiteUrl = "https://discordconnector.valheim.nwest.games/"
+websiteUrl = "https://discord-connector.valheim.games.nwest.one/"
 containsNsfwContent = false
 
 [package.dependencies]
@@ -24,9 +24,3 @@ target = "./"
 [publish]
 repository = "https://thunderstore.io"
 communities = ["valheim"]
-categories = [
-  "hildirs-request-update",
-  "utility",
-  "server-side",
-  "ashlands-update",
-]
