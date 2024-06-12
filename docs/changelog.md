@@ -101,7 +101,7 @@ Adds a requested feature for a second webhook. Both webhooks can be configured t
 Connector sends, and by default (to be non-breaking) they will send all messages (which is the behavior of 2.1.8 and previous).
 Some plugins which may make use of Discord Connector's webhook to send messages can use the same method for sending and will
 be tagged as 'other' webhook events. For a full list of what webhook events can be configured, see the
-[documentation](https://discordconnector.valheim.nwest.games/config/main.html#webhook-events).
+[documentation](https://discord-connector.valheim.games.nwest.one/config/main.html#webhook-events).
 
 Features:
 

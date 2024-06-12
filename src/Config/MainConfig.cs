@@ -149,7 +149,7 @@ internal class MainConfig
         webhookAvatarOverride = config.Bind<string>(MAIN_SETTINGS,
             "Webhook Avatar Override",
             "",
-            "Optional: Override the avatar of the primary webhook with the image at this URL." + Environment.NewLine +
+            "Override the avatar of the primary webhook with the image at this URL." + Environment.NewLine +
             "If left blank, the webhook will use the avatar set in your Discord server's settings.");
 
         webhookUrl2 = config.Bind<string>(MAIN_SETTINGS,
@@ -168,13 +168,13 @@ internal class MainConfig
         webhook2UsernameOverride = config.Bind<string>(MAIN_SETTINGS,
             "Secondary Webhook Username Override",
             "",
-            "Optional: Override the username of the secondary webhook." + Environment.NewLine +
+            "Override the username of the secondary webhook." + Environment.NewLine +
             "If left blank, the webhook will use the default username set in the main config.");
 
         webhook2AvatarOverride = config.Bind<string>(MAIN_SETTINGS,
             "Secondary Webhook Avatar Override",
             "",
-            "Optional: Override the avatar of the secondary webhook with the image at this URL." + Environment.NewLine +
+            "Override the avatar of the secondary webhook with the image at this URL." + Environment.NewLine +
             "If left blank, the webhook will use the avatar set in your Discord server's settings.");
 
         logDebugMessages = config.Bind<bool>(MAIN_SETTINGS,

@@ -102,7 +102,7 @@ internal class ExtraWebhookConfig
           EXTRA_WEBHOOKS,
           $"Webhook Username Override {i + 1}",
           "",
-          "Optional: Override the username of this webhook." + Environment.NewLine +
+          "Override the username of this webhook." + Environment.NewLine +
           "If left blank, the webhook will use the default username set in the main config.")
         );
 
@@ -110,7 +110,7 @@ internal class ExtraWebhookConfig
           EXTRA_WEBHOOKS,
           $"Webhook Avatar Override {i + 1}",
           "",
-          "Optional: Override the avatar of this webhook with the image at the given URL." + Environment.NewLine +
+          "Override the avatar of this webhook with the image at the given URL." + Environment.NewLine +
           "If left blank, the webhook will use the avatar defined on the Discord webhook in your server's settings.")
         );
     }

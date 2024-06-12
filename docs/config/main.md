@@ -2,6 +2,14 @@
 
 Filename `discordconnector.cfg`
 
+## Default Webhook Username Override
+
+Type: `String`, default value: ``
+
+Override the username of all webhooks for this instance of Discord Connector. If left blank, the webhook will use the default name (assigned by Discord in the Integration menu).
+
+This setting will be used for all webhooks unless overridden by a specific webhook username override setting.
+
 ## Webhook URL
 
 Type: `String`, default value: ``
@@ -14,7 +22,19 @@ Type: `String`, default value: `ALL`
 
 Specify a subset of possible events to send to the primary webhook. Format should be the keyword 'ALL' or a semi-colon separated list, e.g. `serverLifecycle;playerAll;playerFirstAll;leaderboardsAll;`
 
-A full list of valid options for this are [here](https://discordconnector.valheim.nwest.games/config/webhook.events.html).
+A full list of valid options for this are [here](https://discord-connector.valheim.games.nwest.one/config/webhook.events.html).
+
+## Webhook Username Override
+
+Type: `String`, default value: ``
+
+Override the username of this webhook. If left blank, the webhook will use the default username set in your Discord channel's "Integration" menu.
+
+## Webhook Avatar Override
+
+Type: `String`, default value: ``
+
+Override the avatar of this webhook. This should be a URL to an image. If left blank, the webhook will use the default avatar set in your Discord channel's "Integration" menu.
 
 ## Secondary Webhook URL
 
@@ -28,7 +48,19 @@ Type: `String`, default value: `ALL`
 
 Specify a subset of possible events to send to the secondary webhook. Format should be the keyword 'ALL' or a semi-colon separated list, e.g. `serverLifecycle;playerAll;playerFirstAll;leaderboardsAll;`
 
-A full list of valid options for this are [here](https://discordconnector.valheim.nwest.games/config/webhook.events.html).
+A full list of valid options for this are [here](https://discord-connector.valheim.games.nwest.one/config/webhook.events.html).
+
+## Secondary Webhook Username Override
+
+Type: `String`, default value: ``
+
+Override the username of this webhook. If left blank, the webhook will use the default username set in your Discord channel's "Integration" menu.
+
+## Secondary Webhook Avatar Override
+
+Type: `String`, default value: ``
+
+Override the avatar of this webhook. This should be a URL to an image. If left blank, the webhook will use the default avatar set in your Discord channel's "Integration" menu.
 
 ## Log Debug Messages
 
