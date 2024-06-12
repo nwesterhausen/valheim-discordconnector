@@ -43,7 +43,18 @@ internal static class PublicIPChecker
     /// <returns>The public IP address of the server</returns>
     public static string GetPublicIP()
     {
-        using System.Net.WebClient client = new();
-        return client.DownloadString("https://ifconfig.me/ip");
+        Plugin.StaticLogger.LogDebug("Getting public IP address.");
+        string address = string.Empty;
+        try
+        {
+            using System.Net.WebClient client = new();
+            address = client.DownloadString("https://ifconfig.me/ip");
+        }
+        catch (Exception e)
+        {
+            Plugin.StaticLogger.LogError($"Failed to get public IP address, an empty string will be used: {e.Message}");
+        }
+        Plugin.StaticLogger.LogDebug($"Public IP address is '{address}'");
+        return address;
     }
 }
