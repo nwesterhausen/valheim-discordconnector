@@ -165,8 +165,9 @@ class WebhookEntry
 {
     public string Url { get; set; }
     public List<Webhook.Event> FireOnEvents { get; set; }
+    public string UsernameOverride { get; set; } = string.Empty;
 
-    public WebhookEntry(string url, List<Webhook.Event> fireOnEvents)
+    public WebhookEntry(string url, List<Webhook.Event> fireOnEvents, string usernameOverride = "")
     {
         if (string.IsNullOrEmpty(url))
         {
@@ -188,6 +189,16 @@ class WebhookEntry
         {
             FireOnEvents = fireOnEvents;
         }
+
+        if (!string.IsNullOrEmpty(usernameOverride))
+        {
+            UsernameOverride = usernameOverride;
+        }
+    }
+
+    public bool HasUsernameOverride()
+    {
+        return !string.IsNullOrEmpty(UsernameOverride);
     }
 
     internal bool HasEvent(Webhook.Event ev)

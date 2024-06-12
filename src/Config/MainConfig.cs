@@ -22,16 +22,19 @@ internal class MainConfig
     public const string RetrieveBySteamID = "PlayerId: Treat each PlayerId as a separate player";
     public const string RetrieveByNameAndSteamID = "NameAndPlayerId: Treat each [PlayerId:CharacterName] combo as a separate player";
     public const string RetrieveByName = "Name: Treat each CharacterName as a separate player";
-    private ConfigFile config;
-    private static List<String> mutedPlayers;
+    private readonly ConfigFile config;
+    private static List<string> mutedPlayers;
     private static Regex mutedPlayersRegex;
     private const string MAIN_SETTINGS = "Main Settings";
 
     // Main Settings
+    private ConfigEntry<string> defaultWebhookUsernameOverride;
     private ConfigEntry<string> webhookUrl;
     private ConfigEntry<string> webhookUrl2;
     private ConfigEntry<string> webhookEvents;
     private ConfigEntry<string> webhook2Events;
+    private ConfigEntry<string> webhookUsernameOverride;
+    private ConfigEntry<string> webhook2UsernameOverride;
     private ConfigEntry<bool> discordEmbedMessagesToggle;
     private ConfigEntry<string> mutedDiscordUserList;
     private ConfigEntry<string> mutedDiscordUserListRegex;
@@ -89,6 +92,11 @@ internal class MainConfig
 
     private void LoadConfig()
     {
+        defaultWebhookUsernameOverride = config.Bind<string>(MAIN_SETTINGS,
+            "Default Webhook Username Override",
+            "",
+            "Override the username of all webhooks for this instance of Discord Connector. If left blank, the webhook will use the default name (assigned by Discord)." + Environment.NewLine +
+            "This setting will be used for all webhooks unless overridden by a specific webhook username override setting.");
 
         webhookUrl = config.Bind<string>(MAIN_SETTINGS,
             "Webhook URL",
@@ -101,7 +109,12 @@ internal class MainConfig
             "ALL",
             "Specify a subset of possible events to send to the primary webhook. Previously all events would go to the primary webhook." + Environment.NewLine +
             "Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLifecycle;playerAll;playerFirstAll;leaderboardsAll;'" + Environment.NewLine +
-            "Full list of valid options here: https://discordconnector.valheim.nwest.games/config/main.html#webhook-events");
+            "Full list of valid options here: https://discord-connector.valheim.games.nwest.one/config/main.html#webhook-events");
+
+        webhookUsernameOverride = config.Bind<string>(MAIN_SETTINGS,
+            "Webhook Username Override",
+            "",
+            "Override the username of the webhook. If left blank, the webhook will use the default name.");
 
         webhookUrl2 = config.Bind<string>(MAIN_SETTINGS,
             "Secondary Webhook URL",
@@ -112,9 +125,15 @@ internal class MainConfig
         webhook2Events = config.Bind<string>(MAIN_SETTINGS,
             "Secondary Webhook Events",
             "ALL",
-            "Specify a subset of possible events to send to the primary webhook. Previously all events would go to the primary webhook." + Environment.NewLine +
+            "Specify a subset of possible events to send to the secondary webhook." + Environment.NewLine +
             "Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLaunch;serverStart;serverSave;'" + Environment.NewLine +
-            "Full list of valid options here: https://discordconnector.valheim.nwest.games/config/main.html#webhook-events");
+            "Full list of valid options here: https://discord-connector.valheim.games.nwest.one/config/main.html#webhook-events");
+
+        webhook2UsernameOverride = config.Bind<string>(MAIN_SETTINGS,
+            "Secondary Webhook Username Override",
+            "",
+            "Optional: Override the username of the secondary webhook." + Environment.NewLine +
+            "If left blank, the webhook will use the default username set in the main config.");
 
         logDebugMessages = config.Bind<bool>(MAIN_SETTINGS,
             "Log Debug Messages",
@@ -176,10 +195,13 @@ internal class MainConfig
     {
         string jsonString = "{";
         jsonString += "\"discord\":{";
+        jsonString += $"\"defaultWebhookUsernameOverride\":\"{defaultWebhookUsernameOverride.Value}\",";
         jsonString += $"\"webhook\":\"{(string.IsNullOrEmpty(webhookUrl.Value) ? "unset" : "REDACTED")}\",";
         jsonString += $"\"webhookEvents\":\"{webhookEvents.Value}\",";
+        jsonString += $"\"webhookUsernameOverride\":\"{webhookUsernameOverride.Value}\",";
         jsonString += $"\"webhook2\":\"{(string.IsNullOrEmpty(webhookUrl2.Value) ? "unset" : "REDACTED")}\",";
         jsonString += $"\"webhook2Events\":\"{webhook2Events.Value}\",";
+        jsonString += $"\"webhook2UsernameOverride\":\"{webhook2UsernameOverride.Value}\",";
         jsonString += $"\"logDebugMessages\":\"{logDebugMessages.Value}\",";
         jsonString += $"\"fancierMessages\":\"{DiscordEmbedsEnabled}\",";
         jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserList.Value}\",";
