@@ -35,6 +35,8 @@ internal class MainConfig
     private ConfigEntry<string> webhook2Events;
     private ConfigEntry<string> webhookUsernameOverride;
     private ConfigEntry<string> webhook2UsernameOverride;
+    private ConfigEntry<string> webhookAvatarOverride;
+    private ConfigEntry<string> webhook2AvatarOverride;
     private ConfigEntry<bool> discordEmbedMessagesToggle;
     private ConfigEntry<string> mutedDiscordUserList;
     private ConfigEntry<string> mutedDiscordUserListRegex;
@@ -48,6 +50,9 @@ internal class MainConfig
     private WebhookEntry primaryWebhook;
     private WebhookEntry secondaryWebhook;
 
+    /// <summary>
+    /// Creates a new MainConfig object with the given config file.
+    /// </summary>
     public MainConfig(ConfigFile configFile)
     {
         config = configFile;
@@ -55,20 +60,13 @@ internal class MainConfig
 
         Plugin.StaticLogger.SetLogLevel(logDebugMessages.Value);
 
-        mutedPlayers = new List<string>(mutedDiscordUserList.Value.Split(';'));
-        if (String.IsNullOrEmpty(mutedDiscordUserListRegex.Value))
-        {
-            mutedPlayersRegex = new Regex(@"a^");
-        }
-        else
-        {
-            mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
-        }
-
-        primaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value));
-        secondaryWebhook = new WebhookEntry(webhookUrl2.Value, Webhook.StringToEventList(webhook2Events.Value));
+        UpdateMutedPlayers();
+        UpdateWebhooks();
     }
 
+    /// <summary>
+    /// Reloads the config file and updates the muted players and webhook entries.
+    /// </summary>
     public void ReloadConfig()
     {
         config.Reload();
@@ -76,8 +74,17 @@ internal class MainConfig
 
         Plugin.StaticLogger.SetLogLevel(logDebugMessages.Value);
 
+        UpdateMutedPlayers();
+        UpdateWebhooks();
+    }
+
+    /// <summary>
+    /// Updates the muted players list with the values from the config file.
+    /// </summary>
+    private void UpdateMutedPlayers()
+    {
         mutedPlayers = new List<string>(mutedDiscordUserList.Value.Split(';'));
-        if (String.IsNullOrEmpty(mutedDiscordUserListRegex.Value))
+        if (string.IsNullOrEmpty(mutedDiscordUserListRegex.Value))
         {
             mutedPlayersRegex = new Regex(@"a^");
         }
@@ -85,9 +92,32 @@ internal class MainConfig
         {
             mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
         }
+    }
 
+    /// <summary>
+    /// Updates the webhook entries with the values from the config file.
+    /// </summary>
+    private void UpdateWebhooks()
+    {
         primaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value));
+        if (!string.IsNullOrEmpty(webhookUsernameOverride.Value))
+        {
+            primaryWebhook.UsernameOverride = webhookUsernameOverride.Value;
+        }
+        if (!string.IsNullOrEmpty(webhookAvatarOverride.Value))
+        {
+            primaryWebhook.AvatarOverride = webhookAvatarOverride.Value;
+        }
+
         secondaryWebhook = new WebhookEntry(webhookUrl2.Value, Webhook.StringToEventList(webhook2Events.Value));
+        if (!string.IsNullOrEmpty(webhook2UsernameOverride.Value))
+        {
+            secondaryWebhook.UsernameOverride = webhook2UsernameOverride.Value;
+        }
+        if (!string.IsNullOrEmpty(webhook2AvatarOverride.Value))
+        {
+            secondaryWebhook.AvatarOverride = webhook2AvatarOverride.Value;
+        }
     }
 
     private void LoadConfig()
@@ -116,6 +146,12 @@ internal class MainConfig
             "",
             "Override the username of the webhook. If left blank, the webhook will use the default name.");
 
+        webhookAvatarOverride = config.Bind<string>(MAIN_SETTINGS,
+            "Webhook Avatar Override",
+            "",
+            "Optional: Override the avatar of the primary webhook with the image at this URL." + Environment.NewLine +
+            "If left blank, the webhook will use the avatar set in your Discord server's settings.");
+
         webhookUrl2 = config.Bind<string>(MAIN_SETTINGS,
             "Secondary Webhook URL",
             "",
@@ -134,6 +170,12 @@ internal class MainConfig
             "",
             "Optional: Override the username of the secondary webhook." + Environment.NewLine +
             "If left blank, the webhook will use the default username set in the main config.");
+
+        webhook2AvatarOverride = config.Bind<string>(MAIN_SETTINGS,
+            "Secondary Webhook Avatar Override",
+            "",
+            "Optional: Override the avatar of the secondary webhook with the image at this URL." + Environment.NewLine +
+            "If left blank, the webhook will use the avatar set in your Discord server's settings.");
 
         logDebugMessages = config.Bind<bool>(MAIN_SETTINGS,
             "Log Debug Messages",
@@ -199,9 +241,11 @@ internal class MainConfig
         jsonString += $"\"webhook\":\"{(string.IsNullOrEmpty(webhookUrl.Value) ? "unset" : "REDACTED")}\",";
         jsonString += $"\"webhookEvents\":\"{webhookEvents.Value}\",";
         jsonString += $"\"webhookUsernameOverride\":\"{webhookUsernameOverride.Value}\",";
+        jsonString += $"\"webhookAvatarOverride\":\"{webhookAvatarOverride.Value}\",";
         jsonString += $"\"webhook2\":\"{(string.IsNullOrEmpty(webhookUrl2.Value) ? "unset" : "REDACTED")}\",";
         jsonString += $"\"webhook2Events\":\"{webhook2Events.Value}\",";
         jsonString += $"\"webhook2UsernameOverride\":\"{webhook2UsernameOverride.Value}\",";
+        jsonString += $"\"webhook2AvatarOverride\":\"{webhook2AvatarOverride.Value}\",";
         jsonString += $"\"logDebugMessages\":\"{logDebugMessages.Value}\",";
         jsonString += $"\"fancierMessages\":\"{DiscordEmbedsEnabled}\",";
         jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserList.Value}\",";

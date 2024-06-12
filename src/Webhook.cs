@@ -132,7 +132,7 @@ public class Webhook
         //Guard against empty string
         if (string.IsNullOrEmpty(configEntry))
         {
-            return new List<Event>();
+            return [];
         }
 
         //Clean string (remove all non-word non-semi-colon characters)
@@ -142,20 +142,17 @@ public class Webhook
         // Check for ALL case
         if (cleaned.Equals("ALL"))
         {
-            return new List<Event> { Event.ALL };
+            return [Event.ALL];
         }
 
-        List<Event> events = new List<Event>();
+        List<Event> events = [];
 
         foreach (string ev in cleaned.Split(';'))
         {
             events.Add(StringToEvent(ev));
         }
 
-        foreach (Webhook.Event we in events)
-        {
-            Plugin.StaticLogger.LogDebug($"Added {we} to list");
-        }
+        Plugin.StaticLogger.LogDebug($"Webhooks: parsed config entry '{configEntry}' => '{string.Join(", ", events)}'");
 
         return events;
     }
@@ -163,27 +160,56 @@ public class Webhook
 
 class WebhookEntry
 {
+    /// <summary>
+    /// The webhook endpoint URL
+    /// </summary>
     public string Url { get; set; }
+    /// <summary>
+    /// Which events should trigger this webhook
+    /// </summary>
     public List<Webhook.Event> FireOnEvents { get; set; }
+    /// <summary>
+    /// The username to use for this webhook
+    /// </summary>
     public string UsernameOverride { get; set; } = string.Empty;
+    /// <summary>
+    /// The URL of the avatar to use for this webhook
+    /// </summary>
+    public string AvatarOverride { get; set; } = string.Empty;
 
-    public WebhookEntry(string url, List<Webhook.Event> fireOnEvents, string usernameOverride = "")
+    /// <summary>
+    /// Create a new WebhookEntry, defaulting to all events
+    /// </summary>
+    /// <param name="url">webhook endpoint</param>
+    public WebhookEntry(string url)
+    {
+        Url = url;
+        FireOnEvents = [Webhook.Event.ALL];
+    }
+
+    /// <summary>
+    /// Create a new WebhookEntry
+    /// </summary>
+    /// <param name="url">webhook endpoint</param>
+    /// <param name="fireOnEvents">events to trigger this webhook</param>
+    /// <param name="usernameOverride">(Optional) username override</param>
+    /// <param name="avatarOverride">(Optional) avatar override</param>
+    public WebhookEntry(string url, List<Webhook.Event> fireOnEvents, string usernameOverride = "", string avatarOverride = "")
     {
         if (string.IsNullOrEmpty(url))
         {
             Plugin.StaticLogger.LogDebug($"Coerced null or empty webhook url to empty string. Ignoring event list.");
             Url = "";
-            FireOnEvents = new List<Webhook.Event>();
+            FireOnEvents = [];
             return;
         }
 
         Url = url;
 
-
         if (fireOnEvents == null || fireOnEvents.Count == 0)
         {
             Plugin.StaticLogger.LogDebug($"Coerced null or empty webhook event list to empty list.");
-            FireOnEvents = new List<Webhook.Event>();
+            FireOnEvents = [];
         }
         else
         {
@@ -194,11 +220,29 @@ class WebhookEntry
         {
             UsernameOverride = usernameOverride;
         }
+
+        if (!string.IsNullOrEmpty(avatarOverride))
+        {
+            AvatarOverride = avatarOverride;
+        }
     }
 
+    /// <summary>
+    /// Check if the webhook has a username override
+    /// </summary>
+    /// <returns>True if a username override exists for this webhook</returns>
     public bool HasUsernameOverride()
     {
         return !string.IsNullOrEmpty(UsernameOverride);
+    }
+
+    /// <summary>
+    /// Check if the webhook has an avatar override
+    /// </summary>
+    /// <returns>True if an avatar override exists for this webhook</returns>
+    public bool HasAvatarOverride()
+    {
+        return !string.IsNullOrEmpty(AvatarOverride);
     }
 
     internal bool HasEvent(Webhook.Event ev)

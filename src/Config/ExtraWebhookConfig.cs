@@ -28,6 +28,10 @@ internal class ExtraWebhookConfig
   /// </summary>
   private List<ConfigEntry<string>> webhookUsernameOverrideList { get; set; }
   /// <summary>
+  /// The config entries for the webhook avatar overrides.
+  /// </summary>
+  private List<ConfigEntry<string>> webhookAvatarOverrideList { get; set; }
+  /// <summary>
   /// The webhook entries defined in the config file.
   /// </summary>
   private List<WebhookEntry> webhookEntries { get; set; }
@@ -51,6 +55,7 @@ internal class ExtraWebhookConfig
     webhookUrlList = [];
     webhookEventsList = [];
     webhookUsernameOverrideList = [];
+    webhookAvatarOverrideList = [];
 
     LoadConfig();
 
@@ -97,8 +102,16 @@ internal class ExtraWebhookConfig
           EXTRA_WEBHOOKS,
           $"Webhook Username Override {i + 1}",
           "",
-          $"Optional: Override the username of the webhook for this entry ({i + 1})." + Environment.NewLine +
+          "Optional: Override the username of this webhook." + Environment.NewLine +
           "If left blank, the webhook will use the default username set in the main config.")
+        );
+
+      webhookAvatarOverrideList.Add(config.Bind<string>(
+          EXTRA_WEBHOOKS,
+          $"Webhook Avatar Override {i + 1}",
+          "",
+          "Optional: Override the avatar of this webhook with the image at the given URL." + Environment.NewLine +
+          "If left blank, the webhook will use the avatar defined on the Discord webhook in your server's settings.")
         );
     }
 
@@ -111,6 +124,14 @@ internal class ExtraWebhookConfig
   /// <returns>A list of webhooks ready for use. Only returns webhooks that are set up correctly.</returns>
   private List<WebhookEntry> LoadWebhookEntries()
   {
+    // Check that all the lists are the same length
+    if (webhookUrlList.Count != webhookEventsList.Count || webhookUrlList.Count != webhookUsernameOverrideList.Count || webhookUrlList.Count != webhookAvatarOverrideList.Count)
+    {
+      Plugin.StaticLogger.LogError("Webhook lists are not the same length. This should not happen.");
+      Plugin.StaticLogger.LogError($"URLs: {webhookUrlList.Count}, Events: {webhookEventsList.Count}, Usernames: {webhookUsernameOverrideList.Count}, Avatars: {webhookAvatarOverrideList.Count}");
+      return [];
+    }
+
     List<WebhookEntry> entries = [];
 
     for (int i = 0; i < webhookUrlList.Count; i++)
@@ -118,9 +139,41 @@ internal class ExtraWebhookConfig
       // If either the URL or the events are empty, skip this entry
       if (string.IsNullOrEmpty(webhookUrlList[i].Value) || string.IsNullOrEmpty(webhookEventsList[i].Value))
       {
+        Plugin.StaticLogger.LogDebug($"ExtraWebhooks: Skipping Webhook {i + 1} because URL or Events are empty.");
         continue;
       }
-      entries.Add(new WebhookEntry(webhookUrlList[i].Value, Webhook.StringToEventList(webhookEventsList[i].Value), webhookUsernameOverrideList[i].Value));
+
+      // Convert the events string into a list of events
+      List<Webhook.Event> events = Webhook.StringToEventList(webhookEventsList[i].Value);
+
+      // If the events list is empty, skip this entry
+      if (events.Count == 0)
+      {
+        Plugin.StaticLogger.LogDebug($"ExtraWebhooks: Skipping Webhook {i + 1} because events are empty.");
+        continue;
+      }
+
+      // Create a new WebhookEntry object
+      WebhookEntry entry = new(
+          webhookUrlList[i].Value,
+          events
+        );
+
+      if (!string.IsNullOrEmpty(webhookUsernameOverrideList[i].Value))
+      {
+        entry.UsernameOverride = webhookUsernameOverrideList[i].Value;
+      }
+      if (!string.IsNullOrEmpty(webhookAvatarOverrideList[i].Value))
+      {
+        entry.AvatarOverride = webhookAvatarOverrideList[i].Value;
+      }
+
+      entries.Add(entry);
+    }
+
+    if (entries.Count > 0)
+    {
+      Plugin.StaticLogger.LogDebug($"ExtraWebhooks: Loaded {entries.Count} webhooks from the config file.");
     }
 
     return entries;
@@ -139,6 +192,12 @@ internal class ExtraWebhookConfig
       jsonString += $"\"webhookURL{i + 1}\": \"{(string.IsNullOrEmpty(webhookUrlList[i].Value) ? "unset" : "REDACTED")}\",";
       jsonString += $"\"webhookEvents{i + 1}\": \"{webhookEventsList[i].Value}\",";
       jsonString += $"\"webhookUsernameOverride{i + 1}\": \"{webhookUsernameOverrideList[i].Value}\",";
+      jsonString += $"\"webhookAvatarOverride{i + 1}\": \"{webhookAvatarOverrideList[i].Value}\"";
+
+      if (i < MAX_WEBHOOKS - 1)
+      {
+        jsonString += ",";
+      }
     }
 
     jsonString += "}";

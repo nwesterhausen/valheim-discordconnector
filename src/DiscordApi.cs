@@ -319,6 +319,15 @@ internal class DiscordExecuteWebhook
     }
 
     /// <summary>
+    /// Reset any overrides on the webhook.
+    /// </summary>
+    public void ResetOverrides()
+    {
+        username = null;
+        avatar_url = null;
+    }
+
+    /// <summary>
     /// Send the message to Discord.
     /// </summary>
     /// <param name="ev">The event that triggered this message</param>
@@ -338,10 +347,15 @@ internal class DiscordExecuteWebhook
             {
                 Plugin.StaticLogger.LogDebug($"Sending {ev} message to Primary Webhook");
                 WebhookEntry primaryWebhook = Plugin.StaticConfig.PrimaryWebhook;
+                ResetOverrides();
 
                 if (primaryWebhook.HasUsernameOverride())
                 {
                     SetUsername(primaryWebhook.UsernameOverride);
+                }
+                if (primaryWebhook.HasAvatarOverride())
+                {
+                    SetAvatarUrl(primaryWebhook.AvatarOverride);
                 }
 
                 DiscordApi.SendSerializedJson(primaryWebhook, JsonConvert.SerializeObject(this));
@@ -351,10 +365,15 @@ internal class DiscordExecuteWebhook
             {
                 Plugin.StaticLogger.LogDebug($"Sending {ev} message to Secondary Webhook");
                 WebhookEntry secondaryWebhook = Plugin.StaticConfig.SecondaryWebhook;
+                ResetOverrides();
 
                 if (secondaryWebhook.HasUsernameOverride())
                 {
                     SetUsername(secondaryWebhook.UsernameOverride);
+                }
+                if (secondaryWebhook.HasAvatarOverride())
+                {
+                    SetAvatarUrl(secondaryWebhook.AvatarOverride);
                 }
 
                 DiscordApi.SendSerializedJson(secondaryWebhook, JsonConvert.SerializeObject(this));
@@ -367,9 +386,15 @@ internal class DiscordExecuteWebhook
                     if (webhook.HasEvent(ev))
                     {
                         Plugin.StaticLogger.LogDebug($"Sending {ev} message to an Extra Webhook");
+                        ResetOverrides();
+
                         if (webhook.HasUsernameOverride())
                         {
                             SetUsername(webhook.UsernameOverride);
+                        }
+                        if (webhook.HasAvatarOverride())
+                        {
+                            SetAvatarUrl(webhook.AvatarOverride);
                         }
 
                         DiscordApi.SendSerializedJson(webhook, JsonConvert.SerializeObject(this));
