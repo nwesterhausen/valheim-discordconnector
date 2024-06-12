@@ -203,6 +203,11 @@ internal class PluginConfig
     public List<string> MutedPlayers => mainConfig.MutedPlayers;
     public Regex MutedPlayersRegex => mainConfig.MutedPlayersRegex;
     public bool AllowNonPlayerShoutLogging => mainConfig.AllowNonPlayerShoutLogging;
+    public bool AllowMentionsHereEveryone => mainConfig.AllowMentionsHereEveryone;
+    public bool AllowMentionsAnyRole => mainConfig.AllowMentionsAnyRole;
+    public bool AllowMentionsAnyUser => mainConfig.AllowMentionsAnyUser;
+    public List<string> AllowedRoleMentions => mainConfig.AllowedRoleMentions;
+    public List<string> AllowedUserMentions => mainConfig.AllowedUserMentions;
 
 
     // Messages.Server

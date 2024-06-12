@@ -150,3 +150,63 @@ Enable this setting to have shouts which are performed by other mods/the server/
 :::warning Muted Players
 These are still subject to censure by the muted player regex and list.
 :::
+
+## Allow Mentions for @here and @everyone
+
+Type: `Boolean`, default value: `false`
+
+Enable this setting to allow the use of @here and @everyone in messages sent to Discord.
+
+:::warning
+This setting is disabled by default to prevent accidental mentions of everyone in the Discord channel. There is no filtering to prevent players from using these mentions in their shouts or names.
+:::
+
+## Allow Role Mentions
+
+Type: `Boolean`, default value: `true`
+
+Enable this setting to allow the use of role mentions in messages sent to Discord. Role mentions are in the format `<@&role_id>`, where `role_id` is the ID of the role you want to mention.
+
+:::warning
+There is no filtering to prevent players from using these mentions in their shouts or names.
+:::
+
+## Allow User Mentions
+
+Type: `Boolean`, default value: `true`
+
+Enable this setting to allow the use of user mentions in messages sent to Discord. User mentions are in the format `<@user_id>`, where `user_id` is the ID of the user you want to mention.
+
+:::warning
+There is no filtering to prevent players from using these mentions in their shouts or names.
+:::
+
+## Specifically Allowed Role Mentions
+
+Type: `String`, default value: ``
+
+Example value: `123452834;123452835`
+
+If you want to allow only certain roles to be mentioned, you can specify them here. This is a semicolon-separated list of role IDs where `role_id` is the ID of the role you want to allow mentions for.
+
+This setting will take precedence over the `Allow Role Mentions` setting (of course if all roles are allowed, this setting is redundant).
+
+:::tip How to get a Role ID
+Send a message in Discord with a backslash before the role mention, e.g. `\@role_name`. This will display the role mention in the format `<@&role_id>`, where `role_id` is the ID of the role you want to mention.
+
+:::
+
+## Specifically Allowed User Mentions
+
+Type: `String`, default value: ``
+
+Example value: `123452834;123452835`
+
+If you want to allow only certain users to be mentioned, you can specify them here. This is a semicolon-separated list of user IDs where `user_id` is the ID of the user you want to allow mentions for.
+
+This setting will take precedence over the `Allow User Mentions` setting (of course if all users are allowed, this setting is redundant).
+
+:::tip How to get a User ID
+Send a message in Discord with a backslash before the user mention, e.g. `\@user_name`. This will display the user mention in the format `<@user_id>`, where `user_id` is the ID of the user you want to mention.
+
+:::

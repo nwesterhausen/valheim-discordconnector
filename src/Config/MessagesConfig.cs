@@ -217,42 +217,42 @@ internal class MessagesConfig
         string jsonString = "{";
 
         jsonString += $"\"{SERVER_MESSAGES}\":{{";
-        jsonString += $"\"launchMessage\":\"{serverLaunchMessage.Value}\",";
-        jsonString += $"\"startMessage\":\"{serverLoadedMessage.Value}\",";
-        jsonString += $"\"stopMessage\":\"{serverStopMessage.Value}\",";
-        jsonString += $"\"shutdownMessage\":\"{serverShutdownMessage.Value}\",";
-        jsonString += $"\"savedMessage\":\"{serverSavedMessage.Value}\",";
-        jsonString += $"\"serverNewDayMessage\":\"{serverNewDayMessage.Value}\"";
+        jsonString += $"\"launchMessage\":\"{serverLaunchMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"startMessage\":\"{serverLoadedMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"stopMessage\":\"{serverStopMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"shutdownMessage\":\"{serverShutdownMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"savedMessage\":\"{serverSavedMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"serverNewDayMessage\":\"{serverNewDayMessage.Value.Replace("\"", "\\\"")}\"";
         jsonString += "},";
 
         jsonString += $"\"{PLAYER_MESSAGES}\":{{";
-        jsonString += $"\"joinMessage\":\"{playerJoinMessage.Value}\",";
-        jsonString += $"\"deathMessage\":\"{playerDeathMessage.Value}\",";
-        jsonString += $"\"leaveMessage\":\"{playerLeaveMessage.Value}\",";
-        jsonString += $"\"pingMessage\":\"{playerPingMessage.Value}\",";
-        jsonString += $"\"shoutMessage\":\"{playerShoutMessage.Value}\"";
+        jsonString += $"\"joinMessage\":\"{playerJoinMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"deathMessage\":\"{playerDeathMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"leaveMessage\":\"{playerLeaveMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"pingMessage\":\"{playerPingMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"shoutMessage\":\"{playerShoutMessage.Value.Replace("\"", "\\\"")}\"";
         jsonString += "},";
 
         jsonString += $"\"{PLAYER_FIRSTS_MESSAGES}\":{{";
-        jsonString += $"\"joinMessage\":\"{playerJoinMessage.Value}\",";
-        jsonString += $"\"deathMessage\":\"{playerDeathMessage.Value}\",";
-        jsonString += $"\"leaveMessage\":\"{playerLeaveMessage.Value}\",";
-        jsonString += $"\"pingMessage\":\"{playerPingMessage.Value}\",";
-        jsonString += $"\"shoutMessage\":\"{playerShoutMessage.Value}\"";
+        jsonString += $"\"joinMessage\":\"{playerJoinMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"deathMessage\":\"{playerDeathMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"leaveMessage\":\"{playerLeaveMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"pingMessage\":\"{playerPingMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"shoutMessage\":\"{playerShoutMessage.Value.Replace("\"", "\\\"")}\"";
         jsonString += "},";
 
         jsonString += $"\"{EVENT_MESSAGES}\":{{";
-        jsonString += $"\"eventStartMessage\":\"{eventStartMessage.Value}\",";
-        jsonString += $"\"eventPausedMessage\":\"{eventPausedMessage.Value}\",";
-        jsonString += $"\"eventResumedMessage\":\"{eventResumedMessage.Value}\",";
-        jsonString += $"\"eventStopMessage\":\"{eventStopMessage.Value}\"";
+        jsonString += $"\"eventStartMessage\":\"{eventStartMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"eventPausedMessage\":\"{eventPausedMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"eventResumedMessage\":\"{eventResumedMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"eventStopMessage\":\"{eventStopMessage.Value.Replace("\"", "\\\"")}\"";
         jsonString += "},";
 
         jsonString += $"\"{BOARD_MESSAGES}\":{{";
-        jsonString += $"\"leaderBoardTopPlayersMessage\":\"{leaderBoardTopPlayersMessage.Value}\",";
-        jsonString += $"\"leaderBoardBottomPlayersMessage\":\"{leaderBoardBottomPlayersMessage.Value}\",";
-        jsonString += $"\"leaderBoardHighestPlayerMessage\":\"{leaderBoardHighestPlayerMessage.Value}\",";
-        jsonString += $"\"leaderBoardLowestPlayerMessage\":\"{leaderBoardLowestPlayerMessage.Value}\"";
+        jsonString += $"\"leaderBoardTopPlayersMessage\":\"{leaderBoardTopPlayersMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"leaderBoardBottomPlayersMessage\":\"{leaderBoardBottomPlayersMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"leaderBoardHighestPlayerMessage\":\"{leaderBoardHighestPlayerMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"leaderBoardLowestPlayerMessage\":\"{leaderBoardLowestPlayerMessage.Value.Replace("\"", "\\\"")}\"";
         jsonString += "}";
 
         jsonString += "}";

@@ -46,6 +46,13 @@ internal class MainConfig
     private ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
     private ConfigEntry<bool> allowNonPlayerShoutLogging;
     private ConfigEntry<bool> logDebugMessages;
+    private ConfigEntry<bool> allowMentionsHereEveryone;
+    private ConfigEntry<bool> allowMentionsAnyRole;
+    private ConfigEntry<bool> allowMentionsAnyUser;
+    private ConfigEntry<string> allowedRoleMentions;
+    private ConfigEntry<string> allowedUserMentions;
+    private List<string> allowedRoleMentionsList;
+    private List<string> allowedUserMentionsList;
 
     private WebhookEntry primaryWebhook;
     private WebhookEntry secondaryWebhook;
@@ -62,6 +69,7 @@ internal class MainConfig
 
         UpdateMutedPlayers();
         UpdateWebhooks();
+        UpdateAllowedMentions();
     }
 
     /// <summary>
@@ -76,6 +84,31 @@ internal class MainConfig
 
         UpdateMutedPlayers();
         UpdateWebhooks();
+        UpdateAllowedMentions();
+    }
+
+    /// <summary>
+    /// Updates the allowed mentions lists with the values from the config file.
+    /// </summary>
+    private void UpdateAllowedMentions()
+    {
+        if (string.IsNullOrEmpty(allowedRoleMentions.Value))
+        {
+            allowedRoleMentionsList = [];
+        }
+        else
+        {
+            allowedRoleMentionsList = new List<string>(allowedRoleMentions.Value.Split(';'));
+        }
+
+        if (string.IsNullOrEmpty(allowedUserMentions.Value))
+        {
+            allowedUserMentionsList = [];
+        }
+        else
+        {
+            allowedUserMentionsList = new List<string>(allowedUserMentions.Value.Split(';'));
+        }
     }
 
     /// <summary>
@@ -83,7 +116,15 @@ internal class MainConfig
     /// </summary>
     private void UpdateMutedPlayers()
     {
-        mutedPlayers = new List<string>(mutedDiscordUserList.Value.Split(';'));
+        if (string.IsNullOrEmpty(mutedDiscordUserList.Value))
+        {
+            mutedPlayers = [];
+        }
+        else
+        {
+            mutedPlayers = new List<string>(mutedDiscordUserList.Value.Split(';'));
+        }
+
         if (string.IsNullOrEmpty(mutedDiscordUserListRegex.Value))
         {
             mutedPlayersRegex = new Regex(@"a^");
@@ -229,6 +270,35 @@ internal class MainConfig
             "Enable this setting to have shouts which are performed by other mods/the server/non-players to be sent to Discord as well." + Environment.NewLine +
             "Note: These are still subject to censure by the muted player regex and list.");
 
+        allowMentionsHereEveryone = config.Bind<bool>(MAIN_SETTINGS,
+            "Allow @here and @everyone mentions",
+            false,
+            "Enable this setting to allow messages sent to Discord to mention @here and @everyone. Per the Discord API, these share the same setting." + Environment.NewLine +
+            "Note: There is no filtering in place to prevent abuse of these mentions (e.g. in a shout or player's name).");
+
+        allowMentionsAnyRole = config.Bind<bool>(MAIN_SETTINGS,
+            "Allow @role mentions",
+            true,
+            "Enable this setting to allow messages sent to Discord to mention roles. Roles mentioned this way use the format `<@&role_id>`" + Environment.NewLine +
+            "Note: There is no filtering in place to prevent abuse of these mentions (e.g. in a shout or player's name).");
+
+        allowMentionsAnyUser = config.Bind<bool>(MAIN_SETTINGS,
+            "Allow @user mentions",
+            true,
+            "Enable this setting to allow messages sent to Discord to mention users. Users mentioned this way use the format `<@user_id>`" + Environment.NewLine +
+            "Note: There is no filtering in place to prevent abuse of these mentions (e.g. in a shout or player's name).");
+
+        allowedRoleMentions = config.Bind<string>(MAIN_SETTINGS,
+            "Allowed Role Mentions",
+            "",
+            "A semicolon-separated list of role IDs that are allowed to be mentioned in messages sent to Discord. These are just a number (no carets), e.g. `123;234`" + Environment.NewLine +
+            "Note: This setting is overshadowed if 'Allow @role mentions` is enabled, and only when that is disabled will these roles still be allowed to be mentioned.");
+
+        allowedUserMentions = config.Bind<string>(MAIN_SETTINGS,
+            "Allowed User Mentions",
+            "",
+            "A semicolon-separated list of user IDs that are allowed to be mentioned in messages sent to Discord. These are just a number (no carets), e.g. `123;234`" + Environment.NewLine +
+            "Note: This setting is overshadowed if 'Allow @user mentions` is enabled, and only when that is disabled will these users still be allowed to be mentioned.");
 
         config.Save();
     }
@@ -249,7 +319,42 @@ internal class MainConfig
         jsonString += $"\"logDebugMessages\":\"{logDebugMessages.Value}\",";
         jsonString += $"\"fancierMessages\":\"{DiscordEmbedsEnabled}\",";
         jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserList.Value}\",";
-        jsonString += $"\"ignoredPlayersRegex\":\"{mutedDiscordUserListRegex.Value}\"";
+        jsonString += $"\"ignoredPlayersList\":[";
+        for (int i = 0; i < mutedPlayers.Count; i++)
+        {
+            jsonString += $"\"{mutedPlayers[i]}\"";
+            if (i < mutedPlayers.Count - 1)
+            {
+                jsonString += ",";
+            }
+        }
+        jsonString += "],";
+        jsonString += $"\"ignoredPlayersRegex\":\"{mutedDiscordUserListRegex.Value}\",";
+        jsonString += $"\"allowMentionsHereEveryone\":\"{allowMentionsHereEveryone.Value}\",";
+        jsonString += $"\"allowMentionsAnyRole\":\"{allowMentionsAnyRole.Value}\",";
+        jsonString += $"\"allowMentionsAnyUser\":\"{allowMentionsAnyUser.Value}\",";
+        jsonString += $"\"allowedRoleMentions\":\"{allowedRoleMentions.Value}\",";
+        jsonString += $"\"allowedRoleMentionsList\":[";
+        for (int i = 0; i < allowedRoleMentionsList.Count; i++)
+        {
+            jsonString += $"\"{allowedRoleMentionsList[i]}\"";
+            if (i < allowedRoleMentionsList.Count - 1)
+            {
+                jsonString += ",";
+            }
+        }
+        jsonString += "],";
+        jsonString += $"\"allowedUserMentions\":\"{allowedUserMentions.Value}\",";
+        jsonString += $"\"allowedUserMentionsList\":[";
+        for (int i = 0; i < allowedUserMentionsList.Count; i++)
+        {
+            jsonString += $"\"{allowedUserMentionsList[i]}\"";
+            if (i < allowedUserMentionsList.Count - 1)
+            {
+                jsonString += ",";
+            }
+        }
+        jsonString += "]";
         jsonString += "},";
         jsonString += $"\"collectStatsEnabled\":\"{CollectStatsEnabled}\",";
         jsonString += $"\"sendPositionsEnabled\":\"{SendPositionsEnabled}\",";
@@ -270,5 +375,10 @@ internal class MainConfig
     public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
     public RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
     public bool AllowNonPlayerShoutLogging => allowNonPlayerShoutLogging.Value;
+    public bool AllowMentionsHereEveryone => allowMentionsHereEveryone.Value;
+    public bool AllowMentionsAnyRole => allowMentionsAnyRole.Value;
+    public bool AllowMentionsAnyUser => allowMentionsAnyUser.Value;
+    public List<string> AllowedRoleMentions => allowedRoleMentionsList;
+    public List<string> AllowedUserMentions => allowedUserMentionsList;
 
 }

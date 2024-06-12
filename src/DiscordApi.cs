@@ -278,15 +278,10 @@ internal class DiscordExecuteWebhook
     /// </summary>
     public DiscordExecuteWebhook()
     {
-        content = null;
-        username = null;
-        avatar_url = null;
-        embeds = null;
-        allowed_mentions = null;
+        // allowed mentions are set for all webhooks right now
+        allowed_mentions = new();
 
-        // Grab the allowed mentions from the configuration
-        // Grab the username override from the configuration
-        // Grab the avatar URL override from the configuration
+        ResetOverrides();
     }
 
     /// <summary>
@@ -450,6 +445,28 @@ internal class AllowedMentions
         roles = [];
         users = [];
         replied_user = false;
+
+        // Update from config
+        if (Plugin.StaticConfig.AllowMentionsHereEveryone)
+        {
+            AllowEveryone();
+        }
+        if (Plugin.StaticConfig.AllowMentionsAnyRole)
+        {
+            AllowAnyRoles();
+        }
+        if (Plugin.StaticConfig.AllowMentionsAnyUser)
+        {
+            AllowAnyUsers();
+        }
+        if (Plugin.StaticConfig.AllowedRoleMentions.Count > 0)
+        {
+            AllowRoles(Plugin.StaticConfig.AllowedRoleMentions);
+        }
+        if (Plugin.StaticConfig.AllowedUserMentions.Count > 0)
+        {
+            AllowUsers(Plugin.StaticConfig.AllowedUserMentions);
+        }
     }
 
     /// <summary>
@@ -532,6 +549,42 @@ internal class AllowedMentions
     {
         if (users.Contains(user_id))
             users.Remove(user_id);
+    }
+
+    /// <summary>
+    /// Allow any role mentions.
+    /// </summary>
+    public void AllowAnyRoles()
+    {
+        if (!parse.Contains("roles"))
+            parse.Add("roles");
+    }
+
+    /// <summary>
+    /// Allow any user mentions.
+    /// </summary>
+    public void AllowAnyUsers()
+    {
+        if (!parse.Contains("users"))
+            parse.Add("users");
+    }
+
+    /// <summary>
+    /// Disallow any role mentions. (Specific role_ids will still be allowed)
+    /// </summary>
+    public void DisallowAnyRoles()
+    {
+        if (parse.Contains("roles"))
+            parse.Remove("roles");
+    }
+
+    /// <summary>
+    /// Disallow any user mentions. (Specific user_ids will still be allowed)
+    /// </summary>
+    public void DisallowAnyUsers()
+    {
+        if (parse.Contains("users"))
+            parse.Remove("users");
     }
 }
 
