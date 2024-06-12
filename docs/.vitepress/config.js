@@ -73,6 +73,9 @@ export default {
                                 { text: 'Player Activity', link: '/config/leaderboards.playerstats' },
                                 { text: 'Custom Leaderboards', link: '/config/leaderboards.custom' },
                             ]
+                        },
+                        {
+                            text: "Extra Webhooks", link: '/config/extra-webhooks',
                         }
                     ]
                 },
