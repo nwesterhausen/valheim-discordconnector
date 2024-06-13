@@ -469,6 +469,36 @@ internal class AllowedMentions
         }
     }
 
+    public AllowedMentions(Config.Model.MentionsConfig config)
+    {
+        parse = [];
+        roles = [];
+        users = [];
+        replied_user = false;
+
+        // Update from config
+        if (config.HereAndEveryone)
+        {
+            AllowEveryone();
+        }
+        if (config.AnyRole)
+        {
+            AllowAnyRoles();
+        }
+        if (config.AnyUser)
+        {
+            AllowAnyUsers();
+        }
+        if (config.AllowedRoles.Count > 0)
+        {
+            AllowRoles(config.AllowedRoles);
+        }
+        if (config.AllowedUsers.Count > 0)
+        {
+            AllowUsers(config.AllowedUsers);
+        }
+    }
+
     /// <summary>
     /// Enable `@everyone` and `@here` mentions.
     /// </summary>
