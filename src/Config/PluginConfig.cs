@@ -109,6 +109,10 @@ internal class PluginConfig
         Plugin.StaticLogger.LogDebug("Configuration Loaded");
         Plugin.StaticLogger.LogDebug($"Muted Players Regex pattern ('a^' is default for no matches): {mainConfig.MutedPlayersRegex.ToString()}");
         DumpConfigAsJson();
+
+        Plugin.StaticLogger.LogInfo("Testing config YAML parsing");
+        var yamlConfig = Utils.ParseConfig(Path.Combine(configPath, "discordconnector.yml"));
+        Utils.WriteConfig(Path.Combine(configPath, "discordconnector-out.yml"), yamlConfig);
     }
 
     public void ReloadConfig()

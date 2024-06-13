@@ -27,6 +27,7 @@
   <ItemGroup>
     <PackageReference Include="LiteDB" Version="5.*" />
     <PackageReference Include="Newtonsoft.Json" Version="13.*" />
+    <PackageReference Include="YamlDotNet" Version="15.*" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
@@ -80,6 +81,8 @@
       <!-- Include Newtonsoft.Json dependency -->
       <BuiltLibraryAndDeps Include="$(TargetDir)Newtonsoft.Json.dll" />
       <BuiltLibraryAndDeps Include="$(ValheimManagedLibs)\System.Runtime.Serialization.dll" />
+      <!-- Include YamlDotNet dependency -->
+      <BuiltLibraryAndDeps Include="$(TargetDir)YamlDotNet.dll" />
       <!-- Include LiteDB dependency -->
       <BuiltLibraryAndDeps Include="$(TargetDir)LiteDB.dll" />
       <!-- Metadata files for Thunderstore -->
@@ -94,8 +97,8 @@
     <Copy SourceFiles="@(ThunderstoreMetadata)" DestinationFolder="$(DiscordConnectorDir)"
       SkipUnchangedFiles="true" />
     <!-- Copying the changelog involves renaming to all uppercase -->
-    <Copy SourceFiles="$(DocsDir)changelog.md"
-      DestinationFiles="$(DiscordConnectorDir)CHANGELOG.md" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(DocsDir)changelog.md" DestinationFiles="$(DiscordConnectorDir)CHANGELOG.md"
+      SkipUnchangedFiles="true" />
   </Target>
 
   <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles">
