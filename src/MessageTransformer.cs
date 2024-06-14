@@ -28,6 +28,9 @@ internal static class MessageTransformer
     private const string DAY_NUMBER = "%DAY_NUMBER%";
     private const string NUM_PLAYERS = "%NUM_PLAYERS%";
     private const string JOIN_CODE = "%JOIN_CODE%";
+    private const string TIMESTAMP = "%TIMESTAMP%";
+    private const string TIMESINCE = "%TIMESINCE%";
+    private const string UNIX_TIMESTAMP = "%UNIX_TIMESTAMP%";
 
     private static readonly Regex OpenCaretRegex = new(@"<[\w=]+>");
     private static readonly Regex CloseCaretRegex = new(@"</[\w]+>");
@@ -75,8 +78,47 @@ internal static class MessageTransformer
         dynamicReplacedMessage = ReplaceDayNumber(dynamicReplacedMessage);
         dynamicReplacedMessage = ReplaceNumPlayers(dynamicReplacedMessage, subtractOne);
         dynamicReplacedMessage = ReplaceJoinCode(dynamicReplacedMessage);
+        dynamicReplacedMessage = ReplaceTimestamp(dynamicReplacedMessage);
+        dynamicReplacedMessage = ReplaceTimesince(dynamicReplacedMessage);
+        dynamicReplacedMessage = ReplaceUnixTimestamp(dynamicReplacedMessage);
 
         return dynamicReplacedMessage;
+    }
+
+    /// <summary>
+    /// Replace the timestamp in the message. This inserts the current time as a unix timestamp in a format that
+    /// discord replaces with a human readable time, adjusted to the user's timezone.
+    /// </summary>
+    /// <param name="rawMessage">Raw message to format</param>
+    /// <returns>Message with the timestamp replaced</returns>
+    private static string ReplaceTimestamp(string rawMessage)
+    {
+        return rawMessage
+            .Replace(TIMESTAMP, $"<t:{(int)System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1)).TotalSeconds}>");
+    }
+
+    /// <summary>
+    /// Replace the timestamp in the message. This inserts the current time as a unix timestamp in a format that
+    /// discord replaces with a human readable time, showing a countdown to the time. (e.g. "in 5 minutes" or "5 minutes ago")
+    /// </summary>
+    /// <param name="rawMessage">Raw message to format</param>
+    /// <returns>Message with the timestamp replaced</returns>
+    private static string ReplaceTimesince(string rawMessage)
+    {
+        return rawMessage
+            .Replace(TIMESINCE, $"<t:{(int)System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1)).TotalSeconds}:R>");
+    }
+
+    /// <summary>
+    /// Replace the unix timestamp in the message. This inserts the current time as a unix timestamp. This does not
+    /// get replaced on its own by Discord, but could be used to customize a `<t:UNIX_TIMESTAMP>` tag for Discord.
+    /// </summary>
+    /// <param name="rawMessage">Raw message to format</param>
+    /// <returns>Message with the timestamp replaced</returns>
+    private static string ReplaceUnixTimestamp(string rawMessage)
+    {
+        return rawMessage
+            .Replace(UNIX_TIMESTAMP, ((int)System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1)).TotalSeconds).ToString());
     }
 
     /// <summary>
