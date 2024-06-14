@@ -8,15 +8,23 @@ In the event messages, anywhere in the message you can use the string vars `%EVE
 | `%EVENT_START_MSG%` | The event start message (e.g. "The forest is moving...") | Event start message      |
 | `%EVENT_END_MSG%`   | The event stop message (e.g. "The forest rests again")   | Event stop message       |
 | `%EVENT_MSG%`       | The appropriate start/end message for the event          | Event start/stop message |
+
 :::
 
-::: tip Available Dynamic Variables
+:::details Always Available Variables
 
-| Variable            | Replaced with..                                                                          | Can be used in..    |
-| ------------------- | ---------------------------------------------------------------------------------------- | ------------------- |
-| `%VAR1%` - `VAR10%` | Custom variable value (defined in [Custom Variables](./variables.custom.md) config file) | Any messages        |
-| `%PUBLICIP%`        | Server's public IP (according to the server)                                             | Any server messages |
-| `%DAY_NUMBER%`      | Current day number on server                                                             | Any messages        |
+| Variable            | Replaced with..                                                                          | Can be used in..                                                                                |
+| ------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `%VAR1%` - `VAR10%` | Custom variable value (defined in [Custom Variables](./variables.custom.md) config file) | Any messages                                                                                    |
+| `%PUBLICIP%`        | Server's public IP (according to the server)                                             | Any server messages                                                                             |
+| `%DAY_NUMBER%`      | Current day number on server                                                             | Any messages                                                                                    |
+| `%WORLD_NAME%`      | World name of the world used on the server                                               | Any messages                                                                                    |
+| `%NUM_PLAYERS%`     | Number of currently online players                                                       | Any messages                                                                                    |
+| `%JOIN_CODE%`       | Server's join code (only if a join code exists, blank otherwise)                         | Any messages                                                                                    |
+| `%TIMESTAMP%`       | `<t:UNIX_TIMESTAMP>`                                                                     | Replaced with a Discord timestamp that will be converted to the user's local time.              |
+| `%TIMESINCE%`       | `<t:UNIX_TIMESTAMP:R>`                                                                   | Replaced with a Discord timestamp that will be converted to a relative time (e.g. 2 hours ago). |
+| `%UNIX_TIMESTAMP%`  | UNIX timestamp of the event (e.g 12039232)                                               | This can be used to create a custom timestamp format in the message.                            |
+
 :::
 
 :::details Random Messages
