@@ -34,17 +34,12 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Abridged Changelog
 
-### Version 2.3.0
+### Version 2.3.1
 
 Features
 
-- support up to 16 additional webhooks (adds a new config file, `discordconnector-extraWebhooks.cfg`)
-- support restricting/allowing Discord mentions in messages (`@here` and `@everyone` are disabled by default -- possibly a breaking change)
-- custom variables are now evaluated again for any embedded variables in the message
-- added new configuration values to allow specifying a custom username and avatar for each webhook (to override the Discord webhook settings)
-- added a configuration value that sets a default username for all webhooks (if not overridden)
-
-Fixes
-
-- no longer relies on the `ZNet.GetPublicIP()` method and instead gets the public IP on its own at server start.
-- `%NUM_PLAYERS%` proactively subtracts 1 if the event is a player leaving
+- Added a few new variables related to timestamps and time
+  - `%TIMESTAMP%` - replaced with `<t:UNIX_TIMESTAMP>` which Discord will convert to the user's local time
+  - `%TIMESINCE%` - replaced with `<t:UNIX_TIMESTAMP:R>` which Discord will convert to a relative time (e.g. 2 hours ago)
+  - `%UNIX_TIMESTAMP%` - replaced with the UNIX timestamp of the event (e.g. 1634567890). This can be used to create a custom timestamp format in the message.
+  - Added a configuration option for the Active Players announcement which will allow you to disable the announcement when no one is online.

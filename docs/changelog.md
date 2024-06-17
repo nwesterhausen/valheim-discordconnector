@@ -2,7 +2,7 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
-## Version NEXT
+## Version 2.3.1
 
 Features
 
