@@ -4,8 +4,8 @@ namespace DiscordConnector.Config;
 internal class LeaderBoardConfigValues
 {
     // Each leader board has these values to configure
-    public ConfigEntry<LeaderBoards.Ordering> type;
-    public ConfigEntry<LeaderBoards.TimeRange> timeRange;
+    public ConfigEntry<Leaderboards.Ordering> type;
+    public ConfigEntry<Leaderboards.TimeRange> timeRange;
     public ConfigEntry<int> numberListings;
     public ConfigEntry<bool> enabled;
     public ConfigEntry<int> periodInMinutes;
@@ -21,25 +21,25 @@ internal class LeaderBoardConfigValues
     public const string EnableDescription = "Enable or disable this leader board.";
 
     public const string TimeRangeTitle = "Leader Board Time Range";
-    public const LeaderBoards.TimeRange TimeRangeDefault = LeaderBoards.TimeRange.AllTime;
+    public const Leaderboards.TimeRange TimeRangeDefault = Leaderboards.TimeRange.AllTime;
     public const string TimeRangeDescription = "A more restrictive filter of time can be applied to the leader board. This restricts it to tally up statistics within the range specified.";
-    public static readonly string TimeRangeDescription1 = $"{LeaderBoards.TimeRange.AllTime}: Apply no time restriction to the leader board, use all available records.";
-    public static readonly string TimeRangeDescription2 = $"{LeaderBoards.TimeRange.Today}: Restrict leader board to recorded events from today.";
-    public static readonly string TimeRangeDescription3 = $"{LeaderBoards.TimeRange.Yesterday}: Restrict leader board to recorded events from yesterday.";
-    public static readonly string TimeRangeDescription4 = $"{LeaderBoards.TimeRange.PastWeek}: Restrict leader board to recorded events from the past week (including today).";
-    public static readonly string TimeRangeDescription5 = $"{LeaderBoards.TimeRange.WeekSundayToSaturday}: Restrict leader board to recorded events from the current week, beginning on Sunday and ending Saturday.";
-    public static readonly string TimeRangeDescription6 = $"{LeaderBoards.TimeRange.WeekMondayToSunday}: Restrict leader board to recorded events from the current week, beginning on Monday and ending Sunday.";
+    public static readonly string TimeRangeDescription1 = $"{Leaderboards.TimeRange.AllTime}: Apply no time restriction to the leader board, use all available records.";
+    public static readonly string TimeRangeDescription2 = $"{Leaderboards.TimeRange.Today}: Restrict leader board to recorded events from today.";
+    public static readonly string TimeRangeDescription3 = $"{Leaderboards.TimeRange.Yesterday}: Restrict leader board to recorded events from yesterday.";
+    public static readonly string TimeRangeDescription4 = $"{Leaderboards.TimeRange.PastWeek}: Restrict leader board to recorded events from the past week (including today).";
+    public static readonly string TimeRangeDescription5 = $"{Leaderboards.TimeRange.WeekSundayToSaturday}: Restrict leader board to recorded events from the current week, beginning on Sunday and ending Saturday.";
+    public static readonly string TimeRangeDescription6 = $"{Leaderboards.TimeRange.WeekMondayToSunday}: Restrict leader board to recorded events from the current week, beginning on Monday and ending Sunday.";
 
     public const string NumberListingsTitle = "Number of Rankings";
     public const int NumberListingsDefault = 3;
     public const string NumberListingsDescription = "Specify a number of places in the leader board. Setting this can help prevent a very long leader board in the case of active servers.";
-    public static readonly string NumberListingsDescription1 = $"Setting to 0 (zero) results in limiting to the hard-coded maximum of {LeaderBoard.MAX_LEADER_BOARD_SIZE}.";
+    public static readonly string NumberListingsDescription1 = $"Setting to 0 (zero) results in limiting to the hard-coded maximum of {LeaderbBoard.MAX_LEADER_BOARD_SIZE}.";
 
     public const string TypeTitle = "Type";
-    public const LeaderBoards.Ordering TypeDefault = LeaderBoards.Ordering.Descending;
+    public const Leaderboards.Ordering TypeDefault = Leaderboards.Ordering.Descending;
     public const string TypeDescription = "Choose what type of leader board this should be. There are 2 options:";
-    public static readonly string TypeDescription1 = $"{LeaderBoards.Ordering.Descending}:\"Number of Rankings\" players (with at least 1 record) are listed in descending order";
-    public static readonly string TypeDescription2 = $"{LeaderBoards.Ordering.Ascending}:  \"Number of Rankings\" players (with at least 1 record) are listed in ascending order";
+    public static readonly string TypeDescription1 = $"{Leaderboards.Ordering.Descending}:\"Number of Rankings\" players (with at least 1 record) are listed in descending order";
+    public static readonly string TypeDescription2 = $"{Leaderboards.Ordering.Ascending}:  \"Number of Rankings\" players (with at least 1 record) are listed in ascending order";
 
     public const string PeriodTitle = "Sending Period";
     public const int PeriodDefault = 600;
@@ -83,7 +83,7 @@ internal class LeaderBoardConfigValues
             DisplayedHeadingDescription + System.Environment.NewLine +
             DisplayedHeadingDescription1);
 
-        timeRange = config.Bind<LeaderBoards.TimeRange>(header,
+        timeRange = config.Bind<Leaderboards.TimeRange>(header,
             TimeRangeTitle,
             TimeRangeDefault,
             TimeRangeDescription + System.Environment.NewLine +
@@ -102,7 +102,7 @@ internal class LeaderBoardConfigValues
             PeriodDescription1
         );
 
-        type = config.Bind<LeaderBoards.Ordering>(header,
+        type = config.Bind<Leaderboards.Ordering>(header,
             TypeTitle,
             TypeDefault,
             TypeDescription + System.Environment.NewLine +
@@ -116,7 +116,7 @@ internal class LeaderBoardConfigValues
             new ConfigDescription(
                 NumberListingsDescription + System.Environment.NewLine +
                 NumberListingsDescription1,
-            new AcceptableValueRange<int>(0, LeaderBoard.MAX_LEADER_BOARD_SIZE * 3)
+            new AcceptableValueRange<int>(0, LeaderbBoard.MAX_LEADER_BOARD_SIZE * 3)
         ));
 
         deaths = config.Bind<bool>(header,
@@ -166,8 +166,8 @@ internal class LeaderBoardConfigValues
 
 public class LeaderBoardConfigReference
 {
-    public LeaderBoards.Ordering Type;
-    public LeaderBoards.TimeRange TimeRange;
+    public Leaderboards.Ordering Type;
+    public Leaderboards.TimeRange TimeRange;
     public int NumberListings;
     public bool Enabled;
     public int PeriodInMinutes;

@@ -1,6 +1,6 @@
 ﻿using System.Timers;
 
-namespace DiscordConnector.LeaderBoards;
+namespace DiscordConnector.Leaderboards;
 
 /// <summary>
 /// <para>

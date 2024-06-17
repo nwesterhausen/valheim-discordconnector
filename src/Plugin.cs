@@ -13,7 +13,7 @@ public class Plugin : BaseUnityPlugin
     internal static VDCLogger StaticLogger;
     internal static PluginConfig StaticConfig;
     internal static Database StaticDatabase;
-    internal static LeaderBoard StaticLeaderBoards;
+    internal static LeaderbBoard StaticLeaderBoards;
     internal static EventWatcher StaticEventWatcher;
     internal static ConfigWatcher StaticConfigWatcher;
     internal static string PublicIpAddress
@@ -41,7 +41,7 @@ public class Plugin : BaseUnityPlugin
         StaticLogger = new VDCLogger(Logger);
         StaticConfig = new PluginConfig(Config);
         StaticDatabase = new Records.Database(Paths.GameRootPath);
-        StaticLeaderBoards = new LeaderBoard();
+        StaticLeaderBoards = new LeaderbBoard();
 
         StaticConfigWatcher = new ConfigWatcher();
 
@@ -118,7 +118,7 @@ public class Plugin : BaseUnityPlugin
         if (StaticConfig.ActivePlayersAnnouncement.Enabled)
         {
             System.Timers.Timer playerActivityTimer = new System.Timers.Timer();
-            playerActivityTimer.Elapsed += LeaderBoards.ActivePlayersAnnouncement.SendOnTimer;
+            playerActivityTimer.Elapsed += Leaderboards.ActivePlayersAnnouncement.SendOnTimer;
             // Interval is learned from config file in minutes
             playerActivityTimer.Interval = 60 * 1000 * StaticConfig.ActivePlayersAnnouncement.PeriodInMinutes;
             Plugin.StaticLogger.LogInfo($"Enabling Player Activity announcement with interval {Strings.HumanReadableMs(playerActivityTimer.Interval)}");

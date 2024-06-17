@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using DiscordConnector.LeaderBoards;
+using DiscordConnector.Leaderboards;
 
 namespace DiscordConnector.Records;
 /// <summary>
@@ -68,7 +68,7 @@ public static class Helper
     /// <summary>
     /// Retrieve the top <paramref name="n"/> players for the <paramref name="key"/> category.
     /// This returns the values in descending (most to least) order.
-    /// 
+    ///
     /// Returns an empty list if the provided <paramref name="key"/> is invalid.
     /// </summary>
     /// <param name="key">One of <see cref="Categories.All"/></param>
@@ -129,7 +129,7 @@ public static class Helper
     /// <summary>
     /// Retrieve the bottom <paramref name="n"/> players for the <paramref name="key"/> category.
     /// This returns the values in ascending (least to most) order.
-    /// 
+    ///
     /// Returns an empty list if the provided <paramref name="key"/> is invalid.
     /// </summary>
     /// <param name="key">One of <see cref="Categories.All"/></param>
