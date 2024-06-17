@@ -10,6 +10,7 @@ Features
   - `%TIMESTAMP%` - replaced with `<t:UNIX_TIMESTAMP>` which Discord will convert to the user's local time
   - `%TIMESINCE%` - replaced with `<t:UNIX_TIMESTAMP:R>` which Discord will convert to a relative time (e.g. 2 hours ago)
   - `%UNIX_TIMESTAMP%` - replaced with the UNIX timestamp of the event (e.g. 1634567890). This can be used to create a custom timestamp format in the message.
+  - Added a configuration option for the Active Players announcement which will allow you to disable the announcement when no one is online.
 
 ## Version 2.3.0
 
