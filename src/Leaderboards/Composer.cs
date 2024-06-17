@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using DiscordConnector.Config;
 using DiscordConnector.Records;
 
-namespace DiscordConnector.LeaderBoards;
+namespace DiscordConnector.Leaderboards;
 internal class Composer : Base
 {
     private int leaderBoardIdx;
@@ -41,7 +41,7 @@ internal class Composer : Base
             {
                 if (deathRankings.Count > 0)
                 {
-                    leaderFields.Add(Tuple.Create("Deaths", LeaderBoard.RankedCountResultToString(deathRankings)));
+                    leaderFields.Add(Tuple.Create("Deaths", LeaderbBoard.RankedCountResultToString(deathRankings)));
                 }
             }
         }
@@ -52,7 +52,7 @@ internal class Composer : Base
             {
                 if (sessionRankings.Count > 0)
                 {
-                    leaderFields.Add(Tuple.Create("Sessions", LeaderBoard.RankedCountResultToString(sessionRankings)));
+                    leaderFields.Add(Tuple.Create("Sessions", LeaderbBoard.RankedCountResultToString(sessionRankings)));
                 }
             }
         }
@@ -63,7 +63,7 @@ internal class Composer : Base
             {
                 if (shoutRankings.Count > 0)
                 {
-                    leaderFields.Add(Tuple.Create("Shouts", LeaderBoard.RankedCountResultToString(shoutRankings)));
+                    leaderFields.Add(Tuple.Create("Shouts", LeaderbBoard.RankedCountResultToString(shoutRankings)));
                 }
             }
         }
@@ -74,7 +74,7 @@ internal class Composer : Base
             {
                 if (pingRankings.Count > 0)
                 {
-                    leaderFields.Add(Tuple.Create("Pings", LeaderBoard.RankedCountResultToString(pingRankings)));
+                    leaderFields.Add(Tuple.Create("Pings", LeaderbBoard.RankedCountResultToString(pingRankings)));
                 }
             }
         }
@@ -85,7 +85,7 @@ internal class Composer : Base
             {
                 if (timeOnlineRankings.Count > 0)
                 {
-                    leaderFields.Add(Tuple.Create("Time Online", LeaderBoard.RankedSecondsToString(timeOnlineRankings)));
+                    leaderFields.Add(Tuple.Create("Time Online", LeaderbBoard.RankedSecondsToString(timeOnlineRankings)));
                 }
             }
         }
@@ -114,7 +114,7 @@ internal class Composer : Base
     private Dictionary<Statistic, List<CountResult>> AllRankings(LeaderBoardConfigReference settings)
     {
         Dictionary<Statistic, List<CountResult>> Dict = new Dictionary<Statistic, List<CountResult>>();
-        if (settings.Type == LeaderBoards.Ordering.Descending)
+        if (settings.Type == Leaderboards.Ordering.Descending)
         {
             if (settings.Deaths)
             {
@@ -137,7 +137,7 @@ internal class Composer : Base
                 Dict.Add(Statistic.TimeOnline, Records.Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings));
             }
         }
-        if (settings.Type == LeaderBoards.Ordering.Ascending)
+        if (settings.Type == Leaderboards.Ordering.Ascending)
         {
             if (settings.Deaths)
             {
@@ -172,7 +172,7 @@ internal class Composer : Base
     private Dictionary<Statistic, List<CountResult>> TimeBasedRankings(LeaderBoardConfigReference settings, System.DateTime startDate, System.DateTime endDate)
     {
         Dictionary<Statistic, List<CountResult>> Dict = new Dictionary<Statistic, List<CountResult>>();
-        if (settings.Type == LeaderBoards.Ordering.Descending)
+        if (settings.Type == Leaderboards.Ordering.Descending)
         {
             if (settings.Deaths)
             {
@@ -195,7 +195,7 @@ internal class Composer : Base
                 Dict.Add(Statistic.TimeOnline, Records.Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings, startDate, endDate));
             }
         }
-        if (settings.Type == LeaderBoards.Ordering.Ascending)
+        if (settings.Type == Leaderboards.Ordering.Ascending)
         {
             if (settings.Deaths)
             {

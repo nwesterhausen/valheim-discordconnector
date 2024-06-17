@@ -1,6 +1,6 @@
 ﻿using System.Timers;
 
-namespace DiscordConnector.LeaderBoards;
+namespace DiscordConnector.Leaderboards;
 
 /// <summary>
 /// <para>
@@ -37,7 +37,12 @@ internal static class ActivePlayersAnnouncement
     /// <returns>Count of character ZDOS</returns>
     private static int CurrentOnlinePlayers()
     {
-        return ZNet.instance.GetAllCharacterZDOS().Count;
+        if (ZNet.instance == null)
+        {
+            Plugin.StaticLogger.LogDebug("ActivePlayersAnnouncement: ZNet instance is null, cannot get online players");
+            return 0;
+        }
+        return ZNet.instance.GetNrOfPlayers();
     }
 
     /// <summary>
@@ -47,6 +52,12 @@ internal static class ActivePlayersAnnouncement
     /// </summary>
     private static void SendActivePlayersBoard()
     {
+        if (Plugin.StaticConfig.ActivePlayersAnnouncement.DisabledWhenNooneOnline && CurrentOnlinePlayers() == 0)
+        {
+            Plugin.StaticLogger.LogDebug("ActivePlayersAnnouncement: No one is online and the config is set to disable when no one is online. Not sending announcement.");
+            return;
+        }
+
         Webhook.Event ev = Webhook.Event.ActivePlayers;
         string formattedAnnouncement = $"**Active Players**\n";
         if (Plugin.StaticConfig.ActivePlayersAnnouncement.IncludeCurrentlyOnline)

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DiscordConnector.LeaderBoards;
+using DiscordConnector.Leaderboards;
 using LiteDB;
 using UnityEngine;
 
@@ -451,7 +451,7 @@ internal class Database
         }
     }
 
-    public List<CountResult> CountAllRecordsGrouped(string key, LeaderBoards.TimeRange timeRange)
+    public List<CountResult> CountAllRecordsGrouped(string key, Leaderboards.TimeRange timeRange)
     {
         if (timeRange == TimeRange.AllTime)
         {

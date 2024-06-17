@@ -4,29 +4,29 @@ using System.Timers;
 
 namespace DiscordConnector
 {
-    internal class LeaderBoard
+    internal class LeaderbBoard
     {
-        private LeaderBoards.Base leaderBoard1;
-        private LeaderBoards.Base leaderBoard2;
-        private LeaderBoards.Base leaderBoard3;
-        private LeaderBoards.Base leaderBoard4;
-        private LeaderBoards.Base leaderBoard5;
+        private Leaderboards.Base leaderBoard1;
+        private Leaderboards.Base leaderBoard2;
+        private Leaderboards.Base leaderBoard3;
+        private Leaderboards.Base leaderBoard4;
+        private Leaderboards.Base leaderBoard5;
         public static readonly int MAX_LEADER_BOARD_SIZE = 16;
 
-        public LeaderBoard()
+        public LeaderbBoard()
         {
-            leaderBoard1 = new LeaderBoards.Composer(0);
-            leaderBoard2 = new LeaderBoards.Composer(1);
-            leaderBoard3 = new LeaderBoards.Composer(2);
-            leaderBoard4 = new LeaderBoards.Composer(3);
-            leaderBoard5 = new LeaderBoards.Composer(4);
+            leaderBoard1 = new Leaderboards.Composer(0);
+            leaderBoard2 = new Leaderboards.Composer(1);
+            leaderBoard3 = new Leaderboards.Composer(2);
+            leaderBoard4 = new Leaderboards.Composer(3);
+            leaderBoard5 = new Leaderboards.Composer(4);
         }
 
-        public LeaderBoards.Base LeaderBoard1 => leaderBoard1;
-        public LeaderBoards.Base LeaderBoard2 => leaderBoard2;
-        public LeaderBoards.Base LeaderBoard3 => leaderBoard3;
-        public LeaderBoards.Base LeaderBoard4 => leaderBoard4;
-        public LeaderBoards.Base LeaderBoard5 => leaderBoard5;
+        public Leaderboards.Base LeaderBoard1 => leaderBoard1;
+        public Leaderboards.Base LeaderBoard2 => leaderBoard2;
+        public Leaderboards.Base LeaderBoard3 => leaderBoard3;
+        public Leaderboards.Base LeaderBoard4 => leaderBoard4;
+        public Leaderboards.Base LeaderBoard5 => leaderBoard5;
 
         /// <summary>
         /// Takes a sorted list <paramref name="rankings"/> and returns a string listing each member on a line prepended with 1, 2, 3, etc.
@@ -77,7 +77,7 @@ namespace DiscordConnector
     }
 }
 
-namespace DiscordConnector.LeaderBoards
+namespace DiscordConnector.Leaderboards
 {
     /// <summary>
     /// A base class for leaderboards to inherit from. It includes a method that lets the leader board be sent on a timer
@@ -175,7 +175,7 @@ namespace DiscordConnector.LeaderBoards
 
                     System.DateTime sunday = today2.AddDays(-dow);
                     System.DateTime saturday = today2.AddDays(6 - dow);
-                    // If we are on sunday, show for the current week 
+                    // If we are on sunday, show for the current week
                     if (today2.DayOfWeek == System.DayOfWeek.Sunday)
                     {
                         sunday = today2;
@@ -191,7 +191,7 @@ namespace DiscordConnector.LeaderBoards
                     System.DateTime monday = today3.AddDays(1 - dow1); // Monday - day of week = goes backward to previous monday until we are in Sunday
                     System.DateTime sunday1 = today3.AddDays(7 - dow1); // (Next monday) - day of week = goes to next monday until we are in Sunday then shows next Sunday
 
-                    // If we are on sunday, fix to show "current" week still 
+                    // If we are on sunday, fix to show "current" week still
                     if (today3.DayOfWeek == System.DayOfWeek.Sunday)
                     {
                         monday = today3.AddDays(-6); // Sunday - 6 = previous monday

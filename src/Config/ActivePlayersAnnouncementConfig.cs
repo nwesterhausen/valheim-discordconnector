@@ -4,6 +4,7 @@ namespace DiscordConnector.Config;
 internal class ActivePlayersAnnouncementConfig
 {
     private ConfigEntry<bool> enabled;
+    private ConfigEntry<bool> disableWhenNooneOnline;
     private ConfigEntry<int> periodInMinutes;
     private ConfigEntry<bool> includeCurrentlyOnline;
     private ConfigEntry<bool> includePlayersToday;
@@ -13,6 +14,10 @@ internal class ActivePlayersAnnouncementConfig
     private const string EnabledTitle = "Enabled";
     private const bool EnabledDefault = false;
     private const string EnableDescription = "Enable or disable the active players announcement being sent to Discord";
+
+    private const string DisabledOfflineTitle = "Disable When No One Online";
+    private const bool DisabledOfflineDefault = false;
+    private const string DisabledOfflineDescription = "Enable or disable the active players announcement when no one is online";
 
     public const string PeriodTitle = "Sending Period";
     public const int PeriodDefault = 360;
@@ -41,6 +46,11 @@ internal class ActivePlayersAnnouncementConfig
             EnabledTitle,
             EnabledDefault,
             EnableDescription);
+
+        disableWhenNooneOnline = config.Bind<bool>(header,
+            DisabledOfflineTitle,
+            DisabledOfflineDefault,
+            DisabledOfflineDescription);
 
         periodInMinutes = config.Bind<int>(header,
             PeriodTitle,
@@ -73,6 +83,7 @@ internal class ActivePlayersAnnouncementConfig
     {
         string jsonString = "{";
         jsonString += $"\"enabled\":\"{enabled.Value}\",";
+        jsonString += $"\"disableWhenNooneOnline\":\"{disableWhenNooneOnline.Value}\",";
         jsonString += $"\"periodInMinutes\":{periodInMinutes.Value},";
         jsonString += $"\"includeCurrentlyOnline\":\"{includeCurrentlyOnline.Value}\",";
         jsonString += $"\"includePlayersToday\":\"{includePlayersToday.Value}\",";
@@ -86,6 +97,7 @@ internal class ActivePlayersAnnouncementConfig
      new ActivePlayersAnnouncementConfigValues
      {
          Enabled = enabled.Value,
+         DisabledWhenNooneOnline = disableWhenNooneOnline.Value,
          PeriodInMinutes = periodInMinutes.Value,
          IncludeCurrentlyOnline = includeCurrentlyOnline.Value,
          IncludeTotalToday = includePlayersToday.Value,
@@ -98,6 +110,7 @@ internal class ActivePlayersAnnouncementConfig
 public class ActivePlayersAnnouncementConfigValues
 {
     public bool Enabled;
+    public bool DisabledWhenNooneOnline;
     public int PeriodInMinutes;
     public bool IncludeCurrentlyOnline;
     public bool IncludeTotalToday;

@@ -6,6 +6,12 @@ Type: `Boolean`, default value: `false`
 
 Enable or disable the active players announcement being sent to Discord
 
+## Disable When Noone is Online
+
+Type: `Boolean`, default value: `false`
+
+Enable or disable the active players announcement when noone is online.
+
 ## Sending Period (Active Players)
 
 Type: `Int32`, default value: `360`

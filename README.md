@@ -17,13 +17,20 @@ See [the README](Metadata/README.md) for the plugin.
 
 See [the changelog](docs/changelog.md).
 
-### Building
+## Building
 
-Before building, you must update the `GameDir` property in the `csproj` file.
+To build, first get the path to your Valheim installation and also use the publicize tool to create a publicized version of the game. I'm not sure without that, if it will fail to build or not.
 
-Use dotnet to restore and build the project. Post build, the compiled library and its
-dependencies get copied into `bin/DiscordConnector` which enables you to simply copy
-that folder into `$(GameDir)/BePinEx/plugins` for testing.
+Then, run the following command to build the project:
+
+```shell
+dotnet build \
+   -c Release \
+   /p:GameDir="C:\Program Files (x86)\Steam\steamapps\common\Valheim" \
+   valheim-discordconnector.sln
+```
+
+Post build, the compiled library and its dependencies get copied into `bin/DiscordConnector` which enables you to simply copy that folder into `$(GameDir)/BePinEx/plugins` for testing or use.
 
 The compiled plugin will be in a zip ready for upload at `bin/DiscordConnector.zip`.
 
@@ -33,18 +40,6 @@ For JSON serialization, using Newtonsoft.Json
 
 For data storage/retrieval using [LiteDB](https://www.litedb.org/)
 (If you want to read the database file generated, you can use [LiteDB Studio](https://github.com/mbdavid/LiteDB.Studio/releases/latest))
-
-### Contributors
-
-Thanks for the helpful contributions!
-
-- @Digitalroot
-- @nwesterhausen
-- @thedefside
-- @Jimw383
-- @jterrace
-
-Thanks for an excellent original plugin @aequasi!
 
 ## Release Steps
 
