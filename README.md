@@ -26,11 +26,11 @@ Then, run the following command to build the project:
 ```shell
 dotnet build \
    -c Release \
-   /p:GameDir="C:\Program Files (x86)\Steam\steamapps\common\Valheim" \
+   /p:GamePath="C:\Program Files (x86)\Steam\steamapps\common\Valheim" \
    valheim-discordconnector.sln
 ```
 
-Post build, the compiled library and its dependencies get copied into `bin/DiscordConnector` which enables you to simply copy that folder into `$(GameDir)/BePinEx/plugins` for testing or use.
+Post build, the compiled library and its dependencies get copied into `bin/DiscordConnector` which enables you to simply copy that folder into `$(GamePath)/BePinEx/plugins` for testing or use.
 
 The compiled plugin will be in a zip ready for upload at `bin/DiscordConnector.zip`.
 

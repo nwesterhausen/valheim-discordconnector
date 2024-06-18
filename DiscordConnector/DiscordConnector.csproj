@@ -11,21 +11,31 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
+  <!-- Make the references to folders used in the build process a lot simpler -->
   <PropertyGroup>
     <!-- Set the path to the game folder. This is used when including references below -->
     <GamePath Condition="$(GamePath) == ''">G:\Valheim\0.218.15</GamePath>
-    <!-- Make the references to folders used in the build process a lot simpler -->
-    <BinDir>$(ProjectDir)bin/</BinDir>
+    <!-- "RepoDir" meaning the parent directory of this project.. aka what is the repository root -->
+    <RepoDir>$(ProjectDir)../</RepoDir>
+    <!-- The output target for our compiled plugin -->
+    <BinDir>$(RepoDir)bin/</BinDir>
+    <!-- The output target for our compiled plugin, specifically.. (this is zipped later) -->
     <DiscordConnectorDir>$(BinDir)DiscordConnector/</DiscordConnectorDir>
-    <MetadataDir>$(ProjectDir)Metadata/</MetadataDir>
-    <DocsDir>$(ProjectDir)docs/</DocsDir>
+    <!-- The directory containing metadata files for Thunderstore -->
+    <MetadataDir>$(RepoDir)Metadata/</MetadataDir>
+    <!-- The directory with the plugin documentation (including CHANGELOG) -->
+    <DocsDir>$(RepoDir)docs/</DocsDir>
+    <!-- Setup the path to the game's managed assemblies -->
     <ValheimManagedLibs>$(GamePath)\valheim_Data\Managed</ValheimManagedLibs>
     <!-- Setup publicized assembly shorthand -->
     <PublicizedAssemblies>$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssemblies>
   </PropertyGroup>
 
+  <!-- Our external dependencies. -->
   <ItemGroup>
+    <!-- LiteDB is used as a database for this plugin -->
     <PackageReference Include="LiteDB" Version="5.*" />
+    <!-- Newtonsoft.Json is used for JSON serialization (e.g. sending JSON to discord) -->
     <PackageReference Include="Newtonsoft.Json" Version="13.*" />
   </ItemGroup>
 
@@ -76,13 +86,14 @@
 
   <Target Name="CopyPluginFiles" AfterTargets="Build">
     <ItemGroup>
+      <!-- Include the compiled plugin library -->
       <BuiltLibraryAndDeps Include="$(TargetDir)DiscordConnector.dll" />
-      <!-- Include Newtonsoft.Json dependency -->
+      <!-- Include Newtonsoft.Json dependencies -->
       <BuiltLibraryAndDeps Include="$(TargetDir)Newtonsoft.Json.dll" />
       <BuiltLibraryAndDeps Include="$(ValheimManagedLibs)\System.Runtime.Serialization.dll" />
       <!-- Include LiteDB dependency -->
       <BuiltLibraryAndDeps Include="$(TargetDir)LiteDB.dll" />
-      <!-- Metadata files for Thunderstore -->
+      <!-- Metadata files for Thunderstore (note that the changelog is copied below) -->
       <ThunderstoreMetadata Include="$(MetadataDir)manifest.json" />
       <ThunderstoreMetadata Include="$(MetadataDir)icon.png" />
       <ThunderstoreMetadata Include="$(MetadataDir)README.md" />
@@ -93,7 +104,7 @@
     <!-- Metadata files go into the base directory -->
     <Copy SourceFiles="@(ThunderstoreMetadata)" DestinationFolder="$(DiscordConnectorDir)"
       SkipUnchangedFiles="true" />
-    <!-- Copying the changelog involves renaming to all uppercase -->
+    <!-- Copying the changelog involves renaming to all uppercase, hence it has its own Copy task -->
     <Copy SourceFiles="$(DocsDir)changelog.md"
       DestinationFiles="$(DiscordConnectorDir)CHANGELOG.md" SkipUnchangedFiles="true" />
   </Target>
@@ -102,6 +113,7 @@
     <!-- Remove the zip file if it exists, so that we can create a new one. -->
     <Delete Files="$(BinDir)DiscordConnector.zip"
       Condition="Exists('$(BinDir)DiscordConnector.zip')" />
+    <!-- Zip the plugin so its ready for Thunderstore -->
     <ZipDirectory SourceDirectory="$(DiscordConnectorDir)"
       DestinationFile="$(BinDir)DiscordConnector.zip" />
   </Target>
