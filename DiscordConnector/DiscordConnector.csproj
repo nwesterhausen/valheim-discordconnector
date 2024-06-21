@@ -31,12 +31,18 @@
     <PublicizedAssemblies>$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssemblies>
   </PropertyGroup>
 
-  <!-- Our external dependencies. -->
+  <!-- Our dependencies. -->
   <ItemGroup>
     <!-- LiteDB is used as a database for this plugin -->
     <PackageReference Include="LiteDB" Version="5.*" />
     <!-- Newtonsoft.Json is used for JSON serialization (e.g. sending JSON to discord) -->
     <PackageReference Include="Newtonsoft.Json" Version="13.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Utility classes and methods -->
+    <ProjectReference Include="..\DiscordConnector.Utilities\DiscordConnector.Utilities.csproj" />
+    <ProjectReference Include="..\DiscordConnector.Database\DiscordConnector.Database.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
@@ -88,6 +94,8 @@
     <ItemGroup>
       <!-- Include the compiled plugin library -->
       <BuiltLibraryAndDeps Include="$(TargetDir)DiscordConnector.dll" />
+      <BuiltLibraryAndDeps Include="$(TargetDir)DiscordConnector.Database.dll" />
+      <BuiltLibraryAndDeps Include="$(TargetDir)DiscordConnector.Utilities.dll" />
       <!-- Include Newtonsoft.Json dependencies -->
       <BuiltLibraryAndDeps Include="$(TargetDir)Newtonsoft.Json.dll" />
       <BuiltLibraryAndDeps Include="$(ValheimManagedLibs)\System.Runtime.Serialization.dll" />
@@ -105,8 +113,8 @@
     <Copy SourceFiles="@(ThunderstoreMetadata)" DestinationFolder="$(DiscordConnectorDir)"
       SkipUnchangedFiles="true" />
     <!-- Copying the changelog involves renaming to all uppercase, hence it has its own Copy task -->
-    <Copy SourceFiles="$(DocsDir)changelog.md"
-      DestinationFiles="$(DiscordConnectorDir)CHANGELOG.md" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(DocsDir)changelog.md" DestinationFiles="$(DiscordConnectorDir)CHANGELOG.md"
+      SkipUnchangedFiles="true" />
   </Target>
 
   <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles">

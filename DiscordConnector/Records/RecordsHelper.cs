@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using DiscordConnector.Leaderboards;
+using DiscordConnector.Database;
 
 namespace DiscordConnector.Records;
 /// <summary>
@@ -60,7 +60,7 @@ public static class Helper
     /// <param name="key">One of <see cref="Categories.All"/></param>
     /// <param name="n">Number of results to return</param>
     /// <returns>A list of <paramref name="n"/> players and their totals for the <paramref name="key"/>, in descending order.</returns>
-    public static List<CountResult> TopNResultForCategory(string key, int n)
+    public static List<CountResult> TopNResultForCategory(Database.Database.Tables key, int n)
     {
         return TopNResultForCategory(key, n, DateHelper.DummyDateTime, DateHelper.DummyDateTime);
     }
@@ -76,16 +76,8 @@ public static class Helper
     /// <param name="startDate">Earliest valid date for the stat records used to gather the results</param>
     /// <param name="endDate">Latest valid date for the stat records used to gather the results</param>
     /// <returns>A list of <paramref name="n"/> players and their totals for the <paramref name="key"/>, in descending order.</returns>
-    public static List<CountResult> TopNResultForCategory(string key, int n, System.DateTime startDate, System.DateTime endDate)
+    public static List<CountResult> TopNResultForCategory(Database.Database.Tables key, int n, DateTime startDate, DateTime endDate)
     {
-        // Validate key
-        if (Array.IndexOf<string>(Records.Categories.All, key) == -1)
-        {
-            Plugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting top {n} results.");
-            Plugin.StaticLogger.LogDebug("Empty list returned because of invalid key.");
-            return new List<CountResult>();
-        }
-
         List<CountResult> queryResults;
 
         // Determine if we are getting ALL or being limited by start and end dates.
@@ -122,7 +114,7 @@ public static class Helper
             return queryResults;
         }
 
-        // Return results limited ot the number desired
+        // Return results limited to the number desired
         return queryResults.GetRange(0, n);
     }
 
@@ -135,7 +127,7 @@ public static class Helper
     /// <param name="key">One of <see cref="Categories.All"/></param>
     /// <param name="n">Number of results to return</param>
     /// <returns>A list of <paramref name="n"/> players and their totals for the <paramref name="key"/>, in ascending order.</returns>
-    public static List<CountResult> BottomNResultForCategory(string key, int n)
+    public static List<CountResult> BottomNResultForCategory(Database.Database.Tables key, int n)
     {
         return BottomNResultForCategory(key, n, DateHelper.DummyDateTime, DateHelper.DummyDateTime);
     }
@@ -149,16 +141,8 @@ public static class Helper
     /// <param name="startDate">Earliest valid date for the stat records used to gather the results</param>
     /// <param name="endDate">Latest valid date for the stat records used to gather the results</param>
     /// <returns>A list of <paramref name="n"/> players and their totals for the <paramref name="key"/>, in ascending order.</returns>
-    public static List<CountResult> BottomNResultForCategory(string key, int n, System.DateTime startDate, System.DateTime endDate)
+    public static List<CountResult> BottomNResultForCategory(Database.Database.Tables key, int n, DateTime startDate, DateTime endDate)
     {
-        // Validate key
-        if (Array.IndexOf<string>(Records.Categories.All, key) == -1)
-        {
-            Plugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting bottom {n} results.");
-            Plugin.StaticLogger.LogDebug("Empty list returned because of invalid key.");
-            return new List<CountResult>();
-        }
-
         List<CountResult> queryResults;
 
         // Determine if we are getting ALL or being limited by start and end dates.
@@ -194,7 +178,7 @@ public static class Helper
             return queryResults;
         }
 
-        // Return results limited ot the number desired
+        // Return results limited to the number desired
         return queryResults.GetRange(0, n);
     }
 
@@ -204,18 +188,10 @@ public static class Helper
     /// <param name="key">Which category to get count from</param>
     /// <param name="timeRange">Time range to restrict count to</param>
     /// <returns>Number of records that fit category within the time range</returns>
-    internal static int CountUniquePlayers(string key, TimeRange timeRange)
+    internal static int CountUniquePlayers(Database.Database.Tables key, DateHelper.TimeRange timeRange)
     {
-        // Validate key
-        if (Array.IndexOf<string>(Records.Categories.All, key) == -1)
-        {
-            Plugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting total unique players.");
-            Plugin.StaticLogger.LogDebug("Zero returned because of invalid key.");
-            return 0;
-        }
-
         // Simplify the all time record gathering
-        if (timeRange == TimeRange.AllTime)
+        if (timeRange == DateHelper.TimeRange.AllTime)
         {
             List<CountResult> results = Plugin.StaticDatabase.CountAllRecordsGrouped(key);
             return results.Count;
@@ -233,16 +209,8 @@ public static class Helper
     /// <param name="startDate">Earliest valid date for the stat records used to gather the results</param>
     /// <param name="endDate">Latest valid date for the stat records used to gather the results</param>
     /// <returns>Number of records that fit category within the time range</returns>
-    internal static int CountUniquePlayers(string key, System.DateTime startDate, System.DateTime endDate)
+    internal static int CountUniquePlayers(Database.Database.Tables key, DateTime startDate, DateTime endDate)
     {
-        // Validate key
-        if (Array.IndexOf<string>(Records.Categories.All, key) == -1)
-        {
-            Plugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting total unique players.");
-            Plugin.StaticLogger.LogDebug("Zero returned because of invalid key.");
-            return 0;
-        }
-
         List<CountResult> allCounted = Plugin.StaticDatabase.CountRecordsBetweenDatesGrouped(key, startDate, endDate);
 
         return allCounted.Count;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DiscordConnector.Config;
-using DiscordConnector.Records;
+using DiscordConnector.Database;
 
 namespace DiscordConnector.Leaderboards;
 internal class Composer : Base
@@ -102,7 +102,7 @@ internal class Composer : Base
 
     private Dictionary<Statistic, List<CountResult>> makeRankings(LeaderBoardConfigReference settings)
     {
-        if (settings.TimeRange == TimeRange.AllTime)
+        if (settings.TimeRange == DateHelper.TimeRange.AllTime)
         {
             return AllRankings(settings);
         }
@@ -118,46 +118,46 @@ internal class Composer : Base
         {
             if (settings.Deaths)
             {
-                Dict.Add(Statistic.Death, Records.Helper.TopNResultForCategory(Categories.Death, settings.NumberListings));
+                Dict.Add(Statistic.Death, Records.Helper.TopNResultForCategory(Database.Database.Tables.DEATHS, settings.NumberListings));
             }
             if (settings.Sessions)
             {
-                Dict.Add(Statistic.Session, Records.Helper.TopNResultForCategory(Categories.Join, settings.NumberListings));
+                Dict.Add(Statistic.Session, Records.Helper.TopNResultForCategory(Database.Database.Tables.JOINS, settings.NumberListings));
             }
             if (settings.Shouts)
             {
-                Dict.Add(Statistic.Shout, Records.Helper.TopNResultForCategory(Categories.Shout, settings.NumberListings));
+                Dict.Add(Statistic.Shout, Records.Helper.TopNResultForCategory(Database.Database.Tables.SHOUTS, settings.NumberListings));
             }
             if (settings.Pings)
             {
-                Dict.Add(Statistic.Ping, Records.Helper.TopNResultForCategory(Categories.Ping, settings.NumberListings));
+                Dict.Add(Statistic.Ping, Records.Helper.TopNResultForCategory(Database.Database.Tables.PINGS, settings.NumberListings));
             }
             if (settings.TimeOnline)
             {
-                Dict.Add(Statistic.TimeOnline, Records.Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings));
+                Dict.Add(Statistic.TimeOnline, Records.Helper.TopNResultForCategory(Database.Database.Tables.TIME_ONLINE, settings.NumberListings));
             }
         }
         if (settings.Type == Leaderboards.Ordering.Ascending)
         {
             if (settings.Deaths)
             {
-                Dict.Add(Statistic.Death, Records.Helper.BottomNResultForCategory(Categories.Death, settings.NumberListings));
+                Dict.Add(Statistic.Death, Records.Helper.BottomNResultForCategory(Database.Database.Tables.DEATHS, settings.NumberListings));
             }
             if (settings.Sessions)
             {
-                Dict.Add(Statistic.Session, Records.Helper.BottomNResultForCategory(Categories.Join, settings.NumberListings));
+                Dict.Add(Statistic.Session, Records.Helper.BottomNResultForCategory(Database.Database.Tables.JOINS, settings.NumberListings));
             }
             if (settings.Shouts)
             {
-                Dict.Add(Statistic.Shout, Records.Helper.BottomNResultForCategory(Categories.Shout, settings.NumberListings));
+                Dict.Add(Statistic.Shout, Records.Helper.BottomNResultForCategory(Database.Database.Tables.SHOUTS, settings.NumberListings));
             }
             if (settings.Pings)
             {
-                Dict.Add(Statistic.Ping, Records.Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings));
+                Dict.Add(Statistic.Ping, Records.Helper.BottomNResultForCategory(Database.Database.Tables.PINGS, settings.NumberListings));
             }
             if (settings.TimeOnline)
             {
-                Dict.Add(Statistic.TimeOnline, Records.Helper.BottomNResultForCategory(Categories.TimeOnline, settings.NumberListings));
+                Dict.Add(Statistic.TimeOnline, Records.Helper.BottomNResultForCategory(Database.Database.Tables.TIME_ONLINE, settings.NumberListings));
             }
         }
 
@@ -176,46 +176,46 @@ internal class Composer : Base
         {
             if (settings.Deaths)
             {
-                Dict.Add(Statistic.Death, Records.Helper.TopNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.Death, Records.Helper.TopNResultForCategory(Database.Database.Tables.DEATHS, settings.NumberListings, startDate, endDate));
             }
             if (settings.Sessions)
             {
-                Dict.Add(Statistic.Session, Records.Helper.TopNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.Session, Records.Helper.TopNResultForCategory(Database.Database.Tables.JOINS, settings.NumberListings, startDate, endDate));
             }
             if (settings.Shouts)
             {
-                Dict.Add(Statistic.Shout, Records.Helper.TopNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.Shout, Records.Helper.TopNResultForCategory(Database.Database.Tables.SHOUTS, settings.NumberListings, startDate, endDate));
             }
             if (settings.Pings)
             {
-                Dict.Add(Statistic.Ping, Records.Helper.TopNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.Ping, Records.Helper.TopNResultForCategory(Database.Database.Tables.PINGS, settings.NumberListings, startDate, endDate));
             }
             if (settings.TimeOnline)
             {
-                Dict.Add(Statistic.TimeOnline, Records.Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.TimeOnline, Records.Helper.TopNResultForCategory(Database.Database.Tables.TIME_ONLINE, settings.NumberListings, startDate, endDate));
             }
         }
         if (settings.Type == Leaderboards.Ordering.Ascending)
         {
             if (settings.Deaths)
             {
-                Dict.Add(Statistic.Death, Records.Helper.BottomNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.Death, Records.Helper.BottomNResultForCategory(Database.Database.Tables.DEATHS, settings.NumberListings, startDate, endDate));
             }
             if (settings.Sessions)
             {
-                Dict.Add(Statistic.Session, Records.Helper.BottomNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.Session, Records.Helper.BottomNResultForCategory(Database.Database.Tables.JOINS, settings.NumberListings, startDate, endDate));
             }
             if (settings.Shouts)
             {
-                Dict.Add(Statistic.Shout, Records.Helper.BottomNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.Shout, Records.Helper.BottomNResultForCategory(Database.Database.Tables.SHOUTS, settings.NumberListings, startDate, endDate));
             }
             if (settings.Pings)
             {
-                Dict.Add(Statistic.Ping, Records.Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.Ping, Records.Helper.BottomNResultForCategory(Database.Database.Tables.PINGS, settings.NumberListings, startDate, endDate));
             }
             if (settings.TimeOnline)
             {
-                Dict.Add(Statistic.TimeOnline, Records.Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.TimeOnline, Records.Helper.BottomNResultForCategory(Database.Database.Tables.PINGS, settings.NumberListings, startDate, endDate));
             }
         }
 

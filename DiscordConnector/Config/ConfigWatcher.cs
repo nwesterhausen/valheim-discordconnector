@@ -10,7 +10,7 @@ namespace DiscordConnector;
 class ConfigWatcher
 {
     /// <summary>
-    /// Regex which matches only DiscordConnector config files; basically matches <code>discordconnector*.cfg</code> but restricted to 
+    /// Regex which matches only DiscordConnector config files; basically matches <code>discordconnector*.cfg</code> but restricted to
     /// exactly how the files are named.
     /// </summary>
     private static Regex watchedConfigFilesRegex = new Regex(@"discordconnector?[\w\-]*\.cfg$");
@@ -69,7 +69,7 @@ class ConfigWatcher
             {
                 string extension = ConfigExtensionFromFilename(filename);
                 // Put the filename str and the hash of the file into the dictionary
-                _fileHashDictionary.Add(extension, DiscordConnector.Hashing.GetMD5Checksum(filename));
+                _fileHashDictionary.Add(extension, Utilities.Hashing.GetMD5Checksum(filename));
             }
 
             Plugin.StaticLogger.LogDebug($"Initialization of file hash dictionary completed.");
@@ -113,7 +113,7 @@ class ConfigWatcher
         Plugin.StaticLogger.LogDebug($"Detected change of {configExtension} config file");
 
         // Hash the changed file
-        String fileHash = DiscordConnector.Hashing.GetMD5Checksum(e.FullPath);
+        String fileHash = Utilities.Hashing.GetMD5Checksum(e.FullPath);
 
         // Create an entry if we haven't yet
         if (!_fileHashDictionary.ContainsKey(configExtension))

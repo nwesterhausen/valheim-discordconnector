@@ -52,7 +52,7 @@ internal static class Handlers
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time joining announcements are enabled and we have no record of the player joining, set the message content to the first time join announcement
-        if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Join, peer.m_playerName) == 0)
+        if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Database.Database.Tables.JOINS, peer.m_playerName) == 0)
         {
             preFormattedMessage = Plugin.StaticConfig.PlayerFirstJoinMessage;
             ev = Webhook.Event.PlayerFirstJoin;
@@ -67,7 +67,7 @@ internal static class Handlers
         // If recording player join statistics is enabled, save a record of player joining
         if (Plugin.StaticConfig.StatsJoinEnabled)
         {
-            Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Join, peer.m_playerName, playerHostName, peer.m_refPos);
+            Plugin.StaticDatabase.InsertSimpleStatRecord(Database.Database.Tables.JOINS, peer.m_playerName, playerHostName, peer.m_refPos);
         }
 
 
@@ -115,7 +115,7 @@ internal static class Handlers
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time leaving announcements are enabled and we have no record of the player leaving, set the message content to the first time leave announcement
-        if (Plugin.StaticConfig.AnnouncePlayerFirstLeaveEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Leave, peer.m_playerName) == 0)
+        if (Plugin.StaticConfig.AnnouncePlayerFirstLeaveEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Database.Database.Tables.LEAVES, peer.m_playerName) == 0)
         {
             preFormattedMessage = Plugin.StaticConfig.PlayerFirstLeaveMessage;
             ev = Webhook.Event.PlayerFirstLeave;
@@ -130,7 +130,7 @@ internal static class Handlers
         // If recording player leave statistics is enabled, save a record of player leaving
         if (Plugin.StaticConfig.StatsLeaveEnabled)
         {
-            Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Leave, peer.m_playerName, playerHostName, peer.m_refPos);
+            Plugin.StaticDatabase.InsertSimpleStatRecord(Database.Database.Tables.LEAVES, peer.m_playerName, playerHostName, peer.m_refPos);
         }
 
 
@@ -169,7 +169,7 @@ internal static class Handlers
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time dying announcements are enabled and we have no record of the player dying, set the message content to the first time death announcement
-        if (Plugin.StaticConfig.AnnouncePlayerFirstDeathEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Death, peer.m_playerName) == 0)
+        if (Plugin.StaticConfig.AnnouncePlayerFirstDeathEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Database.Database.Tables.DEATHS, peer.m_playerName) == 0)
         {
             preFormattedMessage = Plugin.StaticConfig.PlayerFirstDeathMessage;
             ev = Webhook.Event.PlayerFirstDeath;
@@ -182,7 +182,7 @@ internal static class Handlers
 
         if (Plugin.StaticConfig.StatsDeathEnabled)
         {
-            Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Death, peer.m_playerName, playerHostName, peer.m_refPos);
+            Plugin.StaticDatabase.InsertSimpleStatRecord(Database.Database.Tables.DEATHS, peer.m_playerName, playerHostName, peer.m_refPos);
         }
 
 
@@ -222,7 +222,7 @@ internal static class Handlers
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time pinging announcements are enabled and we have no record of the player pinging, set the message content to the first time ping announcement
-        if (Plugin.StaticConfig.AnnouncePlayerFirstPingEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Ping, peer.m_playerName) == 0)
+        if (Plugin.StaticConfig.AnnouncePlayerFirstPingEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Database.Database.Tables.PINGS, peer.m_playerName) == 0)
         {
             preFormattedMessage = Plugin.StaticConfig.PlayerFirstPingMessage;
             ev = Webhook.Event.PlayerFirstPing;
@@ -235,7 +235,7 @@ internal static class Handlers
 
         if (Plugin.StaticConfig.StatsPingEnabled)
         {
-            Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Ping, peer.m_playerName, playerHostName, pos);
+            Plugin.StaticDatabase.InsertSimpleStatRecord(Database.Database.Tables.PINGS, peer.m_playerName, playerHostName, pos);
         }
 
 
@@ -275,7 +275,7 @@ internal static class Handlers
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time shouting announcements are enabled and we have no record of the player shouting, set the message content to the first time ping announcement
-        if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Shout, peer.m_playerName) == 0)
+        if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Database.Database.Tables.SHOUTS, peer.m_playerName) == 0)
         {
             preFormattedMessage = Plugin.StaticConfig.PlayerFirstShoutMessage;
             ev = Webhook.Event.PlayerFirstShout;
@@ -288,7 +288,7 @@ internal static class Handlers
 
         if (Plugin.StaticConfig.StatsShoutEnabled)
         {
-            Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Shout, peer.m_playerName, playerHostName, pos);
+            Plugin.StaticDatabase.InsertSimpleStatRecord(Database.Database.Tables.SHOUTS, peer.m_playerName, playerHostName, pos);
         }
 
         // If sending messages for players shouting is completely disabled

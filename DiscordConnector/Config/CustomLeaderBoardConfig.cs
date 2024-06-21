@@ -5,7 +5,7 @@ internal class LeaderBoardConfigValues
 {
     // Each leader board has these values to configure
     public ConfigEntry<Leaderboards.Ordering> type;
-    public ConfigEntry<Leaderboards.TimeRange> timeRange;
+    public ConfigEntry<DateHelper.TimeRange> timeRange;
     public ConfigEntry<int> numberListings;
     public ConfigEntry<bool> enabled;
     public ConfigEntry<int> periodInMinutes;
@@ -21,14 +21,14 @@ internal class LeaderBoardConfigValues
     public const string EnableDescription = "Enable or disable this leader board.";
 
     public const string TimeRangeTitle = "Leader Board Time Range";
-    public const Leaderboards.TimeRange TimeRangeDefault = Leaderboards.TimeRange.AllTime;
+    public const DateHelper.TimeRange TimeRangeDefault = DateHelper.TimeRange.AllTime;
     public const string TimeRangeDescription = "A more restrictive filter of time can be applied to the leader board. This restricts it to tally up statistics within the range specified.";
-    public static readonly string TimeRangeDescription1 = $"{Leaderboards.TimeRange.AllTime}: Apply no time restriction to the leader board, use all available records.";
-    public static readonly string TimeRangeDescription2 = $"{Leaderboards.TimeRange.Today}: Restrict leader board to recorded events from today.";
-    public static readonly string TimeRangeDescription3 = $"{Leaderboards.TimeRange.Yesterday}: Restrict leader board to recorded events from yesterday.";
-    public static readonly string TimeRangeDescription4 = $"{Leaderboards.TimeRange.PastWeek}: Restrict leader board to recorded events from the past week (including today).";
-    public static readonly string TimeRangeDescription5 = $"{Leaderboards.TimeRange.WeekSundayToSaturday}: Restrict leader board to recorded events from the current week, beginning on Sunday and ending Saturday.";
-    public static readonly string TimeRangeDescription6 = $"{Leaderboards.TimeRange.WeekMondayToSunday}: Restrict leader board to recorded events from the current week, beginning on Monday and ending Sunday.";
+    public static readonly string TimeRangeDescription1 = $"{DateHelper.TimeRange.AllTime}: Apply no time restriction to the leader board, use all available records.";
+    public static readonly string TimeRangeDescription2 = $"{DateHelper.TimeRange.Today}: Restrict leader board to recorded events from today.";
+    public static readonly string TimeRangeDescription3 = $"{DateHelper.TimeRange.Yesterday}: Restrict leader board to recorded events from yesterday.";
+    public static readonly string TimeRangeDescription4 = $"{DateHelper.TimeRange.PastWeek}: Restrict leader board to recorded events from the past week (including today).";
+    public static readonly string TimeRangeDescription5 = $"{DateHelper.TimeRange.WeekSundayToSaturday}: Restrict leader board to recorded events from the current week, beginning on Sunday and ending Saturday.";
+    public static readonly string TimeRangeDescription6 = $"{DateHelper.TimeRange.WeekMondayToSunday}: Restrict leader board to recorded events from the current week, beginning on Monday and ending Sunday.";
 
     public const string NumberListingsTitle = "Number of Rankings";
     public const int NumberListingsDefault = 3;
@@ -83,7 +83,7 @@ internal class LeaderBoardConfigValues
             DisplayedHeadingDescription + System.Environment.NewLine +
             DisplayedHeadingDescription1);
 
-        timeRange = config.Bind<Leaderboards.TimeRange>(header,
+        timeRange = config.Bind<DateHelper.TimeRange>(header,
             TimeRangeTitle,
             TimeRangeDefault,
             TimeRangeDescription + System.Environment.NewLine +
@@ -167,7 +167,7 @@ internal class LeaderBoardConfigValues
 public class LeaderBoardConfigReference
 {
     public Leaderboards.Ordering Type;
-    public Leaderboards.TimeRange TimeRange;
+    public DateHelper.TimeRange TimeRange;
     public int NumberListings;
     public bool Enabled;
     public int PeriodInMinutes;

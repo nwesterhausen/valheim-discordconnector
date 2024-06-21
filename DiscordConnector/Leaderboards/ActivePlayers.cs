@@ -68,19 +68,19 @@ internal static class ActivePlayersAnnouncement
 
         if (Plugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalToday)
         {
-            int uniqueToday = Records.Helper.CountUniquePlayers(Records.Categories.Join, TimeRange.Today);
+            int uniqueToday = Records.Helper.CountUniquePlayers(Database.Database.Tables.JOINS, DateHelper.TimeRange.Today);
             formattedAnnouncement += $"Players today: {uniqueToday}\n";
         }
 
         if (Plugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalPastWeek)
         {
-            int uniqueThisWeek = Records.Helper.CountUniquePlayers(Records.Categories.Join, TimeRange.PastWeek);
+            int uniqueThisWeek = Records.Helper.CountUniquePlayers(Database.Database.Tables.JOINS, DateHelper.TimeRange.PastWeek);
             formattedAnnouncement += $"This week: {uniqueThisWeek}\n";
         }
 
         if (Plugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalAllTime)
         {
-            int uniqueAllTime = Records.Helper.CountUniquePlayers(Records.Categories.Join, TimeRange.AllTime);
+            int uniqueAllTime = Records.Helper.CountUniquePlayers(Database.Database.Tables.JOINS, DateHelper.TimeRange.AllTime);
             formattedAnnouncement += $"All time: {uniqueAllTime}";
         }
 

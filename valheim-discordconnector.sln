@@ -5,6 +5,10 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordConnector", "DiscordConnector\DiscordConnector.csproj", "{0BE9883E-E3C9-43D7-AB8F-BC106762DA5C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordConnector.Database", "DiscordConnector.Database\DiscordConnector.Database.csproj", "{484492AE-1A04-43F4-B2CC-5845A143E402}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordConnector.Utilities", "DiscordConnector.Utilities\DiscordConnector.Utilities.csproj", "{4CF9C63D-BF3F-4888-BD52-D00F8C43EE21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{0BE9883E-E3C9-43D7-AB8F-BC106762DA5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BE9883E-E3C9-43D7-AB8F-BC106762DA5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BE9883E-E3C9-43D7-AB8F-BC106762DA5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{484492AE-1A04-43F4-B2CC-5845A143E402}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{484492AE-1A04-43F4-B2CC-5845A143E402}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{484492AE-1A04-43F4-B2CC-5845A143E402}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{484492AE-1A04-43F4-B2CC-5845A143E402}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CF9C63D-BF3F-4888-BD52-D00F8C43EE21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CF9C63D-BF3F-4888-BD52-D00F8C43EE21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CF9C63D-BF3F-4888-BD52-D00F8C43EE21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CF9C63D-BF3F-4888-BD52-D00F8C43EE21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
