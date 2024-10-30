@@ -58,3 +58,19 @@ internal static class PublicIPChecker
         return address;
     }
 }
+
+internal static class GuidHelper
+{
+    public static string GenerateShortHexGuid(int byteCount = 4)
+    {
+        if (byteCount <= 0 || byteCount > 16)
+        {
+            throw new ArgumentException("Byte count must be between 1 and 16.");
+        }
+
+        Guid guid = Guid.NewGuid();
+        byte[] bytes = guid.ToByteArray();
+        string hexString = BitConverter.ToString(bytes, 0, byteCount).Replace("-", "").ToLower();
+        return hexString;
+    }
+}

@@ -167,7 +167,18 @@ class DiscordApi
             Plugin.StaticLogger.LogDebug($"Dispatch attempted with empty webhook - ignoring");
             return;
         }
-        Plugin.StaticLogger.LogDebug($"Dispatching request to {webhook.Url}");
+
+        // Create an identifier for the request
+        string requestId = GuidHelper.GenerateShortHexGuid();
+
+        if (Plugin.StaticConfig.DebugHttpRequestResponse)
+        {
+            Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: destination {webhook.Url}");
+        }
+        else
+        {
+            Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: sending ${byteArray.Length} bytes to Discord");
+        }
 
         // Create a web request to send the payload to discord
         WebRequest request = WebRequest.Create(webhook.Url);
@@ -178,35 +189,80 @@ class DiscordApi
         // Dispatch the request to discord and the response processing to an async task
         Task.Run(() =>
         {
-            // We have to write the data to the request
-            Stream dataStream = request.GetRequestStream();
-            dataStream.Write(byteArray, 0, byteArray.Length);
-            dataStream.Close();
-
-            // Wait for a response to the web request
-            WebResponse response = request.GetResponse();
-            if (Plugin.StaticConfig.DebugHttpRequestResponse)
+            try
             {
-                Plugin.StaticLogger.LogDebug($"Request Response Short Code: {((HttpWebResponse)response).StatusDescription}");
-            }
-
-            // Get the stream containing content returned by the server.
-            // The using block ensures the stream is automatically closed.
-            using (dataStream = response.GetResponseStream())
-            {
-                // Open the stream using a StreamReader for easy access.
-                StreamReader reader = new StreamReader(dataStream);
-                // Read the content.
-                string responseFromServer = reader.ReadToEnd();
-                // Display the content.
-                if (Plugin.StaticConfig.DebugHttpRequestResponse)
+                // We have to write the data to the request
+                using (Stream dataStream = request.GetRequestStream())
                 {
-                    Plugin.StaticLogger.LogDebug($"Full response: {responseFromServer}");
+                    dataStream.Write(byteArray, 0, byteArray.Length);
                 }
-            }
+                // Wait for a response to the web request
+                bool responseExpected = true;
+                WebResponse response = null;
+                try
+                {
+                    response = request.GetResponse();
+                    if (Plugin.StaticConfig.DebugHttpRequestResponse)
+                    {
+                        if (response is HttpWebResponse webResponse)
+                        {
+                            if (webResponse.StatusCode == HttpStatusCode.NoContent)
+                            {
+                                responseExpected = false;
+                            }
+                            Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: Response Code: {webResponse.StatusCode}");
 
-            // Close the response.
-            response.Close();
+                        }
+                        else
+                        {
+                            Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: Response was not an HttpWebResponse");
+                        }
+                    }
+                }
+                catch (WebException ex)
+                {
+                    Plugin.StaticLogger.LogError($"DispatchRequest.{requestId}: Error getting web response: {ex}");
+                    return;
+                }
+
+                if (responseExpected)
+                {
+                    // Get the stream containing content returned by the server.
+                    using (Stream dataStream = response.GetResponseStream())
+                    {
+                        if (dataStream == null)
+                        {
+                            Plugin.StaticLogger.LogError($"DispatchRequest.{requestId}: Response stream is null");
+                            return;
+                        }
+
+                        // Open the stream using a StreamReader for easy access.
+                        using (StreamReader reader = new StreamReader(dataStream))
+                        {
+                            // Read the content.
+                            string responseFromServer = reader.ReadToEnd();
+                            // Display the content.
+                            if (Plugin.StaticConfig.DebugHttpRequestResponse)
+                            {
+                                if (responseFromServer.Length > 0)
+                                {
+                                    Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: Response from server: {responseFromServer}");
+                                }
+                                else
+                                {
+                                    Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: Empty response from server (normal)");
+                                }
+                            }
+                        }
+                    }
+                }
+                // Close the response.
+                response.Close();
+            }
+            catch (Exception e)
+            {
+                Plugin.StaticLogger.LogWarning($"Error dispatching webhook: {e}");
+            }
         }).ConfigureAwait(false);
     }
 
