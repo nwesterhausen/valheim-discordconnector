@@ -2,6 +2,18 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.3.2
+
+Built against the latest version of Valheim (0.219.14, the Bog Witch update).
+
+Fixes
+
+- Logging improvements for the Discord webhook requests
+- Logging improvements for all our logs (a copy is saved to `BepInEx/config/games.nwest.valheim.discordconnector/vdc.log`)
+
+These changes for logging are to help with troubleshooting plugin issues without requiring the full server log to do so (although
+sometimes it would be necessary to see the full server log).
+
 ## Version 2.3.1
 
 Features
