@@ -177,7 +177,7 @@ class DiscordApi
         }
         else
         {
-            Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: sending ${byteArray.Length} bytes to Discord");
+            Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: sending {byteArray.Length} bytes to Discord");
         }
 
         // Create a web request to send the payload to discord
