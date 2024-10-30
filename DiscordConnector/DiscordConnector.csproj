@@ -14,7 +14,7 @@
   <!-- Make the references to folders used in the build process a lot simpler -->
   <PropertyGroup>
     <!-- Set the path to the game folder. This is used when including references below -->
-    <GamePath Condition="$(GamePath) == ''">G:\Valheim\0.218.15</GamePath>
+    <GamePath Condition="$(GamePath) == ''">G:\Valheim\0.219.14</GamePath>
     <!-- "RepoDir" meaning the parent directory of this project.. aka what is the repository root -->
     <RepoDir>$(ProjectDir)../</RepoDir>
     <!-- The output target for our compiled plugin -->
