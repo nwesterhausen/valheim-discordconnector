@@ -170,15 +170,7 @@ class DiscordApi
 
         // Create an identifier for the request
         string requestId = GuidHelper.GenerateShortHexGuid();
-
-        if (Plugin.StaticConfig.DebugHttpRequestResponse)
-        {
-            Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: destination {webhook.Url}");
-        }
-        else
-        {
-            Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: sending {byteArray.Length} bytes to Discord");
-        }
+        Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: sending {byteArray.Length} bytes to Discord");
 
         // Create a web request to send the payload to discord
         WebRequest request = WebRequest.Create(webhook.Url);
