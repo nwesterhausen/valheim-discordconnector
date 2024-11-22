@@ -2,6 +2,12 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 2.3.3
+
+Fixes
+
+- Can't start plugin when the old log exists in some situations
+
 ## Version 2.3.2
 
 Built against the latest version of Valheim (0.219.14, the Bog Witch update).

@@ -26,9 +26,44 @@ class VDCLogger
     {
         if (File.Exists(_logFilePath))
         {
-            string oldLogFilePath = $"{_logFilePath}.old";
-            File.Move(_logFilePath, oldLogFilePath);
-            _logger.LogInfo($"Existing log file moved to {oldLogFilePath}");
+            // versions old logs, like log.1 log.2 (up to 5)
+            for (int i = 5; i > 1; i--)
+            {
+                string oldLogFilePath = $"{_logFilePath}.{i}";
+                string newLogFilePath = $"{_logFilePath}.{i - 1}";
+                if (File.Exists(oldLogFilePath))
+                {
+                    try
+                    {
+                        File.Delete(oldLogFilePath);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        _logger.LogError($"Error deleting old log file: {ex.Message}");
+                    }
+                }
+                if (File.Exists(newLogFilePath))
+                {
+                    try
+                    {
+                        File.Move(newLogFilePath, oldLogFilePath);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        _logger.LogError($"Error moving log file: {ex.Message}");
+                    }
+                }
+            }
+            // move current log to log.1, which gets moved if exists in the loop above
+            try
+            {
+                File.Move(_logFilePath, $"{_logFilePath}.1");
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError($"Error moving log file: {ex.Message}");
+            }
+            _logger.LogInfo("Existing log files versioned.");
         }
     }
 
@@ -38,7 +73,7 @@ class VDCLogger
     /// <param name="severity">The severity to include, e.g. "WARN" or "DEBUG"</param>
     /// <param name="message">The message to log</param>
     /// <returns>
-    /// This will attempt to write to the log file. If it fails, it will log an error to the BepInEx logger.
+    /// /// This will attempt to write to the log file. If it fails, it will log an error to the BepInEx logger.
     ///
     /// Nothing is returned from this method.
     /// </returns>
