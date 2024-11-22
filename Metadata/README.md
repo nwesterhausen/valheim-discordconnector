@@ -34,6 +34,12 @@ See the [current roadmap](https://github.com/nwesterhausen/valheim-discordconnec
 
 ## Abridged Changelog
 
+### Version 2.3.3
+
+Fixes
+
+- Can't start plugin when the old log exists in some situations
+
 ### Version 2.3.2
 
 Built against the latest version of Valheim (0.219.14, the Bog Witch update).
