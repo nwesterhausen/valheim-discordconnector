@@ -5,7 +5,6 @@
     <Import Project="environment.props" Condition="Exists('environment.props')"/>
     
     <PropertyGroup>
-        <TargetFramework>net48</TargetFramework>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
         <ProjectGuid>{4D35EB3F-E4D0-4FD9-9258-9066A85F1BFE}</ProjectGuid>
@@ -20,6 +19,7 @@
         <Optimize>true</Optimize>
         <Deterministic>true</Deterministic>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     </PropertyGroup>
     
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -204,6 +204,15 @@
       <Content Include="Metadata\README.md" />
       <Content Include="Metadata\thunderstore.toml" />
       <Content Include="UpdateManifest.ps1" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.37">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="LiteDB" Version="5.0.21" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
     
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
