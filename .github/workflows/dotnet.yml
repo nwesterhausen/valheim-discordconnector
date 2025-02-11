@@ -30,9 +30,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 6.0.x
-
+      - name: Remove environment.props for workflow
+        run: rm DiscordConnector/environment.props
       - name: Restore dependencies
         # Specifying the "GamePath" as our build dependency directory (cached)
         run: dotnet restore /p:GamePath=/home/runner/dev-bundle -v n DiscordConnector.sln

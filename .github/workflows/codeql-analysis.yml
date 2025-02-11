@@ -71,8 +71,6 @@ jobs:
           unzip -qq dev-bundle.zip -d /home/runner/dev-bundle
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 6.0.x
 
       - name: Restore dependencies
         # Specifying the "GamePath" as our build dependency directory (cached)
