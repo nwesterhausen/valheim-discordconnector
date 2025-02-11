@@ -71,15 +71,14 @@
                 <AfterTargets Condition="'$(AfterTargets)' == ''">ILRepacker</AfterTargets>
             </PropertyGroup>
         </When>
-        <When Condition="Exists('$GamePath') AND (!Exists('$(CorlibPath)') OR !Exists('$(BepInExPath)') OR !Exists('$(PublicizedAssembliesPath)'))">
-            <PropertyGroup>
-                <BepInExPath Condition="!Exists('$(BepInExPath)')AND Exists('$(GamePath)')">$(GamePath)\BepInEx</BepInExPath>
-                <CorlibPath Condition="!Exists('$(CorlibPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed</CorlibPath>
-                <CorlibPath Condition="!Exists('$(CorlibPath)') AND Exists('$(GamePath)')">$(GamePath)\unstripped_corlib</CorlibPath>
-                <PublicizedAssembliesPath Condition="!Exists('$(PublicizedAssembliesPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssembliesPath>
-            </PropertyGroup>
-        </When>
     </Choose>
+
+    <PropertyGroup>
+        <BepInExPath Condition="!Exists('$(BepInExPath)')AND Exists('$(GamePath)')">$(GamePath)\BepInEx</BepInExPath>
+        <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed</CorlibPath>
+        <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\unstripped_corlib</CorlibPath>
+        <PublicizedAssembliesPath Condition="!Exists('$(PublicizedAssembliesPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssembliesPath>
+    </PropertyGroup>
   
     <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
       <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3"
