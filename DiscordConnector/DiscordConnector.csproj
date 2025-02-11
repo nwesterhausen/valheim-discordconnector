@@ -122,7 +122,7 @@
         </Reference>
         <Reference Include="mscorlib" />
         <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-          <HintPath>$(PackageRoot)Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+          <HintPath>$(PackageRoot)newtonsoft.json\13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
         </Reference>
         <Reference Include="ServerSync">
             <HintPath>Libs\ServerSync.dll</HintPath>
@@ -132,7 +132,7 @@
         </Reference>
         <Reference Include="System"/>
         <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-          <HintPath>$(PackageRoot)System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+          <HintPath>$(PackageRoot)system.buffers\4.5.1\lib\net461\System.Buffers.dll</HintPath>
         </Reference>
         <Reference Include="System.Core"/>
         <Reference Include="System.Data"/>
@@ -238,7 +238,7 @@
     </ItemGroup>
     
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
-    <Import Project="..\packages\ILRepack.Lib.MSBuild.Task.2.0.37\build\ILRepack.Lib.MSBuild.Task.targets" Condition="Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.37\build\ILRepack.Lib.MSBuild.Task.targets')" />
+    <Import Project="$(PackageRoot)\ilrepack.lib.msbuild.task\2.0.37\build\ILRepack.Lib.MSBuild.Task.targets" Condition="Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.37\build\ILRepack.Lib.MSBuild.Task.targets')" />
     
     <Target Name="GetAssemblyVersion" AfterTargets="$(AfterTargets)">
         <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">

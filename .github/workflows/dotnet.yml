@@ -31,7 +31,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: LTS
       - name: Remove environment.props for workflow
         run: rm DiscordConnector/environment.props
       - name: Restore dependencies
