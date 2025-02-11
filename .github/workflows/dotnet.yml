@@ -3,7 +3,7 @@ name: Build
 on:
   workflow_dispatch:
   push:
-    branches: [main, staging]
+    # branches: [main, staging]
   pull_request:
     branches: [main, staging]
 
@@ -45,7 +45,7 @@ jobs:
           # Artifact name
           name: DiscordConnector-artifact.zip
           # A file, directory or wildcard pattern that describes what to upload
-          path: "/home/runner/work/valheim-discordconnector/valheim-discordconnector/bin/DiscordConnector.zip"
+          path: "/home/runner/work/valheim-discordconnector/valheim-discordconnector/Metadata/*.zip"
           # The desired behavior if no files are found using the provided path.
 
           # Duration after which artifact will expire in days. 0 means using default retention.
