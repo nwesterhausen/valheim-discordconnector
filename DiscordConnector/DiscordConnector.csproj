@@ -53,9 +53,6 @@
                 <GamePath Condition="!Exists('$(GamePath)')">$(HOME)/Library/Application Support/Steam/steamapps/common/Valheim/Contents/MacOS</GamePath>
                 <CorlibPath Condition="!Exists('$(CorlibPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed</CorlibPath>
                 <CorlibPath Condition="!Exists('$(CorlibPath)')">$(GamePath)/unstripped_corelib</CorlibPath>
-                <BepInExPath Condition="!Exists('$(BepInExPath)')AND Exists('$(GamePath)')">$(GamePath)/BepInEx</BepInExPath>
-                <PublicizedAssembliesPath Condition="!Exists('$(PublicizedAssembliesPath)') AND Exists('$(GamePath)')">$(GamePath)/valheim_Data/Managed/publicized_assemblies</PublicizedAssembliesPath>
-                <AfterTargets Condition="'$(AfterTargets)' == ''">ILRepacker</AfterTargets>
             </PropertyGroup>
         </When>
         <When Condition="($(OS) == 'Windows_NT') AND $(GamePath) == ''">
@@ -72,6 +69,14 @@
                 <CorlibPath Condition="!Exists('$(CorlibPath)') AND Exists('$(GamePath)')">$(GamePath)\unstripped_corlib</CorlibPath>
                 <PublicizedAssembliesPath Condition="!Exists('$(PublicizedAssembliesPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssembliesPath>
                 <AfterTargets Condition="'$(AfterTargets)' == ''">ILRepacker</AfterTargets>
+            </PropertyGroup>
+        </When>
+        <When Condition="Exists('$GamePath') AND (!Exists('$(CorlibPath)') OR !Exists('$(BepInExPath)') OR !Exists('$(PublicizedAssembliesPath)'))">
+            <PropertyGroup>
+                <BepInExPath Condition="!Exists('$(BepInExPath)')AND Exists('$(GamePath)')">$(GamePath)\BepInEx</BepInExPath>
+                <CorlibPath Condition="!Exists('$(CorlibPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed</CorlibPath>
+                <CorlibPath Condition="!Exists('$(CorlibPath)') AND Exists('$(GamePath)')">$(GamePath)\unstripped_corlib</CorlibPath>
+                <PublicizedAssembliesPath Condition="!Exists('$(PublicizedAssembliesPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssembliesPath>
             </PropertyGroup>
         </When>
     </Choose>
