@@ -35,10 +35,10 @@ jobs:
 
       - name: Restore dependencies
         # Specifying the "GamePath" as our build dependency directory (cached)
-        run: dotnet restore /p:GamePath=/home/runner/dev-bundle -v n valheim-discordconnector.sln
+        run: dotnet restore /p:GamePath=/home/runner/dev-bundle -v n DiscordConnector.sln
       - name: Build
         # Specifying the "GamePath" as our build dependency directory (cached)
-        run: dotnet build --no-restore -c Release /p:GamePath=/home/runner/dev-bundle -v n valheim-discordconnector.sln
+        run: dotnet build --no-restore -c Release /p:GamePath=/home/runner/dev-bundle -v n DiscordConnector.sln
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4
