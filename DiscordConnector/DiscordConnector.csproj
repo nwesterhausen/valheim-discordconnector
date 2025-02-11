@@ -89,7 +89,7 @@
     <Choose>
         <When Condition="$(CI)">
             <PropertyGroup>
-                <PackageRoot>/home/runner/.nuget/packages</PackageRoot>
+                <PackageRoot>/home/runner/.nuget/packages/</PackageRoot>
             </PropertyGroup>
         </When>
         <When Condition="!$(CI)">
