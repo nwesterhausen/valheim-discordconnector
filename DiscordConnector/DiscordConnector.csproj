@@ -88,7 +88,6 @@
 
     <Choose>
         <When Condition="$(CI)">
-            <Message Text="Detected CI environment, substituting special .nuget path"/>
             <PropertyGroup>
                 <PackageRoot>/home/runner/.nuget/packages</PackageRoot>
             </PropertyGroup>
