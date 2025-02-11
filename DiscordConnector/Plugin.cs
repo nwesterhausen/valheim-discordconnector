@@ -40,4 +40,14 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
     /// Works in Awake()
     /// </summary>
     public static bool IsHeadless() => SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null;
+    
+    public DiscordConnectorPlugin()
+    {
+        StaticLogger = new VDCLogger(Logger);
+        StaticConfig = new PluginConfig(Config);
+        StaticDatabase = new Records.Database(Paths.GameRootPath);
+        StaticLeaderBoards = new LeaderbBoard();
+
+        _publicIpAddress = "";
+    }
 }
