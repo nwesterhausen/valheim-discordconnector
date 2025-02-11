@@ -14,12 +14,7 @@
   "author": "Nicholas Westerhausen",
   "license": "MIT",
   "devDependencies": {
-    "vitepress": "1.6.3",
-    "vue": "^3.5.13"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
+    "vitepress": "1.4.2",
+    "vue": "^3.5.12"
   }
 }
