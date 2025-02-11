@@ -17,7 +17,7 @@ class DiscordApi
     /// <param name="pos">A 3-dimensional vector representing a position</param>
     public static void SendMessage(Webhook.Event ev, string message, UnityEngine.Vector3 pos)
     {
-        if (Plugin.StaticConfig.DiscordEmbedsEnabled)
+        if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled)
         {
             SendMessageWithFields(ev, message, [
                     Tuple.Create("Coordinates",MessageTransformer.FormatVector3AsPos(pos))
@@ -96,15 +96,15 @@ class DiscordApi
     /// <param name="serializedJson">Body data for the webhook as JSON serialized into a string</param>
     public static void SendSerializedJson(Webhook.Event ev, string serializedJson)
     {
-        Plugin.StaticLogger.LogDebug($"Finding webhooks for event: (event: {ev})");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Finding webhooks for event: (event: {ev})");
 
         if (ev == Webhook.Event.Other)
         {
-            Plugin.StaticLogger.LogInfo($"Dispatching webhook for 3rd party plugin (configured as 'Other' in WebHook config)");
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Dispatching webhook for 3rd party plugin (configured as 'Other' in WebHook config)");
         }
 
         // Guard against unset webhook or empty serialized json
-        if ((string.IsNullOrEmpty(Plugin.StaticConfig.PrimaryWebhook.Url) && string.IsNullOrEmpty(Plugin.StaticConfig.SecondaryWebhook.Url)) || string.IsNullOrEmpty(serializedJson))
+        if ((string.IsNullOrEmpty(DiscordConnectorPlugin.StaticConfig.PrimaryWebhook.Url) && string.IsNullOrEmpty(DiscordConnectorPlugin.StaticConfig.SecondaryWebhook.Url)) || string.IsNullOrEmpty(serializedJson))
         {
             return;
         }
@@ -112,23 +112,23 @@ class DiscordApi
         // Responsible for sending a JSON string to the webhook.
         byte[] byteArray = Encoding.UTF8.GetBytes(serializedJson);
 
-        if (Plugin.StaticConfig.PrimaryWebhook.HasEvent(ev))
+        if (DiscordConnectorPlugin.StaticConfig.PrimaryWebhook.HasEvent(ev))
         {
-            Plugin.StaticLogger.LogDebug($"Sending {ev} message to Primary Webhook");
-            DispatchRequest(Plugin.StaticConfig.PrimaryWebhook, byteArray);
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Sending {ev} message to Primary Webhook");
+            DispatchRequest(DiscordConnectorPlugin.StaticConfig.PrimaryWebhook, byteArray);
         }
-        if (Plugin.StaticConfig.SecondaryWebhook.HasEvent(ev))
+        if (DiscordConnectorPlugin.StaticConfig.SecondaryWebhook.HasEvent(ev))
         {
-            Plugin.StaticLogger.LogDebug($"Sending {ev} message to Secondary Webhook");
-            DispatchRequest(Plugin.StaticConfig.SecondaryWebhook, byteArray);
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Sending {ev} message to Secondary Webhook");
+            DispatchRequest(DiscordConnectorPlugin.StaticConfig.SecondaryWebhook, byteArray);
         }
 
         // Check for any extra webhooks that should be sent to
-        foreach (WebhookEntry webhook in Plugin.StaticConfig.ExtraWebhooks)
+        foreach (WebhookEntry webhook in DiscordConnectorPlugin.StaticConfig.ExtraWebhooks)
         {
             if (webhook.HasEvent(ev))
             {
-                Plugin.StaticLogger.LogDebug($"Sending {ev} message to Extra Webhook: {webhook.Url}");
+                DiscordConnectorPlugin.StaticLogger.LogDebug($"Sending {ev} message to Extra Webhook: {webhook.Url}");
                 DispatchRequest(webhook, byteArray);
             }
         }
@@ -141,7 +141,7 @@ class DiscordApi
     /// <param name="serializedJson">Serialized JSON of the request to make</param>
     public static void SendSerializedJson(WebhookEntry webhook, string serializedJson)
     {
-        Plugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Trying webhook with payload: {serializedJson}");
 
         // Guard against unset webhook or empty serialized json
         if (string.IsNullOrEmpty(webhook.Url) || string.IsNullOrEmpty(serializedJson))
@@ -164,13 +164,13 @@ class DiscordApi
     {
         if (string.IsNullOrEmpty(webhook.Url))
         {
-            Plugin.StaticLogger.LogDebug($"Dispatch attempted with empty webhook - ignoring");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Dispatch attempted with empty webhook - ignoring");
             return;
         }
 
         // Create an identifier for the request
         string requestId = GuidHelper.GenerateShortHexGuid();
-        Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: sending {byteArray.Length} bytes to Discord");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: sending {byteArray.Length} bytes to Discord");
 
         // Create a web request to send the payload to discord
         WebRequest request = WebRequest.Create(webhook.Url);
@@ -194,7 +194,7 @@ class DiscordApi
                 try
                 {
                     response = request.GetResponse();
-                    if (Plugin.StaticConfig.DebugHttpRequestResponse)
+                    if (DiscordConnectorPlugin.StaticConfig.DebugHttpRequestResponse)
                     {
                         if (response is HttpWebResponse webResponse)
                         {
@@ -202,18 +202,18 @@ class DiscordApi
                             {
                                 responseExpected = false;
                             }
-                            Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: Response Code: {webResponse.StatusCode}");
+                            DiscordConnectorPlugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: Response Code: {webResponse.StatusCode}");
 
                         }
                         else
                         {
-                            Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: Response was not an HttpWebResponse");
+                            DiscordConnectorPlugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: Response was not an HttpWebResponse");
                         }
                     }
                 }
                 catch (WebException ex)
                 {
-                    Plugin.StaticLogger.LogError($"DispatchRequest.{requestId}: Error getting web response: {ex}");
+                    DiscordConnectorPlugin.StaticLogger.LogError($"DispatchRequest.{requestId}: Error getting web response: {ex}");
                     return;
                 }
 
@@ -224,7 +224,7 @@ class DiscordApi
                     {
                         if (dataStream == null)
                         {
-                            Plugin.StaticLogger.LogError($"DispatchRequest.{requestId}: Response stream is null");
+                            DiscordConnectorPlugin.StaticLogger.LogError($"DispatchRequest.{requestId}: Response stream is null");
                             return;
                         }
 
@@ -234,15 +234,15 @@ class DiscordApi
                             // Read the content.
                             string responseFromServer = reader.ReadToEnd();
                             // Display the content.
-                            if (Plugin.StaticConfig.DebugHttpRequestResponse)
+                            if (DiscordConnectorPlugin.StaticConfig.DebugHttpRequestResponse)
                             {
                                 if (responseFromServer.Length > 0)
                                 {
-                                    Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: Response from server: {responseFromServer}");
+                                    DiscordConnectorPlugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: Response from server: {responseFromServer}");
                                 }
                                 else
                                 {
-                                    Plugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: Empty response from server (normal)");
+                                    DiscordConnectorPlugin.StaticLogger.LogDebug($"DispatchRequest.{requestId}: Empty response from server (normal)");
                                 }
                             }
                         }
@@ -253,7 +253,7 @@ class DiscordApi
             }
             catch (Exception e)
             {
-                Plugin.StaticLogger.LogWarning($"Error dispatching webhook: {e}");
+                DiscordConnectorPlugin.StaticLogger.LogWarning($"Error dispatching webhook: {e}");
             }
         }).ConfigureAwait(false);
     }
@@ -369,9 +369,9 @@ internal class DiscordExecuteWebhook
         username = null;
         avatar_url = null;
 
-        if (!string.IsNullOrEmpty(Plugin.StaticConfig.DefaultWebhookUsernameOverride))
+        if (!string.IsNullOrEmpty(DiscordConnectorPlugin.StaticConfig.DefaultWebhookUsernameOverride))
         {
-            SetUsername(Plugin.StaticConfig.DefaultWebhookUsernameOverride);
+            SetUsername(DiscordConnectorPlugin.StaticConfig.DefaultWebhookUsernameOverride);
         }
     }
 
@@ -384,17 +384,17 @@ internal class DiscordExecuteWebhook
         // If the object is not valid, do not send it
         if (!IsValid())
         {
-            Plugin.StaticLogger.LogWarning($"Attempted to send an invalid DiscordExecuteWebhook object:\n{this}");
+            DiscordConnectorPlugin.StaticLogger.LogWarning($"Attempted to send an invalid DiscordExecuteWebhook object:\n{this}");
             return;
         }
 
         // Find any webhook events that match the event
         try
         {
-            if (Plugin.StaticConfig.PrimaryWebhook.HasEvent(ev))
+            if (DiscordConnectorPlugin.StaticConfig.PrimaryWebhook.HasEvent(ev))
             {
-                Plugin.StaticLogger.LogDebug($"Sending {ev} message to Primary Webhook");
-                WebhookEntry primaryWebhook = Plugin.StaticConfig.PrimaryWebhook;
+                DiscordConnectorPlugin.StaticLogger.LogDebug($"Sending {ev} message to Primary Webhook");
+                WebhookEntry primaryWebhook = DiscordConnectorPlugin.StaticConfig.PrimaryWebhook;
                 ResetOverrides();
 
                 if (primaryWebhook.HasUsernameOverride())
@@ -409,10 +409,10 @@ internal class DiscordExecuteWebhook
                 DiscordApi.SendSerializedJson(primaryWebhook, JsonConvert.SerializeObject(this));
 
             }
-            if (Plugin.StaticConfig.SecondaryWebhook.HasEvent(ev))
+            if (DiscordConnectorPlugin.StaticConfig.SecondaryWebhook.HasEvent(ev))
             {
-                Plugin.StaticLogger.LogDebug($"Sending {ev} message to Secondary Webhook");
-                WebhookEntry secondaryWebhook = Plugin.StaticConfig.SecondaryWebhook;
+                DiscordConnectorPlugin.StaticLogger.LogDebug($"Sending {ev} message to Secondary Webhook");
+                WebhookEntry secondaryWebhook = DiscordConnectorPlugin.StaticConfig.SecondaryWebhook;
                 ResetOverrides();
 
                 if (secondaryWebhook.HasUsernameOverride())
@@ -427,13 +427,13 @@ internal class DiscordExecuteWebhook
                 DiscordApi.SendSerializedJson(secondaryWebhook, JsonConvert.SerializeObject(this));
 
             }
-            if (Plugin.StaticConfig.ExtraWebhooks != null)
+            if (DiscordConnectorPlugin.StaticConfig.ExtraWebhooks != null)
             {
-                foreach (WebhookEntry webhook in Plugin.StaticConfig.ExtraWebhooks)
+                foreach (WebhookEntry webhook in DiscordConnectorPlugin.StaticConfig.ExtraWebhooks)
                 {
                     if (webhook.HasEvent(ev))
                     {
-                        Plugin.StaticLogger.LogDebug($"Sending {ev} message to an Extra Webhook");
+                        DiscordConnectorPlugin.StaticLogger.LogDebug($"Sending {ev} message to an Extra Webhook");
                         ResetOverrides();
 
                         if (webhook.HasUsernameOverride())
@@ -453,7 +453,7 @@ internal class DiscordExecuteWebhook
         }
         catch (Exception e)
         {
-            Plugin.StaticLogger.LogWarning($"Error serializing payload: {e}");
+            DiscordConnectorPlugin.StaticLogger.LogWarning($"Error serializing payload: {e}");
         }
     }
 }
@@ -495,25 +495,25 @@ internal class AllowedMentions
         replied_user = false;
 
         // Update from config
-        if (Plugin.StaticConfig.AllowMentionsHereEveryone)
+        if (DiscordConnectorPlugin.StaticConfig.AllowMentionsHereEveryone)
         {
             AllowEveryone();
         }
-        if (Plugin.StaticConfig.AllowMentionsAnyRole)
+        if (DiscordConnectorPlugin.StaticConfig.AllowMentionsAnyRole)
         {
             AllowAnyRoles();
         }
-        if (Plugin.StaticConfig.AllowMentionsAnyUser)
+        if (DiscordConnectorPlugin.StaticConfig.AllowMentionsAnyUser)
         {
             AllowAnyUsers();
         }
-        if (Plugin.StaticConfig.AllowedRoleMentions.Count > 0)
+        if (DiscordConnectorPlugin.StaticConfig.AllowedRoleMentions.Count > 0)
         {
-            AllowRoles(Plugin.StaticConfig.AllowedRoleMentions);
+            AllowRoles(DiscordConnectorPlugin.StaticConfig.AllowedRoleMentions);
         }
-        if (Plugin.StaticConfig.AllowedUserMentions.Count > 0)
+        if (DiscordConnectorPlugin.StaticConfig.AllowedUserMentions.Count > 0)
         {
-            AllowUsers(Plugin.StaticConfig.AllowedUserMentions);
+            AllowUsers(DiscordConnectorPlugin.StaticConfig.AllowedUserMentions);
         }
     }
 

@@ -37,7 +37,7 @@ public class CountResult
     {
         List<CountResult> results = new List<CountResult>();
 
-        if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"ConvertBsonDocumentCountToDotNet r={bsonDocuments.Count}"); }
+        if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods) { DiscordConnectorPlugin.StaticLogger.LogDebug($"ConvertBsonDocumentCountToDotNet r={bsonDocuments.Count}"); }
         foreach (BsonDocument doc in bsonDocuments)
         {
             if (!doc.ContainsKey("Count"))
@@ -64,7 +64,7 @@ public class CountResult
                 if (!doc["Player"].IsNull)
                 {
                     results.Add(new CountResult(
-                        Plugin.StaticDatabase.GetLatestCharacterNameForPlayer(doc["Player"]),
+                        DiscordConnectorPlugin.StaticDatabase.GetLatestCharacterNameForPlayer(doc["Player"]),
                         doc["Count"].AsInt32
                     ));
                 }

@@ -204,7 +204,7 @@ namespace DiscordConnector.Leaderboards
                     return new Tuple<DateTime, DateTime>(DummyDateTime, DummyDateTime);
 
                 default:
-                    Plugin.StaticLogger.LogWarning("DateHelper fell through, probably not wanted!");
+                    DiscordConnectorPlugin.StaticLogger.LogWarning("DateHelper fell through, probably not wanted!");
                     return new Tuple<DateTime, DateTime>(DummyDateTime, DummyDateTime);
             }
         }

@@ -13,14 +13,14 @@ internal class Composer : Base
     }
     public override void SendLeaderBoard()
     {
-        if (leaderBoardIdx > Plugin.StaticConfig.LeaderBoards.Length || leaderBoardIdx < 0)
+        if (leaderBoardIdx > DiscordConnectorPlugin.StaticConfig.LeaderBoards.Length || leaderBoardIdx < 0)
         {
-            Plugin.StaticLogger.LogWarning($"Tried to get leader board out of index bounds (index:{leaderBoardIdx}, length:{Plugin.StaticConfig.LeaderBoards.Length})");
+            DiscordConnectorPlugin.StaticLogger.LogWarning($"Tried to get leader board out of index bounds (index:{leaderBoardIdx}, length:{DiscordConnectorPlugin.StaticConfig.LeaderBoards.Length})");
             return;
         }
 
-        LeaderBoardConfigReference settings = Plugin.StaticConfig.LeaderBoards[leaderBoardIdx];
-        Webhook.Event ev = Plugin.StaticConfig.LeaderBoards[leaderBoardIdx].WebhookEvent;
+        LeaderBoardConfigReference settings = DiscordConnectorPlugin.StaticConfig.LeaderBoards[leaderBoardIdx];
+        Webhook.Event ev = DiscordConnectorPlugin.StaticConfig.LeaderBoards[leaderBoardIdx].WebhookEvent;
 
         if (!settings.Enabled)
         {
@@ -161,7 +161,7 @@ internal class Composer : Base
             }
         }
 
-        Plugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
         printDict(Dict);
 
         return Dict;
@@ -219,7 +219,7 @@ internal class Composer : Base
             }
         }
 
-        Plugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
         printDict(Dict);
 
         return Dict;
@@ -235,7 +235,7 @@ internal class Composer : Base
             {
                 outStr += x.ToString() + ",";
             }
-            Plugin.StaticLogger.LogDebug($"{pair.Key}: {outStr}");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"{pair.Key}: {outStr}");
         }
     }
 

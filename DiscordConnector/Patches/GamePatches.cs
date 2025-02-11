@@ -9,11 +9,11 @@ internal class GamePatches
     {
         private static void Prefix()
         {
-            if (Plugin.StaticConfig.LaunchMessageEnabled)
+            if (DiscordConnectorPlugin.StaticConfig.LaunchMessageEnabled)
             {
                 DiscordApi.SendMessage(
                     Webhook.Event.ServerLaunch,
-                    MessageTransformer.FormatServerMessage(Plugin.StaticConfig.LaunchMessage)
+                    MessageTransformer.FormatServerMessage(DiscordConnectorPlugin.StaticConfig.LaunchMessage)
                 );
             }
         }
@@ -26,25 +26,25 @@ internal class GamePatches
         [HarmonyBefore(new string[] { "HackShardGaming.WorldofValheimServerSideCharacters" })]
         private static void Prefix()
         {
-            if (Plugin.StaticConfig.StopMessageEnabled)
+            if (DiscordConnectorPlugin.StaticConfig.StopMessageEnabled)
             {
                 DiscordApi.SendMessage(
                     Webhook.Event.ServerStop,
-                    MessageTransformer.FormatServerMessage(Plugin.StaticConfig.StopMessage)
+                    MessageTransformer.FormatServerMessage(DiscordConnectorPlugin.StaticConfig.StopMessage)
                 );
             }
-            if (Plugin.IsHeadless())
+            if (DiscordConnectorPlugin.IsHeadless())
             {
-                Plugin.StaticEventWatcher.Dispose();
+                DiscordConnectorPlugin.StaticEventWatcher.Dispose();
             }
         }
         private static void Postfix()
         {
-            if (Plugin.StaticConfig.ShutdownMessageEnabled)
+            if (DiscordConnectorPlugin.StaticConfig.ShutdownMessageEnabled)
             {
                 DiscordApi.SendMessage(
                     Webhook.Event.ServerShutdown,
-                    MessageTransformer.FormatServerMessage(Plugin.StaticConfig.ShutdownMessage)
+                    MessageTransformer.FormatServerMessage(DiscordConnectorPlugin.StaticConfig.ShutdownMessage)
                 );
             }
         }

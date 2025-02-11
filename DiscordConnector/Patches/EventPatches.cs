@@ -19,7 +19,7 @@ internal class RandEventPatches
             float time = __instance.m_time;
             float remaining = duration - time;
             Vector3 pos = __instance.m_pos;
-            Plugin.StaticLogger.LogDebug(
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
                 $"Random event OnActivate {name}: {active} for {duration} at {pos}. (time: {time})"
             );
 
@@ -33,33 +33,33 @@ internal class RandEventPatches
                     involvedPlayers.Add(playerInfo.m_name);
                 }
             }
-            Plugin.StaticLogger.LogDebug(
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
                 $"Involved players in event: {(string.Join(",", involvedPlayers.ToArray()))}"
             );
 
             if (__instance.m_time > 0)
             {
-                if (Plugin.StaticConfig.EventResumedMessageEnabled)
+                if (DiscordConnectorPlugin.StaticConfig.EventResumedMessageEnabled)
                 {
                     string message = MessageTransformer.FormatEventMessage(
-                        Plugin.StaticConfig.EventResumedMessage,
+                        DiscordConnectorPlugin.StaticConfig.EventResumedMessage,
                         Localization.instance.Localize(__instance.m_endMessage),
                         Localization.instance.Localize(__instance.m_startMessage)
                     // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
                     );
-                    if (!Plugin.StaticConfig.EventResumedPosEnabled)
+                    if (!DiscordConnectorPlugin.StaticConfig.EventResumedPosEnabled)
                     {
                         DiscordApi.SendMessage(Webhook.Event.EventResumed, message);
                         return;
                     }
-                    if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+                    if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                     {
                         DiscordApi.SendMessage(Webhook.Event.EventResumed, message, pos);
                     }
                     else
                     {
                         message = MessageTransformer.FormatEventMessage(
-                            Plugin.StaticConfig.EventResumedMessage,
+                            DiscordConnectorPlugin.StaticConfig.EventResumedMessage,
                             Localization.instance.Localize(__instance.m_endMessage),
                             Localization.instance.Localize(__instance.m_startMessage),
                             // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
@@ -71,27 +71,27 @@ internal class RandEventPatches
             }
             else
             {
-                if (Plugin.StaticConfig.EventStartMessageEnabled)
+                if (DiscordConnectorPlugin.StaticConfig.EventStartMessageEnabled)
                 {
                     string message = MessageTransformer.FormatEventStartMessage(
-                        Plugin.StaticConfig.EventResumedMessage,
+                        DiscordConnectorPlugin.StaticConfig.EventResumedMessage,
                         Localization.instance.Localize(__instance.m_endMessage),
                         Localization.instance.Localize(__instance.m_startMessage)
                     // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
                     );
-                    if (!Plugin.StaticConfig.EventStartPosEnabled)
+                    if (!DiscordConnectorPlugin.StaticConfig.EventStartPosEnabled)
                     {
                         DiscordApi.SendMessage(Webhook.Event.EventStart, message);
                         return;
                     }
-                    if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+                    if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                     {
                         DiscordApi.SendMessage(Webhook.Event.EventStart, message, pos);
                     }
                     else
                     {
                         message = MessageTransformer.FormatEventStartMessage(
-                            Plugin.StaticConfig.EventResumedMessage,
+                            DiscordConnectorPlugin.StaticConfig.EventResumedMessage,
                             Localization.instance.Localize(__instance.m_endMessage),
                             Localization.instance.Localize(__instance.m_startMessage),
                             // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
@@ -115,7 +115,7 @@ internal class RandEventPatches
             string name = __instance.m_name;
             float time = __instance.m_time;
             Vector3 pos = __instance.m_pos;
-            Plugin.StaticLogger.LogDebug(
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
                 $"Random event OnDeactivate {name}: End?{active} for {duration} at {pos}. (time: {time})"
             );
 
@@ -127,33 +127,33 @@ internal class RandEventPatches
                     involvedPlayers.Add(playerInfo.m_name);
                 }
             }
-            Plugin.StaticLogger.LogDebug(
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
                 $"Involved players in event: {(string.Join(",", involvedPlayers.ToArray()))}"
             );
 
             if (!end)
             {
-                if (Plugin.StaticConfig.EventPausedMessageEnabled)
+                if (DiscordConnectorPlugin.StaticConfig.EventPausedMessageEnabled)
                 {
                     string message = MessageTransformer.FormatEventMessage(
-                        Plugin.StaticConfig.EventPausedMessage,
+                        DiscordConnectorPlugin.StaticConfig.EventPausedMessage,
                         Localization.instance.Localize(__instance.m_endMessage),
                         Localization.instance.Localize(__instance.m_startMessage)
                     // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
                     );
-                    if (!Plugin.StaticConfig.EventPausedPosEnabled)
+                    if (!DiscordConnectorPlugin.StaticConfig.EventPausedPosEnabled)
                     {
                         DiscordApi.SendMessage(Webhook.Event.EventPaused, message);
                         return;
                     }
-                    if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+                    if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                     {
                         DiscordApi.SendMessage(Webhook.Event.EventPaused, message, pos);
                     }
                     else
                     {
                         message = MessageTransformer.FormatEventMessage(
-                            Plugin.StaticConfig.EventPausedMessage,
+                            DiscordConnectorPlugin.StaticConfig.EventPausedMessage,
                             Localization.instance.Localize(__instance.m_endMessage),
                             Localization.instance.Localize(__instance.m_startMessage),
                             // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
@@ -165,27 +165,27 @@ internal class RandEventPatches
             }
             else
             {
-                if (Plugin.StaticConfig.EventStopMessageEnabled)
+                if (DiscordConnectorPlugin.StaticConfig.EventStopMessageEnabled)
                 {
                     string message = MessageTransformer.FormatEventEndMessage(
-                        Plugin.StaticConfig.EventStopMessage,
+                        DiscordConnectorPlugin.StaticConfig.EventStopMessage,
                         Localization.instance.Localize(__instance.m_endMessage),
                         Localization.instance.Localize(__instance.m_startMessage)
                     // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
                     );
-                    if (!Plugin.StaticConfig.EventStopPosEnabled)
+                    if (!DiscordConnectorPlugin.StaticConfig.EventStopPosEnabled)
                     {
                         DiscordApi.SendMessage(Webhook.Event.EventStop, message);
                         return;
                     }
-                    if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+                    if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
                     {
                         DiscordApi.SendMessage(Webhook.Event.EventStop, message, pos);
                     }
                     else
                     {
                         message = MessageTransformer.FormatEventEndMessage(
-                            Plugin.StaticConfig.EventStopMessage,
+                            DiscordConnectorPlugin.StaticConfig.EventStopMessage,
                             Localization.instance.Localize(__instance.m_endMessage),
                             Localization.instance.Localize(__instance.m_startMessage),
                             // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 

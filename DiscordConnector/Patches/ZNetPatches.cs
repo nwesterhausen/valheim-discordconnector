@@ -10,17 +10,17 @@ internal class ZNetPatches
     {
         private static void Postfix()
         {
-            if (Plugin.StaticConfig.LoadedMessageEnabled)
+            if (DiscordConnectorPlugin.StaticConfig.LoadedMessageEnabled)
             {
                 DiscordApi.SendMessage(
                     Webhook.Event.ServerStart,
-                    MessageTransformer.FormatServerMessage(Plugin.StaticConfig.LoadedMessage)
+                    MessageTransformer.FormatServerMessage(DiscordConnectorPlugin.StaticConfig.LoadedMessage)
                 );
             }
 
-            if (Plugin.IsHeadless())
+            if (DiscordConnectorPlugin.IsHeadless())
             {
-                Plugin.StaticEventWatcher.Activate();
+                DiscordConnectorPlugin.StaticEventWatcher.Activate();
             }
         }
     }
@@ -30,11 +30,11 @@ internal class ZNetPatches
     {
         private static void Postfix(ref bool sync)
         {
-            if (Plugin.StaticConfig.WorldSaveMessageEnabled)
+            if (DiscordConnectorPlugin.StaticConfig.WorldSaveMessageEnabled)
             {
                 DiscordApi.SendMessage(
                     Webhook.Event.ServerSave,
-                    MessageTransformer.FormatServerMessage(Plugin.StaticConfig.SaveMessage)
+                    MessageTransformer.FormatServerMessage(DiscordConnectorPlugin.StaticConfig.SaveMessage)
                 );
             }
         }

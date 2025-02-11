@@ -122,7 +122,7 @@ public class Webhook
                 return Event.NewDayNumber;
 
             default:
-                Plugin.StaticLogger.LogDebug($"Unmatched event token '{eventToken}'");
+                DiscordConnectorPlugin.StaticLogger.LogDebug($"Unmatched event token '{eventToken}'");
                 return Event.None;
         }
     }
@@ -137,7 +137,7 @@ public class Webhook
 
         //Clean string (remove all non-word non-semi-colon characters)
         string cleaned = Regex.Replace(configEntry, @"[^;\w]", "");
-        Plugin.StaticLogger.LogDebug($"Webhooks: cleaned config entry '{configEntry}' => '{cleaned}'");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Webhooks: cleaned config entry '{configEntry}' => '{cleaned}'");
 
         // Check for ALL case
         if (cleaned.Equals("ALL"))
@@ -152,7 +152,7 @@ public class Webhook
             events.Add(StringToEvent(ev));
         }
 
-        Plugin.StaticLogger.LogDebug($"Webhooks: parsed config entry '{configEntry}' => '{string.Join(", ", events)}'");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Webhooks: parsed config entry '{configEntry}' => '{string.Join(", ", events)}'");
 
         return events;
     }
@@ -198,7 +198,7 @@ class WebhookEntry
     {
         if (string.IsNullOrEmpty(url))
         {
-            Plugin.StaticLogger.LogDebug($"Coerced null or empty webhook url to empty string. Ignoring event list.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Coerced null or empty webhook url to empty string. Ignoring event list.");
             Url = "";
             FireOnEvents = [];
             return;
@@ -208,7 +208,7 @@ class WebhookEntry
 
         if (fireOnEvents == null || fireOnEvents.Count == 0)
         {
-            Plugin.StaticLogger.LogDebug($"Coerced null or empty webhook event list to empty list.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Coerced null or empty webhook event list to empty list.");
             FireOnEvents = [];
         }
         else
@@ -254,13 +254,13 @@ class WebhookEntry
 
         if (FireOnEvents.Contains(Webhook.Event.ALL))
         {
-            Plugin.StaticLogger.LogDebug("Webhook has 'ALL' enabled");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Webhook has 'ALL' enabled");
             return true;
         }
 
         if (FireOnEvents.Contains(Webhook.Event.PlayerAll))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerAll");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerAll");
             if (
                 ev == Webhook.Event.PlayerDeath ||
                 ev == Webhook.Event.PlayerJoin ||
@@ -273,7 +273,7 @@ class WebhookEntry
         }
         if (FireOnEvents.Contains(Webhook.Event.PlayerFirstAll))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerFirstAll");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerFirstAll");
             if (
                 ev == Webhook.Event.PlayerFirstDeath ||
                 ev == Webhook.Event.PlayerFirstJoin ||
@@ -286,7 +286,7 @@ class WebhookEntry
         }
         if (FireOnEvents.Contains(Webhook.Event.EventLifecycle))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of EventLifecycle");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking if {ev} is part of EventLifecycle");
             if (
                 ev == Webhook.Event.EventStart ||
                 ev == Webhook.Event.EventStop ||
@@ -298,7 +298,7 @@ class WebhookEntry
         }
         if (FireOnEvents.Contains(Webhook.Event.ServerLifecycle))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of ServerLifecycle");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking if {ev} is part of ServerLifecycle");
             if (
                 ev == Webhook.Event.ServerLaunch ||
                 ev == Webhook.Event.ServerShutdown ||
@@ -311,7 +311,7 @@ class WebhookEntry
         }
         if (FireOnEvents.Contains(Webhook.Event.LeaderboardsAll))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of LeaderboardsAll");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking if {ev} is part of LeaderboardsAll");
             if (
                 ev == Webhook.Event.ActivePlayers ||
                 ev == Webhook.Event.Leaderboard1 ||
@@ -324,7 +324,7 @@ class WebhookEntry
             }
         }
 
-        Plugin.StaticLogger.LogDebug($"Checking for exact match of {ev}");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking for exact match of {ev}");
         return FireOnEvents.Contains(ev);
     }
 }

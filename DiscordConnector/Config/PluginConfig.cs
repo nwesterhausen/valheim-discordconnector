@@ -43,14 +43,14 @@ internal class PluginConfig
 
         foreach (string extension in ConfigExtensions)
         {
-            string oldConfig = Path.Combine(BepInEx.Paths.ConfigPath, $"{PluginInfo.PLUGIN_ID}-{extension}.cfg");
-            string newConfig = Path.Combine(configPath, $"{PluginInfo.SHORT_PLUGIN_ID}-{extension}.cfg");
+            string oldConfig = Path.Combine(BepInEx.Paths.ConfigPath, $"{DiscordConnectorPlugin.ModName}-{extension}.cfg");
+            string newConfig = Path.Combine(configPath, $"{DiscordConnectorPlugin.ModName}-{extension}.cfg");
             // Main config has special handling (no -main extension on it)
             if (extension.Equals("main"))
             {
                 // Main config uses no extensions
-                oldConfig = Path.Combine(BepInEx.Paths.ConfigPath, $"{PluginInfo.PLUGIN_ID}.cfg");
-                newConfig = Path.Combine(configPath, $"{PluginInfo.SHORT_PLUGIN_ID}.cfg");
+                oldConfig = Path.Combine(BepInEx.Paths.ConfigPath, $"{DiscordConnectorPlugin.ModName}.cfg");
+                newConfig = Path.Combine(configPath, $"{DiscordConnectorPlugin.ModName}.cfg");
             }
 
             if (File.Exists(oldConfig))
@@ -58,7 +58,7 @@ internal class PluginConfig
                 if (File.Exists(newConfig))
                 {
                     // There already exists a config in the destination, which is weird because configs also exist in the old location
-                    Plugin.StaticLogger.LogWarning($"Expected to be moving {extension} config from pre-2.1.0 location to new config location, but already exists!");
+                    DiscordConnectorPlugin.StaticLogger.LogWarning($"Expected to be moving {extension} config from pre-2.1.0 location to new config location, but already exists!");
                 }
                 else
                 {
@@ -72,18 +72,18 @@ internal class PluginConfig
     public PluginConfig(ConfigFile config)
     {
         // Set up base path for config and other files
-        configPath = Path.Combine(BepInEx.Paths.ConfigPath, PluginInfo.PLUGIN_ID);
+        configPath = Path.Combine(BepInEx.Paths.ConfigPath, DiscordConnectorPlugin.ModName);
 
         // Migrate configs if needed, since we now nest them in a subdirectory
         migrateConfigIfNeeded();
 
         // Set up the config file paths
-        string mainConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}.cfg";
-        string messageConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}-{MessagesConfig.ConfigExtension}.cfg";
-        string togglesConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}-{TogglesConfig.ConfigExtension}.cfg";
-        string variableConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}-{VariableConfig.ConfigExtension}.cfg";
-        string leaderBoardConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}-{LeaderBoardConfig.ConfigExtension}.cfg";
-        string extraWebhooksConfigFilename = $"{PluginInfo.SHORT_PLUGIN_ID}-{ExtraWebhookConfig.ConfigExtension}.cfg";
+        string mainConfigFilename = $"{DiscordConnectorPlugin.ModName}.cfg";
+        string messageConfigFilename = $"{DiscordConnectorPlugin.ModName}-{MessagesConfig.ConfigExtension}.cfg";
+        string togglesConfigFilename = $"{DiscordConnectorPlugin.ModName}-{TogglesConfig.ConfigExtension}.cfg";
+        string variableConfigFilename = $"{DiscordConnectorPlugin.ModName}-{VariableConfig.ConfigExtension}.cfg";
+        string leaderBoardConfigFilename = $"{DiscordConnectorPlugin.ModName}-{LeaderBoardConfig.ConfigExtension}.cfg";
+        string extraWebhooksConfigFilename = $"{DiscordConnectorPlugin.ModName}-{ExtraWebhookConfig.ConfigExtension}.cfg";
 
         string mainConfigPath = Path.Combine(configPath, mainConfigFilename);
         string messagesConfigPath = Path.Combine(configPath, messageConfigFilename);
@@ -92,12 +92,12 @@ internal class PluginConfig
         string leaderBoardConfigPath = Path.Combine(configPath, leaderBoardConfigFilename);
         string extraWebhooksConfigPath = Path.Combine(configPath, extraWebhooksConfigFilename);
 
-        Plugin.StaticLogger.LogDebug($"Main config: {mainConfigPath}");
-        Plugin.StaticLogger.LogDebug($"Messages config: {messagesConfigPath}");
-        Plugin.StaticLogger.LogDebug($"Toggles config: {togglesConfigPath}");
-        Plugin.StaticLogger.LogDebug($"Variable config: {variableConfigPath}");
-        Plugin.StaticLogger.LogDebug($"Leader board config: {leaderBoardConfigPath}");
-        Plugin.StaticLogger.LogDebug($"Extra Webhook config: {extraWebhooksConfigPath}");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Main config: {mainConfigPath}");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Messages config: {messagesConfigPath}");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Toggles config: {togglesConfigPath}");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Variable config: {variableConfigPath}");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Leader board config: {leaderBoardConfigPath}");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Extra Webhook config: {extraWebhooksConfigPath}");
 
         mainConfig = new MainConfig(new BepInEx.Configuration.ConfigFile(mainConfigPath, true));
         messagesConfig = new MessagesConfig(new BepInEx.Configuration.ConfigFile(messagesConfigPath, true));
@@ -106,8 +106,8 @@ internal class PluginConfig
         leaderBoardConfig = new LeaderBoardConfig(new BepInEx.Configuration.ConfigFile(leaderBoardConfigPath, true));
         extraWebhookConfig = new ExtraWebhookConfig(new BepInEx.Configuration.ConfigFile(extraWebhooksConfigPath, true));
 
-        Plugin.StaticLogger.LogDebug("Configuration Loaded");
-        Plugin.StaticLogger.LogDebug($"Muted Players Regex pattern ('a^' is default for no matches): {mainConfig.MutedPlayersRegex.ToString()}");
+        DiscordConnectorPlugin.StaticLogger.LogDebug("Configuration Loaded");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Muted Players Regex pattern ('a^' is default for no matches): {mainConfig.MutedPlayersRegex.ToString()}");
         DumpConfigAsJson();
     }
 
@@ -300,7 +300,7 @@ internal class PluginConfig
         {
             string configDump = Path.Combine(configPath, ConfigJsonFilename);
             File.WriteAllText(configDump, jsonString);
-            Plugin.StaticLogger.LogDebug($"Dumped configuration files to {ConfigJsonFilename}");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Dumped configuration files to {ConfigJsonFilename}");
         });
     }
 }

@@ -38,13 +38,13 @@ class ConfigWatcher
         watcher.Changed += OnChanged;
         watcher.Error += OnError;
 
-        watcher.Path = Plugin.StaticConfig.configPath;
+        watcher.Path = DiscordConnectorPlugin.StaticConfig.configPath;
 
         watcher.Filter = "discordconnector*.cfg";
         watcher.IncludeSubdirectories = true;
         watcher.EnableRaisingEvents = true;
 
-        Plugin.StaticLogger.LogInfo("File watcher loaded and watching for changes to configs.");
+        DiscordConnectorPlugin.StaticLogger.LogInfo("File watcher loaded and watching for changes to configs.");
 
         // Create and populate the file hash dictionary (a collection of MD5 hashes of our configs, to be able
         // to determine if the files were properly changed or not).
@@ -64,7 +64,7 @@ class ConfigWatcher
         Task.Run(() =>
         {
             // Get an iterable of files in the DiscordConnector config directory, where the file matches our config file regex
-            var myConfigFiles = Directory.EnumerateFiles(Plugin.StaticConfig.configPath).Where(file => watchedConfigFilesRegex.IsMatch(file));
+            var myConfigFiles = Directory.EnumerateFiles(DiscordConnectorPlugin.StaticConfig.configPath).Where(file => watchedConfigFilesRegex.IsMatch(file));
             foreach (String filename in myConfigFiles)
             {
                 string extension = ConfigExtensionFromFilename(filename);
@@ -72,8 +72,8 @@ class ConfigWatcher
                 _fileHashDictionary.Add(extension, DiscordConnector.Hashing.GetMD5Checksum(filename));
             }
 
-            Plugin.StaticLogger.LogDebug($"Initialization of file hash dictionary completed.");
-            Plugin.StaticLogger.LogDebug(string.Join(Environment.NewLine, _fileHashDictionary));
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Initialization of file hash dictionary completed.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug(string.Join(Environment.NewLine, _fileHashDictionary));
         });
     }
 
@@ -110,7 +110,7 @@ class ConfigWatcher
 
         String configExtension = ConfigExtensionFromFilename(e.FullPath);
 
-        Plugin.StaticLogger.LogDebug($"Detected change of {configExtension} config file");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Detected change of {configExtension} config file");
 
         // Hash the changed file
         String fileHash = DiscordConnector.Hashing.GetMD5Checksum(e.FullPath);
@@ -118,8 +118,8 @@ class ConfigWatcher
         // Create an entry if we haven't yet
         if (!_fileHashDictionary.ContainsKey(configExtension))
         {
-            Plugin.StaticLogger.LogWarning("Unexpectedly encountered unhashed config file!");
-            Plugin.StaticLogger.LogDebug($"Added {configExtension} config to config hash dictionary.");
+            DiscordConnectorPlugin.StaticLogger.LogWarning("Unexpectedly encountered unhashed config file!");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Added {configExtension} config to config hash dictionary.");
             _fileHashDictionary.Add(configExtension, fileHash);
             return;
         }
@@ -127,19 +127,19 @@ class ConfigWatcher
         // Check if current hash differs from stored hash.
         if (String.Equals(_fileHashDictionary[configExtension], fileHash))
         {
-            Plugin.StaticLogger.LogDebug("Changes to file were determined to be inconsequential.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Changes to file were determined to be inconsequential.");
             return;
         }
 
         // Check if we are within a very short amount of time from last change. If so, ignore the change.
         if (lastChangeDetected.AddSeconds(DEBOUNCE_SECONDS) > DateTime.Now)
         {
-            Plugin.StaticLogger.LogDebug("Skipping config reload, within DEBOUNCE timing.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Skipping config reload, within DEBOUNCE timing.");
             return;
         }
 
         // Tell the plugin to reload the config file
-        Plugin.StaticConfig.ReloadConfig(configExtension);
+        DiscordConnectorPlugin.StaticConfig.ReloadConfig(configExtension);
         lastChangeDetected = DateTime.Now; // Update last changed date
     }
 
@@ -147,6 +147,6 @@ class ConfigWatcher
     /// Error passthrough for the config watcher.
     /// </summary>
     private static void OnError(object sender, ErrorEventArgs e) =>
-        Plugin.StaticLogger.LogError(e.GetException().ToString());
+        DiscordConnectorPlugin.StaticLogger.LogError(e.GetException().ToString());
 
 }

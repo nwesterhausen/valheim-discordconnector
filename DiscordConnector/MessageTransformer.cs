@@ -45,16 +45,16 @@ internal static class MessageTransformer
     private static string ReplaceVariables(string rawMessage, bool subtractOne = false)
     {
         string customVariablesReplaced = rawMessage
-            .Replace(VAR, Plugin.StaticConfig.UserVariable)
-            .Replace(VAR_1, Plugin.StaticConfig.UserVariable1)
-            .Replace(VAR_2, Plugin.StaticConfig.UserVariable2)
-            .Replace(VAR_3, Plugin.StaticConfig.UserVariable3)
-            .Replace(VAR_4, Plugin.StaticConfig.UserVariable4)
-            .Replace(VAR_5, Plugin.StaticConfig.UserVariable5)
-            .Replace(VAR_6, Plugin.StaticConfig.UserVariable6)
-            .Replace(VAR_7, Plugin.StaticConfig.UserVariable7)
-            .Replace(VAR_8, Plugin.StaticConfig.UserVariable8)
-            .Replace(VAR_9, Plugin.StaticConfig.UserVariable9);
+            .Replace(VAR, DiscordConnectorPlugin.StaticConfig.UserVariable)
+            .Replace(VAR_1, DiscordConnectorPlugin.StaticConfig.UserVariable1)
+            .Replace(VAR_2, DiscordConnectorPlugin.StaticConfig.UserVariable2)
+            .Replace(VAR_3, DiscordConnectorPlugin.StaticConfig.UserVariable3)
+            .Replace(VAR_4, DiscordConnectorPlugin.StaticConfig.UserVariable4)
+            .Replace(VAR_5, DiscordConnectorPlugin.StaticConfig.UserVariable5)
+            .Replace(VAR_6, DiscordConnectorPlugin.StaticConfig.UserVariable6)
+            .Replace(VAR_7, DiscordConnectorPlugin.StaticConfig.UserVariable7)
+            .Replace(VAR_8, DiscordConnectorPlugin.StaticConfig.UserVariable8)
+            .Replace(VAR_9, DiscordConnectorPlugin.StaticConfig.UserVariable9);
 
         return ReplaceDynamicVariables(customVariablesReplaced, subtractOne);
     }
@@ -172,7 +172,7 @@ internal static class MessageTransformer
     private static string ReplacePublicIp(string rawMessage)
     {
         return rawMessage
-            .Replace(PUBLIC_IP, Plugin.PublicIpAddress);
+            .Replace(PUBLIC_IP, DiscordConnectorPlugin.PublicIpAddress);
     }
 
     /// <summary>
@@ -372,7 +372,7 @@ internal static class MessageTransformer
     /// <returns>String following the formatting laid out in the variable config file.</returns>
     public static string FormatVector3AsPos(UnityEngine.Vector3 vec3)
     {
-        return Plugin.StaticConfig.PosVarFormat
+        return DiscordConnectorPlugin.StaticConfig.PosVarFormat
             .Replace("%X%", vec3.x.ToString("F1"))
             .Replace("%Y%", vec3.y.ToString("F1"))
             .Replace("%Z%", vec3.z.ToString("F1"));
@@ -386,7 +386,7 @@ internal static class MessageTransformer
     public static string FormatAppendedPos(UnityEngine.Vector3 vec3)
     {
         string posStr = FormatVector3AsPos(vec3);
-        return Plugin.StaticConfig.AppendedPosFormat
+        return DiscordConnectorPlugin.StaticConfig.AppendedPosFormat
             .Replace(POS, posStr);
     }
 }

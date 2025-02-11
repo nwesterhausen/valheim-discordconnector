@@ -41,17 +41,17 @@ internal class EventWatcher
             {
                 if (!playerInfo.m_publicPosition)
                 {
-                    if (Plugin.StaticConfig.DebugEveryPlayerPosCheck)
+                    if (DiscordConnectorPlugin.StaticConfig.DebugEveryPlayerPosCheck)
                     {
-                        Plugin.StaticLogger.LogDebug($"Unable to check location for {playerInfo.m_name} because their location is not public.");
+                        DiscordConnectorPlugin.StaticLogger.LogDebug($"Unable to check location for {playerInfo.m_name} because their location is not public.");
                     }
                 }
                 else if (RandEventSystem.instance.IsInsideRandomEventArea(Event, playerInfo.m_position))
                 {
                     playerList.Add(playerInfo.m_name);
-                    if (Plugin.StaticConfig.DebugEveryPlayerPosCheck)
+                    if (DiscordConnectorPlugin.StaticConfig.DebugEveryPlayerPosCheck)
                     {
-                        Plugin.StaticLogger.LogDebug($"{playerInfo.m_name} is at {playerInfo.m_position}");
+                        DiscordConnectorPlugin.StaticLogger.LogDebug($"{playerInfo.m_name} is at {playerInfo.m_position}");
                     }
                 }
             }
@@ -102,9 +102,9 @@ internal class EventWatcher
             $"Event: {Status.Name} at {Status.Pos}. Status.IsRunning: {Status.IsRunning}. {Status.Elapsed} of {Status.Duration} seconds completed." + Environment.NewLine +
             $"PreviousEventStartMsg: {PreviousEventStartMessage}, PreviousEventEndMsg: {PreviousEventEndMessage}, PreviousEventPos: {PreviousEventPos}" + Environment.NewLine +
             $"Involved Players: {string.Join(",", Status.InvolvedPlayersList())}";
-            if (Plugin.StaticConfig.DebugEveryEventCheck)
+            if (DiscordConnectorPlugin.StaticConfig.DebugEveryEventCheck)
             {
-                Plugin.StaticLogger.LogDebug(message);
+                DiscordConnectorPlugin.StaticLogger.LogDebug(message);
             }
 
             if (Status.IsRunning)
@@ -121,9 +121,9 @@ internal class EventWatcher
                 if (!HadActiveEvent)
                 {
                     TriggerEventStart();
-                    if (Plugin.StaticConfig.DebugEveryEventChange)
+                    if (DiscordConnectorPlugin.StaticConfig.DebugEveryEventChange)
                     {
-                        Plugin.StaticLogger.LogDebug(message);
+                        DiscordConnectorPlugin.StaticLogger.LogDebug(message);
                     }
                 }
 
@@ -139,9 +139,9 @@ internal class EventWatcher
                 if (HadActiveEvent && !WasRunning)
                 {
                     TriggerEventResumed();
-                    if (Plugin.StaticConfig.DebugEveryEventChange)
+                    if (DiscordConnectorPlugin.StaticConfig.DebugEveryEventChange)
                     {
-                        Plugin.StaticLogger.LogDebug(message);
+                        DiscordConnectorPlugin.StaticLogger.LogDebug(message);
                     }
                 }
             }
@@ -164,9 +164,9 @@ internal class EventWatcher
                     || (HadActiveEvent && WasRunning))
                 {
                     TriggerEventPaused();
-                    if (Plugin.StaticConfig.DebugEveryEventChange)
+                    if (DiscordConnectorPlugin.StaticConfig.DebugEveryEventChange)
                     {
-                        Plugin.StaticLogger.LogDebug(message);
+                        DiscordConnectorPlugin.StaticLogger.LogDebug(message);
                     }
                 }
             }
@@ -180,9 +180,9 @@ internal class EventWatcher
         }
         else
         {
-            if (Plugin.StaticConfig.DebugEveryEventCheck)
+            if (DiscordConnectorPlugin.StaticConfig.DebugEveryEventCheck)
             {
-                Plugin.StaticLogger.LogDebug(
+                DiscordConnectorPlugin.StaticLogger.LogDebug(
                     $"PreviousEventStartMsg: {PreviousEventStartMessage}, PreviousEventEndMsg: {PreviousEventEndMessage}, PreviousEventPos: {PreviousEventPos}" + Environment.NewLine +
                     "Event check ran, no current events (or world isn't loaded yet)."
                 );
@@ -198,9 +198,9 @@ internal class EventWatcher
             if (HadActiveEvent)
             {
                 TriggerEventStop();
-                if (Plugin.StaticConfig.DebugEveryEventChange)
+                if (DiscordConnectorPlugin.StaticConfig.DebugEveryEventChange)
                 {
-                    Plugin.StaticLogger.LogDebug("Event stopped!");
+                    DiscordConnectorPlugin.StaticLogger.LogDebug("Event stopped!");
                 }
             }
         }
@@ -211,27 +211,27 @@ internal class EventWatcher
 
     internal void TriggerEventStart()
     {
-        if (Plugin.StaticConfig.EventStartMessageEnabled)
+        if (DiscordConnectorPlugin.StaticConfig.EventStartMessageEnabled)
         {
             string message = MessageTransformer.FormatEventStartMessage(
-                Plugin.StaticConfig.EventResumedMessage,
+                DiscordConnectorPlugin.StaticConfig.EventResumedMessage,
                 Status.StartMessage,
                 Status.EndMessage
             // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
             );
-            if (!Plugin.StaticConfig.EventStartPosEnabled)
+            if (!DiscordConnectorPlugin.StaticConfig.EventStartPosEnabled)
             {
                 DiscordApi.SendMessage(Webhook.Event.EventStart, message);
                 return;
             }
-            if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+            if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
             {
                 DiscordApi.SendMessage(Webhook.Event.EventStart, message, Status.Pos);
             }
             else
             {
                 message = MessageTransformer.FormatEventStartMessage(
-                    Plugin.StaticConfig.EventResumedMessage,
+                    DiscordConnectorPlugin.StaticConfig.EventResumedMessage,
                     Status.EndMessage,
                     Status.StartMessage,
                     // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
@@ -243,27 +243,27 @@ internal class EventWatcher
     }
     internal void TriggerEventPaused()
     {
-        if (Plugin.StaticConfig.EventPausedMessageEnabled)
+        if (DiscordConnectorPlugin.StaticConfig.EventPausedMessageEnabled)
         {
             string message = MessageTransformer.FormatEventMessage(
-                Plugin.StaticConfig.EventPausedMessage,
+                DiscordConnectorPlugin.StaticConfig.EventPausedMessage,
                 Status.StartMessage,
                 Status.EndMessage
             // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
             );
-            if (!Plugin.StaticConfig.EventPausedPosEnabled)
+            if (!DiscordConnectorPlugin.StaticConfig.EventPausedPosEnabled)
             {
                 DiscordApi.SendMessage(Webhook.Event.EventPaused, message);
                 return;
             }
-            if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+            if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
             {
                 DiscordApi.SendMessage(Webhook.Event.EventPaused, message, Status.Pos);
             }
             else
             {
                 message = MessageTransformer.FormatEventMessage(
-                    Plugin.StaticConfig.EventPausedMessage,
+                    DiscordConnectorPlugin.StaticConfig.EventPausedMessage,
                     Status.StartMessage,
                     Status.EndMessage,
                     // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
@@ -275,27 +275,27 @@ internal class EventWatcher
     }
     internal void TriggerEventResumed()
     {
-        if (Plugin.StaticConfig.EventResumedMessageEnabled)
+        if (DiscordConnectorPlugin.StaticConfig.EventResumedMessageEnabled)
         {
             string message = MessageTransformer.FormatEventMessage(
-                Plugin.StaticConfig.EventResumedMessage,
+                DiscordConnectorPlugin.StaticConfig.EventResumedMessage,
                 Status.StartMessage,
                 Status.EndMessage
             // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
             );
-            if (!Plugin.StaticConfig.EventResumedPosEnabled)
+            if (!DiscordConnectorPlugin.StaticConfig.EventResumedPosEnabled)
             {
                 DiscordApi.SendMessage(Webhook.Event.EventResumed, message);
                 return;
             }
-            if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+            if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
             {
                 DiscordApi.SendMessage(Webhook.Event.EventResumed, message, Status.Pos);
             }
             else
             {
                 message = MessageTransformer.FormatEventMessage(
-                    Plugin.StaticConfig.EventResumedMessage,
+                    DiscordConnectorPlugin.StaticConfig.EventResumedMessage,
                     Status.StartMessage,
                     Status.EndMessage,
                     // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 
@@ -307,27 +307,27 @@ internal class EventWatcher
     }
     internal void TriggerEventStop()
     {
-        if (Plugin.StaticConfig.EventStopMessageEnabled)
+        if (DiscordConnectorPlugin.StaticConfig.EventStopMessageEnabled)
         {
             string message = MessageTransformer.FormatEventEndMessage(
-                Plugin.StaticConfig.EventStopMessage,
+                DiscordConnectorPlugin.StaticConfig.EventStopMessage,
                 PreviousEventStartMessage,
                 PreviousEventEndMessage
             // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
             );
-            if (!Plugin.StaticConfig.EventStopPosEnabled)
+            if (!DiscordConnectorPlugin.StaticConfig.EventStopPosEnabled)
             {
                 DiscordApi.SendMessage(Webhook.Event.EventStop, message);
                 return;
             }
-            if (Plugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
+            if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
             {
                 DiscordApi.SendMessage(Webhook.Event.EventStop, message, PreviousEventPos);
             }
             else
             {
                 message = MessageTransformer.FormatEventEndMessage(
-                    Plugin.StaticConfig.EventStopMessage,
+                    DiscordConnectorPlugin.StaticConfig.EventStopMessage,
                     PreviousEventStartMessage,
                     PreviousEventEndMessage,
                     // string.Join(",", involvedPlayers.ToArray()), //! Removed with event changes 

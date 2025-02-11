@@ -127,8 +127,8 @@ internal class ExtraWebhookConfig
     // Check that all the lists are the same length
     if (webhookUrlList.Count != webhookEventsList.Count || webhookUrlList.Count != webhookUsernameOverrideList.Count || webhookUrlList.Count != webhookAvatarOverrideList.Count)
     {
-      Plugin.StaticLogger.LogError("Webhook lists are not the same length. This should not happen.");
-      Plugin.StaticLogger.LogError($"URLs: {webhookUrlList.Count}, Events: {webhookEventsList.Count}, Usernames: {webhookUsernameOverrideList.Count}, Avatars: {webhookAvatarOverrideList.Count}");
+      DiscordConnectorPlugin.StaticLogger.LogError("Webhook lists are not the same length. This should not happen.");
+      DiscordConnectorPlugin.StaticLogger.LogError($"URLs: {webhookUrlList.Count}, Events: {webhookEventsList.Count}, Usernames: {webhookUsernameOverrideList.Count}, Avatars: {webhookAvatarOverrideList.Count}");
       return [];
     }
 
@@ -139,7 +139,7 @@ internal class ExtraWebhookConfig
       // If either the URL or the events are empty, skip this entry
       if (string.IsNullOrEmpty(webhookUrlList[i].Value) || string.IsNullOrEmpty(webhookEventsList[i].Value))
       {
-        Plugin.StaticLogger.LogDebug($"ExtraWebhooks: Skipping Webhook {i + 1} because URL or Events are empty.");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"ExtraWebhooks: Skipping Webhook {i + 1} because URL or Events are empty.");
         continue;
       }
 
@@ -149,7 +149,7 @@ internal class ExtraWebhookConfig
       // If the events list is empty, skip this entry
       if (events.Count == 0)
       {
-        Plugin.StaticLogger.LogDebug($"ExtraWebhooks: Skipping Webhook {i + 1} because events are empty.");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"ExtraWebhooks: Skipping Webhook {i + 1} because events are empty.");
         continue;
       }
 
@@ -173,7 +173,7 @@ internal class ExtraWebhookConfig
 
     if (entries.Count > 0)
     {
-      Plugin.StaticLogger.LogDebug($"ExtraWebhooks: Loaded {entries.Count} webhooks from the config file.");
+      DiscordConnectorPlugin.StaticLogger.LogDebug($"ExtraWebhooks: Loaded {entries.Count} webhooks from the config file.");
     }
 
     return entries;

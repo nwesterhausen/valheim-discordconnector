@@ -39,7 +39,7 @@ internal static class ActivePlayersAnnouncement
     {
         if (ZNet.instance == null)
         {
-            Plugin.StaticLogger.LogDebug("ActivePlayersAnnouncement: ZNet instance is null, cannot get online players");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("ActivePlayersAnnouncement: ZNet instance is null, cannot get online players");
             return 0;
         }
         return ZNet.instance.GetNrOfPlayers();
@@ -52,33 +52,33 @@ internal static class ActivePlayersAnnouncement
     /// </summary>
     private static void SendActivePlayersBoard()
     {
-        if (Plugin.StaticConfig.ActivePlayersAnnouncement.DisabledWhenNooneOnline && CurrentOnlinePlayers() == 0)
+        if (DiscordConnectorPlugin.StaticConfig.ActivePlayersAnnouncement.DisabledWhenNooneOnline && CurrentOnlinePlayers() == 0)
         {
-            Plugin.StaticLogger.LogDebug("ActivePlayersAnnouncement: No one is online and the config is set to disable when no one is online. Not sending announcement.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("ActivePlayersAnnouncement: No one is online and the config is set to disable when no one is online. Not sending announcement.");
             return;
         }
 
         Webhook.Event ev = Webhook.Event.ActivePlayers;
         string formattedAnnouncement = $"**Active Players**\n";
-        if (Plugin.StaticConfig.ActivePlayersAnnouncement.IncludeCurrentlyOnline)
+        if (DiscordConnectorPlugin.StaticConfig.ActivePlayersAnnouncement.IncludeCurrentlyOnline)
         {
             int currentlyOnline = CurrentOnlinePlayers();
             formattedAnnouncement += $"Online now: {currentlyOnline}\n";
         }
 
-        if (Plugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalToday)
+        if (DiscordConnectorPlugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalToday)
         {
             int uniqueToday = Records.Helper.CountUniquePlayers(Records.Categories.Join, TimeRange.Today);
             formattedAnnouncement += $"Players today: {uniqueToday}\n";
         }
 
-        if (Plugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalPastWeek)
+        if (DiscordConnectorPlugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalPastWeek)
         {
             int uniqueThisWeek = Records.Helper.CountUniquePlayers(Records.Categories.Join, TimeRange.PastWeek);
             formattedAnnouncement += $"This week: {uniqueThisWeek}\n";
         }
 
-        if (Plugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalAllTime)
+        if (DiscordConnectorPlugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalAllTime)
         {
             int uniqueAllTime = Records.Helper.CountUniquePlayers(Records.Categories.Join, TimeRange.AllTime);
             formattedAnnouncement += $"All time: {uniqueAllTime}";

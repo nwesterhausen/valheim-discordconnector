@@ -65,7 +65,7 @@ internal class MainConfig
         config = configFile;
         LoadConfig();
 
-        Plugin.StaticLogger.SetLogLevel(logDebugMessages.Value);
+        DiscordConnectorPlugin.StaticLogger.SetLogLevel(logDebugMessages.Value);
 
         UpdateMutedPlayers();
         UpdateWebhooks();
@@ -80,7 +80,7 @@ internal class MainConfig
         config.Reload();
         config.Save();
 
-        Plugin.StaticLogger.SetLogLevel(logDebugMessages.Value);
+        DiscordConnectorPlugin.StaticLogger.SetLogLevel(logDebugMessages.Value);
 
         UpdateMutedPlayers();
         UpdateWebhooks();

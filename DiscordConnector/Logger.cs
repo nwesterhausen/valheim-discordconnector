@@ -12,7 +12,7 @@ class VDCLogger
     public VDCLogger(BepInEx.Logging.ManualLogSource logger)
     {
         _logger = logger;
-        _logFilePath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, PluginInfo.PLUGIN_ID, LOG_NAME);
+        _logFilePath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, DiscordConnectorPlugin.ModName, LOG_NAME);
         InitializeLogFile();
         _logger.LogInfo("Logger initialized.");
     }

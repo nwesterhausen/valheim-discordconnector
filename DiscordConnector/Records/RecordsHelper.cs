@@ -81,8 +81,8 @@ public static class Helper
         // Validate key
         if (Array.IndexOf<string>(Records.Categories.All, key) == -1)
         {
-            Plugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting top {n} results.");
-            Plugin.StaticLogger.LogDebug("Empty list returned because of invalid key.");
+            DiscordConnectorPlugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting top {n} results.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Empty list returned because of invalid key.");
             return new List<CountResult>();
         }
 
@@ -92,18 +92,18 @@ public static class Helper
         if (startDate != DateHelper.DummyDateTime && endDate != DateHelper.DummyDateTime)
         {
             // Get records from database for category 'key' between dates
-            queryResults = Plugin.StaticDatabase.CountRecordsBetweenDatesGrouped(key, startDate, endDate);
+            queryResults = DiscordConnectorPlugin.StaticDatabase.CountRecordsBetweenDatesGrouped(key, startDate, endDate);
         }
         else
         {
             // Get all records from database for category 'key'
-            queryResults = Plugin.StaticDatabase.CountAllRecordsGrouped(key);
+            queryResults = DiscordConnectorPlugin.StaticDatabase.CountAllRecordsGrouped(key);
         }
 
         // Check if we are debugging all database calls, and print debug
-        if (Plugin.StaticConfig.DebugDatabaseMethods)
+        if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods)
         {
-            Plugin.StaticLogger.LogDebug($"TopNResultForCategory {key} n={n}, results={queryResults.Count}");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"TopNResultForCategory {key} n={n}, results={queryResults.Count}");
         }
 
         // If the amount of results is 0, no need to process further, just return.
@@ -154,8 +154,8 @@ public static class Helper
         // Validate key
         if (Array.IndexOf<string>(Records.Categories.All, key) == -1)
         {
-            Plugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting bottom {n} results.");
-            Plugin.StaticLogger.LogDebug("Empty list returned because of invalid key.");
+            DiscordConnectorPlugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting bottom {n} results.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Empty list returned because of invalid key.");
             return new List<CountResult>();
         }
 
@@ -165,18 +165,18 @@ public static class Helper
         if (startDate != DateHelper.DummyDateTime && endDate != DateHelper.DummyDateTime)
         {
             // Get records from database for category 'key' between dates
-            queryResults = Plugin.StaticDatabase.CountRecordsBetweenDatesGrouped(key, startDate, endDate);
+            queryResults = DiscordConnectorPlugin.StaticDatabase.CountRecordsBetweenDatesGrouped(key, startDate, endDate);
         }
         else
         {
             // Get all records from database for category 'key'
-            queryResults = Plugin.StaticDatabase.CountAllRecordsGrouped(key);
+            queryResults = DiscordConnectorPlugin.StaticDatabase.CountAllRecordsGrouped(key);
         }
 
         // Check if we are debugging all database calls, and print debug
-        if (Plugin.StaticConfig.DebugDatabaseMethods)
+        if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods)
         {
-            Plugin.StaticLogger.LogDebug($"BottomNResultForCategory {key} n={n}, results={queryResults.Count}");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"BottomNResultForCategory {key} n={n}, results={queryResults.Count}");
         }
 
         // If the amount of results is 0, no need to process further, just return.
@@ -209,15 +209,15 @@ public static class Helper
         // Validate key
         if (Array.IndexOf<string>(Records.Categories.All, key) == -1)
         {
-            Plugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting total unique players.");
-            Plugin.StaticLogger.LogDebug("Zero returned because of invalid key.");
+            DiscordConnectorPlugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting total unique players.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Zero returned because of invalid key.");
             return 0;
         }
 
         // Simplify the all time record gathering
         if (timeRange == TimeRange.AllTime)
         {
-            List<CountResult> results = Plugin.StaticDatabase.CountAllRecordsGrouped(key);
+            List<CountResult> results = DiscordConnectorPlugin.StaticDatabase.CountAllRecordsGrouped(key);
             return results.Count;
         }
 
@@ -238,12 +238,12 @@ public static class Helper
         // Validate key
         if (Array.IndexOf<string>(Records.Categories.All, key) == -1)
         {
-            Plugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting total unique players.");
-            Plugin.StaticLogger.LogDebug("Zero returned because of invalid key.");
+            DiscordConnectorPlugin.StaticLogger.LogWarning($"Invalid key \"{key}\" when getting total unique players.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Zero returned because of invalid key.");
             return 0;
         }
 
-        List<CountResult> allCounted = Plugin.StaticDatabase.CountRecordsBetweenDatesGrouped(key, startDate, endDate);
+        List<CountResult> allCounted = DiscordConnectorPlugin.StaticDatabase.CountRecordsBetweenDatesGrouped(key, startDate, endDate);
 
         return allCounted.Count;
     }

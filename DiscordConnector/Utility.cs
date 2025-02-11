@@ -43,7 +43,7 @@ internal static class PublicIPChecker
     /// <returns>The public IP address of the server</returns>
     public static string GetPublicIP()
     {
-        Plugin.StaticLogger.LogDebug("Getting public IP address.");
+        DiscordConnectorPlugin.StaticLogger.LogDebug("Getting public IP address.");
         string address = string.Empty;
         try
         {
@@ -52,9 +52,9 @@ internal static class PublicIPChecker
         }
         catch (Exception e)
         {
-            Plugin.StaticLogger.LogError($"Failed to get public IP address, an empty string will be used: {e.Message}");
+            DiscordConnectorPlugin.StaticLogger.LogError($"Failed to get public IP address, an empty string will be used: {e.Message}");
         }
-        Plugin.StaticLogger.LogDebug($"Public IP address is '{address}'");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Public IP address is '{address}'");
         return address;
     }
 }

@@ -23,17 +23,17 @@ internal class ChatPatches
         /// </remarks>
         private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type, ref UserInfo user, ref string text, ref string senderNetworkUserId)
         {
-            Plugin.StaticLogger.LogDebug($"User details: name:{user.Name} gamerTag:{user.Gamertag} networkUserId:{user.NetworkUserId} DisplayName():{user.GetDisplayName(user.NetworkUserId)}");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"User details: name:{user.Name} gamerTag:{user.Gamertag} networkUserId:{user.NetworkUserId} DisplayName():{user.GetDisplayName(user.NetworkUserId)}");
 
             string userName = user.Name;
             if (string.IsNullOrEmpty(userName))
             {
-                Plugin.StaticLogger.LogInfo("Ignored shout from invalid user (null reference)");
+                DiscordConnectorPlugin.StaticLogger.LogInfo("Ignored shout from invalid user (null reference)");
                 return;
             }
-            if (Plugin.StaticConfig.MutedPlayers.IndexOf(userName) >= 0 || Plugin.StaticConfig.MutedPlayersRegex.IsMatch(userName))
+            if (DiscordConnectorPlugin.StaticConfig.MutedPlayers.IndexOf(userName) >= 0 || DiscordConnectorPlugin.StaticConfig.MutedPlayersRegex.IsMatch(userName))
             {
-                Plugin.StaticLogger.LogInfo($"Ignored shout from user on muted list. User: {userName} Shout: {text}.");
+                DiscordConnectorPlugin.StaticLogger.LogInfo($"Ignored shout from user on muted list. User: {userName} Shout: {text}.");
                 return;
             }
 
@@ -57,7 +57,7 @@ internal class ChatPatches
                 case Talker.Type.Shout:
                     if (text.Equals(ArrivalShout))
                     {
-                        if (Plugin.IsHeadless())
+                        if (DiscordConnectorPlugin.IsHeadless())
                         {
                             return;
                         }
@@ -71,7 +71,7 @@ internal class ChatPatches
                     }
                     break;
                 default:
-                    Plugin.StaticLogger.LogDebug(
+                    DiscordConnectorPlugin.StaticLogger.LogDebug(
                         $"Unmatched chat message. [{type}] {userName}: {text} at {pos}"
                     );
                     break;

@@ -16,7 +16,7 @@ internal static class Handlers
     {
         if (peer == null)
         {
-            Plugin.StaticLogger.LogDebug("Handler:Join - Guarded against null peer");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Handler:Join - Guarded against null peer");
             return;
         }
         // - If it's their first time:
@@ -35,7 +35,7 @@ internal static class Handlers
         // Try adding the player to the joinedPlayers list. If we are not able to add them, check if it's a dead player before doing nothing.
         if (!joinedPlayers.Add(playerHostName))
         {
-            Plugin.StaticLogger.LogDebug($"{playerHostName} already exists in list of joined players.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"{playerHostName} already exists in list of joined players.");
 
             // Seems that player is dead if character ZDOID id is 0
             // m_characterID id=0 means dead, user_id always matches peer.m_uid
@@ -47,27 +47,27 @@ internal static class Handlers
             return;
         }
 
-        Plugin.StaticLogger.LogDebug($"Added player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) to joined player list.");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Added player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) to joined player list.");
 
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time joining announcements are enabled and we have no record of the player joining, set the message content to the first time join announcement
-        if (Plugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Join, peer.m_playerName) == 0)
+        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Join, peer.m_playerName) == 0)
         {
-            preFormattedMessage = Plugin.StaticConfig.PlayerFirstJoinMessage;
+            preFormattedMessage = DiscordConnectorPlugin.StaticConfig.PlayerFirstJoinMessage;
             ev = Webhook.Event.PlayerFirstJoin;
         }
         // If sending messages for players joining is enabled
-        else if (Plugin.StaticConfig.PlayerJoinMessageEnabled)
+        else if (DiscordConnectorPlugin.StaticConfig.PlayerJoinMessageEnabled)
         {
-            preFormattedMessage = Plugin.StaticConfig.JoinMessage;
+            preFormattedMessage = DiscordConnectorPlugin.StaticConfig.JoinMessage;
         }
 
 
         // If recording player join statistics is enabled, save a record of player joining
-        if (Plugin.StaticConfig.StatsJoinEnabled)
+        if (DiscordConnectorPlugin.StaticConfig.StatsJoinEnabled)
         {
-            Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Join, peer.m_playerName, playerHostName, peer.m_refPos);
+            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Join, peer.m_playerName, playerHostName, peer.m_refPos);
         }
 
 
@@ -77,7 +77,7 @@ internal static class Handlers
             return;
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.PlayerJoinPosEnabled, ev);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, DiscordConnectorPlugin.StaticConfig.PlayerJoinPosEnabled, ev);
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ internal static class Handlers
     {
         if (peer == null)
         {
-            Plugin.StaticLogger.LogDebug("Handler:Leave - Guarded against null peer");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Handler:Leave - Guarded against null peer");
             return;
         }
         // - If it's their first time:
@@ -106,31 +106,31 @@ internal static class Handlers
         // Try removing the player to the joinedPlayers list. If we couldn't remove them, then do nothing.
         if (!joinedPlayers.Remove(playerHostName))
         {
-            Plugin.StaticLogger.LogDebug($"{playerHostName} did not exist in the list of joined players!");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"{playerHostName} did not exist in the list of joined players!");
             return;
         }
 
-        Plugin.StaticLogger.LogDebug($"Removed player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) from joined player list.");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Removed player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) from joined player list.");
 
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time leaving announcements are enabled and we have no record of the player leaving, set the message content to the first time leave announcement
-        if (Plugin.StaticConfig.AnnouncePlayerFirstLeaveEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Leave, peer.m_playerName) == 0)
+        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstLeaveEnabled && DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Leave, peer.m_playerName) == 0)
         {
-            preFormattedMessage = Plugin.StaticConfig.PlayerFirstLeaveMessage;
+            preFormattedMessage = DiscordConnectorPlugin.StaticConfig.PlayerFirstLeaveMessage;
             ev = Webhook.Event.PlayerFirstLeave;
         }
         // If sending messages for players leaving is enabled
-        else if (Plugin.StaticConfig.PlayerLeaveMessageEnabled)
+        else if (DiscordConnectorPlugin.StaticConfig.PlayerLeaveMessageEnabled)
         {
-            preFormattedMessage = Plugin.StaticConfig.LeaveMessage;
+            preFormattedMessage = DiscordConnectorPlugin.StaticConfig.LeaveMessage;
         }
 
 
         // If recording player leave statistics is enabled, save a record of player leaving
-        if (Plugin.StaticConfig.StatsLeaveEnabled)
+        if (DiscordConnectorPlugin.StaticConfig.StatsLeaveEnabled)
         {
-            Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Leave, peer.m_playerName, playerHostName, peer.m_refPos);
+            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Leave, peer.m_playerName, playerHostName, peer.m_refPos);
         }
 
 
@@ -140,7 +140,7 @@ internal static class Handlers
             return;
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.PlayerLeavePosEnabled, ev);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, DiscordConnectorPlugin.StaticConfig.PlayerLeavePosEnabled, ev);
     }
 
     /// <summary>
@@ -150,7 +150,7 @@ internal static class Handlers
     {
         if (peer == null)
         {
-            Plugin.StaticLogger.LogDebug("Handler:Death - Guarded against null peer");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Handler:Death - Guarded against null peer");
             return;
         }
         // - If it's their first time:
@@ -169,20 +169,20 @@ internal static class Handlers
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time dying announcements are enabled and we have no record of the player dying, set the message content to the first time death announcement
-        if (Plugin.StaticConfig.AnnouncePlayerFirstDeathEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Death, peer.m_playerName) == 0)
+        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstDeathEnabled && DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Death, peer.m_playerName) == 0)
         {
-            preFormattedMessage = Plugin.StaticConfig.PlayerFirstDeathMessage;
+            preFormattedMessage = DiscordConnectorPlugin.StaticConfig.PlayerFirstDeathMessage;
             ev = Webhook.Event.PlayerFirstDeath;
         }
         // If sending messages for players dying is enabled
-        else if (Plugin.StaticConfig.PlayerDeathMessageEnabled)
+        else if (DiscordConnectorPlugin.StaticConfig.PlayerDeathMessageEnabled)
         {
-            preFormattedMessage = Plugin.StaticConfig.DeathMessage;
+            preFormattedMessage = DiscordConnectorPlugin.StaticConfig.DeathMessage;
         }
 
-        if (Plugin.StaticConfig.StatsDeathEnabled)
+        if (DiscordConnectorPlugin.StaticConfig.StatsDeathEnabled)
         {
-            Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Death, peer.m_playerName, playerHostName, peer.m_refPos);
+            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Death, peer.m_playerName, playerHostName, peer.m_refPos);
         }
 
 
@@ -193,7 +193,7 @@ internal static class Handlers
             return;
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.PlayerDeathPosEnabled, ev);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, DiscordConnectorPlugin.StaticConfig.PlayerDeathPosEnabled, ev);
     }
 
     /// <summary>
@@ -203,7 +203,7 @@ internal static class Handlers
     {
         if (peer == null)
         {
-            Plugin.StaticLogger.LogDebug("Handler:Ping - Guarded against null peer");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Handler:Ping - Guarded against null peer");
             return;
         }
         // - If it's their first time:
@@ -222,20 +222,20 @@ internal static class Handlers
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time pinging announcements are enabled and we have no record of the player pinging, set the message content to the first time ping announcement
-        if (Plugin.StaticConfig.AnnouncePlayerFirstPingEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Ping, peer.m_playerName) == 0)
+        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstPingEnabled && DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Ping, peer.m_playerName) == 0)
         {
-            preFormattedMessage = Plugin.StaticConfig.PlayerFirstPingMessage;
+            preFormattedMessage = DiscordConnectorPlugin.StaticConfig.PlayerFirstPingMessage;
             ev = Webhook.Event.PlayerFirstPing;
         }
         // If sending messages for players pinging is enabled
-        else if (Plugin.StaticConfig.ChatPingEnabled)
+        else if (DiscordConnectorPlugin.StaticConfig.ChatPingEnabled)
         {
-            preFormattedMessage = Plugin.StaticConfig.PingMessage;
+            preFormattedMessage = DiscordConnectorPlugin.StaticConfig.PingMessage;
         }
 
-        if (Plugin.StaticConfig.StatsPingEnabled)
+        if (DiscordConnectorPlugin.StaticConfig.StatsPingEnabled)
         {
-            Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Ping, peer.m_playerName, playerHostName, pos);
+            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Ping, peer.m_playerName, playerHostName, pos);
         }
 
 
@@ -246,7 +246,7 @@ internal static class Handlers
             return;
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.ChatPingPosEnabled, pos, ev);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, DiscordConnectorPlugin.StaticConfig.ChatPingPosEnabled, pos, ev);
     }
 
 
@@ -257,7 +257,7 @@ internal static class Handlers
     {
         if (peer == null)
         {
-            Plugin.StaticLogger.LogDebug("Handler:Shout - Guarded against null peer");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Handler:Shout - Guarded against null peer");
             return;
         }
         // - If it's their first time:
@@ -275,20 +275,20 @@ internal static class Handlers
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time shouting announcements are enabled and we have no record of the player shouting, set the message content to the first time ping announcement
-        if (Plugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && Plugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Shout, peer.m_playerName) == 0)
+        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Shout, peer.m_playerName) == 0)
         {
-            preFormattedMessage = Plugin.StaticConfig.PlayerFirstShoutMessage;
+            preFormattedMessage = DiscordConnectorPlugin.StaticConfig.PlayerFirstShoutMessage;
             ev = Webhook.Event.PlayerFirstShout;
         }
         // If sending messages for players shouting is enabled
-        else if (Plugin.StaticConfig.ChatShoutEnabled)
+        else if (DiscordConnectorPlugin.StaticConfig.ChatShoutEnabled)
         {
-            preFormattedMessage = Plugin.StaticConfig.ShoutMessage;
+            preFormattedMessage = DiscordConnectorPlugin.StaticConfig.ShoutMessage;
         }
 
-        if (Plugin.StaticConfig.StatsShoutEnabled)
+        if (DiscordConnectorPlugin.StaticConfig.StatsShoutEnabled)
         {
-            Plugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Shout, peer.m_playerName, playerHostName, pos);
+            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Shout, peer.m_playerName, playerHostName, pos);
         }
 
         // If sending messages for players shouting is completely disabled
@@ -298,12 +298,12 @@ internal static class Handlers
         }
 
         // Capitalize the entire shout if enabled
-        if (Plugin.StaticConfig.ChatShoutAllCaps)
+        if (DiscordConnectorPlugin.StaticConfig.ChatShoutAllCaps)
         {
             text = text.ToUpper();
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, Plugin.StaticConfig.ChatShoutPosEnabled, pos, text, ev);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, DiscordConnectorPlugin.StaticConfig.ChatShoutPosEnabled, pos, text, ev);
     }
 
     /// <summary>
@@ -350,7 +350,7 @@ internal static class Handlers
         if (posEnabled)
         {
             // If "fancier" discord messages are enabled OR if the message we intend to send DOES NOT contain the %POS% variable
-            if (Plugin.StaticConfig.DiscordEmbedsEnabled || !finalMessage.Contains("%POS%"))
+            if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !finalMessage.Contains("%POS%"))
             {
                 // Send the message to discord with an auto-appended POS (or as a POS embed if "fancier" discord messages are enabled)
                 DiscordApi.SendMessage(ev, finalMessage, pos);
@@ -398,7 +398,7 @@ internal static class Handlers
         if (posEnabled)
         {
             // If "fancier" discord messages are enabled OR if the message we intend to send DOES NOT contain the %POS% variable
-            if (Plugin.StaticConfig.DiscordEmbedsEnabled || !finalMessage.Contains("%POS%"))
+            if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !finalMessage.Contains("%POS%"))
             {
                 // Send the message to discord with an auto-appended POS (or as a POS embed if "fancier" discord messages are enabled)
                 DiscordApi.SendMessage(ev, finalMessage, pos);
@@ -421,25 +421,25 @@ internal static class Handlers
     internal static void NonPlayerChat(Talker.Type type, string user, string text)
     {
         // Check if we allow non-player shouts
-        if (Plugin.StaticConfig.AllowNonPlayerShoutLogging)
+        if (DiscordConnectorPlugin.StaticConfig.AllowNonPlayerShoutLogging)
         {
             // Guard against chats that aren't shouts by non-players
             if (type != Talker.Type.Shout)
             {
-                Plugin.StaticLogger.LogDebug($"Ignored ping/join/leave from non-player {user}");
+                DiscordConnectorPlugin.StaticLogger.LogDebug($"Ignored ping/join/leave from non-player {user}");
                 return;
             }
 
             string nonPlayerHostName = "";
-            Plugin.StaticLogger.LogDebug($"Sending shout from '{user}' to discord: '{text}'");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Sending shout from '{user}' to discord: '{text}'");
 
             // Only if we are sending shouts per the config should we send the shout
-            if (Plugin.StaticConfig.ChatShoutEnabled)
+            if (DiscordConnectorPlugin.StaticConfig.ChatShoutEnabled)
             {
                 // Clean any "formatting" done to the username. This includes coloring via <color=x> tags.
                 string userCleaned = MessageTransformer.CleanCaretFormatting(user);
                 // Format the message into the shout format as defined in the config files
-                string message = MessageTransformer.FormatPlayerMessage(Plugin.StaticConfig.ShoutMessage, userCleaned, nonPlayerHostName, text);
+                string message = MessageTransformer.FormatPlayerMessage(DiscordConnectorPlugin.StaticConfig.ShoutMessage, userCleaned, nonPlayerHostName, text);
 
                 // Non-players shouldn't have a position, so disregard any position in the message formatting
                 if (message.Contains("%POS%"))
@@ -453,6 +453,6 @@ internal static class Handlers
             return;
         }
 
-        Plugin.StaticLogger.LogInfo($"Ignored shout from {user} because they aren't a real player");
+        DiscordConnectorPlugin.StaticLogger.LogInfo($"Ignored shout from {user} because they aren't a real player");
     }
 }
