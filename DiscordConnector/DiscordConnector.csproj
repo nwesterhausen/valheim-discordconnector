@@ -53,6 +53,9 @@
                 <GamePath Condition="!Exists('$(GamePath)')">$(HOME)/Library/Application Support/Steam/steamapps/common/Valheim/Contents/MacOS</GamePath>
                 <CorlibPath Condition="!Exists('$(CorlibPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed</CorlibPath>
                 <CorlibPath Condition="!Exists('$(CorlibPath)')">$(GamePath)/unstripped_corelib</CorlibPath>
+                <BepInExPath Condition="!Exists('$(BepInExPath)')AND Exists('$(GamePath)')">$(GamePath)/BepInEx</BepInExPath>
+                <PublicizedAssembliesPath Condition="!Exists('$(PublicizedAssembliesPath)') AND Exists('$(GamePath)')">$(GamePath)/valheim_Data/Managed/publicized_assemblies</PublicizedAssembliesPath>
+                <AfterTargets Condition="'$(AfterTargets)' == ''">ILRepacker</AfterTargets>
             </PropertyGroup>
         </When>
         <When Condition="($(OS) == 'Windows_NT') AND $(GamePath) == ''">
