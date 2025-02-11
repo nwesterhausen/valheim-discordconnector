@@ -19,7 +19,8 @@
         <Optimize>true</Optimize>
         <Deterministic>true</Deterministic>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+        <TargetFramework>net462</TargetFramework>
+        <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     </PropertyGroup>
     
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
