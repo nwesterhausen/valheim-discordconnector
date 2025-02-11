@@ -1,0 +1,32 @@
+DISCORD CONNECTOR - 2.3.1
+Connect your Valheim server to a Discord Webhook. Works for both dedicated and client-hosted servers. (Visit the github repo for a how-to guide.)
+
+:: REQUIREMENTS ::
+- BepInEx 5.*
+
+:: FEATURES ::
+- Set your own webhook, lets you configure icon, title, and a target channel
+- Enable or Disable any messages
+- Set what text gets sent for most messages
+- Optionally set multiple messages for each notification and have a random message sent
+- Supports both the client and the server
+- Will use an embed for coordinates if enabled
+- Periodic leader board messages with death,ping,shout and join|leave leader. (optional)
+- A message for the first time a player does something (join and death by default, can be entirely disabled)
+- Add almost anything to your messages with 10 user defined variables
+
+:: SUPPORTED MESSAGES ::
+- Server startup (server starting, loading the world)
+- Server started (world loaded, ready to join)
+- Server shutting down (server stopping)
+- Server saves the world
+- Player join
+- Player leave
+- Player shouting
+- Player pinging
+- Player death
+- Random events start/pause/resume/end
+
+:: ROADMAP ::
+- (Better) Fancier Discord messages
+- Discord bot integration

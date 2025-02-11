@@ -1,0 +1,13 @@
+<Project>
+    <PropertyGroup>
+        <ValheimGamePath>C:\Program Files (x86)\Steam\steamapps\common\Valheim</ValheimGamePath>
+        <ValheimServerPath>C:\Program Files (x86)\Steam\steamapps\common\Valheim dedicated server</ValheimServerPath>
+        
+        <BepInExPath>$(ValheimGamePath)\BepInEx</BepInExPath>
+        <CorlibPath>$(ValheimGamePath)\valheim_Data\Managed</CorlibPath>
+        <PublicizedAssembliesPath>$(ValheimGamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssembliesPath>
+        <CopyOutputDLLPath>$(ValheimGamePath)\BepInEx\plugins</CopyOutputDLLPath> <!-- This is where the output DLL will be copied to after building. The templates support doing this for up to three locations. Duplicate this line and append a number. Example below -->
+        <CopyOutputDLLPath2>$(ValheimServerPath)\BepInEx\plugins</CopyOutputDLLPath2>
+        <AfterTargets>ILRepacker</AfterTargets> <!-- If you are using KeyManager, change this to KeyManager as suggested in step 5.2 in the instructions -->
+    </PropertyGroup>
+</Project>
