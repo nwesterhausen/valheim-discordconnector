@@ -21,7 +21,6 @@
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <TargetFramework>net462</TargetFramework>
         <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-        <DependsOnNETStandard>false</DependsOnNETStandard>
     </PropertyGroup>
     
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -85,21 +84,7 @@
       <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3"
                         PrivateAssets="all" />
     </ItemGroup>  
-
-    <Choose>
-        <When Condition="$(CI)">
-            <PropertyGroup>
-                <PackageRoot>/home/runner/.nuget/packages/</PackageRoot>
-            </PropertyGroup>
-        </When>
-        <When Condition="!$(CI)">
-            <PropertyGroup>
-                <PackageRoot>..\packages\</PackageRoot>
-            </PropertyGroup>
-        </When>
-    </Choose>
-  
-  
+ 
     <!--    References to the Valheim Libraries, Harmony-->
     <ItemGroup>
         <Reference Include="0Harmony">
@@ -117,13 +102,7 @@
         <Reference Include="BepInEx">
             <HintPath>$(BepInExPath)\core\BepInEx.dll</HintPath>
         </Reference>
-        <Reference Include="LiteDB, Version=5.0.21.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
-          <HintPath>$(PackageRoot)litedb\5.0.21\lib\net45\LiteDB.dll</HintPath>
-        </Reference>
         <Reference Include="mscorlib" />
-        <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-          <HintPath>$(PackageRoot)newtonsoft.json\13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-        </Reference>
         <Reference Include="ServerSync">
             <HintPath>Libs\ServerSync.dll</HintPath>
         </Reference>
@@ -225,6 +204,9 @@
       <Content Include="Metadata\manifest.json" />
       <Content Include="Metadata\README.md" />
       <Content Include="Metadata\thunderstore.toml" />
+      <Content Include="Packages\.gitkeep" />
+      <Content Include="Packages\Nexus\.gitkeep" />
+      <Content Include="Packages\Thunderstore\.gitkeep" />
       <Content Include="UpdateManifest.ps1" />
     </ItemGroup>
     
@@ -236,10 +218,18 @@
       <PackageReference Include="LiteDB" Version="5.0.21" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
-    
-    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
-    <Import Project="$(PackageRoot)\ilrepack.lib.msbuild.task\2.0.37\build\ILRepack.Lib.MSBuild.Task.targets" Condition="Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.37\build\ILRepack.Lib.MSBuild.Task.targets')" />
-    
+
+    <PropertyGroup>
+      <DependsOnNETStandard>netstandard2.0</DependsOnNETStandard>
+    </PropertyGroup>
+  
+    <ItemGroup>
+      <Reference Include="netstandard" />
+    </ItemGroup>
+
+
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+  
     <Target Name="GetAssemblyVersion" AfterTargets="$(AfterTargets)">
         <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
             <Output TaskParameter="Assemblies" ItemName="Targets"/>
