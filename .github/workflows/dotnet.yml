@@ -26,6 +26,8 @@ jobs:
         run: |
           wget -O dev-bundle.zip ${{ secrets.VDC_DEV_BUNDLE }}${{ vars.VALHEIM_VERSION }}.zip
           unzip -qq dev-bundle.zip -d /home/runner/dev-bundle
+          ls -l /home/runner/dev-bundle
+          ls -l /home/runner/dev-bundle/*
 
       - uses: actions/checkout@v4
       - name: Setup .NET
