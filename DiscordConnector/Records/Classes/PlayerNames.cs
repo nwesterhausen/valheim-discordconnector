@@ -1,21 +1,17 @@
-﻿
+﻿using System;
 using LiteDB;
 
 namespace DiscordConnector.Records;
+
 public class PlayerToName
 {
-    public ObjectId _id { get; }
-    public string CharacterName { get; }
-    public string PlayerId { get; }
-    public System.DateTime InsertedDate { get; }
-
     public PlayerToName(string characterName, string playerHostName)
-        : this(ObjectId.NewObjectId(), characterName, playerHostName, System.DateTime.Now)
+        : this(ObjectId.NewObjectId(), characterName, playerHostName, DateTime.Now)
     {
     }
 
     [BsonCtor]
-    public PlayerToName(ObjectId id, string characterName, string playerId, System.DateTime insertedDate)
+    public PlayerToName(ObjectId id, string characterName, string playerId, DateTime insertedDate)
     {
         _id = id;
         CharacterName = characterName;
@@ -23,9 +19,13 @@ public class PlayerToName
         InsertedDate = insertedDate;
     }
 
+    public ObjectId _id { get; }
+    public string CharacterName { get; }
+    public string PlayerId { get; }
+    public DateTime InsertedDate { get; }
+
     public override string ToString()
     {
         return $"{CharacterName} ({PlayerId})";
     }
-
 }

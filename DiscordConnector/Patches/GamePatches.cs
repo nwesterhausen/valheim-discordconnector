@@ -1,9 +1,9 @@
 ﻿using HarmonyLib;
 
 namespace DiscordConnector.Patches;
+
 internal class GamePatches
 {
-
     [HarmonyPatch(typeof(Game), nameof(Game.Awake))]
     internal class LoadWorld
     {
@@ -23,7 +23,7 @@ internal class GamePatches
     [HarmonyPatch(typeof(Game), nameof(Game.OnApplicationQuit))]
     internal class Shutdown
     {
-        [HarmonyBefore(new string[] { "HackShardGaming.WorldofValheimServerSideCharacters" })]
+        [HarmonyBefore("HackShardGaming.WorldofValheimServerSideCharacters")]
         private static void Prefix()
         {
             if (DiscordConnectorPlugin.StaticConfig.StopMessageEnabled)
@@ -33,11 +33,13 @@ internal class GamePatches
                     MessageTransformer.FormatServerMessage(DiscordConnectorPlugin.StaticConfig.StopMessage)
                 );
             }
+
             if (DiscordConnectorPlugin.IsHeadless())
             {
                 DiscordConnectorPlugin.StaticEventWatcher.Dispose();
             }
         }
+
         private static void Postfix()
         {
             if (DiscordConnectorPlugin.StaticConfig.ShutdownMessageEnabled)

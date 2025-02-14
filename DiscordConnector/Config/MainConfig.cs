@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using BepInEx.Configuration;
 
@@ -8,57 +9,56 @@ namespace DiscordConnector.Config;
 internal class MainConfig
 {
     /// <summary>
-    /// Allowed methods for differentiating between players on the server
+    ///     Allowed methods for differentiating between players on the server
     /// </summary>
     public enum RetrievalDiscernmentMethods
     {
-        [System.ComponentModel.Description(RetrieveBySteamID)]
-        PlayerId,
-        [System.ComponentModel.Description(RetrieveByName)]
-        Name,
-        [System.ComponentModel.Description(RetrieveByNameAndSteamID)]
-        NameAndPlayerId,
+        [Description(RetrieveBySteamID)] PlayerId,
+        [Description(RetrieveByName)] Name,
+
+        [Description(RetrieveByNameAndSteamID)]
+        NameAndPlayerId
     }
+
     public const string RetrieveBySteamID = "PlayerId: Treat each PlayerId as a separate player";
-    public const string RetrieveByNameAndSteamID = "NameAndPlayerId: Treat each [PlayerId:CharacterName] combo as a separate player";
+
+    public const string RetrieveByNameAndSteamID =
+        "NameAndPlayerId: Treat each [PlayerId:CharacterName] combo as a separate player";
+
     public const string RetrieveByName = "Name: Treat each CharacterName as a separate player";
-    private readonly ConfigFile config;
+    private const string MAIN_SETTINGS = "Main Settings";
     private static List<string> mutedPlayers;
     private static Regex mutedPlayersRegex;
-    private const string MAIN_SETTINGS = "Main Settings";
+    private readonly ConfigFile config;
+    private ConfigEntry<string> allowedRoleMentions;
+    private ConfigEntry<string> allowedUserMentions;
+    private ConfigEntry<bool> allowMentionsAnyRole;
+    private ConfigEntry<bool> allowMentionsAnyUser;
+    private ConfigEntry<bool> allowMentionsHereEveryone;
+    private ConfigEntry<bool> allowNonPlayerShoutLogging;
+    private ConfigEntry<bool> announcePlayerFirsts;
+    private ConfigEntry<bool> collectStatsToggle;
 
     // Main Settings
     private ConfigEntry<string> defaultWebhookUsernameOverride;
-    private ConfigEntry<string> webhookUrl;
-    private ConfigEntry<string> webhookUrl2;
-    private ConfigEntry<string> webhookEvents;
-    private ConfigEntry<string> webhook2Events;
-    private ConfigEntry<string> webhookUsernameOverride;
-    private ConfigEntry<string> webhook2UsernameOverride;
-    private ConfigEntry<string> webhookAvatarOverride;
-    private ConfigEntry<string> webhook2AvatarOverride;
     private ConfigEntry<bool> discordEmbedMessagesToggle;
+    private ConfigEntry<bool> logDebugMessages;
     private ConfigEntry<string> mutedDiscordUserList;
     private ConfigEntry<string> mutedDiscordUserListRegex;
-    private ConfigEntry<bool> collectStatsToggle;
-    private ConfigEntry<bool> sendPositionsToggle;
-    private ConfigEntry<bool> announcePlayerFirsts;
     private ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
-    private ConfigEntry<bool> allowNonPlayerShoutLogging;
-    private ConfigEntry<bool> logDebugMessages;
-    private ConfigEntry<bool> allowMentionsHereEveryone;
-    private ConfigEntry<bool> allowMentionsAnyRole;
-    private ConfigEntry<bool> allowMentionsAnyUser;
-    private ConfigEntry<string> allowedRoleMentions;
-    private ConfigEntry<string> allowedUserMentions;
-    private List<string> allowedRoleMentionsList;
-    private List<string> allowedUserMentionsList;
 
-    private WebhookEntry primaryWebhook;
-    private WebhookEntry secondaryWebhook;
+    private ConfigEntry<bool> sendPositionsToggle;
+    private ConfigEntry<string> webhook2AvatarOverride;
+    private ConfigEntry<string> webhook2Events;
+    private ConfigEntry<string> webhook2UsernameOverride;
+    private ConfigEntry<string> webhookAvatarOverride;
+    private ConfigEntry<string> webhookEvents;
+    private ConfigEntry<string> webhookUrl;
+    private ConfigEntry<string> webhookUrl2;
+    private ConfigEntry<string> webhookUsernameOverride;
 
     /// <summary>
-    /// Creates a new MainConfig object with the given config file.
+    ///     Creates a new MainConfig object with the given config file.
     /// </summary>
     public MainConfig(ConfigFile configFile)
     {
@@ -72,8 +72,28 @@ internal class MainConfig
         UpdateAllowedMentions();
     }
 
+    public string DefaultWebhookUsernameOverride => defaultWebhookUsernameOverride.Value;
+    public WebhookEntry PrimaryWebhook { get; private set; }
+
+    public WebhookEntry SecondaryWebhook { get; private set; }
+
+    public bool CollectStatsEnabled => collectStatsToggle.Value;
+    public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
+    public bool SendPositionsEnabled => sendPositionsToggle.Value;
+    public List<string> MutedPlayers => mutedPlayers;
+    public Regex MutedPlayersRegex => mutedPlayersRegex;
+    public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
+    public RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
+    public bool AllowNonPlayerShoutLogging => allowNonPlayerShoutLogging.Value;
+    public bool AllowMentionsHereEveryone => allowMentionsHereEveryone.Value;
+    public bool AllowMentionsAnyRole => allowMentionsAnyRole.Value;
+    public bool AllowMentionsAnyUser => allowMentionsAnyUser.Value;
+    public List<string> AllowedRoleMentions { get; private set; }
+
+    public List<string> AllowedUserMentions { get; private set; }
+
     /// <summary>
-    /// Reloads the config file and updates the muted players and webhook entries.
+    ///     Reloads the config file and updates the muted players and webhook entries.
     /// </summary>
     public void ReloadConfig()
     {
@@ -88,31 +108,31 @@ internal class MainConfig
     }
 
     /// <summary>
-    /// Updates the allowed mentions lists with the values from the config file.
+    ///     Updates the allowed mentions lists with the values from the config file.
     /// </summary>
     private void UpdateAllowedMentions()
     {
         if (string.IsNullOrEmpty(allowedRoleMentions.Value))
         {
-            allowedRoleMentionsList = [];
+            AllowedRoleMentions = [];
         }
         else
         {
-            allowedRoleMentionsList = new List<string>(allowedRoleMentions.Value.Split(';'));
+            AllowedRoleMentions = new List<string>(allowedRoleMentions.Value.Split(';'));
         }
 
         if (string.IsNullOrEmpty(allowedUserMentions.Value))
         {
-            allowedUserMentionsList = [];
+            AllowedUserMentions = [];
         }
         else
         {
-            allowedUserMentionsList = new List<string>(allowedUserMentions.Value.Split(';'));
+            AllowedUserMentions = new List<string>(allowedUserMentions.Value.Split(';'));
         }
     }
 
     /// <summary>
-    /// Updates the muted players list with the values from the config file.
+    ///     Updates the muted players list with the values from the config file.
     /// </summary>
     private void UpdateMutedPlayers()
     {
@@ -136,28 +156,30 @@ internal class MainConfig
     }
 
     /// <summary>
-    /// Updates the webhook entries with the values from the config file.
+    ///     Updates the webhook entries with the values from the config file.
     /// </summary>
     private void UpdateWebhooks()
     {
-        primaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value));
+        PrimaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value));
         if (!string.IsNullOrEmpty(webhookUsernameOverride.Value))
         {
-            primaryWebhook.UsernameOverride = webhookUsernameOverride.Value;
-        }
-        if (!string.IsNullOrEmpty(webhookAvatarOverride.Value))
-        {
-            primaryWebhook.AvatarOverride = webhookAvatarOverride.Value;
+            PrimaryWebhook.UsernameOverride = webhookUsernameOverride.Value;
         }
 
-        secondaryWebhook = new WebhookEntry(webhookUrl2.Value, Webhook.StringToEventList(webhook2Events.Value));
+        if (!string.IsNullOrEmpty(webhookAvatarOverride.Value))
+        {
+            PrimaryWebhook.AvatarOverride = webhookAvatarOverride.Value;
+        }
+
+        SecondaryWebhook = new WebhookEntry(webhookUrl2.Value, Webhook.StringToEventList(webhook2Events.Value));
         if (!string.IsNullOrEmpty(webhook2UsernameOverride.Value))
         {
-            secondaryWebhook.UsernameOverride = webhook2UsernameOverride.Value;
+            SecondaryWebhook.UsernameOverride = webhook2UsernameOverride.Value;
         }
+
         if (!string.IsNullOrEmpty(webhook2AvatarOverride.Value))
         {
-            secondaryWebhook.AvatarOverride = webhook2AvatarOverride.Value;
+            SecondaryWebhook.AvatarOverride = webhook2AvatarOverride.Value;
         }
     }
 
@@ -166,20 +188,24 @@ internal class MainConfig
         defaultWebhookUsernameOverride = config.Bind<string>(MAIN_SETTINGS,
             "Default Webhook Username Override",
             "",
-            "Override the username of all webhooks for this instance of Discord Connector. If left blank, the webhook will use the default name (assigned by Discord)." + Environment.NewLine +
+            "Override the username of all webhooks for this instance of Discord Connector. If left blank, the webhook will use the default name (assigned by Discord)." +
+            Environment.NewLine +
             "This setting will be used for all webhooks unless overridden by a specific webhook username override setting.");
 
         webhookUrl = config.Bind<string>(MAIN_SETTINGS,
             "Webhook URL",
             "",
-            "Discord channel webhook URL. For instructions, reference the 'MAKING A WEBHOOK' section of " + Environment.NewLine +
+            "Discord channel webhook URL. For instructions, reference the 'MAKING A WEBHOOK' section of " +
+            Environment.NewLine +
             "Discord's documentation: https://support.Discord.com/hc/en-us/articles/228383668-Intro-to-Webhook");
 
         webhookEvents = config.Bind<string>(MAIN_SETTINGS,
             "Webhook Events",
             "ALL",
-            "Specify a subset of possible events to send to the primary webhook. Previously all events would go to the primary webhook." + Environment.NewLine +
-            "Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLifecycle;playerAll;playerFirstAll;leaderboardsAll;'" + Environment.NewLine +
+            "Specify a subset of possible events to send to the primary webhook. Previously all events would go to the primary webhook." +
+            Environment.NewLine +
+            "Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLifecycle;playerAll;playerFirstAll;leaderboardsAll;'" +
+            Environment.NewLine +
             "Full list of valid options here: https://discord-connector.valheim.games.nwest.one/config/main.html#webhook-events");
 
         webhookUsernameOverride = config.Bind<string>(MAIN_SETTINGS,
@@ -196,14 +222,16 @@ internal class MainConfig
         webhookUrl2 = config.Bind<string>(MAIN_SETTINGS,
             "Secondary Webhook URL",
             "",
-            "Discord channel webhook URL. For instructions, reference the 'MAKING A WEBHOOK' section of " + Environment.NewLine +
+            "Discord channel webhook URL. For instructions, reference the 'MAKING A WEBHOOK' section of " +
+            Environment.NewLine +
             "Discord's documentation: https://support.Discord.com/hc/en-us/articles/228383668-Intro-to-Webhook");
 
         webhook2Events = config.Bind<string>(MAIN_SETTINGS,
             "Secondary Webhook Events",
             "ALL",
             "Specify a subset of possible events to send to the secondary webhook." + Environment.NewLine +
-            "Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLaunch;serverStart;serverSave;'" + Environment.NewLine +
+            "Format should be the keyword 'ALL' or a semi-colon separated list, e.g. 'serverLaunch;serverStart;serverSave;'" +
+            Environment.NewLine +
             "Full list of valid options here: https://discord-connector.valheim.games.nwest.one/config/main.html#webhook-events");
 
         webhook2UsernameOverride = config.Bind<string>(MAIN_SETTINGS,
@@ -218,12 +246,12 @@ internal class MainConfig
             "Override the avatar of the secondary webhook with the image at this URL." + Environment.NewLine +
             "If left blank, the webhook will use the avatar set in your Discord server's settings.");
 
-        logDebugMessages = config.Bind<bool>(MAIN_SETTINGS,
+        logDebugMessages = config.Bind(MAIN_SETTINGS,
             "Log Debug Messages",
             false,
             "Enable this setting to listen to debug messages from the mod. This will help with troubleshooting issues.");
 
-        discordEmbedMessagesToggle = config.Bind<bool>(MAIN_SETTINGS,
+        discordEmbedMessagesToggle = config.Bind(MAIN_SETTINGS,
             "Use fancier discord messages",
             false,
             "Enable this setting to use embeds in the messages sent to Discord. Currently this will affect the position details for the messages.");
@@ -231,73 +259,82 @@ internal class MainConfig
         mutedDiscordUserList = config.Bind<string>(MAIN_SETTINGS,
             "Ignored Players",
             "",
-            "It may be that you have some players that you never want to send Discord messages for. Adding a player name to this list will ignore them." + Environment.NewLine +
+            "It may be that you have some players that you never want to send Discord messages for. Adding a player name to this list will ignore them." +
+            Environment.NewLine +
             "Format should be a semicolon-separated list: Stuart;John McJohnny;Weird-name1");
 
         mutedDiscordUserListRegex = config.Bind<string>(MAIN_SETTINGS,
             "Ignored Players (Regex)",
             "",
-            "It may be that you have some players that you never want to send Discord messages for. This option lets you provide a regular expression to filter out players if their name matches." + Environment.NewLine +
+            "It may be that you have some players that you never want to send Discord messages for. This option lets you provide a regular expression to filter out players if their name matches." +
+            Environment.NewLine +
             "Format should be a valid string for a .NET Regex (reference: https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference)");
 
-        sendPositionsToggle = config.Bind<bool>(MAIN_SETTINGS,
+        sendPositionsToggle = config.Bind(MAIN_SETTINGS,
             "Send Positions with Messages",
             true,
             "Disable this setting to disable any positions/coordinates being sent with messages (e.g. players deaths or players joining/leaving). (Overwrites any individual setting.)");
 
-        collectStatsToggle = config.Bind<bool>(MAIN_SETTINGS,
+        collectStatsToggle = config.Bind(MAIN_SETTINGS,
             "Collect Player Stats",
             true,
             "Disable this setting to disable all stat collection. (Overwrites any individual setting.)");
 
-        announcePlayerFirsts = config.Bind<bool>(MAIN_SETTINGS,
+        announcePlayerFirsts = config.Bind(MAIN_SETTINGS,
             "Announce Player Firsts",
             true,
             "Disable this setting to disable all extra announcements the first time each player does something. (Overwrites any individual setting.)");
 
-        playerLookupPreference = config.Bind<RetrievalDiscernmentMethods>(MAIN_SETTINGS,
+        playerLookupPreference = config.Bind(MAIN_SETTINGS,
             "How to discern players in Record Retrieval",
             RetrievalDiscernmentMethods.PlayerId,
-            "Choose a method for how players will be separated from the results of a record query (used for statistic leader boards)." + Environment.NewLine +
+            "Choose a method for how players will be separated from the results of a record query (used for statistic leader boards)." +
+            Environment.NewLine +
             RetrieveByName + Environment.NewLine +
             RetrieveBySteamID + Environment.NewLine +
             RetrieveByNameAndSteamID
         );
 
-        allowNonPlayerShoutLogging = config.Bind<bool>(MAIN_SETTINGS,
+        allowNonPlayerShoutLogging = config.Bind(MAIN_SETTINGS,
             "Send Non-Player Shouts to Discord",
             false,
-            "Enable this setting to have shouts which are performed by other mods/the server/non-players to be sent to Discord as well." + Environment.NewLine +
+            "Enable this setting to have shouts which are performed by other mods/the server/non-players to be sent to Discord as well." +
+            Environment.NewLine +
             "Note: These are still subject to censure by the muted player regex and list.");
 
-        allowMentionsHereEveryone = config.Bind<bool>(MAIN_SETTINGS,
+        allowMentionsHereEveryone = config.Bind(MAIN_SETTINGS,
             "Allow @here and @everyone mentions",
             false,
-            "Enable this setting to allow messages sent to Discord to mention @here and @everyone. Per the Discord API, these share the same setting." + Environment.NewLine +
+            "Enable this setting to allow messages sent to Discord to mention @here and @everyone. Per the Discord API, these share the same setting." +
+            Environment.NewLine +
             "Note: There is no filtering in place to prevent abuse of these mentions (e.g. in a shout or player's name).");
 
-        allowMentionsAnyRole = config.Bind<bool>(MAIN_SETTINGS,
+        allowMentionsAnyRole = config.Bind(MAIN_SETTINGS,
             "Allow @role mentions",
             true,
-            "Enable this setting to allow messages sent to Discord to mention roles. Roles mentioned this way use the format `<@&role_id>`" + Environment.NewLine +
+            "Enable this setting to allow messages sent to Discord to mention roles. Roles mentioned this way use the format `<@&role_id>`" +
+            Environment.NewLine +
             "Note: There is no filtering in place to prevent abuse of these mentions (e.g. in a shout or player's name).");
 
-        allowMentionsAnyUser = config.Bind<bool>(MAIN_SETTINGS,
+        allowMentionsAnyUser = config.Bind(MAIN_SETTINGS,
             "Allow @user mentions",
             true,
-            "Enable this setting to allow messages sent to Discord to mention users. Users mentioned this way use the format `<@user_id>`" + Environment.NewLine +
+            "Enable this setting to allow messages sent to Discord to mention users. Users mentioned this way use the format `<@user_id>`" +
+            Environment.NewLine +
             "Note: There is no filtering in place to prevent abuse of these mentions (e.g. in a shout or player's name).");
 
         allowedRoleMentions = config.Bind<string>(MAIN_SETTINGS,
             "Allowed Role Mentions",
             "",
-            "A semicolon-separated list of role IDs that are allowed to be mentioned in messages sent to Discord. These are just a number (no carets), e.g. `123;234`" + Environment.NewLine +
+            "A semicolon-separated list of role IDs that are allowed to be mentioned in messages sent to Discord. These are just a number (no carets), e.g. `123;234`" +
+            Environment.NewLine +
             "Note: This setting is overshadowed if 'Allow @role mentions` is enabled, and only when that is disabled will these roles still be allowed to be mentioned.");
 
         allowedUserMentions = config.Bind<string>(MAIN_SETTINGS,
             "Allowed User Mentions",
             "",
-            "A semicolon-separated list of user IDs that are allowed to be mentioned in messages sent to Discord. These are just a number (no carets), e.g. `123;234`" + Environment.NewLine +
+            "A semicolon-separated list of user IDs that are allowed to be mentioned in messages sent to Discord. These are just a number (no carets), e.g. `123;234`" +
+            Environment.NewLine +
             "Note: This setting is overshadowed if 'Allow @user mentions` is enabled, and only when that is disabled will these users still be allowed to be mentioned.");
 
         config.Save();
@@ -319,7 +356,7 @@ internal class MainConfig
         jsonString += $"\"logDebugMessages\":\"{logDebugMessages.Value}\",";
         jsonString += $"\"fancierMessages\":\"{DiscordEmbedsEnabled}\",";
         jsonString += $"\"ignoredPlayers\":\"{mutedDiscordUserList.Value}\",";
-        jsonString += $"\"ignoredPlayersList\":[";
+        jsonString += "\"ignoredPlayersList\":[";
         for (int i = 0; i < mutedPlayers.Count; i++)
         {
             jsonString += $"\"{mutedPlayers[i]}\"";
@@ -328,32 +365,35 @@ internal class MainConfig
                 jsonString += ",";
             }
         }
+
         jsonString += "],";
         jsonString += $"\"ignoredPlayersRegex\":\"{mutedDiscordUserListRegex.Value}\",";
         jsonString += $"\"allowMentionsHereEveryone\":\"{allowMentionsHereEveryone.Value}\",";
         jsonString += $"\"allowMentionsAnyRole\":\"{allowMentionsAnyRole.Value}\",";
         jsonString += $"\"allowMentionsAnyUser\":\"{allowMentionsAnyUser.Value}\",";
         jsonString += $"\"allowedRoleMentions\":\"{allowedRoleMentions.Value}\",";
-        jsonString += $"\"allowedRoleMentionsList\":[";
-        for (int i = 0; i < allowedRoleMentionsList.Count; i++)
+        jsonString += "\"allowedRoleMentionsList\":[";
+        for (int i = 0; i < AllowedRoleMentions.Count; i++)
         {
-            jsonString += $"\"{allowedRoleMentionsList[i]}\"";
-            if (i < allowedRoleMentionsList.Count - 1)
+            jsonString += $"\"{AllowedRoleMentions[i]}\"";
+            if (i < AllowedRoleMentions.Count - 1)
             {
                 jsonString += ",";
             }
         }
+
         jsonString += "],";
         jsonString += $"\"allowedUserMentions\":\"{allowedUserMentions.Value}\",";
-        jsonString += $"\"allowedUserMentionsList\":[";
-        for (int i = 0; i < allowedUserMentionsList.Count; i++)
+        jsonString += "\"allowedUserMentionsList\":[";
+        for (int i = 0; i < AllowedUserMentions.Count; i++)
         {
-            jsonString += $"\"{allowedUserMentionsList[i]}\"";
-            if (i < allowedUserMentionsList.Count - 1)
+            jsonString += $"\"{AllowedUserMentions[i]}\"";
+            if (i < AllowedUserMentions.Count - 1)
             {
                 jsonString += ",";
             }
         }
+
         jsonString += "]";
         jsonString += "},";
         jsonString += $"\"collectStatsEnabled\":\"{CollectStatsEnabled}\",";
@@ -363,22 +403,4 @@ internal class MainConfig
         jsonString += "}";
         return jsonString;
     }
-
-    public string DefaultWebhookUsernameOverride => defaultWebhookUsernameOverride.Value;
-    public WebhookEntry PrimaryWebhook => primaryWebhook;
-    public WebhookEntry SecondaryWebhook => secondaryWebhook;
-    public bool CollectStatsEnabled => collectStatsToggle.Value;
-    public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
-    public bool SendPositionsEnabled => sendPositionsToggle.Value;
-    public List<string> MutedPlayers => mutedPlayers;
-    public Regex MutedPlayersRegex => mutedPlayersRegex;
-    public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
-    public RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
-    public bool AllowNonPlayerShoutLogging => allowNonPlayerShoutLogging.Value;
-    public bool AllowMentionsHereEveryone => allowMentionsHereEveryone.Value;
-    public bool AllowMentionsAnyRole => allowMentionsAnyRole.Value;
-    public bool AllowMentionsAnyUser => allowMentionsAnyUser.Value;
-    public List<string> AllowedRoleMentions => allowedRoleMentionsList;
-    public List<string> AllowedUserMentions => allowedUserMentionsList;
-
 }

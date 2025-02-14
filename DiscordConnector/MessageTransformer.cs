@@ -1,6 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace DiscordConnector;
+
 internal static class MessageTransformer
 {
     private const string PUBLIC_IP = "%PUBLICIP%";
@@ -36,8 +39,8 @@ internal static class MessageTransformer
     private static readonly Regex CloseCaretRegex = new(@"</[\w]+>");
 
     /// <summary>
-    /// Replace the static variables in the message. These are variables that are set in the config file.
-    /// Replaces:
+    ///     Replace the static variables in the message. These are variables that are set in the config file.
+    ///     Replaces:
     ///     - `%VAR1%` through `%VAR10%` with the user variables
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
@@ -60,8 +63,9 @@ internal static class MessageTransformer
     }
 
     /// <summary>
-    /// Replace dynamic variables in the message. These are variables that are not static and need to be calculated at runtime.
-    /// Replaces:
+    ///     Replace dynamic variables in the message. These are variables that are not static and need to be calculated at
+    ///     runtime.
+    ///     Replaces:
     ///     - `%PUBLICIP%` with the public IP of the server
     ///     - `%WORLD_NAME%` with the name of the world
     ///     - `%DAY_NUMBER%` with the current day number
@@ -86,43 +90,44 @@ internal static class MessageTransformer
     }
 
     /// <summary>
-    /// Replace the timestamp in the message. This inserts the current time as a unix timestamp in a format that
-    /// discord replaces with a human readable time, adjusted to the user's timezone.
+    ///     Replace the timestamp in the message. This inserts the current time as a unix timestamp in a format that
+    ///     discord replaces with a human readable time, adjusted to the user's timezone.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     /// <returns>Message with the timestamp replaced</returns>
     private static string ReplaceTimestamp(string rawMessage)
     {
         return rawMessage
-            .Replace(TIMESTAMP, $"<t:{(int)System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1)).TotalSeconds}>");
+            .Replace(TIMESTAMP, $"<t:{(int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds}>");
     }
 
     /// <summary>
-    /// Replace the timestamp in the message. This inserts the current time as a unix timestamp in a format that
-    /// discord replaces with a human readable time, showing a countdown to the time. (e.g. "in 5 minutes" or "5 minutes ago")
+    ///     Replace the timestamp in the message. This inserts the current time as a unix timestamp in a format that
+    ///     discord replaces with a human readable time, showing a countdown to the time. (e.g. "in 5 minutes" or "5 minutes
+    ///     ago")
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     /// <returns>Message with the timestamp replaced</returns>
     private static string ReplaceTimesince(string rawMessage)
     {
         return rawMessage
-            .Replace(TIMESINCE, $"<t:{(int)System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1)).TotalSeconds}:R>");
+            .Replace(TIMESINCE, $"<t:{(int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds}:R>");
     }
 
     /// <summary>
-    /// Replace the unix timestamp in the message. This inserts the current time as a unix timestamp. This does not
-    /// get replaced on its own by Discord, but could be used to customize a `<t:UNIX_TIMESTAMP>` tag for Discord.
+    ///     Replace the unix timestamp in the message. This inserts the current time as a unix timestamp. This does not
+    ///     get replaced on its own by Discord, but could be used to customize a `<t:UNIX_TIMESTAMP>` tag for Discord.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     /// <returns>Message with the timestamp replaced</returns>
     private static string ReplaceUnixTimestamp(string rawMessage)
     {
         return rawMessage
-            .Replace(UNIX_TIMESTAMP, ((int)System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1)).TotalSeconds).ToString());
+            .Replace(UNIX_TIMESTAMP, ((int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString());
     }
 
     /// <summary>
-    /// Replace the join code in the message. Uses the ZPlayFabMatchmaking class to get the join code.
+    ///     Replace the join code in the message. Uses the ZPlayFabMatchmaking class to get the join code.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     private static string ReplaceJoinCode(string rawMessage)
@@ -132,8 +137,8 @@ internal static class MessageTransformer
     }
 
     /// <summary>
-    /// Replace the day number in the message. Uses the EnvMan instance to get the current day.
-    /// This will only replace `%DAY_NUMBER%` with the current day if the EnvMan instance is available.
+    ///     Replace the day number in the message. Uses the EnvMan instance to get the current day.
+    ///     This will only replace `%DAY_NUMBER%` with the current day if the EnvMan instance is available.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     private static string ReplaceDayNumber(string rawMessage)
@@ -144,8 +149,8 @@ internal static class MessageTransformer
     }
 
     /// <summary>
-    /// Replace the number of players in the message. Uses the ZNet instance to get the number of players.
-    /// This will only replace `%NUM_PLAYERS%` with the number of players if the ZNet instance is available.
+    ///     Replace the number of players in the message. Uses the ZNet instance to get the number of players.
+    ///     This will only replace `%NUM_PLAYERS%` with the number of players if the ZNet instance is available.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     /// <param name="subtractOne">Subtract one from the number of online players</param>
@@ -154,7 +159,8 @@ internal static class MessageTransformer
         if (subtractOne)
         {
             return rawMessage
-                .Replace(NUM_PLAYERS, ZNet.instance != null ? (ZNet.instance.GetNrOfPlayers() - 1).ToString() : NUM_PLAYERS);
+                .Replace(NUM_PLAYERS,
+                    ZNet.instance != null ? (ZNet.instance.GetNrOfPlayers() - 1).ToString() : NUM_PLAYERS);
         }
 
         return rawMessage
@@ -162,11 +168,10 @@ internal static class MessageTransformer
     }
 
     /// <summary>
-    /// Replace the public IP in the message. Uses the ZNet instance to get the public IP.
-    ///
-    /// Note that if this fails, it will return an empty string. Also some occasions, the ZNet class may fail to get
-    /// the public IP address. This is out of scope for this plugin, to avoid making our own assumptions about the
-    /// network configuration of the server.
+    ///     Replace the public IP in the message. Uses the ZNet instance to get the public IP.
+    ///     Note that if this fails, it will return an empty string. Also some occasions, the ZNet class may fail to get
+    ///     the public IP address. This is out of scope for this plugin, to avoid making our own assumptions about the
+    ///     network configuration of the server.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     private static string ReplacePublicIp(string rawMessage)
@@ -176,8 +181,8 @@ internal static class MessageTransformer
     }
 
     /// <summary>
-    /// Replace the world name in the message. Uses the ZNet instance to get the world name.
-    /// This will only replace `%WORLD_NAME%` with the world name if the ZNet instance is available.
+    ///     Replace the world name in the message. Uses the ZNet instance to get the world name.
+    ///     This will only replace `%WORLD_NAME%` with the world name if the ZNet instance is available.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     private static string ReplaceWorldName(string rawMessage)
@@ -187,60 +192,65 @@ internal static class MessageTransformer
     }
 
     /// <summary>
-    /// Format a server message using the config values.
+    ///     Format a server message using the config values.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     public static string FormatServerMessage(string rawMessage)
     {
-        return MessageTransformer.ReplaceVariables(rawMessage);
+        return ReplaceVariables(rawMessage);
     }
 
     /// <summary>
-    /// Format a server message using the config values, with extra player information.
+    ///     Format a server message using the config values, with extra player information.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     /// <param name="playerName">Name of the player</param>
     /// <param name="playerId">ID of the player</param>
     /// <param name="subtractOne">(Optional) Subtract one from the number of online players</param>
-    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId, bool subtractOne = false)
+    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId,
+        bool subtractOne = false)
     {
-        return MessageTransformer.ReplaceVariables(rawMessage, subtractOne)
+        return ReplaceVariables(rawMessage, subtractOne)
             .Replace(PLAYER_STEAMID, playerId)
             .Replace(PLAYER_ID, playerId)
             .Replace(PLAYER_NAME, playerName);
     }
 
     /// <summary>
-    /// Format a server message using the config values, with extra player information.
-    /// Specifically, this version includes the player's position in the message.
+    ///     Format a server message using the config values, with extra player information.
+    ///     Specifically, this version includes the player's position in the message.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     /// <param name="playerName">Name of the player</param>
     /// <param name="playerId">ID of the player</param>
     /// <param name="pos">Position of the player</param>
     /// <param name="subtractOne">(Optional) Subtract one from the number of online players</param>
-    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId, UnityEngine.Vector3 pos, bool subtractOne = false)
+    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId, Vector3 pos,
+        bool subtractOne = false)
     {
-        return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerId, subtractOne)
+        return FormatPlayerMessage(rawMessage, playerName, playerId, subtractOne)
             .Replace(POS, $"{pos}");
     }
+
     /// <summary>
-    /// Format a server message using the config values, with extra player information.
-    /// Specifically, this version includes the shout message in the message.
+    ///     Format a server message using the config values, with extra player information.
+    ///     Specifically, this version includes the shout message in the message.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     /// <param name="playerName">Name of the player</param>
     /// <param name="playerId">ID of the player</param>
     /// <param name="shout">Shout message</param>
     /// <param name="subtractOne">(Optional) Subtract one from the number of online players</param>
-    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId, string shout, bool subtractOne = false)
+    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerId, string shout,
+        bool subtractOne = false)
     {
-        return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerId, subtractOne)
+        return FormatPlayerMessage(rawMessage, playerName, playerId, subtractOne)
             .Replace(SHOUT, shout);
     }
+
     /// <summary>
-    /// Format a server message using the config values, with extra player information.
-    /// Specifically, this version includes the shout message and the player's position in the message.
+    ///     Format a server message using the config values, with extra player information.
+    ///     Specifically, this version includes the shout message and the player's position in the message.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     /// <param name="playerName">Name of the player</param>
@@ -248,47 +258,52 @@ internal static class MessageTransformer
     /// <param name="shout">Shout message</param>
     /// <param name="pos">Position of the player</param>
     /// <param name="subtractOne">(Optional) Subtract one from the number of online players</param>
-    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerSteamId, string shout, UnityEngine.Vector3 pos, bool subtractOne = false)
+    public static string FormatPlayerMessage(string rawMessage, string playerName, string playerSteamId, string shout,
+        Vector3 pos, bool subtractOne = false)
     {
-        return MessageTransformer.FormatPlayerMessage(rawMessage, playerName, playerSteamId, pos, subtractOne)
+        return FormatPlayerMessage(rawMessage, playerName, playerSteamId, pos, subtractOne)
             .Replace(SHOUT, shout);
     }
+
     /// <summary>
-    /// Format an event message using the config values, with extra event information.
+    ///     Format an event message using the config values, with extra event information.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     /// <param name="eventStartMsg">Event start message</param>
     /// <param name="eventEndMsg">Event end message</param>
     public static string FormatEventMessage(string rawMessage, string eventStartMsg, string eventEndMsg)
     {
-        return MessageTransformer.ReplaceVariables(rawMessage)
+        return ReplaceVariables(rawMessage)
             .Replace(EVENT_START_MSG, eventStartMsg)
             .Replace(EVENT_END_MSG, eventEndMsg);
         //.Replace(EVENT_PLAYERS, players); //! Removed until re can reliably poll player locations
     }
+
     /// <summary>
-    /// Format an event message using the config values, with extra event information.
-    /// Specifically, this version includes the event position in the message.
+    ///     Format an event message using the config values, with extra event information.
+    ///     Specifically, this version includes the event position in the message.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     /// <param name="eventStartMsg">Event start message</param>
     /// <param name="eventEndMsg">Event end message</param>
     /// <param name="pos">Position of the event</param>
-    public static string FormatEventMessage(string rawMessage, string eventStartMsg, string eventEndMsg, UnityEngine.Vector3 pos)
+    public static string FormatEventMessage(string rawMessage, string eventStartMsg, string eventEndMsg, Vector3 pos)
     {
-        return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg)
+        return FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg)
             .Replace(POS, $"{pos}");
     }
+
     /// <summary>
-    /// Format an event start message. This will only replace the event message with the start message.
+    ///     Format an event start message. This will only replace the event message with the start message.
     /// </summary>
     public static string FormatEventStartMessage(string rawMessage, string eventStartMsg, string eventEndMsg)
     {
-        return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg)
+        return FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg)
             .Replace(EVENT_MSG, eventStartMsg);
     }
+
     /// <summary>
-    /// Format an event end message. This will only replace the event message with the end message.
+    ///     Format an event end message. This will only replace the event message with the end message.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     /// <param name="eventStartMsg">Event start message</param>
@@ -296,63 +311,66 @@ internal static class MessageTransformer
     /// <param name="pos">Position of the event</param>
     public static string FormatEventEndMessage(string rawMessage, string eventStartMsg, string eventEndMsg)
     {
-        return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg)
+        return FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg)
             .Replace(EVENT_MSG, eventEndMsg);
     }
+
     /// <summary>
-    /// Format an event start message. This will only replace the event message with the start message.
-    /// Specifically, this version includes the event position in the message.
+    ///     Format an event start message. This will only replace the event message with the start message.
+    ///     Specifically, this version includes the event position in the message.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     /// <param name="eventStartMsg">Event start message</param>
     /// <param name="eventEndMsg">Event end message</param>
     /// <param name="pos">Position of the event</param>
-    public static string FormatEventStartMessage(string rawMessage, string eventStartMsg, string eventEndMsg, UnityEngine.Vector3 pos)
+    public static string FormatEventStartMessage(string rawMessage, string eventStartMsg, string eventEndMsg,
+        Vector3 pos)
     {
-        return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, pos)
+        return FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, pos)
             .Replace(EVENT_MSG, eventStartMsg);
     }
+
     /// <summary>
-    /// Format an event end message. This will only replace the event message with the end message.
-    /// Specifically, this version includes the event position in the message.
+    ///     Format an event end message. This will only replace the event message with the end message.
+    ///     Specifically, this version includes the event position in the message.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     /// <param name="eventStartMsg">Event start message</param>
     /// <param name="eventEndMsg">Event end message</param>
     /// <param name="pos">Position of the event</param>
-    public static string FormatEventEndMessage(string rawMessage, string eventStartMsg, string eventEndMsg, UnityEngine.Vector3 pos)
+    public static string FormatEventEndMessage(string rawMessage, string eventStartMsg, string eventEndMsg, Vector3 pos)
     {
-        return MessageTransformer.FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, pos)
+        return FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, pos)
             .Replace(EVENT_MSG, eventEndMsg);
     }
+
     /// <summary>
-    /// Format the header of the leaderboard header using the config values.
+    ///     Format the header of the leaderboard header using the config values.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     public static string FormatLeaderBoardHeader(string rawMessage)
     {
-        return MessageTransformer.ReplaceVariables(rawMessage);
+        return ReplaceVariables(rawMessage);
     }
+
     /// <summary>
-    /// Format the header of the leaderboard header using the config values.
-    /// Specifically, this version includes the number of items in the leaderboard.
+    ///     Format the header of the leaderboard header using the config values.
+    ///     Specifically, this version includes the number of items in the leaderboard.
     /// </summary>
     /// <param name="rawMessage">Raw message to format</param>
     /// <param name="n">Number of items in the leaderboard</param>
     public static string FormatLeaderBoardHeader(string rawMessage, int n)
     {
-        return MessageTransformer.ReplaceVariables(rawMessage)
+        return ReplaceVariables(rawMessage)
             .Replace(N, n.ToString());
     }
 
     /// <summary>
-    /// Remove caret formatting from a string. This is used to strip special color codes away from user names.
-    ///
-    /// For example, some mods can send messages as shouts in the game. They may try to color the name of the user:
-    ///     `<color=cyan>[Admin]</color> vadmin`
-    /// This function strips away any caret formatting, making the string "plain text"
+    ///     Remove caret formatting from a string. This is used to strip special color codes away from user names.
+    ///     For example, some mods can send messages as shouts in the game. They may try to color the name of the user:
+    ///     `<color= cyan>[Admin]</color> vadmin`
+    ///     This function strips away any caret formatting, making the string "plain text"
     ///     `[Admin] vadmin`
-    ///
     /// </summary>
     /// <param name="str">String to strip caret formatting from</param>
     /// <returns>Same string but without the caret formatting</returns>
@@ -366,11 +384,11 @@ internal static class MessageTransformer
     }
 
     /// <summary>
-    /// Format a vector3 position into the formatted version used by discord connector
+    ///     Format a vector3 position into the formatted version used by discord connector
     /// </summary>
     /// <param name="vec3">Position vector to turn into string</param>
     /// <returns>String following the formatting laid out in the variable config file.</returns>
-    public static string FormatVector3AsPos(UnityEngine.Vector3 vec3)
+    public static string FormatVector3AsPos(Vector3 vec3)
     {
         return DiscordConnectorPlugin.StaticConfig.PosVarFormat
             .Replace("%X%", vec3.x.ToString("F1"))
@@ -379,11 +397,11 @@ internal static class MessageTransformer
     }
 
     /// <summary>
-    /// Format the appended position data using the config values.
+    ///     Format the appended position data using the config values.
     /// </summary>
     /// <param name="vec3">Position vector to include</param>
     /// <returns>String to append with the position information</returns>
-    public static string FormatAppendedPos(UnityEngine.Vector3 vec3)
+    public static string FormatAppendedPos(Vector3 vec3)
     {
         string posStr = FormatVector3AsPos(vec3);
         return DiscordConnectorPlugin.StaticConfig.AppendedPosFormat

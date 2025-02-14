@@ -1,69 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Timers;
+using UnityEngine;
 
 namespace DiscordConnector;
+
 internal class EventWatcher
 {
-    private static class Status
-    {
-        /// <summary>
-        /// True if there is currently an active event on the map.
-        /// </summary>
-        public static bool HaveActiveEvent => RandEventSystem.HaveActiveEvent();
-        public static RandomEvent Event
-        {
-            get
-            {
-                if (!HaveActiveEvent)
-                {
-                    return null;
-                }
-                return RandEventSystem.instance.GetCurrentRandomEvent();
-            }
-        }
-        public static string Name => HaveActiveEvent ? Event.m_name : "";
-        public static float Duration => HaveActiveEvent ? Event.m_duration : 0;
-        public static float Elapsed => HaveActiveEvent ? Event.m_time : 0;
-        public static bool IsRunning => HaveActiveEvent ? RandEventSystem.instance.IsAnyPlayerInEventArea(Event) : false;
-        public static UnityEngine.Vector3 Pos => HaveActiveEvent ? Event.m_pos : new UnityEngine.Vector3(0, 0, 0);
-        public static string EndMessage => HaveActiveEvent ? Localization.instance.Localize(Event.m_endMessage) : "";
-        public static string StartMessage => HaveActiveEvent ? Localization.instance.Localize(Event.m_startMessage) : "";
-
-        public static string[] InvolvedPlayersList()
-        {
-            List<String> playerList = new List<string>();
-            if (!HaveActiveEvent)
-            {
-                return playerList.ToArray();
-            }
-            foreach (ZNet.PlayerInfo playerInfo in ZNet.instance.GetPlayerList())
-            {
-                if (!playerInfo.m_publicPosition)
-                {
-                    if (DiscordConnectorPlugin.StaticConfig.DebugEveryPlayerPosCheck)
-                    {
-                        DiscordConnectorPlugin.StaticLogger.LogDebug($"Unable to check location for {playerInfo.m_name} because their location is not public.");
-                    }
-                }
-                else if (RandEventSystem.instance.IsInsideRandomEventArea(Event, playerInfo.m_position))
-                {
-                    playerList.Add(playerInfo.m_name);
-                    if (DiscordConnectorPlugin.StaticConfig.DebugEveryPlayerPosCheck)
-                    {
-                        DiscordConnectorPlugin.StaticLogger.LogDebug($"{playerInfo.m_name} is at {playerInfo.m_position}");
-                    }
-                }
-            }
-            return playerList.ToArray();
-        }
-    }
+    private readonly System.Timers.Timer randEventTimer;
+    private float PreviousElapsed;
+    private Vector3 PreviousEventPos;
+    private string PreviousEventStartMessage, PreviousEventEndMessage;
 
     private bool WasRunning, HadActiveEvent;
-    private float PreviousElapsed;
-    private string PreviousEventStartMessage, PreviousEventEndMessage;
-    private UnityEngine.Vector3 PreviousEventPos;
-    private System.Timers.Timer randEventTimer;
 
     public EventWatcher()
     {
@@ -72,7 +21,7 @@ internal class EventWatcher
         PreviousElapsed = 0;
         PreviousEventStartMessage = "";
         PreviousEventEndMessage = "";
-        PreviousEventPos = new UnityEngine.Vector3();
+        PreviousEventPos = new Vector3();
 
 
         randEventTimer = new System.Timers.Timer();
@@ -81,16 +30,18 @@ internal class EventWatcher
     }
 
     /// <summary>
-    /// Activate the EventWatcher after the Event System has loaded! Otherwise it will provide false-positives.
+    ///     Activate the EventWatcher after the Event System has loaded! Otherwise it will provide false-positives.
     /// </summary>
     public void Activate()
     {
         randEventTimer.Start();
     }
+
     public void Dispose()
     {
         randEventTimer.Stop();
     }
+
     public void CheckRandomEvent(object sender, ElapsedEventArgs elapsedEventArgs)
     {
         if (Status.HaveActiveEvent)
@@ -98,10 +49,14 @@ internal class EventWatcher
             /// <summary>
             /// Printing a detailed debug message with all the pieces we gather from Status.
             /// </summary>
-            string message = $"Currently an event: {Status.HaveActiveEvent}. {Status.StartMessage} | {Status.EndMessage}" + Environment.NewLine +
-            $"Event: {Status.Name} at {Status.Pos}. Status.IsRunning: {Status.IsRunning}. {Status.Elapsed} of {Status.Duration} seconds completed." + Environment.NewLine +
-            $"PreviousEventStartMsg: {PreviousEventStartMessage}, PreviousEventEndMsg: {PreviousEventEndMessage}, PreviousEventPos: {PreviousEventPos}" + Environment.NewLine +
-            $"Involved Players: {string.Join(",", Status.InvolvedPlayersList())}";
+            string message =
+                $"Currently an event: {Status.HaveActiveEvent}. {Status.StartMessage} | {Status.EndMessage}" +
+                Environment.NewLine +
+                $"Event: {Status.Name} at {Status.Pos}. Status.IsRunning: {Status.IsRunning}. {Status.Elapsed} of {Status.Duration} seconds completed." +
+                Environment.NewLine +
+                $"PreviousEventStartMsg: {PreviousEventStartMessage}, PreviousEventEndMsg: {PreviousEventEndMessage}, PreviousEventPos: {PreviousEventPos}" +
+                Environment.NewLine +
+                $"Involved Players: {string.Join(",", Status.InvolvedPlayersList())}";
             if (DiscordConnectorPlugin.StaticConfig.DebugEveryEventCheck)
             {
                 DiscordConnectorPlugin.StaticLogger.LogDebug(message);
@@ -109,7 +64,6 @@ internal class EventWatcher
 
             if (Status.IsRunning)
             {
-
                 /// <summary>
                 /// This checks for what has changed from the last time we checked the Random Event status.
                 /// If 
@@ -160,7 +114,7 @@ internal class EventWatcher
                 ///         Then
                 ///     The change is from RESUMED to PAUSED
                 /// </summary>
-                if ((!HadActiveEvent)
+                if (!HadActiveEvent
                     || (HadActiveEvent && WasRunning))
                 {
                     TriggerEventPaused();
@@ -171,7 +125,7 @@ internal class EventWatcher
                 }
             }
 
-            if (Status.Pos != UnityEngine.Vector3.zero)
+            if (Status.Pos != Vector3.zero)
             {
                 PreviousEventStartMessage = Status.StartMessage;
                 PreviousEventEndMessage = Status.EndMessage;
@@ -183,7 +137,8 @@ internal class EventWatcher
             if (DiscordConnectorPlugin.StaticConfig.DebugEveryEventCheck)
             {
                 DiscordConnectorPlugin.StaticLogger.LogDebug(
-                    $"PreviousEventStartMsg: {PreviousEventStartMessage}, PreviousEventEndMsg: {PreviousEventEndMessage}, PreviousEventPos: {PreviousEventPos}" + Environment.NewLine +
+                    $"PreviousEventStartMsg: {PreviousEventStartMessage}, PreviousEventEndMsg: {PreviousEventEndMessage}, PreviousEventPos: {PreviousEventPos}" +
+                    Environment.NewLine +
                     "Event check ran, no current events (or world isn't loaded yet)."
                 );
             }
@@ -204,6 +159,7 @@ internal class EventWatcher
                 }
             }
         }
+
         HadActiveEvent = Status.HaveActiveEvent;
         WasRunning = Status.IsRunning;
         PreviousElapsed = Status.Elapsed;
@@ -217,13 +173,14 @@ internal class EventWatcher
                 DiscordConnectorPlugin.StaticConfig.EventResumedMessage,
                 Status.StartMessage,
                 Status.EndMessage
-            // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
+                // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
             );
             if (!DiscordConnectorPlugin.StaticConfig.EventStartPosEnabled)
             {
                 DiscordApi.SendMessage(Webhook.Event.EventStart, message);
                 return;
             }
+
             if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
             {
                 DiscordApi.SendMessage(Webhook.Event.EventStart, message, Status.Pos);
@@ -241,6 +198,7 @@ internal class EventWatcher
             }
         }
     }
+
     internal void TriggerEventPaused()
     {
         if (DiscordConnectorPlugin.StaticConfig.EventPausedMessageEnabled)
@@ -249,13 +207,14 @@ internal class EventWatcher
                 DiscordConnectorPlugin.StaticConfig.EventPausedMessage,
                 Status.StartMessage,
                 Status.EndMessage
-            // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
+                // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
             );
             if (!DiscordConnectorPlugin.StaticConfig.EventPausedPosEnabled)
             {
                 DiscordApi.SendMessage(Webhook.Event.EventPaused, message);
                 return;
             }
+
             if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
             {
                 DiscordApi.SendMessage(Webhook.Event.EventPaused, message, Status.Pos);
@@ -273,6 +232,7 @@ internal class EventWatcher
             }
         }
     }
+
     internal void TriggerEventResumed()
     {
         if (DiscordConnectorPlugin.StaticConfig.EventResumedMessageEnabled)
@@ -281,13 +241,14 @@ internal class EventWatcher
                 DiscordConnectorPlugin.StaticConfig.EventResumedMessage,
                 Status.StartMessage,
                 Status.EndMessage
-            // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
+                // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
             );
             if (!DiscordConnectorPlugin.StaticConfig.EventResumedPosEnabled)
             {
                 DiscordApi.SendMessage(Webhook.Event.EventResumed, message);
                 return;
             }
+
             if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
             {
                 DiscordApi.SendMessage(Webhook.Event.EventResumed, message, Status.Pos);
@@ -305,6 +266,7 @@ internal class EventWatcher
             }
         }
     }
+
     internal void TriggerEventStop()
     {
         if (DiscordConnectorPlugin.StaticConfig.EventStopMessageEnabled)
@@ -313,13 +275,14 @@ internal class EventWatcher
                 DiscordConnectorPlugin.StaticConfig.EventStopMessage,
                 PreviousEventStartMessage,
                 PreviousEventEndMessage
-            // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
+                // string.Join(",", involvedPlayers.ToArray()) //! Removed with event changes 
             );
             if (!DiscordConnectorPlugin.StaticConfig.EventStopPosEnabled)
             {
                 DiscordApi.SendMessage(Webhook.Event.EventStop, message);
                 return;
             }
+
             if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !message.Contains("%POS%"))
             {
                 DiscordApi.SendMessage(Webhook.Event.EventStop, message, PreviousEventPos);
@@ -335,6 +298,72 @@ internal class EventWatcher
                 );
                 DiscordApi.SendMessage(Webhook.Event.EventStop, message);
             }
+        }
+    }
+
+    private static class Status
+    {
+        /// <summary>
+        ///     True if there is currently an active event on the map.
+        /// </summary>
+        public static bool HaveActiveEvent => RandEventSystem.HaveActiveEvent();
+
+        public static RandomEvent? Event
+        {
+            get
+            {
+                if (!HaveActiveEvent)
+                {
+                    return null;
+                }
+
+                return RandEventSystem.instance.GetCurrentRandomEvent();
+            }
+        }
+
+        public static string Name => HaveActiveEvent && Event != null ? Event.m_name : "";
+        public static float Duration => HaveActiveEvent && Event != null ? Event.m_duration : 0;
+        public static float Elapsed => HaveActiveEvent && Event != null ? Event.m_time : 0;
+        public static bool IsRunning => HaveActiveEvent && RandEventSystem.instance.IsAnyPlayerInEventArea(Event);
+        public static Vector3 Pos => HaveActiveEvent && Event != null ? Event.m_pos : new Vector3(0, 0, 0);
+
+        public static string EndMessage =>
+            HaveActiveEvent && Event != null ? Localization.instance.Localize(Event.m_endMessage) : "";
+
+        public static string StartMessage => HaveActiveEvent && Event != null
+            ? Localization.instance.Localize(Event.m_startMessage)
+            : "";
+
+        public static string[] InvolvedPlayersList()
+        {
+            List<string> playerList = new();
+            if (!HaveActiveEvent)
+            {
+                return playerList.ToArray();
+            }
+
+            foreach (ZNet.PlayerInfo playerInfo in ZNet.instance.GetPlayerList())
+            {
+                if (!playerInfo.m_publicPosition)
+                {
+                    if (DiscordConnectorPlugin.StaticConfig.DebugEveryPlayerPosCheck)
+                    {
+                        DiscordConnectorPlugin.StaticLogger.LogDebug(
+                            $"Unable to check location for {playerInfo.m_name} because their location is not public.");
+                    }
+                }
+                else if (RandEventSystem.instance.IsInsideRandomEventArea(Event, playerInfo.m_position))
+                {
+                    playerList.Add(playerInfo.m_name);
+                    if (DiscordConnectorPlugin.StaticConfig.DebugEveryPlayerPosCheck)
+                    {
+                        DiscordConnectorPlugin.StaticLogger.LogDebug(
+                            $"{playerInfo.m_name} is at {playerInfo.m_position}");
+                    }
+                }
+            }
+
+            return playerList.ToArray();
         }
     }
 }

@@ -1,78 +1,35 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using BepInEx;
 using BepInEx.Configuration;
 using DiscordConnector.Config;
 
 namespace DiscordConnector;
+
 internal class PluginConfig
 {
-    private MainConfig mainConfig;
-    private MessagesConfig messagesConfig;
-    private TogglesConfig togglesConfig;
-    private VariableConfig variableConfig;
-    private LeaderBoardConfig leaderBoardConfig;
-    private ExtraWebhookConfig extraWebhookConfig;
+    private const string ConfigJsonFilename = "config-dump.json";
+
+    /// <summary>
+    ///     Valid extensions for the config files, plus a reference for main.
+    /// </summary>
+    internal static string[] ConfigExtensions =
+        new[] { "messages", "variables", "leaderBoard", "toggles", "extraWebhooks", "main" };
+
     public readonly string configPath;
-    const string ConfigJsonFilename = "config-dump.json";
-
-    /// <summary>
-    /// Valid extensions for the config files, plus a reference for main.
-    /// </summary>
-    internal static string[] ConfigExtensions = new string[]{
-            "messages",
-            "variables",
-            "leaderBoard",
-            "toggles",
-            "extraWebhooks",
-            "main"
-        };
-
-    /// <summary>
-    /// In 2.1.0, moving to using a subdirectory for config files, since there are a handful of different files to manage and the feature was requested.
-    /// This method will make the new config sub-directory (if it doesn't exist) and then move the DiscordConnector config files into the new config
-    /// sub-directory. If the files already exist in the new sub-directory, then this will log a warning for each config that exists there, since they
-    /// should not exist there yet!
-    /// </summary>
-    internal void migrateConfigIfNeeded()
-    {
-        if (!Directory.Exists(configPath))
-        {
-            Directory.CreateDirectory(configPath);
-        }
-
-        foreach (string extension in ConfigExtensions)
-        {
-            string oldConfig = Path.Combine(BepInEx.Paths.ConfigPath, $"{DiscordConnectorPlugin.ModName}-{extension}.cfg");
-            string newConfig = Path.Combine(configPath, $"{DiscordConnectorPlugin.ModName}-{extension}.cfg");
-            // Main config has special handling (no -main extension on it)
-            if (extension.Equals("main"))
-            {
-                // Main config uses no extensions
-                oldConfig = Path.Combine(BepInEx.Paths.ConfigPath, $"{DiscordConnectorPlugin.ModName}.cfg");
-                newConfig = Path.Combine(configPath, $"{DiscordConnectorPlugin.ModName}.cfg");
-            }
-
-            if (File.Exists(oldConfig))
-            {
-                if (File.Exists(newConfig))
-                {
-                    // There already exists a config in the destination, which is weird because configs also exist in the old location
-                    DiscordConnectorPlugin.StaticLogger.LogWarning($"Expected to be moving {extension} config from pre-2.1.0 location to new config location, but already exists!");
-                }
-                else
-                {
-                    // Migrate the file if it doesn't already exist there.
-                    File.Move(oldConfig, newConfig);
-                }
-            }
-        }
-    }
+    private readonly ExtraWebhookConfig extraWebhookConfig;
+    private readonly LeaderBoardConfig leaderBoardConfig;
+    private readonly MainConfig mainConfig;
+    private readonly MessagesConfig messagesConfig;
+    private readonly TogglesConfig togglesConfig;
+    private readonly VariableConfig variableConfig;
 
     public PluginConfig(ConfigFile config)
     {
         // Set up base path for config and other files
-        configPath = Path.Combine(BepInEx.Paths.ConfigPath, DiscordConnectorPlugin.ModName);
+        configPath = Path.Combine(Paths.ConfigPath, DiscordConnectorPlugin.ModName);
 
         // Migrate configs if needed, since we now nest them in a subdirectory
         migrateConfigIfNeeded();
@@ -83,7 +40,8 @@ internal class PluginConfig
         string togglesConfigFilename = $"{DiscordConnectorPlugin.ModName}-{TogglesConfig.ConfigExtension}.cfg";
         string variableConfigFilename = $"{DiscordConnectorPlugin.ModName}-{VariableConfig.ConfigExtension}.cfg";
         string leaderBoardConfigFilename = $"{DiscordConnectorPlugin.ModName}-{LeaderBoardConfig.ConfigExtension}.cfg";
-        string extraWebhooksConfigFilename = $"{DiscordConnectorPlugin.ModName}-{ExtraWebhookConfig.ConfigExtension}.cfg";
+        string extraWebhooksConfigFilename =
+            $"{DiscordConnectorPlugin.ModName}-{ExtraWebhookConfig.ConfigExtension}.cfg";
 
         string mainConfigPath = Path.Combine(configPath, mainConfigFilename);
         string messagesConfigPath = Path.Combine(configPath, messageConfigFilename);
@@ -99,57 +57,17 @@ internal class PluginConfig
         DiscordConnectorPlugin.StaticLogger.LogDebug($"Leader board config: {leaderBoardConfigPath}");
         DiscordConnectorPlugin.StaticLogger.LogDebug($"Extra Webhook config: {extraWebhooksConfigPath}");
 
-        mainConfig = new MainConfig(new BepInEx.Configuration.ConfigFile(mainConfigPath, true));
-        messagesConfig = new MessagesConfig(new BepInEx.Configuration.ConfigFile(messagesConfigPath, true));
-        togglesConfig = new TogglesConfig(new BepInEx.Configuration.ConfigFile(togglesConfigPath, true));
-        variableConfig = new VariableConfig(new BepInEx.Configuration.ConfigFile(variableConfigPath, true));
-        leaderBoardConfig = new LeaderBoardConfig(new BepInEx.Configuration.ConfigFile(leaderBoardConfigPath, true));
-        extraWebhookConfig = new ExtraWebhookConfig(new BepInEx.Configuration.ConfigFile(extraWebhooksConfigPath, true));
+        mainConfig = new MainConfig(new ConfigFile(mainConfigPath, true));
+        messagesConfig = new MessagesConfig(new ConfigFile(messagesConfigPath, true));
+        togglesConfig = new TogglesConfig(new ConfigFile(togglesConfigPath, true));
+        variableConfig = new VariableConfig(new ConfigFile(variableConfigPath, true));
+        leaderBoardConfig = new LeaderBoardConfig(new ConfigFile(leaderBoardConfigPath, true));
+        extraWebhookConfig = new ExtraWebhookConfig(new ConfigFile(extraWebhooksConfigPath, true));
 
         DiscordConnectorPlugin.StaticLogger.LogDebug("Configuration Loaded");
-        DiscordConnectorPlugin.StaticLogger.LogDebug($"Muted Players Regex pattern ('a^' is default for no matches): {mainConfig.MutedPlayersRegex.ToString()}");
+        DiscordConnectorPlugin.StaticLogger.LogDebug(
+            $"Muted Players Regex pattern ('a^' is default for no matches): {mainConfig.MutedPlayersRegex}");
         DumpConfigAsJson();
-    }
-
-    public void ReloadConfig()
-    {
-        mainConfig.ReloadConfig();
-        messagesConfig.ReloadConfig();
-        togglesConfig.ReloadConfig();
-        variableConfig.ReloadConfig();
-        leaderBoardConfig.ReloadConfig();
-        extraWebhookConfig.ReloadConfig();
-    }
-
-    /// <summary>
-    /// Reload a config by specifying the configKey (one of )
-    /// </summary>
-    /// <param name="configExt">Config extension to reload</param>
-    public void ReloadConfig(string configExt)
-    {
-        switch (configExt)
-        {
-            case "main":
-                mainConfig.ReloadConfig();
-                return;
-            case "messages":
-                messagesConfig.ReloadConfig();
-                return;
-            case "toggles":
-                togglesConfig.ReloadConfig();
-                return;
-            case "variables":
-                variableConfig.ReloadConfig();
-                return;
-            case "leaderBoard":
-                leaderBoardConfig.ReloadConfig();
-                return;
-            case "extraWebhooks":
-                extraWebhookConfig.ReloadConfig();
-                return;
-            default:
-                return;
-        }
     }
 
     // Exposed Config Values
@@ -199,7 +117,10 @@ internal class PluginConfig
     public bool DiscordEmbedsEnabled => mainConfig.DiscordEmbedsEnabled;
     public bool SendPositionsEnabled => mainConfig.SendPositionsEnabled;
     public bool AnnouncePlayerFirsts => mainConfig.AnnouncePlayerFirsts;
-    public MainConfig.RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => mainConfig.RecordRetrievalDiscernmentMethod;
+
+    public MainConfig.RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod =>
+        mainConfig.RecordRetrievalDiscernmentMethod;
+
     public List<string> MutedPlayers => mainConfig.MutedPlayers;
     public Regex MutedPlayersRegex => mainConfig.MutedPlayersRegex;
     public bool AllowNonPlayerShoutLogging => mainConfig.AllowNonPlayerShoutLogging;
@@ -232,11 +153,20 @@ internal class PluginConfig
     public string PlayerFirstPingMessage => messagesConfig.PlayerFirstPingMessage;
     public string PlayerFirstShoutMessage => messagesConfig.PlayerFirstShoutMessage;
 
-    public bool AnnouncePlayerFirstDeathEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstDeathEnabled;
-    public bool AnnouncePlayerFirstJoinEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstJoinEnabled;
-    public bool AnnouncePlayerFirstLeaveEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstLeaveEnabled;
-    public bool AnnouncePlayerFirstPingEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstPingEnabled;
-    public bool AnnouncePlayerFirstShoutEnabled => mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstShoutEnabled;
+    public bool AnnouncePlayerFirstDeathEnabled =>
+        mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstDeathEnabled;
+
+    public bool AnnouncePlayerFirstJoinEnabled =>
+        mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstJoinEnabled;
+
+    public bool AnnouncePlayerFirstLeaveEnabled =>
+        mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstLeaveEnabled;
+
+    public bool AnnouncePlayerFirstPingEnabled =>
+        mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstPingEnabled;
+
+    public bool AnnouncePlayerFirstShoutEnabled =>
+        mainConfig.AnnouncePlayerFirsts && togglesConfig.AnnouncePlayerFirstShoutEnabled;
 
     // Messages.Events
     public string EventStartMessage => messagesConfig.EventStartMessage;
@@ -275,13 +205,101 @@ internal class PluginConfig
 
     // Leader board configs
     public LeaderBoardConfigReference[] LeaderBoards => leaderBoardConfig.LeaderBoards;
-    public ActivePlayersAnnouncementConfigValues ActivePlayersAnnouncement => leaderBoardConfig.ActivePlayersAnnouncement;
+
+    public ActivePlayersAnnouncementConfigValues ActivePlayersAnnouncement =>
+        leaderBoardConfig.ActivePlayersAnnouncement;
 
     // Extra webhook config
     public List<WebhookEntry> ExtraWebhooks => extraWebhookConfig.GetWebhookEntries();
 
     /// <summary>
-    /// Writes the loaded configuration to a JSON file in the config directory.
+    ///     In 2.1.0, moving to using a subdirectory for config files, since there are a handful of different files to manage
+    ///     and the feature was requested.
+    ///     This method will make the new config sub-directory (if it doesn't exist) and then move the DiscordConnector config
+    ///     files into the new config
+    ///     sub-directory. If the files already exist in the new sub-directory, then this will log a warning for each config
+    ///     that exists there, since they
+    ///     should not exist there yet!
+    /// </summary>
+    internal void migrateConfigIfNeeded()
+    {
+        if (!Directory.Exists(configPath))
+        {
+            Directory.CreateDirectory(configPath);
+        }
+
+        foreach (string extension in ConfigExtensions)
+        {
+            string oldConfig = Path.Combine(Paths.ConfigPath, $"{DiscordConnectorPlugin.ModName}-{extension}.cfg");
+            string newConfig = Path.Combine(configPath, $"{DiscordConnectorPlugin.ModName}-{extension}.cfg");
+            // Main config has special handling (no -main extension on it)
+            if (extension.Equals("main"))
+            {
+                // Main config uses no extensions
+                oldConfig = Path.Combine(Paths.ConfigPath, $"{DiscordConnectorPlugin.ModName}.cfg");
+                newConfig = Path.Combine(configPath, $"{DiscordConnectorPlugin.ModName}.cfg");
+            }
+
+            if (File.Exists(oldConfig))
+            {
+                if (File.Exists(newConfig))
+                {
+                    // There already exists a config in the destination, which is weird because configs also exist in the old location
+                    DiscordConnectorPlugin.StaticLogger.LogWarning(
+                        $"Expected to be moving {extension} config from pre-2.1.0 location to new config location, but already exists!");
+                }
+                else
+                {
+                    // Migrate the file if it doesn't already exist there.
+                    File.Move(oldConfig, newConfig);
+                }
+            }
+        }
+    }
+
+    public void ReloadConfig()
+    {
+        mainConfig.ReloadConfig();
+        messagesConfig.ReloadConfig();
+        togglesConfig.ReloadConfig();
+        variableConfig.ReloadConfig();
+        leaderBoardConfig.ReloadConfig();
+        extraWebhookConfig.ReloadConfig();
+    }
+
+    /// <summary>
+    ///     Reload a config by specifying the configKey (one of )
+    /// </summary>
+    /// <param name="configExt">Config extension to reload</param>
+    public void ReloadConfig(string configExt)
+    {
+        switch (configExt)
+        {
+            case "main":
+                mainConfig.ReloadConfig();
+                return;
+            case "messages":
+                messagesConfig.ReloadConfig();
+                return;
+            case "toggles":
+                togglesConfig.ReloadConfig();
+                return;
+            case "variables":
+                variableConfig.ReloadConfig();
+                return;
+            case "leaderBoard":
+                leaderBoardConfig.ReloadConfig();
+                return;
+            case "extraWebhooks":
+                extraWebhookConfig.ReloadConfig();
+                return;
+            default:
+                return;
+        }
+    }
+
+    /// <summary>
+    ///     Writes the loaded configuration to a JSON file in the config directory.
     /// </summary>
     public void DumpConfigAsJson()
     {
@@ -296,7 +314,7 @@ internal class PluginConfig
 
         jsonString += "}";
 
-        System.Threading.Tasks.Task.Run(() =>
+        Task.Run(() =>
         {
             string configDump = Path.Combine(configPath, ConfigJsonFilename);
             File.WriteAllText(configDump, jsonString);

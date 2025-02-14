@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 
 namespace DiscordConnector;
+
 public class Webhook
 {
     public enum Event
@@ -40,7 +41,7 @@ public class Webhook
         None,
         Other,
         CronJob,
-        NewDayNumber,
+        NewDayNumber
     }
 
     public static Event StringToEvent(string eventToken)
@@ -152,33 +153,17 @@ public class Webhook
             events.Add(StringToEvent(ev));
         }
 
-        DiscordConnectorPlugin.StaticLogger.LogDebug($"Webhooks: parsed config entry '{configEntry}' => '{string.Join(", ", events)}'");
+        DiscordConnectorPlugin.StaticLogger.LogDebug(
+            $"Webhooks: parsed config entry '{configEntry}' => '{string.Join(", ", events)}'");
 
         return events;
     }
 }
 
-class WebhookEntry
+internal class WebhookEntry
 {
     /// <summary>
-    /// The webhook endpoint URL
-    /// </summary>
-    public string Url { get; set; }
-    /// <summary>
-    /// Which events should trigger this webhook
-    /// </summary>
-    public List<Webhook.Event> FireOnEvents { get; set; }
-    /// <summary>
-    /// The username to use for this webhook
-    /// </summary>
-    public string UsernameOverride { get; set; } = string.Empty;
-    /// <summary>
-    /// The URL of the avatar to use for this webhook
-    /// </summary>
-    public string AvatarOverride { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Create a new WebhookEntry, defaulting to all events
+    ///     Create a new WebhookEntry, defaulting to all events
     /// </summary>
     /// <param name="url">webhook endpoint</param>
     public WebhookEntry(string url)
@@ -188,17 +173,19 @@ class WebhookEntry
     }
 
     /// <summary>
-    /// Create a new WebhookEntry
+    ///     Create a new WebhookEntry
     /// </summary>
     /// <param name="url">webhook endpoint</param>
     /// <param name="fireOnEvents">events to trigger this webhook</param>
     /// <param name="usernameOverride">(Optional) username override</param>
     /// <param name="avatarOverride">(Optional) avatar override</param>
-    public WebhookEntry(string url, List<Webhook.Event> fireOnEvents, string usernameOverride = "", string avatarOverride = "")
+    public WebhookEntry(string url, List<Webhook.Event> fireOnEvents, string usernameOverride = "",
+        string avatarOverride = "")
     {
         if (string.IsNullOrEmpty(url))
         {
-            DiscordConnectorPlugin.StaticLogger.LogDebug($"Coerced null or empty webhook url to empty string. Ignoring event list.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
+                "Coerced null or empty webhook url to empty string. Ignoring event list.");
             Url = "";
             FireOnEvents = [];
             return;
@@ -208,7 +195,7 @@ class WebhookEntry
 
         if (fireOnEvents == null || fireOnEvents.Count == 0)
         {
-            DiscordConnectorPlugin.StaticLogger.LogDebug($"Coerced null or empty webhook event list to empty list.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Coerced null or empty webhook event list to empty list.");
             FireOnEvents = [];
         }
         else
@@ -228,7 +215,27 @@ class WebhookEntry
     }
 
     /// <summary>
-    /// Check if the webhook has a username override
+    ///     The webhook endpoint URL
+    /// </summary>
+    public string Url { get; set; }
+
+    /// <summary>
+    ///     Which events should trigger this webhook
+    /// </summary>
+    public List<Webhook.Event> FireOnEvents { get; set; }
+
+    /// <summary>
+    ///     The username to use for this webhook
+    /// </summary>
+    public string UsernameOverride { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     The URL of the avatar to use for this webhook
+    /// </summary>
+    public string AvatarOverride { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Check if the webhook has a username override
     /// </summary>
     /// <returns>True if a username override exists for this webhook</returns>
     public bool HasUsernameOverride()
@@ -237,7 +244,7 @@ class WebhookEntry
     }
 
     /// <summary>
-    /// Check if the webhook has an avatar override
+    ///     Check if the webhook has an avatar override
     /// </summary>
     /// <returns>True if an avatar override exists for this webhook</returns>
     public bool HasAvatarOverride()
@@ -271,6 +278,7 @@ class WebhookEntry
                 return true;
             }
         }
+
         if (FireOnEvents.Contains(Webhook.Event.PlayerFirstAll))
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerFirstAll");
@@ -284,6 +292,7 @@ class WebhookEntry
                 return true;
             }
         }
+
         if (FireOnEvents.Contains(Webhook.Event.EventLifecycle))
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking if {ev} is part of EventLifecycle");
@@ -296,6 +305,7 @@ class WebhookEntry
                 return true;
             }
         }
+
         if (FireOnEvents.Contains(Webhook.Event.ServerLifecycle))
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking if {ev} is part of ServerLifecycle");
@@ -309,6 +319,7 @@ class WebhookEntry
                 return true;
             }
         }
+
         if (FireOnEvents.Contains(Webhook.Event.LeaderboardsAll))
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking if {ev} is part of LeaderboardsAll");

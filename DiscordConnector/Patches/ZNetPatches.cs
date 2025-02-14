@@ -2,9 +2,9 @@
 using HarmonyLib;
 
 namespace DiscordConnector.Patches;
+
 internal class ZNetPatches
 {
-
     [HarmonyPatch(typeof(ZNet), nameof(ZNet.LoadWorld))]
     internal class LoadWorld
     {
@@ -43,7 +43,8 @@ internal class ZNetPatches
     [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_CharacterID))]
     internal class RPC_CharacterID
     {
-        private static List<long> joinedPlayers = new List<long>();
+        private static List<long> joinedPlayers = new();
+
         private static void Postfix(ZRpc rpc, ZDOID characterID)
         {
             ZNetPeer peer = ZNet.instance.GetPeer(rpc);
@@ -53,7 +54,6 @@ internal class ZNetPatches
             }
 
             Handlers.Join(peer);
-
         }
 
         [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_Disconnect))]
