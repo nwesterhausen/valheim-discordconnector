@@ -53,15 +53,27 @@ jobs:
           rm -rf ~/VHINSTALL/valheim_Data/Managed/publicized_assemblies
           rm -rf ~/VHINSTALL/valheim_server_Data/Managed/publicized_assemblies
 
+      - name: Save Cache
+        if: steps.cachevalheim.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+        with:
+          path: ~/VHINSTALL
+          key: ${{ steps.valheimversion.outputs.valheimversion }}-${{ hashFiles('**/lockfiles') }}-BepInExPack-5.4.2202
+          
       - name: Set references to DLLs
         run: |
           echo "<?xml version=\"1.0\" encoding=\"utf-8\"?><Project ToolsVersion=\"Current\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"><PropertyGroup><VALHEIM_INSTALL>$HOME/VHINSTALL/</VALHEIM_INSTALL><GamePath>$HOME/VHINSTALL/</GamePath></PropertyGroup></Project>" > Environment.props
+
+      - name: Reset DoPrebuild.props
+        run: |
+          pwd
+          echo "<?xml version=\"1.0\" encoding=\"utf-8\"?><Project ToolsVersion=\"Current\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"><PropertyGroup><ExecutePrebuild>true</ExecutePrebuild></PropertyGroup></Project>" > DiscordConnector/DoPrebuild.props
 
 
       # Build DLLs
       - name: Build solution
         run: |
-          dotnet build DiscordConnector.sln --configuration Debug
+          dotnet build DiscordConnector.sln --configuration Release
 
 
       - name: Upload a Build Artifact
