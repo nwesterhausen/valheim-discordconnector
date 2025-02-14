@@ -1,9 +1,12 @@
 param ($manifestFile, $versionString)
 
-try {
+try
+{
     $manifest = Get-Content $manifestFile
     $manifest = $manifest -replace '"version_number":\s*"([^"]*)"', "`"version_number`": `"$versionString`""
     Set-Content -Path $manifestFile -Value $manifest
-} catch {
+}
+catch
+{
     Write-Error $_.Exception.Message
 }

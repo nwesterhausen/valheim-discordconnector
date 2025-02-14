@@ -7,33 +7,38 @@ using System.Threading.Tasks;
 
 namespace DiscordConnector;
 
-class ConfigWatcher
+internal class ConfigWatcher
 {
     /// <summary>
-    /// Regex which matches only DiscordConnector config files; basically matches <code>discordconnector*.cfg</code> but restricted to 
-    /// exactly how the files are named.
+    ///     Regex which matches only DiscordConnector config files; basically matches <code>discordconnector*.cfg</code> but
+    ///     restricted to
+    ///     exactly how the files are named.
     /// </summary>
-    private static Regex watchedConfigFilesRegex = new Regex(@"discordconnector?[\w\-]*\.cfg$");
-    private static Regex configExtensionMatcherRegex = new Regex(@"discordconnector-(\w+)\.cfg$");
+    private static readonly Regex watchedConfigFilesRegex = new(@"discordconnector?[\w\-]*\.cfg$");
+
+    private static readonly Regex configExtensionMatcherRegex = new(@"discordconnector-(\w+)\.cfg$");
+
     /// <summary>
-    /// Date when the last change to any config file was detected.
+    ///     Date when the last change to any config file was detected.
     /// </summary>
     private static DateTime lastChangeDetected;
+
     /// <summary>
-    /// Period of time (in seconds) to ignore subsequent changes to config files.
+    ///     Period of time (in seconds) to ignore subsequent changes to config files.
     /// </summary>
-    private static int DEBOUNCE_SECONDS = 10;
+    private static readonly int DEBOUNCE_SECONDS = 10;
+
     /// <summary>
-    /// A dictionary of 'filename' -> 'hash' to determine if config files were changed in a meaningful way.
+    ///     A dictionary of 'filename' -> 'hash' to determine if config files were changed in a meaningful way.
     /// </summary>
-    private static Dictionary<String, String> _fileHashDictionary;
+    private static Dictionary<string, string> _fileHashDictionary;
 
     public ConfigWatcher()
     {
-        var watcher = new FileSystemWatcher();
+        FileSystemWatcher watcher = new();
 
         watcher.NotifyFilter = NotifyFilters.Size
-                           | NotifyFilters.LastWrite;
+                               | NotifyFilters.LastWrite;
 
         watcher.Changed += OnChanged;
         watcher.Error += OnError;
@@ -57,28 +62,30 @@ class ConfigWatcher
     }
 
     /// <summary>
-    /// Offload population of hash dictionary to a separate thread if possible.
+    ///     Offload population of hash dictionary to a separate thread if possible.
     /// </summary>
     private void PopulateHashDictionary()
     {
         Task.Run(() =>
         {
             // Get an iterable of files in the DiscordConnector config directory, where the file matches our config file regex
-            var myConfigFiles = Directory.EnumerateFiles(DiscordConnectorPlugin.StaticConfig.configPath).Where(file => watchedConfigFilesRegex.IsMatch(file));
-            foreach (String filename in myConfigFiles)
+            IEnumerable<string>? myConfigFiles = Directory
+                .EnumerateFiles(DiscordConnectorPlugin.StaticConfig.configPath)
+                .Where(file => watchedConfigFilesRegex.IsMatch(file));
+            foreach (string filename in myConfigFiles)
             {
                 string extension = ConfigExtensionFromFilename(filename);
                 // Put the filename str and the hash of the file into the dictionary
-                _fileHashDictionary.Add(extension, DiscordConnector.Hashing.GetMD5Checksum(filename));
+                _fileHashDictionary.Add(extension, Hashing.GetMD5Checksum(filename));
             }
 
-            DiscordConnectorPlugin.StaticLogger.LogDebug($"Initialization of file hash dictionary completed.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Initialization of file hash dictionary completed.");
             DiscordConnectorPlugin.StaticLogger.LogDebug(string.Join(Environment.NewLine, _fileHashDictionary));
         });
     }
 
     /// <summary>
-    /// Get the config file extension from the config file path
+    ///     Get the config file extension from the config file path
     /// </summary>
     /// <param name="filename">Filename or full file path to extract config file extension from</param>
     /// <returns>The extension slug for the config file</returns>
@@ -86,19 +93,21 @@ class ConfigWatcher
     {
         // Determine config extension
         string extension = "main";
-        var extensionMatch = configExtensionMatcherRegex.Match(filename);
+        Match? extensionMatch = configExtensionMatcherRegex.Match(filename);
         if (extensionMatch.Success && extensionMatch.Groups.Count > 1)
         {
             extension = extensionMatch.Groups[1].Value;
         }
+
         return extension;
     }
 
     /// <summary>
-    /// Method for reacting to changes in the files (from the FileWatcher).
+    ///     Method for reacting to changes in the files (from the FileWatcher).
     /// </summary>
     /// <remarks>
-    /// This method reacts to the change in config file by hashing the file again and on a different result, it tells the mod to reload that config.
+    ///     This method reacts to the change in config file by hashing the file again and on a different result, it tells the
+    ///     mod to reload that config.
     /// </remarks>
     private static void OnChanged(object sender, FileSystemEventArgs e)
     {
@@ -108,12 +117,12 @@ class ConfigWatcher
             return;
         }
 
-        String configExtension = ConfigExtensionFromFilename(e.FullPath);
+        string configExtension = ConfigExtensionFromFilename(e.FullPath);
 
         DiscordConnectorPlugin.StaticLogger.LogDebug($"Detected change of {configExtension} config file");
 
         // Hash the changed file
-        String fileHash = DiscordConnector.Hashing.GetMD5Checksum(e.FullPath);
+        string fileHash = Hashing.GetMD5Checksum(e.FullPath);
 
         // Create an entry if we haven't yet
         if (!_fileHashDictionary.ContainsKey(configExtension))
@@ -125,7 +134,7 @@ class ConfigWatcher
         }
 
         // Check if current hash differs from stored hash.
-        if (String.Equals(_fileHashDictionary[configExtension], fileHash))
+        if (string.Equals(_fileHashDictionary[configExtension], fileHash))
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug("Changes to file were determined to be inconsequential.");
             return;
@@ -144,9 +153,10 @@ class ConfigWatcher
     }
 
     /// <summary>
-    /// Error passthrough for the config watcher.
+    ///     Error passthrough for the config watcher.
     /// </summary>
-    private static void OnError(object sender, ErrorEventArgs e) =>
+    private static void OnError(object sender, ErrorEventArgs e)
+    {
         DiscordConnectorPlugin.StaticLogger.LogError(e.GetException().ToString());
-
+    }
 }

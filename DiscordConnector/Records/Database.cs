@@ -1,15 +1,19 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using BepInEx;
+using DiscordConnector.Config;
 using DiscordConnector.Leaderboards;
 using LiteDB;
 using UnityEngine;
 
 namespace DiscordConnector.Records;
+
 /// <summary>
-/// The database class holds the connection to the database, and so all the database-accessing methods are contained within.
+///     The database class holds the connection to the database, and so all the database-accessing methods are contained
+///     within.
 /// </summary>
 internal class Database
 {
@@ -19,19 +23,19 @@ internal class Database
     private ILiteCollection<SimpleStat> DeathCollection;
     private ILiteCollection<SimpleStat> JoinCollection;
     private ILiteCollection<SimpleStat> LeaveCollection;
-    private ILiteCollection<SimpleStat> ShoutCollection;
     private ILiteCollection<SimpleStat> PingCollection;
     private ILiteCollection<PlayerToName> PlayerToNameCollection;
+    private ILiteCollection<SimpleStat> ShoutCollection;
 
     /// <summary>
-    /// Sets up the database path and initializes the database connection.
-    ///
-    /// This will set up the database path in a default location: `BepInEx/Config/{DiscordConnectorPlugin.ModName}/records.db`
+    ///     Sets up the database path and initializes the database connection.
+    ///     This will set up the database path in a default location:
+    ///     `BepInEx/Config/{DiscordConnectorPlugin.ModName}/records.db`
     /// </summary>
     /// <param name="rootStorePath">Directory to save the LiteDB database in.</param>
     public Database(string rootStorePath)
     {
-        DbPath = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, DiscordConnectorPlugin.ModName, DB_NAME);
+        DbPath = Path.Combine(Paths.ConfigPath, DiscordConnectorPlugin.ModName, DB_NAME);
         // If rootStorePath has length and is not equal to the default path, use it instead.
         // Note: Enabling this would cause the database to store with the game root instead (see Plugin.cs:43)
         // if (rootStorePath.Length > 0 && rootStorePath != BepInEx.Paths.ConfigPath)
@@ -40,22 +44,20 @@ internal class Database
         // }
 
         // Check for database in old location and move if necessary
-        string oldDatabase = System.IO.Path.Combine(BepInEx.Paths.ConfigPath, $"{DiscordConnectorPlugin.ModName}-records.db");
-        if (System.IO.File.Exists(oldDatabase))
+        string oldDatabase = Path.Combine(Paths.ConfigPath, $"{DiscordConnectorPlugin.ModName}-records.db");
+        if (File.Exists(oldDatabase))
         {
-            System.IO.File.Move(oldDatabase, DbPath);
+            File.Move(oldDatabase, DbPath);
         }
 
         Initialize();
     }
 
     /// <summary>
-    /// Method to initialize the database reference and content.
-    ///
-    /// This method creates the database file (if it doesn't exist) and opens it for reading.
-    ///
-    /// Because of how LiteDB works (it creates tables as needed), this method simply creates the collection handles
-    /// used later on as records get added to the database.
+    ///     Method to initialize the database reference and content.
+    ///     This method creates the database file (if it doesn't exist) and opens it for reading.
+    ///     Because of how LiteDB works (it creates tables as needed), this method simply creates the collection handles
+    ///     used later on as records get added to the database.
     /// </summary>
     public void Initialize()
     {
@@ -81,7 +83,7 @@ internal class Database
                     DiscordConnectorPlugin.StaticLogger.LogDebug("Created indices on database collections");
                 }).ConfigureAwait(false);
             }
-            catch (System.IO.IOException e)
+            catch (IOException e)
             {
                 DiscordConnectorPlugin.StaticLogger.LogError($"Unable to acquire un-shared access to {DbPath}");
                 DiscordConnectorPlugin.StaticLogger.LogDebug(e.ToString());
@@ -90,7 +92,7 @@ internal class Database
     }
 
     /// <summary>
-    /// Runs EnsureIndex() on each collection, targeting the columns we index on
+    ///     Runs EnsureIndex() on each collection, targeting the columns we index on
     /// </summary>
     private void EnsureIndicesOnCollections()
     {
@@ -109,7 +111,7 @@ internal class Database
     }
 
     /// <summary>
-    /// Closes the database connection nicely.
+    ///     Closes the database connection nicely.
     /// </summary>
     public void Dispose()
     {
@@ -118,17 +120,18 @@ internal class Database
     }
 
     /// <summary>
-    /// Insert a "simple stat" record into the database for the provided collection.
+    ///     Insert a "simple stat" record into the database for the provided collection.
     /// </summary>
     /// <param name="collection">Collection to insert the record into</param>
     /// <param name="playerName">Character name</param>
     /// <param name="playerHostName">Player connection id/hostname</param>
     /// <param name="pos">Position</param>
-    private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, string playerHostName, Vector3 pos)
+    private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName,
+        string playerHostName, Vector3 pos)
     {
         Task.Run(() =>
         {
-            SimpleStat newRecord = new SimpleStat(
+            SimpleStat newRecord = new(
                 playerName,
                 playerHostName,
                 pos.x, pos.y, pos.z
@@ -138,7 +141,7 @@ internal class Database
     }
 
     /// <summary>
-    /// Inserts a record with the player hostname and id into the database, to simplify retrieval at a later date.
+    ///     Inserts a record with the player hostname and id into the database, to simplify retrieval at a later date.
     /// </summary>
     /// <param name="characterName">Player character's name</param>
     /// <param name="playerHostName">Player's connection hostname</param>
@@ -146,7 +149,8 @@ internal class Database
     {
         Task.Run(() =>
         {
-            if (PlayerToNameCollection.Exists(x => x.PlayerId.Equals(playerHostName) && x.CharacterName.Equals(characterName)))
+            if (PlayerToNameCollection.Exists(x =>
+                    x.PlayerId.Equals(playerHostName) && x.CharacterName.Equals(characterName)))
             {
                 // If the player record exists with both playerHostName and characterName, do nothing.
                 return;
@@ -155,28 +159,30 @@ internal class Database
             if (PlayerToNameCollection.Exists(x => x.PlayerId.Equals(playerHostName)))
             {
                 // If the player record exists but only with the playerHostName, a new "latest" name is here
-                DiscordConnectorPlugin.StaticLogger.LogDebug($"Multiple characters from {playerHostName}, latest is {characterName}");
-
+                DiscordConnectorPlugin.StaticLogger.LogDebug(
+                    $"Multiple characters from {playerHostName}, latest is {characterName}");
             }
+
             // Insert the player name record if it doesn't exist
-            PlayerToName newPlayer = new PlayerToName(characterName, playerHostName);
+            PlayerToName newPlayer = new(characterName, playerHostName);
             PlayerToNameCollection.Insert(newPlayer);
         }).ConfigureAwait(false);
     }
 
     /// <summary>
-    /// Insert a "simple stat" record without the position data.
+    ///     Insert a "simple stat" record without the position data.
     /// </summary>
     /// <param name="collection">Collection to insert the record into</param>
     /// <param name="playerName">Character name</param>
     /// <param name="playerHostName">Player connection id/hostname</param>
-    private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName, string playerHostName)
+    private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName,
+        string playerHostName)
     {
         InsertSimpleStatRecord(collection, playerName, playerHostName, Vector3.zero);
     }
 
     /// <summary>
-    /// Insert a simple stat record with position for the provided key into the LiteDB database.
+    ///     Insert a simple stat record with position for the provided key into the LiteDB database.
     /// </summary>
     /// <param name="key">What kind of record to insert</param>
     /// <param name="playerName">Player character name</param>
@@ -209,9 +215,8 @@ internal class Database
     }
 
     /// <summary>
-    /// Insert a simple stat record without position for the provided key into the LiteDB database.
-    ///
-    /// This method simply wraps the positional InsertSimpleStatRecord method.
+    ///     Insert a simple stat record without position for the provided key into the LiteDB database.
+    ///     This method simply wraps the positional InsertSimpleStatRecord method.
     /// </summary>
     /// <param name="key">What kind of record to insert</param>
     /// <param name="playerName">Player character name</param>
@@ -222,11 +227,11 @@ internal class Database
     }
 
     /// <summary>
-    /// Returns the latest known character name for the given player identifier.
-    ///
-    /// This first tries to find the name in the player_name table, and failing that references the join table with a query.
-    /// If it has to use the join table to find the name, if it does find a valid name, it adds a record to the player_name
-    /// table to make future lookups faster.
+    ///     Returns the latest known character name for the given player identifier.
+    ///     This first tries to find the name in the player_name table, and failing that references the join table with a
+    ///     query.
+    ///     If it has to use the join table to find the name, if it does find a valid name, it adds a record to the player_name
+    ///     table to make future lookups faster.
     /// </summary>
     /// <param name="playerHostName">The player's connection host name</param>
     /// <returns>Last known character name of the player</returns>
@@ -253,7 +258,8 @@ internal class Database
             catch (InvalidOperationException)
             {
                 // We should never not find the record, since we check for exists above!
-                DiscordConnectorPlugin.StaticLogger.LogWarning($"Should have found {playerHostName} in player_name table but did not!");
+                DiscordConnectorPlugin.StaticLogger.LogWarning(
+                    $"Should have found {playerHostName} in player_name table but did not!");
             }
         }
 
@@ -268,19 +274,24 @@ internal class Database
         {
             if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods)
             {
-                DiscordConnectorPlugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {playerHostName} result = NONE");
+                DiscordConnectorPlugin.StaticLogger.LogDebug(
+                    $"GetLatestNameForCharacterId {playerHostName} result = NONE");
             }
+
             return "undefined";
         }
+
         if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods)
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug($"nameQuery has {nameQuery.Count} results");
         }
+
         // simplify results to single record
         BsonDocument result = nameQuery[0];
         if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods)
         {
-            DiscordConnectorPlugin.StaticLogger.LogDebug($"GetLatestNameForCharacterId {playerHostName} result = {result}");
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
+                $"GetLatestNameForCharacterId {playerHostName} result = {result}");
         }
 
         Task.Run(() =>
@@ -294,7 +305,7 @@ internal class Database
 
 
     /// <summary>
-    /// Get totals for each player's tracked records
+    ///     Get totals for each player's tracked records
     /// </summary>
     /// <param name="key">Record type to return sums for</param>
     /// <returns>List of results with character names and totals</returns>
@@ -320,25 +331,22 @@ internal class Database
         }
     }
 
-    private struct JoinLeaveTime
-    {
-        public DateTime Time;
-        public bool IsJoin;
-    }
-
     /// <summary>
-    /// Provides time online in seconds for all players within the date range provided. By default, it includes all time.
-    ///
-    /// This looks through the provided simple stat table and counts up time differences between joins and leaves.
+    ///     Provides time online in seconds for all players within the date range provided. By default, it includes all time.
+    ///     This looks through the provided simple stat table and counts up time differences between joins and leaves.
     /// </summary>
     /// <param name="startDate">Date to start including records from</param>
     /// <param name="startDate">Date to stop including records before</param>
-    /// <param name="inclusiveStart">Whether to include the start date or not in the returned results. If true, it will use `>=` for the startDate comparison; otherwise `>`.</param>
-    /// <param name="inclusiveEnd">Whether to include the end date or not in the returned results. If true, it will use `<=` for the startDate comparison; otherwise `<`.</param>
+    /// <param name="inclusiveStart">
+    ///     Whether to include the start date or not in the returned results. If true, it will use
+    ///     `>=` for the startDate comparison; otherwise `>`.
+    /// </param>
+    /// <param name="inclusiveEnd">
+    ///     Whether to include the end date or not in the returned results. If true, it will use `<=` for the startDate comparison; otherwise `<`.</param>
     /// <returns>List of counts with CharacterName and Total (x) for the provided SimpleStat collection.</returns>
-    private List<CountResult> TimeOnlineRecordsGrouped(System.DateTime? startDate = null, System.DateTime? endDate = null, bool inclusiveStart = true, bool inclusiveEnd = true)
+    private List<CountResult> TimeOnlineRecordsGrouped(DateTime? startDate = null, DateTime? endDate = null,
+        bool inclusiveStart = true, bool inclusiveEnd = true)
     {
-
         PlayerToName[] players = PlayerToNameCollection.Query().ToArray();
         List<CountResult> results = new();
 
@@ -347,19 +355,18 @@ internal class Database
             // Create a spot to record total online time for player.
             TimeSpan onlineTime = TimeSpan.FromSeconds(0.0);
 
-            var joinsQuery = JoinCollection.Query().Where(x => x.PlayerId.Equals(player.PlayerId) && x.Name.Equals(player.CharacterName));
-            var leavesQuery = LeaveCollection.Query().Where(x => x.PlayerId.Equals(player.PlayerId) && x.Name.Equals(player.CharacterName));
+            ILiteQueryable<SimpleStat>? joinsQuery = JoinCollection.Query().Where(x =>
+                x.PlayerId.Equals(player.PlayerId) && x.Name.Equals(player.CharacterName));
+            ILiteQueryable<SimpleStat>? leavesQuery = LeaveCollection.Query().Where(x =>
+                x.PlayerId.Equals(player.PlayerId) && x.Name.Equals(player.CharacterName));
 
-            Func<int, bool> startCompare = inclusiveStart ?
-                (x) => x >= 0 :
-                (x) => x > 0;
-            Func<int, bool> endCompare = inclusiveEnd ?
-                (x) => x <= 0 :
-                (x) => x < 0;
+            Func<int, bool> startCompare = inclusiveStart ? x => x >= 0 : x => x > 0;
+            Func<int, bool> endCompare = inclusiveEnd ? x => x <= 0 : x => x < 0;
             if (startDate != null)
             {
                 joinsQuery = joinsQuery.Where(x => startCompare(x.Date.CompareTo(startDate.GetValueOrDefault())));
             }
+
             if (endDate != null)
             {
                 joinsQuery = joinsQuery.Where(x => endCompare(x.Date.CompareTo(endDate.GetValueOrDefault())));
@@ -372,9 +379,10 @@ internal class Database
                 stat => new JoinLeaveTime { Time = stat.Date, IsJoin = false });
             JoinLeaveTime[] sortedJoinLeaves = joins.Concat(leaves).OrderBy(j => j.Time).ToArray();
 
-            DiscordConnectorPlugin.StaticLogger.LogDebug($"{player.PlayerId} as {player.CharacterName} has {joins.Length} joins, {leaves.Length} leaves");
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
+                $"{player.PlayerId} as {player.CharacterName} has {joins.Length} joins, {leaves.Length} leaves");
 
-            System.DateTime? joinedTime = null;
+            DateTime? joinedTime = null;
             foreach (JoinLeaveTime joinLeaveTime in sortedJoinLeaves)
             {
                 if (joinedTime == null)
@@ -386,7 +394,8 @@ internal class Database
                     }
                     else
                     {
-                        DiscordConnectorPlugin.StaticLogger.LogDebug($"Player {player.CharacterName} left at {joinLeaveTime.Time} but was not joined.");
+                        DiscordConnectorPlugin.StaticLogger.LogDebug(
+                            $"Player {player.CharacterName} left at {joinLeaveTime.Time} but was not joined.");
                     }
                 }
                 else
@@ -394,7 +403,8 @@ internal class Database
                     // Player is currently joined, expecting a leave.
                     if (joinLeaveTime.IsJoin)
                     {
-                        DiscordConnectorPlugin.StaticLogger.LogDebug($"Player {player.CharacterName} joined at {joinLeaveTime.Time} but was already joined at {joinedTime}");
+                        DiscordConnectorPlugin.StaticLogger.LogDebug(
+                            $"Player {player.CharacterName} joined at {joinLeaveTime.Time} but was already joined at {joinedTime}");
                         joinedTime = joinLeaveTime.Time;
                     }
                     else
@@ -416,13 +426,11 @@ internal class Database
     }
 
     /// <summary>
-    /// Get the total count of records in the category for the player (by character name).
-    ///
-    /// This can be used to figure out if its the first action the player has taken.
-    ///
-    /// Returns -1 if collecting stats is disabled.
-    /// Returns -2 if the specified category key is invalid
-    /// Returns -3 if the collection in the database has an issue
+    ///     Get the total count of records in the category for the player (by character name).
+    ///     This can be used to figure out if its the first action the player has taken.
+    ///     Returns -1 if collecting stats is disabled.
+    ///     Returns -2 if the specified category key is invalid
+    ///     Returns -3 if the collection in the database has an issue
     /// </summary>
     /// <param name="key"></param>
     /// <param name="playerName"></param>
@@ -433,6 +441,7 @@ internal class Database
         {
             return -1;
         }
+
         switch (key)
         {
             case Categories.Death:
@@ -451,7 +460,7 @@ internal class Database
         }
     }
 
-    public List<CountResult> CountAllRecordsGrouped(string key, Leaderboards.TimeRange timeRange)
+    public List<CountResult> CountAllRecordsGrouped(string key, TimeRange timeRange)
     {
         if (timeRange == TimeRange.AllTime)
         {
@@ -462,27 +471,30 @@ internal class Database
         return CountRecordsBetweenDatesGrouped(key, BeginEndDate.Item1, BeginEndDate.Item2);
     }
 
-    internal List<CountResult> CountRecordsBetweenDatesGrouped(string key, System.DateTime startDate, System.DateTime endDate, bool inclusiveStart = true, bool inclusiveEnd = true)
+    internal List<CountResult> CountRecordsBetweenDatesGrouped(string key, DateTime startDate, DateTime endDate,
+        bool inclusiveStart = true, bool inclusiveEnd = true)
     {
         switch (key)
         {
             case Categories.Death:
-                return CountAllRecordsGroupsWhereDate(DeathCollection, startDate, endDate, inclusiveStart, inclusiveEnd);
+                return CountAllRecordsGroupsWhereDate(DeathCollection, startDate, endDate, inclusiveStart,
+                    inclusiveEnd);
             case Categories.Join:
                 return CountAllRecordsGroupsWhereDate(JoinCollection, startDate, endDate, inclusiveStart, inclusiveEnd);
             case Categories.Leave:
-                return CountAllRecordsGroupsWhereDate(LeaveCollection, startDate, endDate, inclusiveStart, inclusiveEnd);
+                return CountAllRecordsGroupsWhereDate(LeaveCollection, startDate, endDate, inclusiveStart,
+                    inclusiveEnd);
             case Categories.Ping:
                 return CountAllRecordsGroupsWhereDate(PingCollection, startDate, endDate, inclusiveStart, inclusiveEnd);
             case Categories.Shout:
-                return CountAllRecordsGroupsWhereDate(ShoutCollection, startDate, endDate, inclusiveStart, inclusiveEnd);
+                return CountAllRecordsGroupsWhereDate(ShoutCollection, startDate, endDate, inclusiveStart,
+                    inclusiveEnd);
             case Categories.TimeOnline:
                 return TimeOnlineRecordsGrouped(startDate, endDate, inclusiveStart, inclusiveEnd);
             default:
                 DiscordConnectorPlugin.StaticLogger.LogDebug($"CountTodaysRecordsGrouped, invalid key '{key}'");
                 return [];
         }
-
     }
 
     internal int CountOfRecordsByName(ILiteCollection<SimpleStat> collection, string playerName)
@@ -501,9 +513,9 @@ internal class Database
     }
 
     /// <summary>
-    /// Return a list of leaders for the collection.
-    ///
-    /// This looks through the provided simple stat table and counts up results for each player using the method defined in the config.
+    ///     Return a list of leaders for the collection.
+    ///     This looks through the provided simple stat table and counts up results for each player using the method defined in
+    ///     the config.
     /// </summary>
     /// <param name="collection">Simple stat collection to count player totals in</param>
     /// <returns>List of counts with CharacterName and Total (x) for the provided SimpleStat collection.</returns>
@@ -511,7 +523,8 @@ internal class Database
     {
         if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods)
         {
-            DiscordConnectorPlugin.StaticLogger.LogDebug($"CountAllRecordsGrouped {DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod}");
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
+                $"CountAllRecordsGrouped {DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod}");
         }
 
         if (collection.Count() == 0)
@@ -520,6 +533,7 @@ internal class Database
             {
                 DiscordConnectorPlugin.StaticLogger.LogDebug("Collection is empty, skipping.");
             }
+
             return [];
         }
 
@@ -527,12 +541,15 @@ internal class Database
         string GroupByClause = "PlayerId";
         string SelectClause = "{Player: @Key, Count: Count(*)}";
 
-        if (DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod == Config.MainConfig.RetrievalDiscernmentMethods.NameAndPlayerId)
+        if (DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod ==
+            MainConfig.RetrievalDiscernmentMethods.NameAndPlayerId)
         {
             GroupByClause = "{Name,PlayerId}";
             SelectClause = "{NamePlayer: @Key, Count: COUNT(*)}";
         }
-        if (DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod == Config.MainConfig.RetrievalDiscernmentMethods.Name)
+
+        if (DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod ==
+            MainConfig.RetrievalDiscernmentMethods.Name)
         {
             GroupByClause = "Name";
             SelectClause = "{Name: @Key, Count: Count(*)}";
@@ -555,21 +572,27 @@ internal class Database
 
 
     /// <summary>
-    /// Provides count summaries for the collection within the date range provided. By default, it includes the start date.
-    ///
-    /// This looks through the provided simple stat table and counts up results for each player using the method defined in the config.
+    ///     Provides count summaries for the collection within the date range provided. By default, it includes the start date.
+    ///     This looks through the provided simple stat table and counts up results for each player using the method defined in
+    ///     the config.
     /// </summary>
     /// <param name="collection">Simple stat collection to count player totals in</param>
     /// <param name="startDate">Date to start including records from</param>
     /// <param name="startDate">Date to stop including records before</param>
-    /// <param name="inclusiveStart">Whether to include the start date or not in the returned results. If true, it will use `>=` for the startDate comparison; otherwise `>`.</param>
-    /// <param name="inclusiveEnd">Whether to include the end date or not in the returned results. If true, it will use `<=` for the startDate comparison; otherwise `<`.</param>
+    /// <param name="inclusiveStart">
+    ///     Whether to include the start date or not in the returned results. If true, it will use
+    ///     `>=` for the startDate comparison; otherwise `>`.
+    /// </param>
+    /// <param name="inclusiveEnd">
+    ///     Whether to include the end date or not in the returned results. If true, it will use `<=` for the startDate comparison; otherwise `<`.</param>
     /// <returns>List of counts with CharacterName and Total (x) for the provided SimpleStat collection.</returns>
-    internal List<CountResult> CountAllRecordsGroupsWhereDate(ILiteCollection<SimpleStat> collection, System.DateTime startDate, System.DateTime endDate, bool inclusiveStart = true, bool inclusiveEnd = true)
+    internal List<CountResult> CountAllRecordsGroupsWhereDate(ILiteCollection<SimpleStat> collection,
+        DateTime startDate, DateTime endDate, bool inclusiveStart = true, bool inclusiveEnd = true)
     {
         if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods)
         {
-            DiscordConnectorPlugin.StaticLogger.LogDebug($"CountAllRecordsGroupsWhereDate {DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod} {startDate} {endDate}");
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
+                $"CountAllRecordsGroupsWhereDate {DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod} {startDate} {endDate}");
         }
 
         if (collection.Count() == 0)
@@ -578,6 +601,7 @@ internal class Database
             {
                 DiscordConnectorPlugin.StaticLogger.LogDebug("Collection is empty, skipping.");
             }
+
             return [];
         }
 
@@ -585,12 +609,15 @@ internal class Database
         string GroupByClause = "PlayerId";
         string SelectClause = "{Player: @Key, Count: Count(*)}";
 
-        if (DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod == Config.MainConfig.RetrievalDiscernmentMethods.NameAndPlayerId)
+        if (DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod ==
+            MainConfig.RetrievalDiscernmentMethods.NameAndPlayerId)
         {
             GroupByClause = "{Name,PlayerId}";
             SelectClause = "{NamePlayer: @Key, Count: COUNT(*)}";
         }
-        if (DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod == Config.MainConfig.RetrievalDiscernmentMethods.Name)
+
+        if (DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod ==
+            MainConfig.RetrievalDiscernmentMethods.Name)
         {
             GroupByClause = "Name";
             SelectClause = "{Name: @Key, Count: Count(*)}";
@@ -603,11 +630,11 @@ internal class Database
                 collection.Query()
                     // Filter to dates inclusively
                     .Where(x => x.Date.Year >= startDate.Date.Year
-                        && x.Date.Month >= startDate.Date.Month
-                        && x.Date.Day >= startDate.Date.Day
-                        && x.Date.Year <= endDate.Date.Year
-                        && x.Date.Month <= endDate.Date.Month
-                        && x.Date.Day <= endDate.Date.Day)
+                                && x.Date.Month >= startDate.Date.Month
+                                && x.Date.Day >= startDate.Date.Day
+                                && x.Date.Year <= endDate.Date.Year
+                                && x.Date.Month <= endDate.Date.Month
+                                && x.Date.Day <= endDate.Date.Day)
                     .GroupBy(GroupByClause)
                     .Select(SelectClause)
                     .ToList()
@@ -619,11 +646,11 @@ internal class Database
                 collection.Query()
                     // Filter to dates: end date inclusively, start date exclusively
                     .Where(x => x.Date.Year > startDate.Date.Year
-                        && x.Date.Month > startDate.Date.Month
-                        && x.Date.Day > startDate.Date.Day
-                        && x.Date.Year <= endDate.Date.Year
-                        && x.Date.Month <= endDate.Date.Month
-                        && x.Date.Day <= endDate.Date.Day)
+                                && x.Date.Month > startDate.Date.Month
+                                && x.Date.Day > startDate.Date.Day
+                                && x.Date.Year <= endDate.Date.Year
+                                && x.Date.Month <= endDate.Date.Month
+                                && x.Date.Day <= endDate.Date.Day)
                     .GroupBy(GroupByClause)
                     .Select(SelectClause)
                     .ToList()
@@ -635,11 +662,11 @@ internal class Database
                 collection.Query()
                     // Filter to dates: start date inclusively, end date exclusively
                     .Where(x => x.Date.Year >= startDate.Date.Year
-                        && x.Date.Month >= startDate.Date.Month
-                        && x.Date.Day >= startDate.Date.Day
-                        && x.Date.Year < endDate.Date.Year
-                        && x.Date.Month < endDate.Date.Month
-                        && x.Date.Day < endDate.Date.Day)
+                                && x.Date.Month >= startDate.Date.Month
+                                && x.Date.Day >= startDate.Date.Day
+                                && x.Date.Year < endDate.Date.Year
+                                && x.Date.Month < endDate.Date.Month
+                                && x.Date.Day < endDate.Date.Day)
                     .GroupBy(GroupByClause)
                     .Select(SelectClause)
                     .ToList()
@@ -651,11 +678,11 @@ internal class Database
                 collection.Query()
                     // Filter to dates exclusively
                     .Where(x => x.Date.Year > startDate.Date.Year
-                        && x.Date.Month > startDate.Date.Month
-                        && x.Date.Day > startDate.Date.Day
-                        && x.Date.Year < endDate.Date.Year
-                        && x.Date.Month < endDate.Date.Month
-                        && x.Date.Day < endDate.Date.Day)
+                                && x.Date.Month > startDate.Date.Month
+                                && x.Date.Day > startDate.Date.Day
+                                && x.Date.Year < endDate.Date.Year
+                                && x.Date.Month < endDate.Date.Month
+                                && x.Date.Day < endDate.Date.Day)
                     .GroupBy(GroupByClause)
                     .Select(SelectClause)
                     .ToList()
@@ -664,12 +691,16 @@ internal class Database
 
         if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods)
         {
-            DiscordConnectorPlugin.StaticLogger.LogDebug($"CountAllRecordsGroupsWhereDate {result.Count} records returned");
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
+                $"CountAllRecordsGroupsWhereDate {result.Count} records returned");
         }
 
         return result;
-
     }
 
-
+    private struct JoinLeaveTime
+    {
+        public DateTime Time;
+        public bool IsJoin;
+    }
 }

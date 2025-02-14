@@ -1,50 +1,39 @@
-﻿using BepInEx.Configuration;
+﻿using System;
+using BepInEx.Configuration;
+using DiscordConnector.Leaderboards;
 
 namespace DiscordConnector.Config;
+
 internal class LeaderBoardConfigValues
 {
-    // Each leader board has these values to configure
-    public ConfigEntry<Leaderboards.Ordering> type;
-    public ConfigEntry<Leaderboards.TimeRange> timeRange;
-    public ConfigEntry<int> numberListings;
-    public ConfigEntry<bool> enabled;
-    public ConfigEntry<int> periodInMinutes;
-    public ConfigEntry<bool> deaths;
-    public ConfigEntry<bool> sessions;
-    public ConfigEntry<bool> shouts;
-    public ConfigEntry<bool> pings;
-    public ConfigEntry<bool> timeOnline;
-    public ConfigEntry<string> displayedHeading;
-
     public const string EnabledTitle = "Enabled";
     public const bool EnabledDefault = false;
     public const string EnableDescription = "Enable or disable this leader board.";
 
     public const string TimeRangeTitle = "Leader Board Time Range";
-    public const Leaderboards.TimeRange TimeRangeDefault = Leaderboards.TimeRange.AllTime;
-    public const string TimeRangeDescription = "A more restrictive filter of time can be applied to the leader board. This restricts it to tally up statistics within the range specified.";
-    public static readonly string TimeRangeDescription1 = $"{Leaderboards.TimeRange.AllTime}: Apply no time restriction to the leader board, use all available records.";
-    public static readonly string TimeRangeDescription2 = $"{Leaderboards.TimeRange.Today}: Restrict leader board to recorded events from today.";
-    public static readonly string TimeRangeDescription3 = $"{Leaderboards.TimeRange.Yesterday}: Restrict leader board to recorded events from yesterday.";
-    public static readonly string TimeRangeDescription4 = $"{Leaderboards.TimeRange.PastWeek}: Restrict leader board to recorded events from the past week (including today).";
-    public static readonly string TimeRangeDescription5 = $"{Leaderboards.TimeRange.WeekSundayToSaturday}: Restrict leader board to recorded events from the current week, beginning on Sunday and ending Saturday.";
-    public static readonly string TimeRangeDescription6 = $"{Leaderboards.TimeRange.WeekMondayToSunday}: Restrict leader board to recorded events from the current week, beginning on Monday and ending Sunday.";
+    public const TimeRange TimeRangeDefault = TimeRange.AllTime;
+
+    public const string TimeRangeDescription =
+        "A more restrictive filter of time can be applied to the leader board. This restricts it to tally up statistics within the range specified.";
 
     public const string NumberListingsTitle = "Number of Rankings";
     public const int NumberListingsDefault = 3;
-    public const string NumberListingsDescription = "Specify a number of places in the leader board. Setting this can help prevent a very long leader board in the case of active servers.";
-    public static readonly string NumberListingsDescription1 = $"Setting to 0 (zero) results in limiting to the hard-coded maximum of {LeaderbBoard.MAX_LEADER_BOARD_SIZE}.";
+
+    public const string NumberListingsDescription =
+        "Specify a number of places in the leader board. Setting this can help prevent a very long leader board in the case of active servers.";
 
     public const string TypeTitle = "Type";
-    public const Leaderboards.Ordering TypeDefault = Leaderboards.Ordering.Descending;
+    public const Ordering TypeDefault = Ordering.Descending;
     public const string TypeDescription = "Choose what type of leader board this should be. There are 2 options:";
-    public static readonly string TypeDescription1 = $"{Leaderboards.Ordering.Descending}:\"Number of Rankings\" players (with at least 1 record) are listed in descending order";
-    public static readonly string TypeDescription2 = $"{Leaderboards.Ordering.Ascending}:  \"Number of Rankings\" players (with at least 1 record) are listed in ascending order";
 
     public const string PeriodTitle = "Sending Period";
     public const int PeriodDefault = 600;
-    public const string PeriodDescription = "Set the number of minutes between a leader board announcement sent to discord.";
-    public const string PeriodDescription1 = "This timer starts when the server is started. Default is set to 10 hours (600 minutes).";
+
+    public const string PeriodDescription =
+        "Set the number of minutes between a leader board announcement sent to discord.";
+
+    public const string PeriodDescription1 =
+        "This timer starts when the server is started. Default is set to 10 hours (600 minutes).";
 
     public const string DeathsTitle = "Death Statistics";
     public const bool DeathsDefault = true;
@@ -64,15 +53,61 @@ internal class LeaderBoardConfigValues
 
     public const string TimeOnlineTitle = "Time Online Statistics";
     public const bool TimeOnlineDefault = false;
-    public const string TimeOnlineDescription = "If enabled, player online time statistics will be part of the leader board.";
+
+    public const string TimeOnlineDescription =
+        "If enabled, player online time statistics will be part of the leader board.";
 
     public const string DisplayedHeadingTitle = "Leader Board Heading";
     public const string DisplayedHeadingDescription = "Define the heading message to display with this leader board.";
-    public const string DisplayedHeadingDescription1 = "Include %N% to dynamically reference the value in \"Number of Rankings\"";
+
+    public const string DisplayedHeadingDescription1 =
+        "Include %N% to dynamically reference the value in \"Number of Rankings\"";
+
+    public static readonly string TimeRangeDescription1 =
+        $"{TimeRange.AllTime}: Apply no time restriction to the leader board, use all available records.";
+
+    public static readonly string TimeRangeDescription2 =
+        $"{TimeRange.Today}: Restrict leader board to recorded events from today.";
+
+    public static readonly string TimeRangeDescription3 =
+        $"{TimeRange.Yesterday}: Restrict leader board to recorded events from yesterday.";
+
+    public static readonly string TimeRangeDescription4 =
+        $"{TimeRange.PastWeek}: Restrict leader board to recorded events from the past week (including today).";
+
+    public static readonly string TimeRangeDescription5 =
+        $"{TimeRange.WeekSundayToSaturday}: Restrict leader board to recorded events from the current week, beginning on Sunday and ending Saturday.";
+
+    public static readonly string TimeRangeDescription6 =
+        $"{TimeRange.WeekMondayToSunday}: Restrict leader board to recorded events from the current week, beginning on Monday and ending Sunday.";
+
+    public static readonly string NumberListingsDescription1 =
+        $"Setting to 0 (zero) results in limiting to the hard-coded maximum of {LeaderbBoard.MAX_LEADER_BOARD_SIZE}.";
+
+    public static readonly string TypeDescription1 =
+        $"{Ordering.Descending}:\"Number of Rankings\" players (with at least 1 record) are listed in descending order";
+
+    public static readonly string TypeDescription2 =
+        $"{Ordering.Ascending}:  \"Number of Rankings\" players (with at least 1 record) are listed in ascending order";
+
+    public ConfigEntry<bool> deaths;
+    public ConfigEntry<string> displayedHeading;
+    public ConfigEntry<bool> enabled;
+    public ConfigEntry<int> numberListings;
+    public ConfigEntry<int> periodInMinutes;
+    public ConfigEntry<bool> pings;
+    public ConfigEntry<bool> sessions;
+    public ConfigEntry<bool> shouts;
+    public ConfigEntry<bool> timeOnline;
+
+    public ConfigEntry<TimeRange> timeRange;
+
+    // Each leader board has these values to configure
+    public ConfigEntry<Ordering> type;
 
     public LeaderBoardConfigValues(ConfigFile config, string header)
     {
-        enabled = config.Bind<bool>(header,
+        enabled = config.Bind(header,
             EnabledTitle,
             EnabledDefault,
             EnableDescription);
@@ -80,66 +115,66 @@ internal class LeaderBoardConfigValues
         displayedHeading = config.Bind<string>(header,
             DisplayedHeadingTitle,
             $"{header} Statistic Leader Board",
-            DisplayedHeadingDescription + System.Environment.NewLine +
+            DisplayedHeadingDescription + Environment.NewLine +
             DisplayedHeadingDescription1);
 
-        timeRange = config.Bind<Leaderboards.TimeRange>(header,
+        timeRange = config.Bind(header,
             TimeRangeTitle,
             TimeRangeDefault,
-            TimeRangeDescription + System.Environment.NewLine +
-            TimeRangeDescription1 + System.Environment.NewLine +
-            TimeRangeDescription2 + System.Environment.NewLine +
-            TimeRangeDescription3 + System.Environment.NewLine +
-            TimeRangeDescription4 + System.Environment.NewLine +
-            TimeRangeDescription5 + System.Environment.NewLine +
+            TimeRangeDescription + Environment.NewLine +
+            TimeRangeDescription1 + Environment.NewLine +
+            TimeRangeDescription2 + Environment.NewLine +
+            TimeRangeDescription3 + Environment.NewLine +
+            TimeRangeDescription4 + Environment.NewLine +
+            TimeRangeDescription5 + Environment.NewLine +
             TimeRangeDescription6
-            );
+        );
 
-        periodInMinutes = config.Bind<int>(header,
+        periodInMinutes = config.Bind(header,
             PeriodTitle,
             PeriodDefault,
-            PeriodDescription + System.Environment.NewLine +
+            PeriodDescription + Environment.NewLine +
             PeriodDescription1
         );
 
-        type = config.Bind<Leaderboards.Ordering>(header,
+        type = config.Bind(header,
             TypeTitle,
             TypeDefault,
-            TypeDescription + System.Environment.NewLine +
-            TypeDescription1 + System.Environment.NewLine +
+            TypeDescription + Environment.NewLine +
+            TypeDescription1 + Environment.NewLine +
             TypeDescription2
         );
 
-        numberListings = config.Bind<int>(header,
+        numberListings = config.Bind(header,
             NumberListingsTitle,
             NumberListingsDefault,
             new ConfigDescription(
-                NumberListingsDescription + System.Environment.NewLine +
+                NumberListingsDescription + Environment.NewLine +
                 NumberListingsDescription1,
-            new AcceptableValueRange<int>(0, LeaderbBoard.MAX_LEADER_BOARD_SIZE * 3)
-        ));
+                new AcceptableValueRange<int>(0, LeaderbBoard.MAX_LEADER_BOARD_SIZE * 3)
+            ));
 
-        deaths = config.Bind<bool>(header,
+        deaths = config.Bind(header,
             DeathsTitle,
             DeathsDefault,
             DeathsDescription);
 
-        sessions = config.Bind<bool>(header,
+        sessions = config.Bind(header,
             SessionsTitle,
             SessionsDefault,
             SessionsDescription);
 
-        shouts = config.Bind<bool>(header,
+        shouts = config.Bind(header,
             ShoutsTitle,
             ShoutsDefault,
             ShoutsDescription);
 
-        pings = config.Bind<bool>(header,
+        pings = config.Bind(header,
             PingsTitle,
             PingsDefault,
             PingsDescription);
 
-        timeOnline = config.Bind<bool>(header,
+        timeOnline = config.Bind(header,
             TimeOnlineTitle,
             TimeOnlineDefault,
             TimeOnlineDescription);
@@ -166,20 +201,20 @@ internal class LeaderBoardConfigValues
 
 public class LeaderBoardConfigReference
 {
-    public Leaderboards.Ordering Type;
-    public Leaderboards.TimeRange TimeRange;
-    public int NumberListings;
-    public bool Enabled;
-    public int PeriodInMinutes;
     public bool Deaths;
+    public string DisplayedHeading;
+    public bool Enabled;
+    public int NumberListings;
+    public int PeriodInMinutes;
+    public bool Pings;
     public bool Sessions;
     public bool Shouts;
-    public bool Pings;
     public bool TimeOnline;
-    public string DisplayedHeading;
+    public TimeRange TimeRange;
+    public Ordering Type;
 
     /// <summary>
-    /// The event to use when sending to the webhook.
+    ///     The event to use when sending to the webhook.
     /// </summary>
     public Webhook.Event WebhookEvent;
 }

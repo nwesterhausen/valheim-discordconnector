@@ -1,11 +1,9 @@
 ﻿using BepInEx.Configuration;
+
 namespace DiscordConnector.Config;
+
 internal class LeaderBoardConfig
 {
-    private static ConfigFile config;
-
-    public static string ConfigExtension = "leaderBoards";
-
     // config header strings
     private const string LEADER_BOARD_1 = "LeaderBoard.1";
     private const string LEADER_BOARD_2 = "LeaderBoard.2";
@@ -13,6 +11,10 @@ internal class LeaderBoardConfig
     private const string LEADER_BOARD_4 = "LeaderBoard.4";
     private const string LEADER_BOARD_5 = "LeaderBoard.5";
     private const string ACTIVE_PLAYERS = "ActivePlayers.Announcement";
+    private static ConfigFile config;
+
+    public static string ConfigExtension = "leaderBoards";
+    private ActivePlayersAnnouncementConfig activePlayersAnnouncementConfig;
 
     // Config Definitions
     private LeaderBoardConfigValues leaderBoard1;
@@ -20,8 +22,6 @@ internal class LeaderBoardConfig
     private LeaderBoardConfigValues leaderBoard3;
     private LeaderBoardConfigValues leaderBoard4;
     private LeaderBoardConfigValues leaderBoard5;
-    private LeaderBoardConfigReference[] _leaderBoards;
-    private ActivePlayersAnnouncementConfig activePlayersAnnouncementConfig;
 
     public LeaderBoardConfig(ConfigFile configFile)
     {
@@ -29,11 +29,17 @@ internal class LeaderBoardConfig
         LoadConfig();
     }
 
+    // Variables
+    public LeaderBoardConfigReference[] LeaderBoards { get; private set; }
+
+    public ActivePlayersAnnouncementConfigValues ActivePlayersAnnouncement => activePlayersAnnouncementConfig.Value;
+
     public void ReloadConfig()
     {
         config.Reload();
         config.Save();
     }
+
     private void LoadConfig()
     {
         leaderBoard1 = new LeaderBoardConfigValues(config, LEADER_BOARD_1);
@@ -44,13 +50,17 @@ internal class LeaderBoardConfig
         activePlayersAnnouncementConfig = new ActivePlayersAnnouncementConfig(config, ACTIVE_PLAYERS);
 
         config.Save();
-        _leaderBoards = new LeaderBoardConfigReference[]{
+        LeaderBoards = new[]
+        {
             new LeaderBoardConfigReference
             {
                 Type = leaderBoard1.type.Value,
                 TimeRange = leaderBoard1.timeRange.Value,
                 DisplayedHeading = leaderBoard1.displayedHeading.Value,
-                NumberListings = leaderBoard1.numberListings.Value == 0 ? LeaderbBoard.MAX_LEADER_BOARD_SIZE : leaderBoard1.numberListings.Value,
+                NumberListings =
+                    leaderBoard1.numberListings.Value == 0
+                        ? LeaderbBoard.MAX_LEADER_BOARD_SIZE
+                        : leaderBoard1.numberListings.Value,
                 Enabled = leaderBoard1.enabled.Value,
                 PeriodInMinutes = leaderBoard1.periodInMinutes.Value,
                 Deaths = leaderBoard1.deaths.Value,
@@ -58,14 +68,17 @@ internal class LeaderBoardConfig
                 Shouts = leaderBoard1.shouts.Value,
                 Pings = leaderBoard1.pings.Value,
                 TimeOnline = leaderBoard1.timeOnline.Value,
-                WebhookEvent = Webhook.Event.Leaderboard1,
+                WebhookEvent = Webhook.Event.Leaderboard1
             },
             new LeaderBoardConfigReference
             {
                 Type = leaderBoard2.type.Value,
                 TimeRange = leaderBoard2.timeRange.Value,
                 DisplayedHeading = leaderBoard2.displayedHeading.Value,
-                NumberListings = leaderBoard2.numberListings.Value == 0 ? LeaderbBoard.MAX_LEADER_BOARD_SIZE : leaderBoard2.numberListings.Value,
+                NumberListings =
+                    leaderBoard2.numberListings.Value == 0
+                        ? LeaderbBoard.MAX_LEADER_BOARD_SIZE
+                        : leaderBoard2.numberListings.Value,
                 Enabled = leaderBoard2.enabled.Value,
                 PeriodInMinutes = leaderBoard2.periodInMinutes.Value,
                 Deaths = leaderBoard2.deaths.Value,
@@ -73,14 +86,17 @@ internal class LeaderBoardConfig
                 Shouts = leaderBoard2.shouts.Value,
                 Pings = leaderBoard2.pings.Value,
                 TimeOnline = leaderBoard2.timeOnline.Value,
-                WebhookEvent = Webhook.Event.Leaderboard2,
+                WebhookEvent = Webhook.Event.Leaderboard2
             },
             new LeaderBoardConfigReference
             {
                 Type = leaderBoard3.type.Value,
                 TimeRange = leaderBoard3.timeRange.Value,
                 DisplayedHeading = leaderBoard3.displayedHeading.Value,
-                NumberListings = leaderBoard3.numberListings.Value == 0 ? LeaderbBoard.MAX_LEADER_BOARD_SIZE : leaderBoard3.numberListings.Value,
+                NumberListings =
+                    leaderBoard3.numberListings.Value == 0
+                        ? LeaderbBoard.MAX_LEADER_BOARD_SIZE
+                        : leaderBoard3.numberListings.Value,
                 Enabled = leaderBoard3.enabled.Value,
                 PeriodInMinutes = leaderBoard3.periodInMinutes.Value,
                 Deaths = leaderBoard3.deaths.Value,
@@ -88,14 +104,17 @@ internal class LeaderBoardConfig
                 Shouts = leaderBoard3.shouts.Value,
                 Pings = leaderBoard3.pings.Value,
                 TimeOnline = leaderBoard3.timeOnline.Value,
-                WebhookEvent = Webhook.Event.Leaderboard3,
+                WebhookEvent = Webhook.Event.Leaderboard3
             },
             new LeaderBoardConfigReference
             {
                 Type = leaderBoard4.type.Value,
                 TimeRange = leaderBoard4.timeRange.Value,
                 DisplayedHeading = leaderBoard4.displayedHeading.Value,
-                NumberListings = leaderBoard4.numberListings.Value == 0 ? LeaderbBoard.MAX_LEADER_BOARD_SIZE : leaderBoard4.numberListings.Value,
+                NumberListings =
+                    leaderBoard4.numberListings.Value == 0
+                        ? LeaderbBoard.MAX_LEADER_BOARD_SIZE
+                        : leaderBoard4.numberListings.Value,
                 Enabled = leaderBoard4.enabled.Value,
                 PeriodInMinutes = leaderBoard4.periodInMinutes.Value,
                 Deaths = leaderBoard4.deaths.Value,
@@ -103,14 +122,17 @@ internal class LeaderBoardConfig
                 Shouts = leaderBoard4.shouts.Value,
                 Pings = leaderBoard4.pings.Value,
                 TimeOnline = leaderBoard4.timeOnline.Value,
-                WebhookEvent = Webhook.Event.Leaderboard4,
+                WebhookEvent = Webhook.Event.Leaderboard4
             },
             new LeaderBoardConfigReference
             {
                 Type = leaderBoard5.type.Value,
                 TimeRange = leaderBoard5.timeRange.Value,
                 DisplayedHeading = leaderBoard5.displayedHeading.Value,
-                NumberListings = leaderBoard5.numberListings.Value == 0 ? LeaderbBoard.MAX_LEADER_BOARD_SIZE : leaderBoard5.numberListings.Value,
+                NumberListings =
+                    leaderBoard5.numberListings.Value == 0
+                        ? LeaderbBoard.MAX_LEADER_BOARD_SIZE
+                        : leaderBoard5.numberListings.Value,
                 Enabled = leaderBoard5.enabled.Value,
                 PeriodInMinutes = leaderBoard5.periodInMinutes.Value,
                 Deaths = leaderBoard5.deaths.Value,
@@ -118,9 +140,9 @@ internal class LeaderBoardConfig
                 Shouts = leaderBoard5.shouts.Value,
                 Pings = leaderBoard5.pings.Value,
                 TimeOnline = leaderBoard5.timeOnline.Value,
-                WebhookEvent = Webhook.Event.Leaderboard5,
-            }};
-
+                WebhookEvent = Webhook.Event.Leaderboard5
+            }
+        };
     }
 
     public string ConfigAsJson()
@@ -135,7 +157,4 @@ internal class LeaderBoardConfig
         jsonString += "}";
         return jsonString;
     }
-    // Variables
-    public LeaderBoardConfigReference[] LeaderBoards => _leaderBoards;
-    public ActivePlayersAnnouncementConfigValues ActivePlayersAnnouncement => activePlayersAnnouncementConfig.Value;
 }

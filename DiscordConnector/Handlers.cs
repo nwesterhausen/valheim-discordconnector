@@ -1,16 +1,18 @@
 ﻿using System.Collections.Generic;
+using DiscordConnector.Records;
 using UnityEngine;
 
 namespace DiscordConnector;
+
 internal static class Handlers
 {
     /// <summary>
-    /// Track players on the server using their host names, e.g. Steam_109248510103 or XBox_2091010148
+    ///     Track players on the server using their host names, e.g. Steam_109248510103 or XBox_2091010148
     /// </summary>
-    public static HashSet<string> joinedPlayers = new HashSet<string>();
+    public static HashSet<string> joinedPlayers = new();
 
     /// <summary>
-    /// Perform the necessary steps for a player joining the server.
+    ///     Perform the necessary steps for a player joining the server.
     /// </summary>
     public static void Join(ZNetPeer peer)
     {
@@ -19,6 +21,7 @@ internal static class Handlers
             DiscordConnectorPlugin.StaticLogger.LogDebug("Handler:Join - Guarded against null peer");
             return;
         }
+
         // - If it's their first time:
         //     a. If first join announcements are enabled:
         //         i. Send a first join announcement to Discord
@@ -41,18 +44,20 @@ internal static class Handlers
             // m_characterID id=0 means dead, user_id always matches peer.m_uid
             if (peer.m_characterID.ID != 0)
             {
-                Handlers.Death(peer);
+                Death(peer);
             }
 
             return;
         }
 
-        DiscordConnectorPlugin.StaticLogger.LogDebug($"Added player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) to joined player list.");
+        DiscordConnectorPlugin.StaticLogger.LogDebug(
+            $"Added player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) to joined player list.");
 
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time joining announcements are enabled and we have no record of the player joining, set the message content to the first time join announcement
-        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstJoinEnabled && DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Join, peer.m_playerName) == 0)
+        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstJoinEnabled &&
+            DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Categories.Join, peer.m_playerName) == 0)
         {
             preFormattedMessage = DiscordConnectorPlugin.StaticConfig.PlayerFirstJoinMessage;
             ev = Webhook.Event.PlayerFirstJoin;
@@ -67,7 +72,8 @@ internal static class Handlers
         // If recording player join statistics is enabled, save a record of player joining
         if (DiscordConnectorPlugin.StaticConfig.StatsJoinEnabled)
         {
-            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Join, peer.m_playerName, playerHostName, peer.m_refPos);
+            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Categories.Join, peer.m_playerName,
+                playerHostName, peer.m_refPos);
         }
 
 
@@ -77,11 +83,12 @@ internal static class Handlers
             return;
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, DiscordConnectorPlugin.StaticConfig.PlayerJoinPosEnabled, ev);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage,
+            DiscordConnectorPlugin.StaticConfig.PlayerJoinPosEnabled, ev);
     }
 
     /// <summary>
-    /// Perform the necessary steps for a player leaving the server.
+    ///     Perform the necessary steps for a player leaving the server.
     /// </summary>
     public static void Leave(ZNetPeer peer)
     {
@@ -90,6 +97,7 @@ internal static class Handlers
             DiscordConnectorPlugin.StaticLogger.LogDebug("Handler:Leave - Guarded against null peer");
             return;
         }
+
         // - If it's their first time:
         //     a. If first leave announcements are enabled:
         //         i. Send a first leave announcement to Discord
@@ -106,16 +114,19 @@ internal static class Handlers
         // Try removing the player to the joinedPlayers list. If we couldn't remove them, then do nothing.
         if (!joinedPlayers.Remove(playerHostName))
         {
-            DiscordConnectorPlugin.StaticLogger.LogDebug($"{playerHostName} did not exist in the list of joined players!");
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
+                $"{playerHostName} did not exist in the list of joined players!");
             return;
         }
 
-        DiscordConnectorPlugin.StaticLogger.LogDebug($"Removed player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) from joined player list.");
+        DiscordConnectorPlugin.StaticLogger.LogDebug(
+            $"Removed player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) from joined player list.");
 
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time leaving announcements are enabled and we have no record of the player leaving, set the message content to the first time leave announcement
-        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstLeaveEnabled && DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Leave, peer.m_playerName) == 0)
+        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstLeaveEnabled &&
+            DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Categories.Leave, peer.m_playerName) == 0)
         {
             preFormattedMessage = DiscordConnectorPlugin.StaticConfig.PlayerFirstLeaveMessage;
             ev = Webhook.Event.PlayerFirstLeave;
@@ -130,7 +141,8 @@ internal static class Handlers
         // If recording player leave statistics is enabled, save a record of player leaving
         if (DiscordConnectorPlugin.StaticConfig.StatsLeaveEnabled)
         {
-            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Leave, peer.m_playerName, playerHostName, peer.m_refPos);
+            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Categories.Leave, peer.m_playerName,
+                playerHostName, peer.m_refPos);
         }
 
 
@@ -140,11 +152,12 @@ internal static class Handlers
             return;
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, DiscordConnectorPlugin.StaticConfig.PlayerLeavePosEnabled, ev);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage,
+            DiscordConnectorPlugin.StaticConfig.PlayerLeavePosEnabled, ev);
     }
 
     /// <summary>
-    /// Perform the necessary steps for a player dying on the server.
+    ///     Perform the necessary steps for a player dying on the server.
     /// </summary>
     public static void Death(ZNetPeer peer)
     {
@@ -153,6 +166,7 @@ internal static class Handlers
             DiscordConnectorPlugin.StaticLogger.LogDebug("Handler:Death - Guarded against null peer");
             return;
         }
+
         // - If it's their first time:
         //     a. If first death announcements are enabled:
         //         i. Send a first death announcement to Discord
@@ -169,7 +183,8 @@ internal static class Handlers
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time dying announcements are enabled and we have no record of the player dying, set the message content to the first time death announcement
-        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstDeathEnabled && DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Death, peer.m_playerName) == 0)
+        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstDeathEnabled &&
+            DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Categories.Death, peer.m_playerName) == 0)
         {
             preFormattedMessage = DiscordConnectorPlugin.StaticConfig.PlayerFirstDeathMessage;
             ev = Webhook.Event.PlayerFirstDeath;
@@ -182,9 +197,9 @@ internal static class Handlers
 
         if (DiscordConnectorPlugin.StaticConfig.StatsDeathEnabled)
         {
-            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Death, peer.m_playerName, playerHostName, peer.m_refPos);
+            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Categories.Death, peer.m_playerName,
+                playerHostName, peer.m_refPos);
         }
-
 
 
         // If sending messages for players dying is completely disabled
@@ -193,11 +208,12 @@ internal static class Handlers
             return;
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, DiscordConnectorPlugin.StaticConfig.PlayerDeathPosEnabled, ev);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage,
+            DiscordConnectorPlugin.StaticConfig.PlayerDeathPosEnabled, ev);
     }
 
     /// <summary>
-    /// Perform the necessary steps for a player pinging on the server.
+    ///     Perform the necessary steps for a player pinging on the server.
     /// </summary>
     public static void Ping(ZNetPeer peer, Vector3 pos)
     {
@@ -206,6 +222,7 @@ internal static class Handlers
             DiscordConnectorPlugin.StaticLogger.LogDebug("Handler:Ping - Guarded against null peer");
             return;
         }
+
         // - If it's their first time:
         //     a. If first ping announcements are enabled:
         //         i. Send a first ping announcement to Discord
@@ -222,7 +239,8 @@ internal static class Handlers
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time pinging announcements are enabled and we have no record of the player pinging, set the message content to the first time ping announcement
-        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstPingEnabled && DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Ping, peer.m_playerName) == 0)
+        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstPingEnabled &&
+            DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Categories.Ping, peer.m_playerName) == 0)
         {
             preFormattedMessage = DiscordConnectorPlugin.StaticConfig.PlayerFirstPingMessage;
             ev = Webhook.Event.PlayerFirstPing;
@@ -235,9 +253,9 @@ internal static class Handlers
 
         if (DiscordConnectorPlugin.StaticConfig.StatsPingEnabled)
         {
-            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Ping, peer.m_playerName, playerHostName, pos);
+            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Categories.Ping, peer.m_playerName,
+                playerHostName, pos);
         }
-
 
 
         // If sending messages for players pinging is completely disabled
@@ -246,12 +264,13 @@ internal static class Handlers
             return;
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, DiscordConnectorPlugin.StaticConfig.ChatPingPosEnabled, pos, ev);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage,
+            DiscordConnectorPlugin.StaticConfig.ChatPingPosEnabled, pos, ev);
     }
 
 
     /// <summary>
-    /// Perform the necessary steps for a player shouting on the server.
+    ///     Perform the necessary steps for a player shouting on the server.
     /// </summary>
     public static void Shout(ZNetPeer peer, Vector3 pos, string text)
     {
@@ -260,6 +279,7 @@ internal static class Handlers
             DiscordConnectorPlugin.StaticLogger.LogDebug("Handler:Shout - Guarded against null peer");
             return;
         }
+
         // - If it's their first time:
         //     a. If first shout announcements are enabled:
         //         i. Send a first shout announcement to Discord
@@ -275,7 +295,8 @@ internal static class Handlers
         // Create basic message pre-formatting
         string preFormattedMessage = "";
         // If first-time shouting announcements are enabled and we have no record of the player shouting, set the message content to the first time ping announcement
-        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstShoutEnabled && DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Records.Categories.Shout, peer.m_playerName) == 0)
+        if (DiscordConnectorPlugin.StaticConfig.AnnouncePlayerFirstShoutEnabled &&
+            DiscordConnectorPlugin.StaticDatabase.CountOfRecordsByName(Categories.Shout, peer.m_playerName) == 0)
         {
             preFormattedMessage = DiscordConnectorPlugin.StaticConfig.PlayerFirstShoutMessage;
             ev = Webhook.Event.PlayerFirstShout;
@@ -288,7 +309,8 @@ internal static class Handlers
 
         if (DiscordConnectorPlugin.StaticConfig.StatsShoutEnabled)
         {
-            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Records.Categories.Shout, peer.m_playerName, playerHostName, pos);
+            DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Categories.Shout, peer.m_playerName,
+                playerHostName, pos);
         }
 
         // If sending messages for players shouting is completely disabled
@@ -303,30 +325,33 @@ internal static class Handlers
             text = text.ToUpper();
         }
 
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, DiscordConnectorPlugin.StaticConfig.ChatShoutPosEnabled, pos, text, ev);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage,
+            DiscordConnectorPlugin.StaticConfig.ChatShoutPosEnabled, pos, text, ev);
     }
 
     /// <summary>
-    /// Finish formatting the message based on the positional data (if allowed) and dispatch it to the Discord webhook.
+    ///     Finish formatting the message based on the positional data (if allowed) and dispatch it to the Discord webhook.
     /// </summary>
     /// <param name="peer">Player peer reference</param>
     /// <param name="playerHostName">Player host name</param>
     /// <param name="preFormattedMessage">Raw message to format for sending to discord</param>
     /// <param name="posEnabled">If we are allowed to include the position data</param>
-    private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage, bool posEnabled, Webhook.Event ev)
+    private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage,
+        bool posEnabled, Webhook.Event ev)
     {
         FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, posEnabled, peer.m_refPos, ev);
     }
 
     /// <summary>
-    /// Finish formatting the message based on the positional data (if allowed) and dispatch it to the Discord webhook.
+    ///     Finish formatting the message based on the positional data (if allowed) and dispatch it to the Discord webhook.
     /// </summary>
     /// <param name="peer">Player peer reference</param>
     /// <param name="playerHostName">Player host name</param>
     /// <param name="preFormattedMessage">Raw message to format for sending to discord</param>
     /// <param name="posEnabled">If we are allowed to include the position data</param>
     /// <param name="pos">Positional data to use in formatting</param>
-    private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage, bool posEnabled, Vector3 pos, Webhook.Event ev)
+    private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage,
+        bool posEnabled, Vector3 pos, Webhook.Event ev)
     {
         // Format the message accordingly, depending if it has the %POS% variable or not
         string finalMessage;
@@ -338,12 +363,13 @@ internal static class Handlers
                 preFormattedMessage.Replace("%POS%", "");
             }
 
-            finalMessage = MessageTransformer.FormatPlayerMessage(preFormattedMessage, peer.m_playerName, playerHostName, pos, isPlayerLeaving);
-
+            finalMessage = MessageTransformer.FormatPlayerMessage(preFormattedMessage, peer.m_playerName,
+                playerHostName, pos, isPlayerLeaving);
         }
         else
         {
-            finalMessage = MessageTransformer.FormatPlayerMessage(preFormattedMessage, peer.m_playerName, playerHostName, isPlayerLeaving);
+            finalMessage = MessageTransformer.FormatPlayerMessage(preFormattedMessage, peer.m_playerName,
+                playerHostName, isPlayerLeaving);
         }
 
         // If sending the position with the player join message is enabled
@@ -363,11 +389,9 @@ internal static class Handlers
     }
 
 
-
     /// <summary>
-    /// Finish formatting the message based on the positional data (if allowed) and dispatch it to the Discord webhook.
-    ///
-    /// This method handles the text from shouts and other chat-adjacent things
+    ///     Finish formatting the message based on the positional data (if allowed) and dispatch it to the Discord webhook.
+    ///     This method handles the text from shouts and other chat-adjacent things
     /// </summary>
     /// <param name="peer">Player peer reference</param>
     /// <param name="playerHostName">Player host name</param>
@@ -375,7 +399,8 @@ internal static class Handlers
     /// <param name="posEnabled">If we are allowed to include the position data</param>
     /// <param name="pos">Positional data to use in formatting</param>
     /// <param name="text">Text that was sent</param>
-    private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage, bool posEnabled, Vector3 pos, string text, Webhook.Event ev)
+    private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage,
+        bool posEnabled, Vector3 pos, string text, Webhook.Event ev)
     {
         // Format the message accordingly, depending if it has the %POS% variable or not
         string finalMessage;
@@ -386,12 +411,14 @@ internal static class Handlers
                 preFormattedMessage.Replace("%POS%", "");
             }
 
-            finalMessage = MessageTransformer.FormatPlayerMessage(preFormattedMessage, peer.m_playerName, playerHostName, text, pos);
-
+            finalMessage =
+                MessageTransformer.FormatPlayerMessage(preFormattedMessage, peer.m_playerName, playerHostName, text,
+                    pos);
         }
         else
         {
-            finalMessage = MessageTransformer.FormatPlayerMessage(preFormattedMessage, peer.m_playerName, playerHostName, text);
+            finalMessage =
+                MessageTransformer.FormatPlayerMessage(preFormattedMessage, peer.m_playerName, playerHostName, text);
         }
 
         // If sending the position with the player join message is enabled
@@ -411,9 +438,9 @@ internal static class Handlers
     }
 
     /// <summary>
-    /// Handle a non-player chat message. Currently only works for shouts.
-    /// ///
-    /// If allowed in the configuration, this will send a message to discord as if a player shouted.
+    ///     Handle a non-player chat message. Currently only works for shouts.
+    ///     ///
+    ///     If allowed in the configuration, this will send a message to discord as if a player shouted.
     /// </summary>
     /// <param name="type">Type of chat message</param>
     /// <param name="user">Listed username of sender</param>
@@ -439,7 +466,8 @@ internal static class Handlers
                 // Clean any "formatting" done to the username. This includes coloring via <color=x> tags.
                 string userCleaned = MessageTransformer.CleanCaretFormatting(user);
                 // Format the message into the shout format as defined in the config files
-                string message = MessageTransformer.FormatPlayerMessage(DiscordConnectorPlugin.StaticConfig.ShoutMessage, userCleaned, nonPlayerHostName, text);
+                string message = MessageTransformer.FormatPlayerMessage(
+                    DiscordConnectorPlugin.StaticConfig.ShoutMessage, userCleaned, nonPlayerHostName, text);
 
                 // Non-players shouldn't have a position, so disregard any position in the message formatting
                 if (message.Contains("%POS%"))
@@ -449,6 +477,7 @@ internal static class Handlers
 
                 DiscordApi.SendMessage(Webhook.Event.PlayerShout, message);
             }
+
             // Exit the function since we sent the message
             return;
         }
