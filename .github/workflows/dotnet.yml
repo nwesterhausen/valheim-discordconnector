@@ -84,6 +84,12 @@ jobs:
         run: |
           dotnet build DiscordConnector.sln --configuration Release
 
+      # temp
+      - name: Find files
+        run: |
+          pwd
+          ls -l
+          
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4
