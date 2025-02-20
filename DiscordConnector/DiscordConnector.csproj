@@ -179,8 +179,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Content Include="DoPrebuild.props" />
-    <Content Include="Environment.props" />
     <Content Include="ILRepack.targets" />
     <Content Include="Libs\ServerSync.dll" />
     <Content Include="Metadata\DiscordConnector-Nexus.readme" />
