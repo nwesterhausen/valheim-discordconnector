@@ -67,7 +67,7 @@ jobs:
         uses: actions/cache/save@v3
         with:
           path: ~/VHINSTALL
-          key: ${{ steps.valheimversion.outputs.valheimversion }}-${{ hashFiles('**/lockfiles') }}-BepInExPack-5.4.2202
+          key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2202
           
       - name: Set references to DLLs
         run: |
@@ -75,23 +75,12 @@ jobs:
 
       - name: Reset DoPrebuild.props
         run: |
-          pwd
           echo "<?xml version=\"1.0\" encoding=\"utf-8\"?><Project ToolsVersion=\"Current\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"><PropertyGroup><ExecutePrebuild>true</ExecutePrebuild></PropertyGroup></Project>" > DiscordConnector/DoPrebuild.props
-
 
       # Build DLLs
       - name: Build solution
         run: |
           dotnet build DiscordConnector.sln --configuration Release
-
-      # temp
-      - name: Find files
-        run: |
-          pwd
-          ls -l
-          ls -l DiscordConnector
-          ls -l DiscordConnector/Packages
-          ls -l DiscordConnector/Packages/*
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4
@@ -99,7 +88,7 @@ jobs:
           # Artifact name
           name: DiscordConnector-artifact.zip
           # A file, directory or wildcard pattern that describes what to upload
-          path: "/home/runner/work/valheim-discordconnector/valheim-discordconnector/DiscordConnector/Packages/**/*.zip"
+          path: "./Packages/Thunderstore/*.zip"
           # The desired behavior if no files are found using the provided path.
 
           # Duration after which artifact will expire in days. 0 means using default retention.
