@@ -38,15 +38,17 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <GamePath Condition="!Exists('$(GamePath)')      AND Exists('$(VALHEIM_INSTALL)')">$(VALHEIM_INSTALL)</GamePath>
-    <Error Text="GamePath not found. Please set the VALHEIM_INSTALL or GamePath property in Environment.props" Condition="!Exists('$(GamePath)')" />
-    <BepInExPath Condition="!Exists('$(BepInExPath)')AND Exists('$(GamePath)')">$(GamePath)\BepInEx</BepInExPath>
-    <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed</CorlibPath>
-    <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\unstripped_corlib</CorlibPath>
-    <PublicizedAssembliesPath Condition="!Exists('$(PublicizedAssembliesPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssembliesPath>
-    <VALHEIM_INSTALL Condition="!Exists('$(VALHEIM_INSTALL)') AND Exists('$(GamePath)')">$(GamePath)</VALHEIM_INSTALL>
-  </PropertyGroup>
+  <Target Name="DerivePaths" BeforeTargets="Prebuild">
+    <PropertyGroup >
+      <GamePath Condition="!Exists('$(GamePath)')      AND Exists('$(VALHEIM_INSTALL)')">$(VALHEIM_INSTALL)</GamePath>
+      <Error Text="GamePath not found. Please set the VALHEIM_INSTALL or GamePath property in Environment.props" Condition="!Exists('$(GamePath)')" />
+      <BepInExPath Condition="!Exists('$(BepInExPath)')AND Exists('$(GamePath)')">$(GamePath)\BepInEx</BepInExPath>
+      <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed</CorlibPath>
+      <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\unstripped_corlib</CorlibPath>
+      <PublicizedAssembliesPath Condition="!Exists('$(PublicizedAssembliesPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssembliesPath>
+      <VALHEIM_INSTALL Condition="!Exists('$(VALHEIM_INSTALL)') AND Exists('$(GamePath)')">$(GamePath)</VALHEIM_INSTALL>
+    </PropertyGroup>
+  </Target>
   
   <Import Project="Environment.props" Condition="Exists('Environment.props')" />
   <Import Project="DoPrebuild.props" Condition="Exists('DoPrebuild.props')" />
