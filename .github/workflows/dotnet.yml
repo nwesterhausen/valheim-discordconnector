@@ -3,7 +3,6 @@ name: Build
 on:
   workflow_dispatch:
   push:
-    # branches: [main, staging]
   pull_request:
     branches: [main, staging]
 
@@ -34,6 +33,7 @@ jobs:
           
       - name: Install Dependencies
         run: dotnet restore DiscordConnector/DiscordConnector.csproj
+        
       # Cache the results
       - name: Cache Valheim
         id: cachevalheim

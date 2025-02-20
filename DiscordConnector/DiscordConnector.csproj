@@ -28,6 +28,7 @@
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <GenerateResourceNeverLockTypeAssemblies>true</GenerateResourceNeverLockTypeAssemblies>
   </PropertyGroup>
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -36,6 +37,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
   </PropertyGroup>
+
   <PropertyGroup>
     <BepInExPath Condition="!Exists('$(BepInExPath)')AND Exists('$(GamePath)')">$(GamePath)\BepInEx</BepInExPath>
     <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed</CorlibPath>
@@ -46,6 +48,11 @@
   
   <Import Project="Environment.props" Condition="Exists('Environment.props')" />
   <Import Project="DoPrebuild.props" Condition="Exists('DoPrebuild.props')" />
+
+  <ItemGroup>
+    <ThunderstoreDestination Include="$(ProjectDir)../Packages/Thunderstore/" />
+    <NexusDestination Include="$(ProjectDir)../Packages/Nexus/" />
+  </ItemGroup>
   
   <Target Name="DetermineVersion" AfterTargets="ILRepacker">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
@@ -86,8 +93,13 @@
     <Message Text="Updating version number in Metadata\manifest.json" Condition="Exists(@(ManifestFile))"  Importance="high"/>
     <Exec Command="powershell.exe -ExecutionPolicy Bypass -Command &quot;&amp; { &amp; '$(ProjectDir)UpdateManifest.ps1' -manifestFile '@(ManifestFile)' -versionString '$(PackageVersion)' }&quot;" />
   </Target>
+
+  <Target Name="PreparePackageDestination" AfterTargets="UpdateManifestVersion" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Message Text="Preparing Package Destinations" Importance="high" />
+    <MakeDir Directories="$(ThunderstoreDestination);$(NexusDestination)" />
+  </Target>
   
-  <Target Name="MakeThunderstorePackage" AfterTargets="UpdateManifestVersion" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <Target Name="MakeThunderstorePackage" AfterTargets="PreparePackageDestination" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Error Text="manifest.json not found in Thunderstore directory." Condition="!Exists('$(ProjectDir)\Metadata\manifest.json')" />
     <Error Text="icon.png not found in Thunderstore directory. Please note that Thunderstore requires this image to be 256x256 in dimension" Condition="!Exists('$(ProjectDir)\Metadata\icon.png')" />
     <ItemGroup>
@@ -100,7 +112,7 @@
     <Copy SourceFiles="@(PackageFiles)" DestinationFolder="$(PackageDir)" />
     <Copy SourceFiles="$(ProjectDir)..\docs\changelog.md" DestinationFiles="$(PackageDir)\CHANGELOG.md" />
     <Message Importance="high" Text="Exporting to $(ProjectDir)\..\Packages\Thunderstore\"/>
-    <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(ProjectDir)\..\Packages\Thunderstore\$(PackageName).zip" Overwrite="true" />
+    <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(ThunderstoreDestination)$(PackageName).zip" Overwrite="true" />
     <RemoveDir Directories="$(PackageDir)" />
   </Target>
   
@@ -112,7 +124,7 @@
     <MakeDir Directories="$(PackageDir)" />
     <Copy SourceFiles="@(NexusPackageFiles)" DestinationFolder="$(PackageDir)" />
     <Message Importance="high" Text="Exporting to $(ProjectDir)\..\Packages\Nexus\"/>
-    <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(ProjectDir)\..\Packages\Nexus\$(PackageName).zip" Overwrite="true" />
+    <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(NexusDestination)$(PackageName).zip" Overwrite="true" />
     <RemoveDir Directories="$(PackageDir)" />
   </Target>
   
