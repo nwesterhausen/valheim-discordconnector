@@ -56,18 +56,20 @@
     <Message Text="BepInExPath: $(BepInExPath)" Importance="high" />
     <Message Text="CorlibPath: $(CorlibPath)" Importance="high" />
     <Message Text="PublicizedAssembliesPath: $(PublicizedAssembliesPath)" Importance="high" />
-    <Error Text="Empty BepInEx path. Please populate it with the proper dependencies." Condition="!Exists('$(BepInExPath)')" />
-    <Error Text="Empty Corlib path. Please populate it with the proper dependencies." Condition="!Exists('$(CorlibPath)')" />
-    <Error Text="Empty PublicizedAssemblies path. Please populate it with the proper dependencies." Condition="!Exists('$(PublicizedAssembliesPath)')" />
+    <PropertyGroup>
+      <PackageOutputPath>$(ProjectDir)../Packages/</PackageOutputPath>
+      <ThunderstoreDestination>$(PackageOutputPath)Thunderstore/</ThunderstoreDestination>
+      <NexusDestination>$(PackageOutputPath)Nexus/</NexusDestination>
+    </PropertyGroup>
+    <Message Text="PackageOutputPath: $(PackageOutputPath)" Importance="high"/>
+    <Message Text="ThunderstoreDestination: $(ThunderstoreDestination)" Importance="high"/>
+    <Message Text="NexusDestination: $(NexusDestination)" Importance="high"/>
+    <Message Text="Preparing Package Destinations" Importance="high"/>
+    <MakeDir Directories="$(PackageOutputPath);$(ThunderstoreDestination);$(NexusDestination)"/>
   </Target>
   
   <Import Project="Environment.props" Condition="Exists('Environment.props')" />
   <Import Project="DoPrebuild.props" Condition="Exists('DoPrebuild.props')" />
-
-  <ItemGroup>
-    <ThunderstoreDestination Include="$(ProjectDir)../Packages/Thunderstore/" />
-    <NexusDestination Include="$(ProjectDir)../Packages/Nexus/" />
-  </ItemGroup>
   
   <Target Name="DetermineVersion" AfterTargets="ILRepacker">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
@@ -85,7 +87,7 @@
       <PackageName>$(AssemblyName)_v$(Major).$(Minor).$(Patch)</PackageName>
       <PackageVersion>$(Major).$(Minor).$(Patch)</PackageVersion>
       <VersionString>$(Major).$(Minor).$(Patch)</VersionString>
-      <PackageDir>$(ProjectDir)\Metadata\$(PackageName)</PackageDir>
+      <PackageDir>$(PackageOutputPath)$(PackageName)</PackageDir>
     </PropertyGroup>
   </Target>
   
@@ -94,10 +96,12 @@
     <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath)')" />
     <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath2)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath2)')" />
     <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath3)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath3)')" />
+    <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(PackageDir)" OverwriteReadOnlyFiles="true"/>
   </Target>
   
   <Target Name="CopyReadMeToTSFolder" AfterTargets="CopyOutputDLL" Condition=" ('$(Configuration)|$(Platform)' == 'Release|AnyCPU') And ('$(OS)' == 'Windows_NT') ">
     <Copy SourceFiles="$(ProjectDir)\Metadata\README.md" DestinationFolder="$(PackageDir)" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="$(ProjectDir)..\docs\changelog.md" DestinationFolder="$(PackageDir)" OverwriteReadOnlyFiles="true"/>
   </Target>
   
   <Target Name="UpdateManifestVersion" AfterTargets="CopyReadmeToTSFolder" Condition=" ('$(Configuration)|$(Platform)' == 'Release|AnyCPU') And ('$(OS)' == 'Windows_NT') ">
@@ -109,12 +113,7 @@
     <Exec Command="powershell.exe -ExecutionPolicy Bypass -Command &quot;&amp; { &amp; '$(ProjectDir)UpdateManifest.ps1' -manifestFile '@(ManifestFile)' -versionString '$(PackageVersion)' }&quot;" />
   </Target>
 
-  <Target Name="PreparePackageDestination" AfterTargets="UpdateManifestVersion" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Message Text="Preparing Package Destinations" Importance="high" />
-    <MakeDir Directories="$(ThunderstoreDestination);$(NexusDestination)" />
-  </Target>
-  
-  <Target Name="MakeThunderstorePackage" AfterTargets="PreparePackageDestination" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <Target Name="MakeThunderstorePackage" AfterTargets="UpdateManifestVersion" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Error Text="manifest.json not found in Thunderstore directory." Condition="!Exists('$(ProjectDir)\Metadata\manifest.json')" />
     <Error Text="icon.png not found in Thunderstore directory. Please note that Thunderstore requires this image to be 256x256 in dimension" Condition="!Exists('$(ProjectDir)\Metadata\icon.png')" />
     <ItemGroup>
@@ -123,10 +122,9 @@
       <PackageFiles Include="$(ProjectDir)\Metadata\icon.png" Condition="Exists('$(ProjectDir)\Metadata\icon.png')" />
       <PackageFiles Include="$(ProjectDir)\Metadata\README.md" Condition="Exists('$(ProjectDir)\Metadata\README.md')" />
     </ItemGroup>
-    <MakeDir Directories="$(PackageDir)" />
     <Copy SourceFiles="@(PackageFiles)" DestinationFolder="$(PackageDir)" />
     <Copy SourceFiles="$(ProjectDir)..\docs\changelog.md" DestinationFiles="$(PackageDir)\CHANGELOG.md" />
-    <Message Importance="high" Text="Exporting to $(ProjectDir)\..\Packages\Thunderstore\"/>
+    <Message Importance="high" Text="Exporting to $(ThunderstoreDestination)"/>
     <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(ThunderstoreDestination)$(PackageName).zip" Overwrite="true" />
     <RemoveDir Directories="$(PackageDir)" />
   </Target>
@@ -135,6 +133,7 @@
     <MakeDir Directories="$(ProjectDir)\Nexus" />
     <ItemGroup>
       <NexusPackageFiles Include="$(TargetDir)$(AssemblyName).dll;" />
+      <NexusPackageFiles Include="$(ProjectDir)\Metadata\DiscordConnector-Nexus.readme;"/>
     </ItemGroup>
     <MakeDir Directories="$(PackageDir)" />
     <Copy SourceFiles="@(NexusPackageFiles)" DestinationFolder="$(PackageDir)" />
