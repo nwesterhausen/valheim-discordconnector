@@ -71,10 +71,14 @@ jobs:
           
       - name: Set references to DLLs
         run: |
+          echo "Replacing Environment.props"
+          cat Environment.props
           echo "<?xml version=\"1.0\" encoding=\"utf-8\"?><Project ToolsVersion=\"Current\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"><PropertyGroup><VALHEIM_INSTALL>$HOME/VHINSTALL/</VALHEIM_INSTALL><GamePath>$HOME/VHINSTALL/</GamePath></PropertyGroup></Project>" > Environment.props
 
       - name: Reset DoPrebuild.props
         run: |
+          echo "Resetting DoPrebuild.props"
+          cat DiscordConnector/DoPrebuild.props
           echo "<?xml version=\"1.0\" encoding=\"utf-8\"?><Project ToolsVersion=\"Current\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"><PropertyGroup><ExecutePrebuild>true</ExecutePrebuild></PropertyGroup></Project>" > DiscordConnector/DoPrebuild.props
 
       # Build DLLs
