@@ -50,6 +50,15 @@
       <PublicizedAssembliesPath Condition="!Exists('$(PublicizedAssembliesPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssembliesPath>
       <VALHEIM_INSTALL Condition="!Exists('$(VALHEIM_INSTALL)') AND Exists('$(GamePath)')">$(GamePath)</VALHEIM_INSTALL>
     </PropertyGroup>
+    <Message Text="Derived Paths:" Importance="high" />
+    <Message Text="VALHEIM_INSTALL: $(VALHEIM_INSTALL)" Importance="high" />
+    <Message Text="GamePath: $(GamePath)" Importance="high" />
+    <Message Text="BepInExPath: $(BepInExPath)" Importance="high" />
+    <Message Text="CorlibPath: $(CorlibPath)" Importance="high" />
+    <Message Text="PublicizedAssembliesPath: $(PublicizedAssembliesPath)" Importance="high" />
+    <Error Text="Empty BepInEx path. Please populate it with the proper dependencies." Condition="!Exists('$(BepInExPath)')" />
+    <Error Text="Empty Corlib path. Please populate it with the proper dependencies." Condition="!Exists('$(CorlibPath)')" />
+    <Error Text="Empty PublicizedAssemblies path. Please populate it with the proper dependencies." Condition="!Exists('$(PublicizedAssembliesPath)')" />
   </Target>
   
   <Import Project="Environment.props" Condition="Exists('Environment.props')" />
