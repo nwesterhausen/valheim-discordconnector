@@ -38,7 +38,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
 
-  <Target Name="DerivePaths" BeforeTargets="Prebuild">
+  <Target Name="DerivePaths" BeforeTargets="BeforeBuild">
     <PropertyGroup >
       <GamePath Condition="!Exists('$(GamePath)')      AND Exists('$(VALHEIM_INSTALL)')">$(VALHEIM_INSTALL)</GamePath>
       <Error Text="GamePath not found. Please set the VALHEIM_INSTALL or GamePath property in Environment.props" Condition="!Exists('$(GamePath)')" />
