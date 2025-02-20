@@ -212,9 +212,6 @@
     <Content Include="Metadata\manifest.json" />
     <Content Include="Metadata\README.md" />
     <Content Include="Metadata\thunderstore.toml" />
-    <Content Include="Packages\.gitkeep" />
-    <Content Include="Packages\Nexus\.gitkeep" />
-    <Content Include="Packages\Thunderstore\.gitkeep" />
     <Content Include="UpdateManifest.ps1" />
   </ItemGroup>
   
@@ -227,4 +224,5 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Buffers" Version="4.6.0" />
   </ItemGroup>
+
 </Project>
