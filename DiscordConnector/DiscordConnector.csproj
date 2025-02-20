@@ -39,6 +39,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <GamePath Condition="!Exists('$(GamePath)')      AND Exists('$(VALHEIM_INSTALL)')">$(VALHEIM_INSTALL)</GamePath>
+    <Error Text="GamePath not found. Please set the VALHEIM_INSTALL or GamePath property in Environment.props" Condition="!Exists('$(GamePath)')" />
     <BepInExPath Condition="!Exists('$(BepInExPath)')AND Exists('$(GamePath)')">$(GamePath)\BepInEx</BepInExPath>
     <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed</CorlibPath>
     <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\unstripped_corlib</CorlibPath>
