@@ -111,6 +111,12 @@
     <Message Text="ManifestFile is @(ManifestFile)"  Importance="high"/>
     <Message Text="Updating version number in Metadata\manifest.json" Condition="Exists(@(ManifestFile))"  Importance="high"/>
     <Exec Command="powershell.exe -ExecutionPolicy Bypass -Command &quot;&amp; { &amp; '$(ProjectDir)UpdateManifest.ps1' -manifestFile '@(ManifestFile)' -versionString '$(PackageVersion)' }&quot;" />
+    <ItemGroup>
+      <TomlFile Include="$(ProjectDir)Metadata\thunderstore.toml" />
+    </ItemGroup>
+    <Message Text="Toml manifest is @(TomlFile)" Importance="high" />
+    <Message Text="Updating version number in Metadata\thunderstore.toml" Condition="Exists(@(TomlFile))" Importance="high" />
+    <Exec Command="powershell.exe -ExecutionPolicy Bypass -Command &quot;&amp; { &amp; '$(ProjectDir)UpdateThunderstoreToml.ps1' -tomlFile '@(TomlFile)' -versionString '$(PackageVersion)' }&quot;" />
   </Target>
 
   <Target Name="MakeThunderstorePackage" AfterTargets="UpdateManifestVersion" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
