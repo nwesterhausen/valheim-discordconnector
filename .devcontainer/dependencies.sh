@@ -20,5 +20,5 @@ mv ~/BepInExRaw/BepInExPack_Valheim/* ~/VHINSTALL/
 pnpm install
 
 # Build
-dotnet build DiscordConnector.sln /p:VALHEIM_INSTALL=~/VHINSTALL
+dotnet build DiscordConnector.sln /p:VALHEIM_INSTALL=/home/vscode/VHINSTALL
 pnpm docs:build
