@@ -1,12 +1,12 @@
 #!/bin/bash
 #
 # Setup Valheim dependencies in devcontainer
-sudo apt -y install software-properties-common
 sudo dpkg --add-architecture i386
-sudo add-apt-repository -y -n -U http://deb.debian.org/debian -c non-free -c non-free-firmware
-sudo add-apt-repository -y -n -U http://deb.debian.org/debian -c non-free -c non-free-firmware
+sudo sed -i 's/^Components: main$/& contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+echo steam steam/license note '' | sudo debconf-set-selections
+echo steam steam/question select "I AGREE" | sudo debconf-set-selections
 sudo apt update
-sudo apt -y install steamcmd
+DEBIAN_FRONTEND=noninteractive sudo apt -y install steamcmd
 
 wget -O bepinex.zip "https://thunderstore.io/package/download/denikson/BepInExPack_Valheim/5.4.2202/"
 unzip bepinex.zip -d ~/BepInExRaw
@@ -20,5 +20,5 @@ mv ~/BepInExRaw/BepInExPack_Valheim/* ~/VHINSTALL/
 pnpm install
 
 # Build
-dotnet build DiscordConnector.sln
+dotnet build DiscordConnector.sln /p:VALHEIM_INSTALL=~/VHINSTALL
 pnpm docs:build
