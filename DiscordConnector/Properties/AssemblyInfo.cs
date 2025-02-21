@@ -10,7 +10,7 @@ using DiscordConnector;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(DiscordConnectorPlugin.Author)]
 [assembly: AssemblyProduct(DiscordConnectorPlugin.ModName)]
-[assembly: AssemblyCopyright("Copyright ©  2025")]
+[assembly: AssemblyCopyright("© 2025 " + DiscordConnectorPlugin.Author)]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
