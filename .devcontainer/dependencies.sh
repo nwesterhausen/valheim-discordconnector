@@ -16,7 +16,8 @@ unzip bepinex.zip -d ~/BepInExRaw
 mv ~/VHINSTALL/valheim_server_Data/ ~/VHINSTALL/valheim_Data/
 mv ~/BepInExRaw/BepInExPack_Valheim/* ~/VHINSTALL/
 
-# Node deps
+# PreBuild
+dotnet restore
 pnpm install
 
 # Build
