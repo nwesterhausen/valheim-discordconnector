@@ -16,5 +16,9 @@ unzip bepinex.zip -d ~/BepInExRaw
 mv ~/VHINSTALL/valheim_server_Data/ ~/VHINSTALL/valheim_Data/
 mv ~/BepInExRaw/BepInExPack_Valheim/* ~/VHINSTALL/
 
+# Node deps
+pnpm install
+
 # Build
 dotnet build DiscordConnector.sln
+pnpm docs:build
