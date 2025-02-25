@@ -8,7 +8,6 @@
       <InputAssemblies Include="$(OutputPath)\Newtonsoft.Json.dll"/>
       <InputAssemblies Include="$(OutputPath)\LiteDB.dll"/>
       <InputAssemblies Include="$(OutputPath)\System.Buffers.dll"/>
-      <InputAssemblies Include="$(CorlibPath)\System.Runtime.Serialization.dll" />
     </ItemGroup>  
     <ILRepack 
       Parallel="true" 
