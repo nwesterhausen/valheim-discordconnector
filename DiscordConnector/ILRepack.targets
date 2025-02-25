@@ -8,6 +8,13 @@
       <InputAssemblies Include="$(OutputPath)\Newtonsoft.Json.dll"/>
       <InputAssemblies Include="$(OutputPath)\LiteDB.dll"/>
     </ItemGroup>
-    <ILRepack Parallel="true" DebugInfo="true" Internalize="true" InputAssemblies="@(InputAssemblies)" OutputFile="$(TargetPath)" TargetKind="SameAsPrimaryAssembly" LibraryPath="$(OutputPath)"/>
+    <ILRepack 
+      Parallel="true" 
+      DebugInfo="true" 
+      Internalize="true" 
+      InputAssemblies="@(InputAssemblies)" 
+      OutputFile="$(TargetPath)bundled-dependencies.dll" 
+      TargetKind="SameAsPrimaryAssembly" 
+      LibraryPath="$(OutputPath)"/>
   </Target>
 </Project>
