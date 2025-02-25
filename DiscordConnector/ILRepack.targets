@@ -14,7 +14,7 @@
       DebugInfo="true" 
       Internalize="true" 
       InputAssemblies="@(InputAssemblies)" 
-      OutputFile="$(TargetPath)bundled-dependencies.dll" 
+      OutputFile="$(TargetPath)" 
       TargetKind="SameAsPrimaryAssembly" 
       LibraryPath="$(OutputPath)"/>
   </Target>
