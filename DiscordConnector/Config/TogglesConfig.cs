@@ -68,58 +68,6 @@ internal class TogglesConfig
     {
         config = configFile;
 
-        LoadConfig();
-    }
-
-    public bool LaunchMessageEnabled => serverLaunchToggle.Value;
-    public bool LoadedMessageEnabled => serverLoadedToggle.Value;
-    public bool StopMessageEnabled => serverStopToggle.Value;
-    public bool ShutdownMessageEnabled => serverShutdownToggle.Value;
-    public bool WorldSaveMessageEnabled => serverSaveToggle.Value;
-    public bool ChatShoutEnabled => chatShoutToggle.Value;
-    public bool ChatShoutPosEnabled => chatShoutPosToggle.Value;
-    public bool ChatPingEnabled => chatPingToggle.Value;
-    public bool ChatPingPosEnabled => chatPingPosToggle.Value;
-    public bool PlayerJoinMessageEnabled => playerJoinToggle.Value;
-    public bool PlayerJoinPosEnabled => playerJoinPosToggle.Value;
-    public bool PlayerDeathMessageEnabled => playerDeathToggle.Value;
-    public bool PlayerDeathPosEnabled => playerDeathPosToggle.Value;
-    public bool PlayerLeaveMessageEnabled => playerLeaveToggle.Value;
-    public bool PlayerLeavePosEnabled => playerLeavePosToggle.Value;
-    public bool StatsDeathEnabled => collectStatsDeaths.Value;
-    public bool StatsJoinEnabled => collectStatsJoins.Value;
-    public bool StatsLeaveEnabled => collectStatsLeaves.Value;
-    public bool StatsPingEnabled => collectStatsPings.Value;
-    public bool StatsShoutEnabled => collectStatsShouts.Value;
-    public bool AnnouncePlayerFirstDeathEnabled => announcePlayerFirstDeath.Value;
-    public bool AnnouncePlayerFirstJoinEnabled => announcePlayerFirstJoin.Value;
-    public bool AnnouncePlayerFirstLeaveEnabled => announcePlayerFirstLeave.Value;
-    public bool AnnouncePlayerFirstPingEnabled => announcePlayerFirstPing.Value;
-    public bool AnnouncePlayerFirstShoutEnabled => announcePlayerFirstShout.Value;
-    public bool EventStartMessageEnabled => eventStartMessageToggle.Value;
-    public bool EventPausedMessageEnabled => eventPausedMessageToggle.Value;
-    public bool EventResumedMessageEnabled => eventResumedMessageToggle.Value;
-    public bool EventStopMessageEnabled => eventStopMessageToggle.Value;
-    public bool EventStartPosEnabled => eventStartPosToggle.Value;
-    public bool EventPausedPosEnabled => eventPausedPosToggle.Value;
-    public bool EventStopPosEnabled => eventStopPosToggle.Value;
-    public bool EventResumedPosEnabled => eventResumedPosToggle.Value;
-    public bool DebugEveryPlayerPosCheck => debugEveryEventPlayerPosCheck.Value;
-    public bool DebugEveryEventCheck => debugEveryEventCheck.Value;
-    public bool DebugEveryEventChange => debugEventChanges.Value;
-    public bool DebugHttpRequestResponse => debugHttpRequestResponses.Value;
-    public bool DebugDatabaseMethods => debugDatabaseMethods.Value;
-    public bool ChatShoutAllCaps => chatShoutAllCaps.Value;
-    public bool NewDayNumberEnabled => newDayNumberToggle.Value;
-
-    public void ReloadConfig()
-    {
-        config.Reload();
-        config.Save();
-    }
-
-    private void LoadConfig()
-    {
         // Message Toggles
         serverLaunchToggle = config.Bind(MESSAGES_TOGGLES,
             "Server Launch Notifications",
@@ -294,6 +242,47 @@ internal class TogglesConfig
 
         config.Save();
     }
+
+    public bool LaunchMessageEnabled => serverLaunchToggle.Value;
+    public bool LoadedMessageEnabled => serverLoadedToggle.Value;
+    public bool StopMessageEnabled => serverStopToggle.Value;
+    public bool ShutdownMessageEnabled => serverShutdownToggle.Value;
+    public bool WorldSaveMessageEnabled => serverSaveToggle.Value;
+    public bool ChatShoutEnabled => chatShoutToggle.Value;
+    public bool ChatShoutPosEnabled => chatShoutPosToggle.Value;
+    public bool ChatPingEnabled => chatPingToggle.Value;
+    public bool ChatPingPosEnabled => chatPingPosToggle.Value;
+    public bool PlayerJoinMessageEnabled => playerJoinToggle.Value;
+    public bool PlayerJoinPosEnabled => playerJoinPosToggle.Value;
+    public bool PlayerDeathMessageEnabled => playerDeathToggle.Value;
+    public bool PlayerDeathPosEnabled => playerDeathPosToggle.Value;
+    public bool PlayerLeaveMessageEnabled => playerLeaveToggle.Value;
+    public bool PlayerLeavePosEnabled => playerLeavePosToggle.Value;
+    public bool StatsDeathEnabled => collectStatsDeaths.Value;
+    public bool StatsJoinEnabled => collectStatsJoins.Value;
+    public bool StatsLeaveEnabled => collectStatsLeaves.Value;
+    public bool StatsPingEnabled => collectStatsPings.Value;
+    public bool StatsShoutEnabled => collectStatsShouts.Value;
+    public bool AnnouncePlayerFirstDeathEnabled => announcePlayerFirstDeath.Value;
+    public bool AnnouncePlayerFirstJoinEnabled => announcePlayerFirstJoin.Value;
+    public bool AnnouncePlayerFirstLeaveEnabled => announcePlayerFirstLeave.Value;
+    public bool AnnouncePlayerFirstPingEnabled => announcePlayerFirstPing.Value;
+    public bool AnnouncePlayerFirstShoutEnabled => announcePlayerFirstShout.Value;
+    public bool EventStartMessageEnabled => eventStartMessageToggle.Value;
+    public bool EventPausedMessageEnabled => eventPausedMessageToggle.Value;
+    public bool EventResumedMessageEnabled => eventResumedMessageToggle.Value;
+    public bool EventStopMessageEnabled => eventStopMessageToggle.Value;
+    public bool EventStartPosEnabled => eventStartPosToggle.Value;
+    public bool EventPausedPosEnabled => eventPausedPosToggle.Value;
+    public bool EventStopPosEnabled => eventStopPosToggle.Value;
+    public bool EventResumedPosEnabled => eventResumedPosToggle.Value;
+    public bool DebugEveryPlayerPosCheck => debugEveryEventPlayerPosCheck.Value;
+    public bool DebugEveryEventCheck => debugEveryEventCheck.Value;
+    public bool DebugEveryEventChange => debugEventChanges.Value;
+    public bool DebugHttpRequestResponse => debugHttpRequestResponses.Value;
+    public bool DebugDatabaseMethods => debugDatabaseMethods.Value;
+    public bool ChatShoutAllCaps => chatShoutAllCaps.Value;
+    public bool NewDayNumberEnabled => newDayNumberToggle.Value;
 
     public string ConfigAsJson()
     {

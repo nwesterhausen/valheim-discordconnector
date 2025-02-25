@@ -201,17 +201,17 @@ internal class LeaderBoardConfigValues
 
 public class LeaderBoardConfigReference
 {
-    public bool Deaths;
-    public string DisplayedHeading;
-    public bool Enabled;
-    public int NumberListings;
-    public int PeriodInMinutes;
-    public bool Pings;
-    public bool Sessions;
-    public bool Shouts;
-    public bool TimeOnline;
-    public TimeRange TimeRange;
-    public Ordering Type;
+    public bool Deaths = false;
+    public string DisplayedHeading = "Leader Board";
+    public bool Enabled = false;
+    public int NumberListings = 3;
+    public int PeriodInMinutes = 600;
+    public bool Pings = false;
+    public bool Sessions = false;
+    public bool Shouts = false;
+    public bool TimeOnline = false;
+    public TimeRange TimeRange = TimeRange.AllTime;
+    public Ordering Type = Ordering.Descending;
 
     /// <summary>
     ///     The event to use when sending to the webhook.

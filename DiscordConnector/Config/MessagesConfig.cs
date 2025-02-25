@@ -52,51 +52,6 @@ internal class MessagesConfig
     public MessagesConfig(ConfigFile configFile)
     {
         config = configFile;
-        LoadConfig();
-    }
-
-    // Messages.Server
-    public string LaunchMessage => GetRandomStringFromValue(serverLaunchMessage);
-    public string LoadedMessage => GetRandomStringFromValue(serverLoadedMessage);
-    public string StopMessage => GetRandomStringFromValue(serverStopMessage);
-    public string ShutdownMessage => GetRandomStringFromValue(serverShutdownMessage);
-    public string SaveMessage => GetRandomStringFromValue(serverSavedMessage);
-    public string NewDayMessage => GetRandomStringFromValue(serverNewDayMessage);
-
-    // Messages.Player
-    public string JoinMessage => GetRandomStringFromValue(playerJoinMessage);
-    public string LeaveMessage => GetRandomStringFromValue(playerLeaveMessage);
-    public string DeathMessage => GetRandomStringFromValue(playerDeathMessage);
-    public string PingMessage => GetRandomStringFromValue(playerPingMessage);
-    public string ShoutMessage => GetRandomStringFromValue(playerShoutMessage);
-
-    // Messages.PlayerFirsts
-    public string PlayerFirstJoinMessage => GetRandomStringFromValue(playerFirstJoinMessage);
-    public string PlayerFirstLeaveMessage => GetRandomStringFromValue(playerFirstLeaveMessage);
-    public string PlayerFirstDeathMessage => GetRandomStringFromValue(playerFirstDeathMessage);
-    public string PlayerFirstPingMessage => GetRandomStringFromValue(playerFirstPingMessage);
-    public string PlayerFirstShoutMessage => GetRandomStringFromValue(playerFirstShoutMessage);
-
-    // Messages.Events
-    public string EventStartMessage => GetRandomStringFromValue(eventStartMessage);
-    public string EventPausedMessage => GetRandomStringFromValue(eventPausedMessage);
-    public string EventStopMessage => GetRandomStringFromValue(eventStopMessage);
-    public string EventResumedMessage => GetRandomStringFromValue(eventResumedMessage);
-
-    // Messages.LeaderBoards
-    public string LeaderBoardTopPlayerHeading => GetRandomStringFromValue(leaderBoardTopPlayersMessage);
-    public string LeaderBoardBottomPlayersHeading => GetRandomStringFromValue(leaderBoardBottomPlayersMessage);
-    public string LeaderBoardHighestHeading => GetRandomStringFromValue(leaderBoardHighestPlayerMessage);
-    public string LeaderBoardLowestHeading => GetRandomStringFromValue(leaderBoardLowestPlayerMessage);
-
-    public void ReloadConfig()
-    {
-        config.Reload();
-        config.Save();
-    }
-
-    private void LoadConfig()
-    {
         // Messages.Server
         serverLaunchMessage = config.Bind<string>(SERVER_MESSAGES,
             "Server Launch Message",
@@ -263,6 +218,40 @@ internal class MessagesConfig
 
         config.Save();
     }
+
+    // Messages.Server
+    public string LaunchMessage => GetRandomStringFromValue(serverLaunchMessage);
+    public string LoadedMessage => GetRandomStringFromValue(serverLoadedMessage);
+    public string StopMessage => GetRandomStringFromValue(serverStopMessage);
+    public string ShutdownMessage => GetRandomStringFromValue(serverShutdownMessage);
+    public string SaveMessage => GetRandomStringFromValue(serverSavedMessage);
+    public string NewDayMessage => GetRandomStringFromValue(serverNewDayMessage);
+
+    // Messages.Player
+    public string JoinMessage => GetRandomStringFromValue(playerJoinMessage);
+    public string LeaveMessage => GetRandomStringFromValue(playerLeaveMessage);
+    public string DeathMessage => GetRandomStringFromValue(playerDeathMessage);
+    public string PingMessage => GetRandomStringFromValue(playerPingMessage);
+    public string ShoutMessage => GetRandomStringFromValue(playerShoutMessage);
+
+    // Messages.PlayerFirsts
+    public string PlayerFirstJoinMessage => GetRandomStringFromValue(playerFirstJoinMessage);
+    public string PlayerFirstLeaveMessage => GetRandomStringFromValue(playerFirstLeaveMessage);
+    public string PlayerFirstDeathMessage => GetRandomStringFromValue(playerFirstDeathMessage);
+    public string PlayerFirstPingMessage => GetRandomStringFromValue(playerFirstPingMessage);
+    public string PlayerFirstShoutMessage => GetRandomStringFromValue(playerFirstShoutMessage);
+
+    // Messages.Events
+    public string EventStartMessage => GetRandomStringFromValue(eventStartMessage);
+    public string EventPausedMessage => GetRandomStringFromValue(eventPausedMessage);
+    public string EventStopMessage => GetRandomStringFromValue(eventStopMessage);
+    public string EventResumedMessage => GetRandomStringFromValue(eventResumedMessage);
+
+    // Messages.LeaderBoards
+    public string LeaderBoardTopPlayerHeading => GetRandomStringFromValue(leaderBoardTopPlayersMessage);
+    public string LeaderBoardBottomPlayersHeading => GetRandomStringFromValue(leaderBoardBottomPlayersMessage);
+    public string LeaderBoardHighestHeading => GetRandomStringFromValue(leaderBoardHighestPlayerMessage);
+    public string LeaderBoardLowestHeading => GetRandomStringFromValue(leaderBoardLowestPlayerMessage);
 
     public string ConfigAsJson()
     {

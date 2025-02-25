@@ -26,22 +26,7 @@ internal class LeaderBoardConfig
     public LeaderBoardConfig(ConfigFile configFile)
     {
         config = configFile;
-        LoadConfig();
-    }
-
-    // Variables
-    public LeaderBoardConfigReference[] LeaderBoards { get; private set; }
-
-    public ActivePlayersAnnouncementConfigValues ActivePlayersAnnouncement => activePlayersAnnouncementConfig.Value;
-
-    public void ReloadConfig()
-    {
-        config.Reload();
-        config.Save();
-    }
-
-    private void LoadConfig()
-    {
+        
         leaderBoard1 = new LeaderBoardConfigValues(config, LEADER_BOARD_1);
         leaderBoard2 = new LeaderBoardConfigValues(config, LEADER_BOARD_2);
         leaderBoard3 = new LeaderBoardConfigValues(config, LEADER_BOARD_3);
@@ -144,6 +129,11 @@ internal class LeaderBoardConfig
             }
         };
     }
+
+    // Variables
+    public LeaderBoardConfigReference[] LeaderBoards { get; private set; }
+
+    public ActivePlayersAnnouncementConfigValues ActivePlayersAnnouncement => activePlayersAnnouncementConfig.Value;
 
     public string ConfigAsJson()
     {

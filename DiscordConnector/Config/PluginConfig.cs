@@ -257,47 +257,6 @@ internal class PluginConfig
         }
     }
 
-    public void ReloadConfig()
-    {
-        mainConfig.ReloadConfig();
-        messagesConfig.ReloadConfig();
-        togglesConfig.ReloadConfig();
-        variableConfig.ReloadConfig();
-        leaderBoardConfig.ReloadConfig();
-        extraWebhookConfig.ReloadConfig();
-    }
-
-    /// <summary>
-    ///     Reload a config by specifying the configKey (one of )
-    /// </summary>
-    /// <param name="configExt">Config extension to reload</param>
-    public void ReloadConfig(string configExt)
-    {
-        switch (configExt)
-        {
-            case "main":
-                mainConfig.ReloadConfig();
-                return;
-            case "messages":
-                messagesConfig.ReloadConfig();
-                return;
-            case "toggles":
-                togglesConfig.ReloadConfig();
-                return;
-            case "variables":
-                variableConfig.ReloadConfig();
-                return;
-            case "leaderBoard":
-                leaderBoardConfig.ReloadConfig();
-                return;
-            case "extraWebhooks":
-                extraWebhookConfig.ReloadConfig();
-                return;
-            default:
-                return;
-        }
-    }
-
     /// <summary>
     ///     Writes the loaded configuration to a JSON file in the config directory.
     /// </summary>

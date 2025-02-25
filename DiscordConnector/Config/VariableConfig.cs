@@ -29,31 +29,7 @@ internal class VariableConfig
     public VariableConfig(ConfigFile configFile)
     {
         config = configFile;
-        LoadConfig();
-    }
-
-    // Variables
-    public string UserVariable => userVar.Value;
-    public string UserVariable1 => userVar1.Value;
-    public string UserVariable2 => userVar2.Value;
-    public string UserVariable3 => userVar3.Value;
-    public string UserVariable4 => userVar4.Value;
-    public string UserVariable5 => userVar5.Value;
-    public string UserVariable6 => userVar6.Value;
-    public string UserVariable7 => userVar7.Value;
-    public string UserVariable8 => userVar8.Value;
-    public string UserVariable9 => userVar9.Value;
-    public string PosVarFormat => posVarFormat.Value;
-    public string AppendedPosFormat => appendedPosFormat.Value;
-
-    public void ReloadConfig()
-    {
-        config.Reload();
-        config.Save();
-    }
-
-    private void LoadConfig()
-    {
+        
         // User Variable Settings
         userVar = config.Bind<string>(VARIABLE_SETTINGS,
             "Defined Variable 1",
@@ -114,6 +90,20 @@ internal class VariableConfig
 
         config.Save();
     }
+
+    // Variables
+    public string UserVariable => userVar.Value;
+    public string UserVariable1 => userVar1.Value;
+    public string UserVariable2 => userVar2.Value;
+    public string UserVariable3 => userVar3.Value;
+    public string UserVariable4 => userVar4.Value;
+    public string UserVariable5 => userVar5.Value;
+    public string UserVariable6 => userVar6.Value;
+    public string UserVariable7 => userVar7.Value;
+    public string UserVariable8 => userVar8.Value;
+    public string UserVariable9 => userVar9.Value;
+    public string PosVarFormat => posVarFormat.Value;
+    public string AppendedPosFormat => appendedPosFormat.Value;
 
     public string ConfigAsJson()
     {

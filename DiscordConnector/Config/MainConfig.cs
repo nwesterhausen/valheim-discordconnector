@@ -63,128 +63,7 @@ internal class MainConfig
     public MainConfig(ConfigFile configFile)
     {
         config = configFile;
-        LoadConfig();
-
-        DiscordConnectorPlugin.StaticLogger.SetLogLevel(logDebugMessages.Value);
-
-        UpdateMutedPlayers();
-        UpdateWebhooks();
-        UpdateAllowedMentions();
-    }
-
-    public string DefaultWebhookUsernameOverride => defaultWebhookUsernameOverride.Value;
-    public WebhookEntry PrimaryWebhook { get; private set; }
-
-    public WebhookEntry SecondaryWebhook { get; private set; }
-
-    public bool CollectStatsEnabled => collectStatsToggle.Value;
-    public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
-    public bool SendPositionsEnabled => sendPositionsToggle.Value;
-    public List<string> MutedPlayers => mutedPlayers;
-    public Regex MutedPlayersRegex => mutedPlayersRegex;
-    public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
-    public RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
-    public bool AllowNonPlayerShoutLogging => allowNonPlayerShoutLogging.Value;
-    public bool AllowMentionsHereEveryone => allowMentionsHereEveryone.Value;
-    public bool AllowMentionsAnyRole => allowMentionsAnyRole.Value;
-    public bool AllowMentionsAnyUser => allowMentionsAnyUser.Value;
-    public List<string> AllowedRoleMentions { get; private set; }
-
-    public List<string> AllowedUserMentions { get; private set; }
-
-    /// <summary>
-    ///     Reloads the config file and updates the muted players and webhook entries.
-    /// </summary>
-    public void ReloadConfig()
-    {
-        config.Reload();
-        config.Save();
-
-        DiscordConnectorPlugin.StaticLogger.SetLogLevel(logDebugMessages.Value);
-
-        UpdateMutedPlayers();
-        UpdateWebhooks();
-        UpdateAllowedMentions();
-    }
-
-    /// <summary>
-    ///     Updates the allowed mentions lists with the values from the config file.
-    /// </summary>
-    private void UpdateAllowedMentions()
-    {
-        if (string.IsNullOrEmpty(allowedRoleMentions.Value))
-        {
-            AllowedRoleMentions = [];
-        }
-        else
-        {
-            AllowedRoleMentions = new List<string>(allowedRoleMentions.Value.Split(';'));
-        }
-
-        if (string.IsNullOrEmpty(allowedUserMentions.Value))
-        {
-            AllowedUserMentions = [];
-        }
-        else
-        {
-            AllowedUserMentions = new List<string>(allowedUserMentions.Value.Split(';'));
-        }
-    }
-
-    /// <summary>
-    ///     Updates the muted players list with the values from the config file.
-    /// </summary>
-    private void UpdateMutedPlayers()
-    {
-        if (string.IsNullOrEmpty(mutedDiscordUserList.Value))
-        {
-            mutedPlayers = [];
-        }
-        else
-        {
-            mutedPlayers = new List<string>(mutedDiscordUserList.Value.Split(';'));
-        }
-
-        if (string.IsNullOrEmpty(mutedDiscordUserListRegex.Value))
-        {
-            mutedPlayersRegex = new Regex(@"a^");
-        }
-        else
-        {
-            mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
-        }
-    }
-
-    /// <summary>
-    ///     Updates the webhook entries with the values from the config file.
-    /// </summary>
-    private void UpdateWebhooks()
-    {
-        PrimaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value));
-        if (!string.IsNullOrEmpty(webhookUsernameOverride.Value))
-        {
-            PrimaryWebhook.UsernameOverride = webhookUsernameOverride.Value;
-        }
-
-        if (!string.IsNullOrEmpty(webhookAvatarOverride.Value))
-        {
-            PrimaryWebhook.AvatarOverride = webhookAvatarOverride.Value;
-        }
-
-        SecondaryWebhook = new WebhookEntry(webhookUrl2.Value, Webhook.StringToEventList(webhook2Events.Value));
-        if (!string.IsNullOrEmpty(webhook2UsernameOverride.Value))
-        {
-            SecondaryWebhook.UsernameOverride = webhook2UsernameOverride.Value;
-        }
-
-        if (!string.IsNullOrEmpty(webhook2AvatarOverride.Value))
-        {
-            SecondaryWebhook.AvatarOverride = webhook2AvatarOverride.Value;
-        }
-    }
-
-    private void LoadConfig()
-    {
+        
         defaultWebhookUsernameOverride = config.Bind<string>(MAIN_SETTINGS,
             "Default Webhook Username Override",
             "",
@@ -338,6 +217,108 @@ internal class MainConfig
             "Note: This setting is overshadowed if 'Allow @user mentions` is enabled, and only when that is disabled will these users still be allowed to be mentioned.");
 
         config.Save();
+
+        DiscordConnectorPlugin.StaticLogger.SetLogLevel(logDebugMessages.Value);
+
+        UpdateMutedPlayers();
+        UpdateWebhooks();
+        UpdateAllowedMentions();
+    }
+
+    public string DefaultWebhookUsernameOverride => defaultWebhookUsernameOverride.Value;
+    public WebhookEntry PrimaryWebhook { get; private set; }
+
+    public WebhookEntry SecondaryWebhook { get; private set; }
+
+    public bool CollectStatsEnabled => collectStatsToggle.Value;
+    public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
+    public bool SendPositionsEnabled => sendPositionsToggle.Value;
+    public List<string> MutedPlayers => mutedPlayers;
+    public Regex MutedPlayersRegex => mutedPlayersRegex;
+    public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
+    public RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
+    public bool AllowNonPlayerShoutLogging => allowNonPlayerShoutLogging.Value;
+    public bool AllowMentionsHereEveryone => allowMentionsHereEveryone.Value;
+    public bool AllowMentionsAnyRole => allowMentionsAnyRole.Value;
+    public bool AllowMentionsAnyUser => allowMentionsAnyUser.Value;
+    public List<string> AllowedRoleMentions { get; private set; }
+
+    public List<string> AllowedUserMentions { get; private set; }
+
+    /// <summary>
+    ///     Updates the allowed mentions lists with the values from the config file.
+    /// </summary>
+    private void UpdateAllowedMentions()
+    {
+        if (string.IsNullOrEmpty(allowedRoleMentions.Value))
+        {
+            AllowedRoleMentions = [];
+        }
+        else
+        {
+            AllowedRoleMentions = new List<string>(allowedRoleMentions.Value.Split(';'));
+        }
+
+        if (string.IsNullOrEmpty(allowedUserMentions.Value))
+        {
+            AllowedUserMentions = [];
+        }
+        else
+        {
+            AllowedUserMentions = new List<string>(allowedUserMentions.Value.Split(';'));
+        }
+    }
+
+    /// <summary>
+    ///     Updates the muted players list with the values from the config file.
+    /// </summary>
+    private void UpdateMutedPlayers()
+    {
+        if (string.IsNullOrEmpty(mutedDiscordUserList.Value))
+        {
+            mutedPlayers = [];
+        }
+        else
+        {
+            mutedPlayers = new List<string>(mutedDiscordUserList.Value.Split(';'));
+        }
+
+        if (string.IsNullOrEmpty(mutedDiscordUserListRegex.Value))
+        {
+            mutedPlayersRegex = new Regex(@"a^");
+        }
+        else
+        {
+            mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
+        }
+    }
+
+    /// <summary>
+    ///     Updates the webhook entries with the values from the config file.
+    /// </summary>
+    private void UpdateWebhooks()
+    {
+        PrimaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value));
+        if (!string.IsNullOrEmpty(webhookUsernameOverride.Value))
+        {
+            PrimaryWebhook.UsernameOverride = webhookUsernameOverride.Value;
+        }
+
+        if (!string.IsNullOrEmpty(webhookAvatarOverride.Value))
+        {
+            PrimaryWebhook.AvatarOverride = webhookAvatarOverride.Value;
+        }
+
+        SecondaryWebhook = new WebhookEntry(webhookUrl2.Value, Webhook.StringToEventList(webhook2Events.Value));
+        if (!string.IsNullOrEmpty(webhook2UsernameOverride.Value))
+        {
+            SecondaryWebhook.UsernameOverride = webhook2UsernameOverride.Value;
+        }
+
+        if (!string.IsNullOrEmpty(webhook2AvatarOverride.Value))
+        {
+            SecondaryWebhook.AvatarOverride = webhook2AvatarOverride.Value;
+        }
     }
 
     public string ConfigAsJson()

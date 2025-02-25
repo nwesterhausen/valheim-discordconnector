@@ -39,53 +39,7 @@ internal class ExtraWebhookConfig
         webhookUsernameOverrideList = [];
         webhookAvatarOverrideList = [];
 
-        LoadConfig();
-
-        webhookEntries = LoadWebhookEntries();
-    }
-
-    /// <summary>
-    ///     The config entries for the webhook urls.
-    /// </summary>
-    private List<ConfigEntry<string>> webhookUrlList { get; }
-
-    /// <summary>
-    ///     The config entries for the webhook events.
-    /// </summary>
-    private List<ConfigEntry<string>> webhookEventsList { get; }
-
-    /// <summary>
-    ///     The config entries for the webhook username overrides.
-    /// </summary>
-    private List<ConfigEntry<string>> webhookUsernameOverrideList { get; }
-
-    /// <summary>
-    ///     The config entries for the webhook avatar overrides.
-    /// </summary>
-    private List<ConfigEntry<string>> webhookAvatarOverrideList { get; }
-
-    /// <summary>
-    ///     The webhook entries defined in the config file.
-    /// </summary>
-    private List<WebhookEntry> webhookEntries { get; set; }
-
-    /// <summary>
-    ///     Reloads the config file and updates the webhook entries.
-    /// </summary>
-    public void ReloadConfig()
-    {
-        config.Reload();
-        config.Save();
-
-        webhookEntries = LoadWebhookEntries();
-    }
-
-
-    /// <summary>
-    ///     Initializes the config file with the default values and the config entries available.
-    /// </summary>
-    private void LoadConfig()
-    {
+        
         for (int i = 0; i < MAX_WEBHOOKS; i++)
         {
             webhookUrlList.Add(config.Bind<string>(
@@ -126,7 +80,34 @@ internal class ExtraWebhookConfig
         }
 
         config.Save();
+
+        webhookEntries = LoadWebhookEntries();
     }
+
+    /// <summary>
+    ///     The config entries for the webhook urls.
+    /// </summary>
+    private List<ConfigEntry<string>> webhookUrlList { get; }
+
+    /// <summary>
+    ///     The config entries for the webhook events.
+    /// </summary>
+    private List<ConfigEntry<string>> webhookEventsList { get; }
+
+    /// <summary>
+    ///     The config entries for the webhook username overrides.
+    /// </summary>
+    private List<ConfigEntry<string>> webhookUsernameOverrideList { get; }
+
+    /// <summary>
+    ///     The config entries for the webhook avatar overrides.
+    /// </summary>
+    private List<ConfigEntry<string>> webhookAvatarOverrideList { get; }
+
+    /// <summary>
+    ///     The webhook entries defined in the config file.
+    /// </summary>
+    private List<WebhookEntry> webhookEntries { get; set; }
 
     /// <summary>
     ///     Converts the config entries into a list of WebhookEntry objects

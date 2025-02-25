@@ -45,10 +45,10 @@ internal class DiscordApi
     }
 
     /// <summary>
-    ///     Send a <paramref name="message" /> with <paramref name="fields" /> to Discord.
+    ///     Send a message with fields to Discord.
     /// </summary>
     /// <param name="ev">The event which triggered this message</param>
-    /// <param name="content">A string optionally formatted with Discord-approved markdown syntax.</param>
+    /// <param name="content">A string optionally formatted with Discord-approved Markdown syntax.</param>
     /// <param name="fields">Discord fields as defined in the API, as Tuples (field name, value)</param>
     public static void SendMessageWithFields(Webhook.Event ev, string? content = null,
         List<Tuple<string, string>>? fields = null)
@@ -66,8 +66,7 @@ internal class DiscordApi
         {
             payload.embeds = [];
             List<DiscordField> discordFields = [];
-            // Convert the fields into JSON Strings
-            List<string> fieldStrings = [];
+            
             foreach (Tuple<string, string> t in fields)
             {
                 discordFields.Add(new DiscordField { name = t.Item1, value = t.Item2 });
@@ -187,7 +186,7 @@ internal class DiscordApi
 
                 // Wait for a response to the web request
                 bool responseExpected = true;
-                WebResponse response = null;
+                WebResponse response;
                 try
                 {
                     response = request.GetResponse();
@@ -216,11 +215,10 @@ internal class DiscordApi
                         $"DispatchRequest.{requestId}: Error getting web response: {ex}");
                     return;
                 }
-
-                if (responseExpected)
-                {
+                    if (responseExpected)
+                    {
                     // Get the stream containing content returned by the server.
-                    using (Stream dataStream = response.GetResponseStream())
+                    using (Stream? dataStream = response.GetResponseStream())
                     {
                         if (dataStream == null)
                         {
@@ -282,7 +280,7 @@ internal class DiscordApi
     }
 
     /// <summary>
-    ///     Send a <paramref name="message" /> with <paramref name="fields" /> to Discord.
+    ///     Send a <paramref name="content" /> with <paramref name="fields" /> to Discord.
     /// </summary>
     /// <param name="content">A string optionally formatted with Discord-approved markdown syntax.</param>
     /// <param name="fields">Discord fields as defined in the API, as Tuples (field name, value)</param>
@@ -342,19 +340,19 @@ internal class DiscordExecuteWebhook
     /// <summary>
     ///     Set the username for the webhook.
     /// </summary>
-    /// <param name="username">The username to set for the webhook</param>
-    public void SetUsername(string username)
+    /// <param name="name">The username to set for the webhook</param>
+    public void SetUsername(string name)
     {
-        this.username = username;
+        this.username = name;
     }
 
     /// <summary>
     ///     Set the avatar URL for the webhook.
     /// </summary>
-    /// <param name="avatar_url">The avatar URL to set for the webhook</param>
-    public void SetAvatarUrl(string avatar_url)
+    /// <param name="url">The avatar URL to set for the webhook</param>
+    public void SetAvatarUrl(string url)
     {
-        this.avatar_url = avatar_url;
+        this.avatar_url = url;
     }
 
     /// <summary>
@@ -436,8 +434,6 @@ internal class DiscordExecuteWebhook
                 DiscordApi.SendSerializedJson(secondaryWebhook, JsonConvert.SerializeObject(this));
             }
 
-            if (DiscordConnectorPlugin.StaticConfig.ExtraWebhooks != null)
-            {
                 foreach (WebhookEntry webhook in DiscordConnectorPlugin.StaticConfig.ExtraWebhooks)
                 {
                     if (webhook.HasEvent(ev))
@@ -458,7 +454,7 @@ internal class DiscordExecuteWebhook
                         DiscordApi.SendSerializedJson(webhook, JsonConvert.SerializeObject(this));
                     }
                 }
-            }
+            
         }
         catch (Exception e)
         {
@@ -704,13 +700,13 @@ internal class DiscordField
     ///     Name of the field.
     ///     These are just titled embedded values, where the name is the title. The value is a content string.
     /// </summary>
-    public string name { get; set; }
+    public string? name { get; set; }
 
     /// <summary>
     ///     The string content of the field.
     ///     For example, the leaderboards are a list with `\n` as a separator, so they appear as an ordered list in Discord.
     /// </summary>
-    public string value { get; set; }
+    public string? value { get; set; }
 
     /// <summary>
     ///     Whether or not this field should display inline.
