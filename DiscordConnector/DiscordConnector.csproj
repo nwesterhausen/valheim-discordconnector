@@ -27,6 +27,8 @@
     <RootNamespace>DiscordConnector</RootNamespace>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <GenerateResourceNeverLockTypeAssemblies>true</GenerateResourceNeverLockTypeAssemblies>
+    <!--  Remove warnings for unable to resolve or can't find assembly. Disable this NOWARN if you run into compilation issues. -->
+    <NoWarn>MSB3245;MSB3243</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
