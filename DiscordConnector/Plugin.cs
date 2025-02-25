@@ -13,12 +13,13 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
     internal const string ModVersion = "3.0.0";
     internal const string Author = "nwesterhausen";
     private const string ModGUID = Author + "." + ModName;
+    
     internal static VDCLogger StaticLogger;
     internal static PluginConfig StaticConfig;
     internal static Database StaticDatabase;
-    internal static LeaderbBoard StaticLeaderBoards;
-    internal static EventWatcher StaticEventWatcher;
-    private static string _publicIpAddress;
+    internal static LeaderbBoard StaticLeaderBoards = new LeaderbBoard();
+    internal static EventWatcher StaticEventWatcher = new EventWatcher();
+    private static string _publicIpAddress = "";
     private readonly Harmony _harmony = new(ModGUID);
 
     public DiscordConnectorPlugin()
@@ -26,9 +27,6 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
         StaticLogger = new VDCLogger(Logger);
         StaticConfig = new PluginConfig(Config);
         StaticDatabase = new Database(Paths.GameRootPath);
-        StaticLeaderBoards = new LeaderbBoard();
-
-        _publicIpAddress = "";
     }
 
     internal static string PublicIpAddress

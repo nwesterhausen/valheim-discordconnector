@@ -219,61 +219,7 @@ internal class MainConfig
         config.Save();
 
         DiscordConnectorPlugin.StaticLogger.SetLogLevel(logDebugMessages.Value);
-
-        UpdateMutedPlayers();
-        UpdateWebhooks();
-        UpdateAllowedMentions();
-    }
-
-    public string DefaultWebhookUsernameOverride => defaultWebhookUsernameOverride.Value;
-    public WebhookEntry PrimaryWebhook { get; private set; }
-
-    public WebhookEntry SecondaryWebhook { get; private set; }
-
-    public bool CollectStatsEnabled => collectStatsToggle.Value;
-    public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
-    public bool SendPositionsEnabled => sendPositionsToggle.Value;
-    public List<string> MutedPlayers => mutedPlayers;
-    public Regex MutedPlayersRegex => mutedPlayersRegex;
-    public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
-    public RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
-    public bool AllowNonPlayerShoutLogging => allowNonPlayerShoutLogging.Value;
-    public bool AllowMentionsHereEveryone => allowMentionsHereEveryone.Value;
-    public bool AllowMentionsAnyRole => allowMentionsAnyRole.Value;
-    public bool AllowMentionsAnyUser => allowMentionsAnyUser.Value;
-    public List<string> AllowedRoleMentions { get; private set; }
-
-    public List<string> AllowedUserMentions { get; private set; }
-
-    /// <summary>
-    ///     Updates the allowed mentions lists with the values from the config file.
-    /// </summary>
-    private void UpdateAllowedMentions()
-    {
-        if (string.IsNullOrEmpty(allowedRoleMentions.Value))
-        {
-            AllowedRoleMentions = [];
-        }
-        else
-        {
-            AllowedRoleMentions = new List<string>(allowedRoleMentions.Value.Split(';'));
-        }
-
-        if (string.IsNullOrEmpty(allowedUserMentions.Value))
-        {
-            AllowedUserMentions = [];
-        }
-        else
-        {
-            AllowedUserMentions = new List<string>(allowedUserMentions.Value.Split(';'));
-        }
-    }
-
-    /// <summary>
-    ///     Updates the muted players list with the values from the config file.
-    /// </summary>
-    private void UpdateMutedPlayers()
-    {
+        // Update Muted Players
         if (string.IsNullOrEmpty(mutedDiscordUserList.Value))
         {
             mutedPlayers = [];
@@ -291,13 +237,8 @@ internal class MainConfig
         {
             mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
         }
-    }
-
-    /// <summary>
-    ///     Updates the webhook entries with the values from the config file.
-    /// </summary>
-    private void UpdateWebhooks()
-    {
+        
+        // Update Webhooks
         PrimaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value));
         if (!string.IsNullOrEmpty(webhookUsernameOverride.Value))
         {
@@ -319,7 +260,46 @@ internal class MainConfig
         {
             SecondaryWebhook.AvatarOverride = webhook2AvatarOverride.Value;
         }
+        
+        // Update Allowed Mentions
+        if (string.IsNullOrEmpty(allowedRoleMentions.Value))
+        {
+            AllowedRoleMentions = [];
+        }
+        else
+        {
+            AllowedRoleMentions = new List<string>(allowedRoleMentions.Value.Split(';'));
+        }
+
+        if (string.IsNullOrEmpty(allowedUserMentions.Value))
+        {
+            AllowedUserMentions = [];
+        }
+        else
+        {
+            AllowedUserMentions = new List<string>(allowedUserMentions.Value.Split(';'));
+        }
     }
+
+    public string DefaultWebhookUsernameOverride => defaultWebhookUsernameOverride.Value;
+    public WebhookEntry PrimaryWebhook { get; private set; }
+
+    public WebhookEntry SecondaryWebhook { get; private set; }
+
+    public bool CollectStatsEnabled => collectStatsToggle.Value;
+    public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
+    public bool SendPositionsEnabled => sendPositionsToggle.Value;
+    public List<string> MutedPlayers => mutedPlayers;
+    public Regex MutedPlayersRegex => mutedPlayersRegex;
+    public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
+    public RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
+    public bool AllowNonPlayerShoutLogging => allowNonPlayerShoutLogging.Value;
+    public bool AllowMentionsHereEveryone => allowMentionsHereEveryone.Value;
+    public bool AllowMentionsAnyRole => allowMentionsAnyRole.Value;
+    public bool AllowMentionsAnyUser => allowMentionsAnyUser.Value;
+    public List<string> AllowedRoleMentions { get; private set; }
+
+    public List<string> AllowedUserMentions { get; private set; }
 
     public string ConfigAsJson()
     {

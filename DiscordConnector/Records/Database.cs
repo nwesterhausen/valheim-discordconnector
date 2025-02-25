@@ -18,7 +18,7 @@ namespace DiscordConnector.Records;
 internal class Database
 {
     private const string DB_NAME = "records.db";
-    private static string DbPath;
+    private static string DbPath = "";
     private LiteDatabase db;
     private ILiteCollection<SimpleStat> DeathCollection;
     private ILiteCollection<SimpleStat> JoinCollection;
