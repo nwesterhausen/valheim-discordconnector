@@ -29,19 +29,19 @@ internal class PluginConfig
     public PluginConfig(ConfigFile config)
     {
         // Set up base path for config and other files
-        configPath = Path.Combine(Paths.ConfigPath, DiscordConnectorPlugin.ModName);
+        configPath = Path.Combine(Paths.ConfigPath, DiscordConnectorPlugin.LegacyConfigPath);
 
         // Migrate configs if needed, since we now nest them in a subdirectory
         migrateConfigIfNeeded();
 
         // Set up the config file paths
-        string mainConfigFilename = $"{DiscordConnectorPlugin.ModName}.cfg";
-        string messageConfigFilename = $"{DiscordConnectorPlugin.ModName}-{MessagesConfig.ConfigExtension}.cfg";
-        string togglesConfigFilename = $"{DiscordConnectorPlugin.ModName}-{TogglesConfig.ConfigExtension}.cfg";
-        string variableConfigFilename = $"{DiscordConnectorPlugin.ModName}-{VariableConfig.ConfigExtension}.cfg";
-        string leaderBoardConfigFilename = $"{DiscordConnectorPlugin.ModName}-{LeaderBoardConfig.ConfigExtension}.cfg";
+        string mainConfigFilename = $"{DiscordConnectorPlugin.LegacyModName}.cfg";
+        string messageConfigFilename = $"{DiscordConnectorPlugin.LegacyModName}-{MessagesConfig.ConfigExtension}.cfg";
+        string togglesConfigFilename = $"{DiscordConnectorPlugin.LegacyModName}-{TogglesConfig.ConfigExtension}.cfg";
+        string variableConfigFilename = $"{DiscordConnectorPlugin.LegacyModName}-{VariableConfig.ConfigExtension}.cfg";
+        string leaderBoardConfigFilename = $"{DiscordConnectorPlugin.LegacyModName}-{LeaderBoardConfig.ConfigExtension}.cfg";
         string extraWebhooksConfigFilename =
-            $"{DiscordConnectorPlugin.ModName}-{ExtraWebhookConfig.ConfigExtension}.cfg";
+            $"{DiscordConnectorPlugin.LegacyModName}-{ExtraWebhookConfig.ConfigExtension}.cfg";
 
         string mainConfigPath = Path.Combine(configPath, mainConfigFilename);
         string messagesConfigPath = Path.Combine(configPath, messageConfigFilename);
@@ -230,14 +230,14 @@ internal class PluginConfig
 
         foreach (string extension in ConfigExtensions)
         {
-            string oldConfig = Path.Combine(Paths.ConfigPath, $"{DiscordConnectorPlugin.ModName}-{extension}.cfg");
-            string newConfig = Path.Combine(configPath, $"{DiscordConnectorPlugin.ModName}-{extension}.cfg");
+            string oldConfig = Path.Combine(Paths.ConfigPath, $"{DiscordConnectorPlugin.LegacyModName}-{extension}.cfg");
+            string newConfig = Path.Combine(configPath, $"{DiscordConnectorPlugin.LegacyModName}-{extension}.cfg");
             // Main config has special handling (no -main extension on it)
             if (extension.Equals("main"))
             {
                 // Main config uses no extensions
-                oldConfig = Path.Combine(Paths.ConfigPath, $"{DiscordConnectorPlugin.ModName}.cfg");
-                newConfig = Path.Combine(configPath, $"{DiscordConnectorPlugin.ModName}.cfg");
+                oldConfig = Path.Combine(Paths.ConfigPath, $"{DiscordConnectorPlugin.LegacyModName}.cfg");
+                newConfig = Path.Combine(configPath, $"{DiscordConnectorPlugin.LegacyModName}.cfg");
             }
 
             if (File.Exists(oldConfig))

@@ -13,6 +13,8 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
     internal const string ModVersion = "3.0.0";
     internal const string Author = "nwesterhausen";
     private const string ModGUID = Author + "." + ModName;
+    internal const string LegacyConfigPath = "games.nwest.valheim.discordconnector";
+    internal const string LegacyModName = "discordconnector";
     
     internal static VDCLogger StaticLogger;
     internal static PluginConfig StaticConfig;
