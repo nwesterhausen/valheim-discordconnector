@@ -21,11 +21,11 @@ internal class ChatPatches
         ///     The implementation here passes details of the chat message to one of the <see cref="Handlers"/> functions.
         /// </para>
         /// </remarks>
-        private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type, ref UserInfo user, ref string text, ref string senderNetworkUserId)
+        private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type, ref UserInfo sender, ref string text)
         {
-            Plugin.StaticLogger.LogDebug($"User details: name:{user.Name} gamerTag:{user.Gamertag} networkUserId:{user.NetworkUserId} DisplayName():{user.GetDisplayName(user.NetworkUserId)}");
+            Plugin.StaticLogger.LogDebug($"User details: name:{sender.Name}  DisplayName():{sender.GetDisplayName()}");
 
-            string userName = user.Name;
+            string userName = sender.Name;
             if (string.IsNullOrEmpty(userName))
             {
                 Plugin.StaticLogger.LogInfo("Ignored shout from invalid user (null reference)");
