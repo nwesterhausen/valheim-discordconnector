@@ -1,120 +1,240 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
-    <RootNamespace>DiscordConnector</RootNamespace>
+    <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>latest</LangVersion>
-    <OutputType>Library</OutputType>
+    <LangVersion>12.0</LangVersion>
     <Optimize>true</Optimize>
-    <Deterministic>true</Deterministic>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Copyright>Copyright© 2025</Copyright>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+
+    <TargetFramework>net481</TargetFramework>
+    <Product>Discord Connector for Valheim</Product>
+    <Id>DiscordConnector</Id>
+    <PackageId>DiscordConnector</PackageId>
+    <Description>Enhances Valheim servers by sending messages to a Discord Webhook</Description>
+    <Authors>nwesterhausen</Authors>
+    <projectUrl>https://github.com/nwesterhausen/valheim-discordconnector/</projectUrl>
+    <PackageIcon>Metadata\icon.png</PackageIcon>
+    <iconUrl>https://github.com/nwesterhausen/valheim-discordconnector/raw/main/DiscordConnector/Metadata/icon.png</iconUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/nwesterhausen/valheim-discordconnector</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nwesterhausen/valheim-discordconnector</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Valheim Plugin</PackageTags>
+    <NeutralLanguage>en</NeutralLanguage>
+    <AssemblyName>DiscordConnector</AssemblyName>
+    <RootNamespace>DiscordConnector</RootNamespace>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <GenerateResourceNeverLockTypeAssemblies>true</GenerateResourceNeverLockTypeAssemblies>
+    <!--  Remove warnings for unable to resolve or can't find assembly. Disable this NOWARN if you run into compilation issues. -->
+    <NoWarn>MSB3245;MSB3243</NoWarn>
   </PropertyGroup>
 
-  <!-- Make the references to folders used in the build process a lot simpler -->
-  <PropertyGroup>
-    <!-- Set the path to the game folder. This is used when including references below -->
-    <GamePath Condition="$(GamePath) == ''">G:\Valheim\0.219.14</GamePath>
-    <!-- "RepoDir" meaning the parent directory of this project.. aka what is the repository root -->
-    <RepoDir>$(ProjectDir)../</RepoDir>
-    <!-- The output target for our compiled plugin -->
-    <BinDir>$(RepoDir)bin/</BinDir>
-    <!-- The output target for our compiled plugin, specifically.. (this is zipped later) -->
-    <DiscordConnectorDir>$(BinDir)DiscordConnector/</DiscordConnectorDir>
-    <!-- The directory containing metadata files for Thunderstore -->
-    <MetadataDir>$(RepoDir)Metadata/</MetadataDir>
-    <!-- The directory with the plugin documentation (including CHANGELOG) -->
-    <DocsDir>$(RepoDir)docs/</DocsDir>
-    <!-- Setup the path to the game's managed assemblies -->
-    <ValheimManagedLibs>$(GamePath)\valheim_Data\Managed</ValheimManagedLibs>
-    <!-- Setup publicized assembly shorthand -->
-    <PublicizedAssemblies>$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssemblies>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
   </PropertyGroup>
 
-  <!-- Our external dependencies. -->
-  <ItemGroup>
-    <!-- LiteDB is used as a database for this plugin -->
-    <PackageReference Include="LiteDB" Version="5.*" />
-    <!-- Newtonsoft.Json is used for JSON serialization (e.g. sending JSON to discord) -->
-    <PackageReference Include="Newtonsoft.Json" Version="13.*" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3"
-      PrivateAssets="all" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <!-- These dependencies are thinned out to only what's needed for DiscordConnector -->
-    <!-- (not sure if it matters) -->
-    <!-- Harmony and BepInEx dependency -->
-    <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(GamePath)\BepInEx\core\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="BepInEx, Version=5.4.22.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(GamePath)\BepInEx\core\BepInEx.dll</HintPath>
-    </Reference>
-    <!-- Valheim Assembly Dependencies -->
-    <Reference Include="assembly_guiutils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(PublicizedAssemblies)\assembly_guiutils_publicized.dll</HintPath>
-    </Reference>
-    <Reference Include="assembly_valheim, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(PublicizedAssemblies)\assembly_valheim_publicized.dll</HintPath>
-    </Reference>
-    <!-- Unity Engine Dependencies -->
-    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(ValheimManagedLibs)\UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference
-      Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(ValheimManagedLibs)\UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <Target Name="PreparePluginDir" AfterTargets="PrepareForBuild">
-    <!-- Create the artifact output location (if it doesn't exist) -->
-    <MakeDir Directories="$(DiscordConnectorDir)" Condition="!Exists('$(DiscordConnectorDir)')" />
-    <MakeDir Directories="$(DiscordConnectorDir)plugins"
-      Condition="!Exists('$(DiscordConnectorDir)plugins')" />
-    <!-- Make a reference to children of the output location -->
+  <Target Name="DerivePaths" BeforeTargets="BeforeBuild">
+    <PropertyGroup>
+      <GamePath Condition="!Exists('$(GamePath)')      AND Exists('$(VALHEIM_INSTALL)')">$(VALHEIM_INSTALL)</GamePath>
+    </PropertyGroup>
+    <Error Text="GamePath not found. Please set the VALHEIM_INSTALL or GamePath property in Environment.props" Condition="!Exists('$(GamePath)')" />
+    <PropertyGroup>
+      <BepInExPath Condition="!Exists('$(BepInExPath)')AND Exists('$(GamePath)')">$(GamePath)\BepInEx</BepInExPath>
+      <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed</CorlibPath>
+      <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\unstripped_corlib</CorlibPath>
+      <PublicizedAssembliesPath Condition="!Exists('$(PublicizedAssembliesPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssembliesPath>
+      <VALHEIM_INSTALL Condition="!Exists('$(VALHEIM_INSTALL)') AND Exists('$(GamePath)')">$(GamePath)</VALHEIM_INSTALL>
+    </PropertyGroup>
+    <Message Text="Derived Paths:" Importance="high" />
+    <Message Text="VALHEIM_INSTALL: $(VALHEIM_INSTALL)" Importance="high" />
+    <Message Text="GamePath: $(GamePath)" Importance="high" />
+    <Message Text="BepInExPath: $(BepInExPath)" Importance="high" />
+    <Message Text="CorlibPath: $(CorlibPath)" Importance="high" />
+    <Message Text="PublicizedAssembliesPath: $(PublicizedAssembliesPath)" Importance="high" />
+    <PropertyGroup>
+      <PackageOutputPath>$(ProjectDir)../Packages/</PackageOutputPath>
+      <ThunderstoreDestination>$(PackageOutputPath)Thunderstore/</ThunderstoreDestination>
+      <NexusDestination>$(PackageOutputPath)Nexus/</NexusDestination>
+    </PropertyGroup>
+    <Message Text="PackageOutputPath: $(PackageOutputPath)" Importance="high" />
+    <Message Text="ThunderstoreDestination: $(ThunderstoreDestination)" Importance="high" />
+    <Message Text="NexusDestination: $(NexusDestination)" Importance="high" />
+    <Message Text="Preparing Package Destinations" Importance="high" />
+    <MakeDir Directories="$(PackageOutputPath);$(ThunderstoreDestination);$(NexusDestination)" />
+  </Target>
+  
+  <Import Project="Environment.props" Condition="Exists('Environment.props')" />
+  <Import Project="DoPrebuild.props" Condition="Exists('DoPrebuild.props')" />
+  
+  <Target Name="DetermineVersion" AfterTargets="ILRepacker">
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="Targets" />
+    </GetAssemblyIdentity>
     <ItemGroup>
-      <OldBuildArtifacts Include="$(DiscordConnectorDir)**\*" />
+      <AssemblyVersions Include="@(Targets->'%(Version)')" />
     </ItemGroup>
-    <!-- Delete any existing build artifacts -->
-    <Delete Files="@(OldBuildArtifacts)" />
+    <Error Text="Failed to get Assembly Version." Condition="'%(AssemblyVersions.Identity)' == ''" />
+    <PropertyGroup>
+      <AssemblyVersion>%(AssemblyVersions.Identity)</AssemblyVersion>
+      <Major>$(AssemblyVersion.Split('.')[0])</Major>
+      <Minor>$(AssemblyVersion.Split('.')[1])</Minor>
+      <Patch>$(AssemblyVersion.Split('.')[2])</Patch>
+      <PackageName>$(AssemblyName)_v$(Major).$(Minor).$(Patch)</PackageName>
+      <PackageVersion>$(Major).$(Minor).$(Patch)</PackageVersion>
+      <VersionString>$(Major).$(Minor).$(Patch)</VersionString>
+      <PackageDir>$(PackageOutputPath)$(PackageName)</PackageDir>
+    </PropertyGroup>
   </Target>
-
-  <Target Name="CopyPluginFiles" AfterTargets="Build">
+  
+  <Target Name="CopyOutputDLL" AfterTargets="DetermineVersion">
+    <Error Text="DLL not found in target directory." Condition="!Exists('$(TargetDir)$(AssemblyName).dll')" />
+    <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath)')" />
+    <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath2)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath2)')" />
+    <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath3)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath3)')" />
+    <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(PackageDir)" OverwriteReadOnlyFiles="true" />
+  </Target>
+  
+  <Target Name="CopyReadMeToTSFolder" AfterTargets="CopyOutputDLL" Condition=" ('$(Configuration)|$(Platform)' == 'Release|AnyCPU') And ('$(OS)' == 'Windows_NT') ">
+    <Copy SourceFiles="$(ProjectDir)\Metadata\README.md" DestinationFolder="$(PackageDir)" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="$(ProjectDir)..\docs\changelog.md" DestinationFolder="$(PackageDir)" OverwriteReadOnlyFiles="true" />
+  </Target>
+  
+  <Target Name="UpdateManifestVersion" AfterTargets="CopyReadmeToTSFolder" Condition=" ('$(Configuration)|$(Platform)' == 'Release|AnyCPU') And ('$(OS)' == 'Windows_NT') ">
     <ItemGroup>
-      <!-- Include the compiled plugin library -->
-      <BuiltLibraryAndDeps Include="$(TargetDir)DiscordConnector.dll" />
-      <!-- Include Newtonsoft.Json dependencies -->
-      <BuiltLibraryAndDeps Include="$(TargetDir)Newtonsoft.Json.dll" />
-      <BuiltLibraryAndDeps Include="$(ValheimManagedLibs)\System.Runtime.Serialization.dll" />
-      <!-- Include LiteDB dependency -->
-      <BuiltLibraryAndDeps Include="$(TargetDir)LiteDB.dll" />
-      <!-- Metadata files for Thunderstore (note that the changelog is copied below) -->
-      <ThunderstoreMetadata Include="$(MetadataDir)manifest.json" />
-      <ThunderstoreMetadata Include="$(MetadataDir)icon.png" />
-      <ThunderstoreMetadata Include="$(MetadataDir)README.md" />
+      <ManifestFile Include="$(ProjectDir)Metadata\manifest.json" />
     </ItemGroup>
-    <!-- Plugin files go into a 'plugins' subdirectory -->
-    <Copy SourceFiles="@(BuiltLibraryAndDeps)" DestinationFolder="$(DiscordConnectorDir)plugins"
-      SkipUnchangedFiles="true" />
-    <!-- Metadata files go into the base directory -->
-    <Copy SourceFiles="@(ThunderstoreMetadata)" DestinationFolder="$(DiscordConnectorDir)"
-      SkipUnchangedFiles="true" />
-    <!-- Copying the changelog involves renaming to all uppercase, hence it has its own Copy task -->
-    <Copy SourceFiles="$(DocsDir)changelog.md"
-      DestinationFiles="$(DiscordConnectorDir)CHANGELOG.md" SkipUnchangedFiles="true" />
+    <Message Text="ManifestFile is @(ManifestFile)" Importance="high" />
+    <Message Text="Updating version number in Metadata\manifest.json" Condition="Exists(@(ManifestFile))" Importance="high" />
+    <Exec Command="powershell.exe -ExecutionPolicy Bypass -Command &quot;&amp; { &amp; '$(ProjectDir)UpdateManifest.ps1' -manifestFile '@(ManifestFile)' -versionString '$(PackageVersion)' }&quot;" />
+    <ItemGroup>
+      <TomlFile Include="$(ProjectDir)Metadata\thunderstore.toml" />
+    </ItemGroup>
+    <Message Text="Toml manifest is @(TomlFile)" Importance="high" />
+    <Message Text="Updating version number in Metadata\thunderstore.toml" Condition="Exists(@(TomlFile))" Importance="high" />
+    <Exec Command="powershell.exe -ExecutionPolicy Bypass -Command &quot;&amp; { &amp; '$(ProjectDir)UpdateThunderstoreToml.ps1' -tomlFile '@(TomlFile)' -versionString '$(PackageVersion)' }&quot;" />
   </Target>
 
-  <Target Name="ZipPlugin" AfterTargets="CopyPluginFiles">
-    <!-- Remove the zip file if it exists, so that we can create a new one. -->
-    <Delete Files="$(BinDir)DiscordConnector.zip"
-      Condition="Exists('$(BinDir)DiscordConnector.zip')" />
-    <!-- Zip the plugin so its ready for Thunderstore -->
-    <ZipDirectory SourceDirectory="$(DiscordConnectorDir)"
-      DestinationFile="$(BinDir)DiscordConnector.zip" />
+  <Target Name="MakeThunderstorePackage" AfterTargets="UpdateManifestVersion" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Error Text="manifest.json not found in Thunderstore directory." Condition="!Exists('$(ProjectDir)\Metadata\manifest.json')" />
+    <Error Text="icon.png not found in Thunderstore directory. Please note that Thunderstore requires this image to be 256x256 in dimension" Condition="!Exists('$(ProjectDir)\Metadata\icon.png')" />
+    <ItemGroup>
+      <PackageFiles Include="$(TargetDir)$(AssemblyName).dll" Condition="Exists('$(TargetDir)$(AssemblyName).dll')" />
+      <PackageFiles Include="$(ProjectDir)\Metadata\manifest.json" Condition="Exists('$(ProjectDir)\Metadata\manifest.json')" />
+      <PackageFiles Include="$(ProjectDir)\Metadata\icon.png" Condition="Exists('$(ProjectDir)\Metadata\icon.png')" />
+      <PackageFiles Include="$(ProjectDir)\Metadata\README.md" Condition="Exists('$(ProjectDir)\Metadata\README.md')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PackageFiles)" DestinationFolder="$(PackageDir)" />
+    <Copy SourceFiles="$(ProjectDir)..\docs\changelog.md" DestinationFiles="$(PackageDir)\CHANGELOG.md" />
+    <Message Importance="high" Text="Exporting to $(ThunderstoreDestination)" />
+    <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(ThunderstoreDestination)$(PackageName).zip" Overwrite="true" />
+    <RemoveDir Directories="$(PackageDir)" />
   </Target>
+  
+  <Target Name="MakeNexusPackage" AfterTargets="MakeThunderstorePackage" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <MakeDir Directories="$(ProjectDir)\Nexus" />
+    <ItemGroup>
+      <NexusPackageFiles Include="$(TargetDir)$(AssemblyName).dll;" />
+      <NexusPackageFiles Include="$(ProjectDir)\Metadata\DiscordConnector-Nexus.readme;" />
+    </ItemGroup>
+    <MakeDir Directories="$(PackageDir)" />
+    <Copy SourceFiles="@(NexusPackageFiles)" DestinationFolder="$(PackageDir)" />
+    <Message Importance="high" Text="Exporting to $(ProjectDir)\..\Packages\Nexus\" />
+    <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(NexusDestination)$(PackageName).zip" Overwrite="true" />
+    <RemoveDir Directories="$(PackageDir)" />
+  </Target>
+  
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>$(BepInExPath)\core\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_guiutils">
+      <HintPath>$(PublicizedAssembliesPath)\assembly_guiutils_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_utils">
+      <HintPath>$(PublicizedAssembliesPath)\assembly_utils_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_valheim">
+      <HintPath>$(PublicizedAssembliesPath)\assembly_valheim_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>$(BepInExPath)\core\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="ServerSync">
+      <HintPath>Libs\ServerSync.dll</HintPath>
+    </Reference>
+    <Reference Include="SoftReferenceableAssets">
+      <HintPath>$(PublicizedAssembliesPath)\SoftReferenceableAssets_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(CorlibPath)\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>$(CorlibPath)\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(CorlibPath)\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>$(CorlibPath)\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>$(CorlibPath)\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(CorlibPath)\UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>$(CorlibPath)\UnityEngine.ParticleSystemModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(CorlibPath)\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>$(CorlibPath)\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(CorlibPath)\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(GamePath)\valheim_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="ILRepack.targets" />
+    <Content Include="Metadata\DiscordConnector-Nexus.readme" />
+    <Content Include="Metadata\icon.png" />
+    <Content Include="Metadata\icon.svg" />
+    <Content Include="Metadata\icon2.svg" />
+    <Content Include="Metadata\icon3.svg" />
+    <Content Include="Metadata\icon4.svg" />
+    <Content Include="Metadata\manifest.json" />
+    <Content Include="Metadata\README.md" />
+    <Content Include="Metadata\thunderstore.toml" />
+    <Content Include="UpdateManifest.ps1" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="ILRepack" Version="2.0.39">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.37">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="JotunnLib" Version="2.23.2" />
+    <PackageReference Include="LiteDB" Version="5.0.21" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Buffers" Version="4.6.0" />
+  </ItemGroup>
+
 </Project>

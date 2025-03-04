@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="ILRepacker" AfterTargets="Build">
+    <ItemGroup>
+      <InputAssemblies Include="$(TargetPath)"/>
+      <!-- <InputAssemblies Include="$(OutputPath)\ServerSync.dll"/> -->
+      <!-- Include here the other dependencies to be bundled -->
+      <InputAssemblies Include="$(OutputPath)\Newtonsoft.Json.dll"/>
+      <InputAssemblies Include="$(OutputPath)\LiteDB.dll"/>
+      <InputAssemblies Include="$(OutputPath)\System.Buffers.dll"/>
+    </ItemGroup>  
+    <ILRepack 
+      Parallel="true" 
+      DebugInfo="true" 
+      Internalize="true" 
+      InputAssemblies="@(InputAssemblies)" 
+      OutputFile="$(TargetPath)" 
+      TargetKind="SameAsPrimaryAssembly" 
+      LibraryPath="$(OutputPath)"/>
+  </Target>
+</Project>

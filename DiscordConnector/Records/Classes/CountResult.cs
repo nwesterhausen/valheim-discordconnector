@@ -1,22 +1,22 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using LiteDB;
 
 namespace DiscordConnector.Records;
+
 /// <summary>
-/// Holds the name of the collection and value for it.
+///     Holds the name of the collection and value for it.
 /// </summary>
 public class CountResult
 {
-    public string Name { get; }
-    public int Count { get; }
-
     [BsonCtor]
     public CountResult(string name, int count)
     {
         Name = name;
         Count = count;
     }
+
+    public string Name { get; }
+    public int Count { get; }
 
     public static int CompareByCount(CountResult cr1, CountResult cr2)
     {
@@ -29,15 +29,19 @@ public class CountResult
     }
 
     /// <summary>
-    /// Converts a list of BSON documents with "player" and "count" values into our CountResult value.
+    ///     Converts a list of BSON documents with "player" and "count" values into our CountResult value.
     /// </summary>
     /// <param name="bsonDocuments">List of BSON with player and count values.</param>
     /// <returns>List of count results</returns>
     public static List<CountResult> ConvertFromBsonDocuments(List<BsonDocument> bsonDocuments)
     {
-        List<CountResult> results = new List<CountResult>();
+        List<CountResult> results = new();
 
-        if (Plugin.StaticConfig.DebugDatabaseMethods) { Plugin.StaticLogger.LogDebug($"ConvertBsonDocumentCountToDotNet r={bsonDocuments.Count}"); }
+        if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"ConvertBsonDocumentCountToDotNet r={bsonDocuments.Count}");
+        }
+
         foreach (BsonDocument doc in bsonDocuments)
         {
             if (!doc.ContainsKey("Count"))
@@ -64,12 +68,13 @@ public class CountResult
                 if (!doc["Player"].IsNull)
                 {
                     results.Add(new CountResult(
-                        Plugin.StaticDatabase.GetLatestCharacterNameForPlayer(doc["Player"]),
+                        DiscordConnectorPlugin.StaticDatabase.GetLatestCharacterNameForPlayer(doc["Player"]),
                         doc["Count"].AsInt32
                     ));
                 }
             }
         }
+
         return results;
     }
 
