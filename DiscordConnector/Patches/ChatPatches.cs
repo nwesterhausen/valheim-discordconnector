@@ -27,7 +27,7 @@ internal class ChatPatches
         /// </remarks>
         private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type, ref UserInfo sender, ref string text)
         {
-            Plugin.StaticLogger.LogDebug($"User details: name:{sender.Name}  DisplayName():{sender.GetDisplayName()}");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"User details: name:{sender.Name}  DisplayName():{sender.GetDisplayName()}");
 
             string userName = sender.Name;
             if (string.IsNullOrEmpty(userName))
