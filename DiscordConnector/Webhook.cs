@@ -180,12 +180,12 @@ internal class WebhookEntry
     /// <param name="usernameOverride">(Optional) username override</param>
     /// <param name="avatarOverride">(Optional) avatar override</param>
     public WebhookEntry(string url, List<Webhook.Event> fireOnEvents, string usernameOverride = "",
-        string avatarOverride = "")
+        string avatarOverride = "", string whichWebhook = "")
     {
         if (string.IsNullOrEmpty(url))
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug(
-                "Coerced null or empty webhook url to empty string. Ignoring event list.");
+                $"Coerced null or empty {whichWebhook} webhook url to empty string. Ignoring event list.");
             Url = "";
             FireOnEvents = [];
             return;
@@ -195,7 +195,7 @@ internal class WebhookEntry
 
         if (fireOnEvents == null || fireOnEvents.Count == 0)
         {
-            DiscordConnectorPlugin.StaticLogger.LogDebug("Coerced null or empty webhook event list to empty list.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Coerced null or empty {whichWebhook} webhook event list to empty list.");
             FireOnEvents = [];
         }
         else

@@ -239,7 +239,7 @@ internal class MainConfig
         }
         
         // Update Webhooks
-        PrimaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value));
+        PrimaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value), whichWebhook: "Primary");
         if (!string.IsNullOrEmpty(webhookUsernameOverride.Value))
         {
             PrimaryWebhook.UsernameOverride = webhookUsernameOverride.Value;
@@ -250,7 +250,7 @@ internal class MainConfig
             PrimaryWebhook.AvatarOverride = webhookAvatarOverride.Value;
         }
 
-        SecondaryWebhook = new WebhookEntry(webhookUrl2.Value, Webhook.StringToEventList(webhook2Events.Value));
+        SecondaryWebhook = new WebhookEntry(webhookUrl2.Value, Webhook.StringToEventList(webhook2Events.Value), whichWebhook: "Secondary");
         if (!string.IsNullOrEmpty(webhook2UsernameOverride.Value))
         {
             SecondaryWebhook.UsernameOverride = webhook2UsernameOverride.Value;
