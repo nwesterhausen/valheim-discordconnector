@@ -2,6 +2,18 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 3.0.0
+
+Changes
+
+- No longer tries to re-load the config if a change is detected. This never worked quite right.
+- Build process changes, including using ILRepack to merge the dependencies into the main assembly.
+This means that there is now just a single `DiscordConnector.dll` file which includes this plugin & its dependencies.
+
+Fixes
+
+- Fixed a bug where the plugin would crash on the new version of Valheim due to the user detail changes.
+
 ## Version 2.3.3
 
 Fixes
