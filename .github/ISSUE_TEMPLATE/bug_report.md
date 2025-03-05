@@ -16,6 +16,9 @@ A clear and concise description of what you expected to happen.
 **Configuration**
 Upload the `config-dump.json` file from the Discord Connector config folder.
 
+**Logs**
+Upload the `vdc.log` file from the Discord Connector config folder.
+
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
