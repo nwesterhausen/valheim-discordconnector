@@ -16,7 +16,7 @@ internal class VDCLogger
     public VDCLogger(ManualLogSource logger)
     {
         _logger = logger;
-        _logFilePath = Path.Combine(Paths.ConfigPath, DiscordConnectorPlugin.LegacyModName, LOG_NAME);
+        _logFilePath = Path.Combine(Paths.ConfigPath, DiscordConnectorPlugin.LegacyConfigPath, LOG_NAME);
         InitializeLogFile();
         _logger.LogInfo("Logger initialized.");
     }

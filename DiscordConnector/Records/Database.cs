@@ -35,7 +35,7 @@ internal class Database
     /// <param name="rootStorePath">Directory to save the LiteDB database in.</param>
     public Database(string rootStorePath)
     {
-        DbPath = Path.Combine(Paths.ConfigPath, DiscordConnectorPlugin.LegacyModName, DB_NAME);
+        DbPath = Path.Combine(Paths.ConfigPath, DiscordConnectorPlugin.LegacyConfigPath, DB_NAME);
         // If rootStorePath has length and is not equal to the default path, use it instead.
         // Note: Enabling this would cause the database to store with the game root instead (see Plugin.cs:43)
         // if (rootStorePath.Length > 0 && rootStorePath != BepInEx.Paths.ConfigPath)
