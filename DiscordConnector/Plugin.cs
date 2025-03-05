@@ -103,6 +103,13 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
 
         _harmony = Harmony.CreateAndPatchAll(typeof(DiscordConnectorPlugin).Assembly, ModGUID);
     }
+    
+    private void OnDestroy()
+    {
+        StaticDatabase.Dispose();
+        _harmony.UnpatchSelf();
+    }
+
 
     internal static string PublicIpAddress
     {
