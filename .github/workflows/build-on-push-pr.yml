@@ -37,7 +37,7 @@ jobs:
       # Cache the results
       - name: Cache Valheim
         id: cachevalheim
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/VHINSTALL
           key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2202   
@@ -64,7 +64,7 @@ jobs:
 
       - name: Save Cache
         if: steps.cachevalheim.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: ~/VHINSTALL
           key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2202
