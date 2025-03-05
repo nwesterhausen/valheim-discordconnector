@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <!-- Specific paths on my own machine, to be used when building and testing locally. -->
+    <ValheimGamePath>/home/vscode/VHINSTALL/</ValheimGamePath>
+    <VALHEIM_INSTALL>$(ValheimGamePath)</VALHEIM_INSTALL>
+    <GamePath>$(ValheimGamePath)</GamePath>
+    <AfterTargets>ILRepacker</AfterTargets> <!-- If you are using KeyManager, change this to KeyManager as suggested in step 5.2 in the instructions -->
+  </PropertyGroup>
+</Project>

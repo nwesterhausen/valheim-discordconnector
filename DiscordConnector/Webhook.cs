@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 
 namespace DiscordConnector;
+
 public class Webhook
 {
     public enum Event
@@ -40,7 +41,7 @@ public class Webhook
         None,
         Other,
         CronJob,
-        NewDayNumber,
+        NewDayNumber
     }
 
     public static Event StringToEvent(string eventToken)
@@ -122,7 +123,7 @@ public class Webhook
                 return Event.NewDayNumber;
 
             default:
-                Plugin.StaticLogger.LogDebug($"Unmatched event token '{eventToken}'");
+                DiscordConnectorPlugin.StaticLogger.LogDebug($"Unmatched event token '{eventToken}'");
                 return Event.None;
         }
     }
@@ -137,7 +138,7 @@ public class Webhook
 
         //Clean string (remove all non-word non-semi-colon characters)
         string cleaned = Regex.Replace(configEntry, @"[^;\w]", "");
-        Plugin.StaticLogger.LogDebug($"Webhooks: cleaned config entry '{configEntry}' => '{cleaned}'");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Webhooks: cleaned config entry '{configEntry}' => '{cleaned}'");
 
         // Check for ALL case
         if (cleaned.Equals("ALL"))
@@ -152,33 +153,17 @@ public class Webhook
             events.Add(StringToEvent(ev));
         }
 
-        Plugin.StaticLogger.LogDebug($"Webhooks: parsed config entry '{configEntry}' => '{string.Join(", ", events)}'");
+        DiscordConnectorPlugin.StaticLogger.LogDebug(
+            $"Webhooks: parsed config entry '{configEntry}' => '{string.Join(", ", events)}'");
 
         return events;
     }
 }
 
-class WebhookEntry
+internal class WebhookEntry
 {
     /// <summary>
-    /// The webhook endpoint URL
-    /// </summary>
-    public string Url { get; set; }
-    /// <summary>
-    /// Which events should trigger this webhook
-    /// </summary>
-    public List<Webhook.Event> FireOnEvents { get; set; }
-    /// <summary>
-    /// The username to use for this webhook
-    /// </summary>
-    public string UsernameOverride { get; set; } = string.Empty;
-    /// <summary>
-    /// The URL of the avatar to use for this webhook
-    /// </summary>
-    public string AvatarOverride { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Create a new WebhookEntry, defaulting to all events
+    ///     Create a new WebhookEntry, defaulting to all events
     /// </summary>
     /// <param name="url">webhook endpoint</param>
     public WebhookEntry(string url)
@@ -188,17 +173,19 @@ class WebhookEntry
     }
 
     /// <summary>
-    /// Create a new WebhookEntry
+    ///     Create a new WebhookEntry
     /// </summary>
     /// <param name="url">webhook endpoint</param>
     /// <param name="fireOnEvents">events to trigger this webhook</param>
     /// <param name="usernameOverride">(Optional) username override</param>
     /// <param name="avatarOverride">(Optional) avatar override</param>
-    public WebhookEntry(string url, List<Webhook.Event> fireOnEvents, string usernameOverride = "", string avatarOverride = "")
+    public WebhookEntry(string url, List<Webhook.Event> fireOnEvents, string usernameOverride = "",
+        string avatarOverride = "", string whichWebhook = "")
     {
         if (string.IsNullOrEmpty(url))
         {
-            Plugin.StaticLogger.LogDebug($"Coerced null or empty webhook url to empty string. Ignoring event list.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
+                $"Coerced null or empty {whichWebhook} webhook url to empty string. Ignoring event list.");
             Url = "";
             FireOnEvents = [];
             return;
@@ -208,7 +195,7 @@ class WebhookEntry
 
         if (fireOnEvents == null || fireOnEvents.Count == 0)
         {
-            Plugin.StaticLogger.LogDebug($"Coerced null or empty webhook event list to empty list.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Coerced null or empty {whichWebhook} webhook event list to empty list.");
             FireOnEvents = [];
         }
         else
@@ -228,7 +215,27 @@ class WebhookEntry
     }
 
     /// <summary>
-    /// Check if the webhook has a username override
+    ///     The webhook endpoint URL
+    /// </summary>
+    public string Url { get; set; }
+
+    /// <summary>
+    ///     Which events should trigger this webhook
+    /// </summary>
+    public List<Webhook.Event> FireOnEvents { get; set; }
+
+    /// <summary>
+    ///     The username to use for this webhook
+    /// </summary>
+    public string UsernameOverride { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     The URL of the avatar to use for this webhook
+    /// </summary>
+    public string AvatarOverride { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Check if the webhook has a username override
     /// </summary>
     /// <returns>True if a username override exists for this webhook</returns>
     public bool HasUsernameOverride()
@@ -237,7 +244,7 @@ class WebhookEntry
     }
 
     /// <summary>
-    /// Check if the webhook has an avatar override
+    ///     Check if the webhook has an avatar override
     /// </summary>
     /// <returns>True if an avatar override exists for this webhook</returns>
     public bool HasAvatarOverride()
@@ -254,13 +261,13 @@ class WebhookEntry
 
         if (FireOnEvents.Contains(Webhook.Event.ALL))
         {
-            Plugin.StaticLogger.LogDebug("Webhook has 'ALL' enabled");
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Webhook has 'ALL' enabled");
             return true;
         }
 
         if (FireOnEvents.Contains(Webhook.Event.PlayerAll))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerAll");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerAll");
             if (
                 ev == Webhook.Event.PlayerDeath ||
                 ev == Webhook.Event.PlayerJoin ||
@@ -271,9 +278,10 @@ class WebhookEntry
                 return true;
             }
         }
+
         if (FireOnEvents.Contains(Webhook.Event.PlayerFirstAll))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerFirstAll");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking if {ev} is part of PlayerFirstAll");
             if (
                 ev == Webhook.Event.PlayerFirstDeath ||
                 ev == Webhook.Event.PlayerFirstJoin ||
@@ -284,9 +292,10 @@ class WebhookEntry
                 return true;
             }
         }
+
         if (FireOnEvents.Contains(Webhook.Event.EventLifecycle))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of EventLifecycle");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking if {ev} is part of EventLifecycle");
             if (
                 ev == Webhook.Event.EventStart ||
                 ev == Webhook.Event.EventStop ||
@@ -296,9 +305,10 @@ class WebhookEntry
                 return true;
             }
         }
+
         if (FireOnEvents.Contains(Webhook.Event.ServerLifecycle))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of ServerLifecycle");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking if {ev} is part of ServerLifecycle");
             if (
                 ev == Webhook.Event.ServerLaunch ||
                 ev == Webhook.Event.ServerShutdown ||
@@ -309,9 +319,10 @@ class WebhookEntry
                 return true;
             }
         }
+
         if (FireOnEvents.Contains(Webhook.Event.LeaderboardsAll))
         {
-            Plugin.StaticLogger.LogDebug($"Checking if {ev} is part of LeaderboardsAll");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking if {ev} is part of LeaderboardsAll");
             if (
                 ev == Webhook.Event.ActivePlayers ||
                 ev == Webhook.Event.Leaderboard1 ||
@@ -324,7 +335,7 @@ class WebhookEntry
             }
         }
 
-        Plugin.StaticLogger.LogDebug($"Checking for exact match of {ev}");
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Checking for exact match of {ev}");
         return FireOnEvents.Contains(ev);
     }
 }

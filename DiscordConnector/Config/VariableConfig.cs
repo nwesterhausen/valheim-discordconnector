@@ -2,15 +2,17 @@
 using BepInEx.Configuration;
 
 namespace DiscordConnector.Config;
+
 internal class VariableConfig
 {
-    private static ConfigFile config;
-
-    public static string ConfigExtension = "variables";
-
     // config header strings
     private const string VARIABLE_SETTINGS = "Variable Definition";
     private const string DYNAMIC_VARIABLE_CONFIG = "Variables.DynamicConfig";
+    private static ConfigFile config;
+
+    public static string ConfigExtension = "variables";
+    private ConfigEntry<string> appendedPosFormat;
+    private ConfigEntry<string> posVarFormat;
 
     // Variable Definition
     private ConfigEntry<string> userVar;
@@ -23,23 +25,11 @@ internal class VariableConfig
     private ConfigEntry<string> userVar7;
     private ConfigEntry<string> userVar8;
     private ConfigEntry<string> userVar9;
-    private ConfigEntry<string> posVarFormat;
-    private ConfigEntry<string> appendedPosFormat;
 
     public VariableConfig(ConfigFile configFile)
     {
         config = configFile;
-        LoadConfig();
-    }
-
-    public void ReloadConfig()
-    {
-        config.Reload();
-        config.Save();
-    }
-    private void LoadConfig()
-    {
-
+        
         // User Variable Settings
         userVar = config.Bind<string>(VARIABLE_SETTINGS,
             "Defined Variable 1",
@@ -90,13 +80,30 @@ internal class VariableConfig
         appendedPosFormat = config.Bind<string>(DYNAMIC_VARIABLE_CONFIG,
             "Auto-Appended POS Format",
             "Coords: (%POS%)",
-            "This defines how the automatic inclusion of the position data is included. This gets appended to the messages sent." + Environment.NewLine +
-            "If you prefer to embed the POS inside the message instead of embedding it, you can modify the messages in the message config " + Environment.NewLine +
-            "to include the %POS% variable. This POS message only gets appended on the message if no %POS% is in the message getting sent " + Environment.NewLine +
+            "This defines how the automatic inclusion of the position data is included. This gets appended to the messages sent." +
+            Environment.NewLine +
+            "If you prefer to embed the POS inside the message instead of embedding it, you can modify the messages in the message config " +
+            Environment.NewLine +
+            "to include the %POS% variable. This POS message only gets appended on the message if no %POS% is in the message getting sent " +
+            Environment.NewLine +
             "but you have sent position data enabled for that message.");
 
         config.Save();
     }
+
+    // Variables
+    public string UserVariable => userVar.Value;
+    public string UserVariable1 => userVar1.Value;
+    public string UserVariable2 => userVar2.Value;
+    public string UserVariable3 => userVar3.Value;
+    public string UserVariable4 => userVar4.Value;
+    public string UserVariable5 => userVar5.Value;
+    public string UserVariable6 => userVar6.Value;
+    public string UserVariable7 => userVar7.Value;
+    public string UserVariable8 => userVar8.Value;
+    public string UserVariable9 => userVar9.Value;
+    public string PosVarFormat => posVarFormat.Value;
+    public string AppendedPosFormat => appendedPosFormat.Value;
 
     public string ConfigAsJson()
     {
@@ -120,17 +127,4 @@ internal class VariableConfig
         jsonString += "}";
         return jsonString;
     }
-    // Variables
-    public string UserVariable => userVar.Value;
-    public string UserVariable1 => userVar1.Value;
-    public string UserVariable2 => userVar2.Value;
-    public string UserVariable3 => userVar3.Value;
-    public string UserVariable4 => userVar4.Value;
-    public string UserVariable5 => userVar5.Value;
-    public string UserVariable6 => userVar6.Value;
-    public string UserVariable7 => userVar7.Value;
-    public string UserVariable8 => userVar8.Value;
-    public string UserVariable9 => userVar9.Value;
-    public string PosVarFormat => posVarFormat.Value;
-    public string AppendedPosFormat => appendedPosFormat.Value;
 }

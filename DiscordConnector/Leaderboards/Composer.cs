@@ -4,23 +4,27 @@ using DiscordConnector.Config;
 using DiscordConnector.Records;
 
 namespace DiscordConnector.Leaderboards;
+
 internal class Composer : Base
 {
-    private int leaderBoardIdx;
+    private readonly int leaderBoardIdx;
+
     public Composer(int leaderBoard)
     {
         leaderBoardIdx = leaderBoard;
     }
+
     public override void SendLeaderBoard()
     {
-        if (leaderBoardIdx > Plugin.StaticConfig.LeaderBoards.Length || leaderBoardIdx < 0)
+        if (leaderBoardIdx > DiscordConnectorPlugin.StaticConfig.LeaderBoards.Length || leaderBoardIdx < 0)
         {
-            Plugin.StaticLogger.LogWarning($"Tried to get leader board out of index bounds (index:{leaderBoardIdx}, length:{Plugin.StaticConfig.LeaderBoards.Length})");
+            DiscordConnectorPlugin.StaticLogger.LogWarning(
+                $"Tried to get leader board out of index bounds (index:{leaderBoardIdx}, length:{DiscordConnectorPlugin.StaticConfig.LeaderBoards.Length})");
             return;
         }
 
-        LeaderBoardConfigReference settings = Plugin.StaticConfig.LeaderBoards[leaderBoardIdx];
-        Webhook.Event ev = Plugin.StaticConfig.LeaderBoards[leaderBoardIdx].WebhookEvent;
+        LeaderBoardConfigReference settings = DiscordConnectorPlugin.StaticConfig.LeaderBoards[leaderBoardIdx];
+        Webhook.Event ev = DiscordConnectorPlugin.StaticConfig.LeaderBoards[leaderBoardIdx].WebhookEvent;
 
         if (!settings.Enabled)
         {
@@ -28,10 +32,10 @@ internal class Composer : Base
         }
 
         // Build standings
-        var rankings = makeRankings(settings);
+        Dictionary<Statistic, List<CountResult>> rankings = makeRankings(settings);
 
         // Build leader board for discord
-        List<Tuple<string, string>> leaderFields = new List<Tuple<string, string>>();
+        List<Tuple<string, string>> leaderFields = new();
 
         // Check if there are rankings for each statistic. If there are, we want to build and add it.
         if (rankings.ContainsKey(Statistic.Death))
@@ -45,6 +49,7 @@ internal class Composer : Base
                 }
             }
         }
+
         if (rankings.ContainsKey(Statistic.Session))
         {
             List<CountResult> sessionRankings;
@@ -56,6 +61,7 @@ internal class Composer : Base
                 }
             }
         }
+
         if (rankings.ContainsKey(Statistic.Shout))
         {
             List<CountResult> shoutRankings;
@@ -67,6 +73,7 @@ internal class Composer : Base
                 }
             }
         }
+
         if (rankings.ContainsKey(Statistic.Ping))
         {
             List<CountResult> pingRankings;
@@ -78,6 +85,7 @@ internal class Composer : Base
                 }
             }
         }
+
         if (rankings.ContainsKey(Statistic.TimeOnline))
         {
             List<CountResult> timeOnlineRankings;
@@ -85,7 +93,8 @@ internal class Composer : Base
             {
                 if (timeOnlineRankings.Count > 0)
                 {
-                    leaderFields.Add(Tuple.Create("Time Online", LeaderbBoard.RankedSecondsToString(timeOnlineRankings)));
+                    leaderFields.Add(
+                        Tuple.Create("Time Online", LeaderbBoard.RankedSecondsToString(timeOnlineRankings)));
                 }
             }
         }
@@ -107,123 +116,152 @@ internal class Composer : Base
             return AllRankings(settings);
         }
 
-        var BeginEndDate = DateHelper.StartEndDatesForTimeRange(settings.TimeRange);
+        Tuple<DateTime, DateTime>? BeginEndDate = DateHelper.StartEndDatesForTimeRange(settings.TimeRange);
         return TimeBasedRankings(settings, BeginEndDate.Item1, BeginEndDate.Item2);
     }
 
     private Dictionary<Statistic, List<CountResult>> AllRankings(LeaderBoardConfigReference settings)
     {
-        Dictionary<Statistic, List<CountResult>> Dict = new Dictionary<Statistic, List<CountResult>>();
-        if (settings.Type == Leaderboards.Ordering.Descending)
+        Dictionary<Statistic, List<CountResult>> Dict = new();
+        if (settings.Type == Ordering.Descending)
         {
             if (settings.Deaths)
             {
-                Dict.Add(Statistic.Death, Records.Helper.TopNResultForCategory(Categories.Death, settings.NumberListings));
+                Dict.Add(Statistic.Death, Helper.TopNResultForCategory(Categories.Death, settings.NumberListings));
             }
+
             if (settings.Sessions)
             {
-                Dict.Add(Statistic.Session, Records.Helper.TopNResultForCategory(Categories.Join, settings.NumberListings));
+                Dict.Add(Statistic.Session, Helper.TopNResultForCategory(Categories.Join, settings.NumberListings));
             }
+
             if (settings.Shouts)
             {
-                Dict.Add(Statistic.Shout, Records.Helper.TopNResultForCategory(Categories.Shout, settings.NumberListings));
+                Dict.Add(Statistic.Shout, Helper.TopNResultForCategory(Categories.Shout, settings.NumberListings));
             }
+
             if (settings.Pings)
             {
-                Dict.Add(Statistic.Ping, Records.Helper.TopNResultForCategory(Categories.Ping, settings.NumberListings));
+                Dict.Add(Statistic.Ping, Helper.TopNResultForCategory(Categories.Ping, settings.NumberListings));
             }
+
             if (settings.TimeOnline)
             {
-                Dict.Add(Statistic.TimeOnline, Records.Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings));
-            }
-        }
-        if (settings.Type == Leaderboards.Ordering.Ascending)
-        {
-            if (settings.Deaths)
-            {
-                Dict.Add(Statistic.Death, Records.Helper.BottomNResultForCategory(Categories.Death, settings.NumberListings));
-            }
-            if (settings.Sessions)
-            {
-                Dict.Add(Statistic.Session, Records.Helper.BottomNResultForCategory(Categories.Join, settings.NumberListings));
-            }
-            if (settings.Shouts)
-            {
-                Dict.Add(Statistic.Shout, Records.Helper.BottomNResultForCategory(Categories.Shout, settings.NumberListings));
-            }
-            if (settings.Pings)
-            {
-                Dict.Add(Statistic.Ping, Records.Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings));
-            }
-            if (settings.TimeOnline)
-            {
-                Dict.Add(Statistic.TimeOnline, Records.Helper.BottomNResultForCategory(Categories.TimeOnline, settings.NumberListings));
+                Dict.Add(Statistic.TimeOnline,
+                    Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings));
             }
         }
 
-        Plugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
+        if (settings.Type == Ordering.Ascending)
+        {
+            if (settings.Deaths)
+            {
+                Dict.Add(Statistic.Death, Helper.BottomNResultForCategory(Categories.Death, settings.NumberListings));
+            }
+
+            if (settings.Sessions)
+            {
+                Dict.Add(Statistic.Session, Helper.BottomNResultForCategory(Categories.Join, settings.NumberListings));
+            }
+
+            if (settings.Shouts)
+            {
+                Dict.Add(Statistic.Shout, Helper.BottomNResultForCategory(Categories.Shout, settings.NumberListings));
+            }
+
+            if (settings.Pings)
+            {
+                Dict.Add(Statistic.Ping, Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings));
+            }
+
+            if (settings.TimeOnline)
+            {
+                Dict.Add(Statistic.TimeOnline,
+                    Helper.BottomNResultForCategory(Categories.TimeOnline, settings.NumberListings));
+            }
+        }
+
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
         printDict(Dict);
 
         return Dict;
-
     }
 
 
-    private Dictionary<Statistic, List<CountResult>> TimeBasedRankings(LeaderBoardConfigReference settings, System.DateTime startDate, System.DateTime endDate)
+    private Dictionary<Statistic, List<CountResult>> TimeBasedRankings(LeaderBoardConfigReference settings,
+        DateTime startDate, DateTime endDate)
     {
-        Dictionary<Statistic, List<CountResult>> Dict = new Dictionary<Statistic, List<CountResult>>();
-        if (settings.Type == Leaderboards.Ordering.Descending)
+        Dictionary<Statistic, List<CountResult>> Dict = new();
+        if (settings.Type == Ordering.Descending)
         {
             if (settings.Deaths)
             {
-                Dict.Add(Statistic.Death, Records.Helper.TopNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.Death,
+                    Helper.TopNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate));
             }
+
             if (settings.Sessions)
             {
-                Dict.Add(Statistic.Session, Records.Helper.TopNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.Session,
+                    Helper.TopNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate));
             }
+
             if (settings.Shouts)
             {
-                Dict.Add(Statistic.Shout, Records.Helper.TopNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.Shout,
+                    Helper.TopNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate));
             }
+
             if (settings.Pings)
             {
-                Dict.Add(Statistic.Ping, Records.Helper.TopNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.Ping,
+                    Helper.TopNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
             }
+
             if (settings.TimeOnline)
             {
-                Dict.Add(Statistic.TimeOnline, Records.Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings, startDate, endDate));
-            }
-        }
-        if (settings.Type == Leaderboards.Ordering.Ascending)
-        {
-            if (settings.Deaths)
-            {
-                Dict.Add(Statistic.Death, Records.Helper.BottomNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate));
-            }
-            if (settings.Sessions)
-            {
-                Dict.Add(Statistic.Session, Records.Helper.BottomNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate));
-            }
-            if (settings.Shouts)
-            {
-                Dict.Add(Statistic.Shout, Records.Helper.BottomNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate));
-            }
-            if (settings.Pings)
-            {
-                Dict.Add(Statistic.Ping, Records.Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
-            }
-            if (settings.TimeOnline)
-            {
-                Dict.Add(Statistic.TimeOnline, Records.Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
+                Dict.Add(Statistic.TimeOnline,
+                    Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings, startDate, endDate));
             }
         }
 
-        Plugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
+        if (settings.Type == Ordering.Ascending)
+        {
+            if (settings.Deaths)
+            {
+                Dict.Add(Statistic.Death,
+                    Helper.BottomNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate));
+            }
+
+            if (settings.Sessions)
+            {
+                Dict.Add(Statistic.Session,
+                    Helper.BottomNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate));
+            }
+
+            if (settings.Shouts)
+            {
+                Dict.Add(Statistic.Shout,
+                    Helper.BottomNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate));
+            }
+
+            if (settings.Pings)
+            {
+                Dict.Add(Statistic.Ping,
+                    Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
+            }
+
+            if (settings.TimeOnline)
+            {
+                Dict.Add(Statistic.TimeOnline,
+                    Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
+            }
+        }
+
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
         printDict(Dict);
 
         return Dict;
-
     }
 
     private static void printDict(Dictionary<Statistic, List<CountResult>> dict)
@@ -231,12 +269,12 @@ internal class Composer : Base
         foreach (KeyValuePair<Statistic, List<CountResult>> pair in dict)
         {
             string outStr = "";
-            foreach (var x in pair.Value)
+            foreach (CountResult? x in pair.Value)
             {
-                outStr += x.ToString() + ",";
+                outStr += x + ",";
             }
-            Plugin.StaticLogger.LogDebug($"{pair.Key}: {outStr}");
+
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"{pair.Key}: {outStr}");
         }
     }
-
 }

@@ -2,6 +2,7 @@
 using UnityEngine;
 
 namespace DiscordConnector.Patches;
+
 internal class ChatPatches
 {
     private const string ArrivalShout = "I have arrived!";
@@ -10,30 +11,36 @@ internal class ChatPatches
     internal class OnNewChatMessage
     {
         /// <summary>
-        /// Look into the chat message and perform some actions depending on what it is. No modifications are made to the messages being sent in game.
+        ///     Look into the chat message and perform some actions depending on what it is. No modifications are made to the
+        ///     messages being sent in game.
         /// </summary>
         /// <remarks>
-        /// <para>
-        ///     DiscordConnector is concerned with Shouts and Pings, as the other types of chat messages are not broadcast to the server where DiscordConnector operates.
-        ///     In the special case of shouting <see cref="ArrivalShout"/> in a server hosted from the client version of Valheim, some player has joined the game.
-        /// </para>
-        /// <para>
-        ///     The implementation here passes details of the chat message to one of the <see cref="Handlers"/> functions.
-        /// </para>
+        ///     <para>
+        ///         DiscordConnector is concerned with Shouts and Pings, as the other types of chat messages are not broadcast to
+        ///         the server where DiscordConnector operates.
+        ///         In the special case of shouting <see cref="ArrivalShout" /> in a server hosted from the client version of
+        ///         Valheim, some player has joined the game.
+        ///     </para>
+        ///     <para>
+        ///         The implementation here passes details of the chat message to one of the <see cref="Handlers" /> functions.
+        ///     </para>
         /// </remarks>
-        private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type, ref UserInfo user, ref string text, ref string senderNetworkUserId)
+        private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type, ref UserInfo sender, ref string text)
         {
-            Plugin.StaticLogger.LogDebug($"User details: name:{user.Name} gamerTag:{user.Gamertag} networkUserId:{user.NetworkUserId} DisplayName():{user.GetDisplayName(user.NetworkUserId)}");
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"User details: name:{sender.Name}  DisplayName():{sender.GetDisplayName()}");
 
-            string userName = user.Name;
+            string userName = sender.Name;
             if (string.IsNullOrEmpty(userName))
             {
-                Plugin.StaticLogger.LogInfo("Ignored shout from invalid user (null reference)");
+                DiscordConnectorPlugin.StaticLogger.LogInfo("Ignored shout from invalid user (null reference)");
                 return;
             }
-            if (Plugin.StaticConfig.MutedPlayers.IndexOf(userName) >= 0 || Plugin.StaticConfig.MutedPlayersRegex.IsMatch(userName))
+
+            if (DiscordConnectorPlugin.StaticConfig.MutedPlayers.IndexOf(userName) >= 0 ||
+                DiscordConnectorPlugin.StaticConfig.MutedPlayersRegex.IsMatch(userName))
             {
-                Plugin.StaticLogger.LogInfo($"Ignored shout from user on muted list. User: {userName} Shout: {text}.");
+                DiscordConnectorPlugin.StaticLogger.LogInfo(
+                    $"Ignored shout from user on muted list. User: {userName} Shout: {text}.");
                 return;
             }
 
@@ -57,7 +64,7 @@ internal class ChatPatches
                 case Talker.Type.Shout:
                     if (text.Equals(ArrivalShout))
                     {
-                        if (Plugin.IsHeadless())
+                        if (DiscordConnectorPlugin.IsHeadless())
                         {
                             return;
                         }
@@ -69,14 +76,14 @@ internal class ChatPatches
                     {
                         Handlers.Shout(peer, pos, text);
                     }
+
                     break;
                 default:
-                    Plugin.StaticLogger.LogDebug(
+                    DiscordConnectorPlugin.StaticLogger.LogDebug(
                         $"Unmatched chat message. [{type}] {userName}: {text} at {pos}"
                     );
                     break;
             }
-
         }
     }
 }
