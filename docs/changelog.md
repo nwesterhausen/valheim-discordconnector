@@ -13,6 +13,7 @@ This means that there is now just a single `DiscordConnector.dll` file which inc
 Fixes
 
 - Fixed a bug where the plugin would crash on the new version of Valheim due to the user detail changes.
+Thanks @ilyas-elbani for contributing this fix!
 
 ## Version 2.3.3
 
