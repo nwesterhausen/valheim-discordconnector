@@ -10,20 +10,21 @@ internal class VDCLogger
 {
     private static ManualLogSource _logger;
     private static string _logFilePath;
-    private static readonly string LOG_NAME = "vdc.log";
-    private bool _logDebugMessages;
+    private const string LogName = "vdc.log";
+    private bool logDebugMessages;
+    private const int MaxLogFiles = 5;
 
     public VDCLogger(ManualLogSource logger)
     {
         _logger = logger;
-        _logFilePath = Path.Combine(Paths.ConfigPath, DiscordConnectorPlugin.LegacyConfigPath, LOG_NAME);
+        _logFilePath = Path.Combine(Paths.ConfigPath, DiscordConnectorPlugin.LegacyConfigPath, LogName);
         InitializeLogFile();
         _logger.LogInfo("Logger initialized.");
     }
 
     internal void SetLogLevel(bool logDebugMessages)
     {
-        _logDebugMessages = logDebugMessages;
+        this.logDebugMessages = logDebugMessages;
     }
 
     private void InitializeLogFile()
@@ -31,7 +32,7 @@ internal class VDCLogger
         if (File.Exists(_logFilePath))
         {
             // versions old logs, like log.1 log.2 (up to 5)
-            for (int i = 5; i > 1; i--)
+            for (int i = MaxLogFiles; i > 1; i--)
             {
                 string oldLogFilePath = $"{_logFilePath}.{i}";
                 string newLogFilePath = $"{_logFilePath}.{i - 1}";
@@ -102,7 +103,7 @@ internal class VDCLogger
     public async Task LogDebugAsync(string message)
     {
         await LogToFileAsync("DEBUG", message);
-        if (_logDebugMessages)
+        if (logDebugMessages)
         {
             _logger.LogInfo(message);
         }
