@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Timers;
+
 using DiscordConnector.Leaderboards;
 using DiscordConnector.Records;
 

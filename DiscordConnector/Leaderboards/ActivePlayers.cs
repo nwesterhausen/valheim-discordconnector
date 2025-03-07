@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Timers;
+
 using DiscordConnector.Records;
 
 namespace DiscordConnector.Leaderboards;

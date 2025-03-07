@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+
 using BepInEx.Configuration;
 
 namespace DiscordConnector.Config;
@@ -29,33 +30,33 @@ internal class MainConfig
     private const string MAIN_SETTINGS = "Main Settings";
     private static List<string> mutedPlayers;
     private static Regex mutedPlayersRegex;
+    private readonly ConfigEntry<string> allowedRoleMentions;
+    private readonly ConfigEntry<string> allowedUserMentions;
+    private readonly ConfigEntry<bool> allowMentionsAnyRole;
+    private readonly ConfigEntry<bool> allowMentionsAnyUser;
+    private readonly ConfigEntry<bool> allowMentionsHereEveryone;
+    private readonly ConfigEntry<bool> allowNonPlayerShoutLogging;
+    private readonly ConfigEntry<bool> announcePlayerFirsts;
+    private readonly ConfigEntry<bool> collectStatsToggle;
     private readonly ConfigFile config;
-    private ConfigEntry<string> allowedRoleMentions;
-    private ConfigEntry<string> allowedUserMentions;
-    private ConfigEntry<bool> allowMentionsAnyRole;
-    private ConfigEntry<bool> allowMentionsAnyUser;
-    private ConfigEntry<bool> allowMentionsHereEveryone;
-    private ConfigEntry<bool> allowNonPlayerShoutLogging;
-    private ConfigEntry<bool> announcePlayerFirsts;
-    private ConfigEntry<bool> collectStatsToggle;
 
     // Main Settings
-    private ConfigEntry<string> defaultWebhookUsernameOverride;
-    private ConfigEntry<bool> discordEmbedMessagesToggle;
-    private ConfigEntry<bool> logDebugMessages;
-    private ConfigEntry<string> mutedDiscordUserList;
-    private ConfigEntry<string> mutedDiscordUserListRegex;
-    private ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
+    private readonly ConfigEntry<string> defaultWebhookUsernameOverride;
+    private readonly ConfigEntry<bool> discordEmbedMessagesToggle;
+    private readonly ConfigEntry<bool> logDebugMessages;
+    private readonly ConfigEntry<string> mutedDiscordUserList;
+    private readonly ConfigEntry<string> mutedDiscordUserListRegex;
+    private readonly ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
 
-    private ConfigEntry<bool> sendPositionsToggle;
-    private ConfigEntry<string> webhook2AvatarOverride;
-    private ConfigEntry<string> webhook2Events;
-    private ConfigEntry<string> webhook2UsernameOverride;
-    private ConfigEntry<string> webhookAvatarOverride;
-    private ConfigEntry<string> webhookEvents;
-    private ConfigEntry<string> webhookUrl;
-    private ConfigEntry<string> webhookUrl2;
-    private ConfigEntry<string> webhookUsernameOverride;
+    private readonly ConfigEntry<bool> sendPositionsToggle;
+    private readonly ConfigEntry<string> webhook2AvatarOverride;
+    private readonly ConfigEntry<string> webhook2Events;
+    private readonly ConfigEntry<string> webhook2UsernameOverride;
+    private readonly ConfigEntry<string> webhookAvatarOverride;
+    private readonly ConfigEntry<string> webhookEvents;
+    private readonly ConfigEntry<string> webhookUrl;
+    private readonly ConfigEntry<string> webhookUrl2;
+    private readonly ConfigEntry<string> webhookUsernameOverride;
 
     /// <summary>
     ///     Creates a new MainConfig object with the given config file.
@@ -63,7 +64,7 @@ internal class MainConfig
     public MainConfig(ConfigFile configFile)
     {
         config = configFile;
-        
+
         defaultWebhookUsernameOverride = config.Bind<string>(MAIN_SETTINGS,
             "Default Webhook Username Override",
             "",
@@ -237,9 +238,10 @@ internal class MainConfig
         {
             mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
         }
-        
+
         // Update Webhooks
-        PrimaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value), whichWebhook: "Primary");
+        PrimaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value),
+            whichWebhook: "Primary");
         if (!string.IsNullOrEmpty(webhookUsernameOverride.Value))
         {
             PrimaryWebhook.UsernameOverride = webhookUsernameOverride.Value;
@@ -250,7 +252,8 @@ internal class MainConfig
             PrimaryWebhook.AvatarOverride = webhookAvatarOverride.Value;
         }
 
-        SecondaryWebhook = new WebhookEntry(webhookUrl2.Value, Webhook.StringToEventList(webhook2Events.Value), whichWebhook: "Secondary");
+        SecondaryWebhook = new WebhookEntry(webhookUrl2.Value, Webhook.StringToEventList(webhook2Events.Value),
+            whichWebhook: "Secondary");
         if (!string.IsNullOrEmpty(webhook2UsernameOverride.Value))
         {
             SecondaryWebhook.UsernameOverride = webhook2UsernameOverride.Value;
@@ -260,7 +263,7 @@ internal class MainConfig
         {
             SecondaryWebhook.AvatarOverride = webhook2AvatarOverride.Value;
         }
-        
+
         // Update Allowed Mentions
         if (string.IsNullOrEmpty(allowedRoleMentions.Value))
         {
@@ -282,9 +285,9 @@ internal class MainConfig
     }
 
     public string DefaultWebhookUsernameOverride => defaultWebhookUsernameOverride.Value;
-    public WebhookEntry PrimaryWebhook { get; private set; }
+    public WebhookEntry PrimaryWebhook { get; }
 
-    public WebhookEntry SecondaryWebhook { get; private set; }
+    public WebhookEntry SecondaryWebhook { get; }
 
     public bool CollectStatsEnabled => collectStatsToggle.Value;
     public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
@@ -297,9 +300,9 @@ internal class MainConfig
     public bool AllowMentionsHereEveryone => allowMentionsHereEveryone.Value;
     public bool AllowMentionsAnyRole => allowMentionsAnyRole.Value;
     public bool AllowMentionsAnyUser => allowMentionsAnyUser.Value;
-    public List<string> AllowedRoleMentions { get; private set; }
+    public List<string> AllowedRoleMentions { get; }
 
-    public List<string> AllowedUserMentions { get; private set; }
+    public List<string> AllowedUserMentions { get; }
 
     public string ConfigAsJson()
     {

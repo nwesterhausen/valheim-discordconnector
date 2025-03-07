@@ -14,19 +14,19 @@ internal class LeaderBoardConfig
     private static ConfigFile config;
 
     public static string ConfigExtension = "leaderBoards";
-    private ActivePlayersAnnouncementConfig activePlayersAnnouncementConfig;
+    private readonly ActivePlayersAnnouncementConfig activePlayersAnnouncementConfig;
 
     // Config Definitions
-    private LeaderBoardConfigValues leaderBoard1;
-    private LeaderBoardConfigValues leaderBoard2;
-    private LeaderBoardConfigValues leaderBoard3;
-    private LeaderBoardConfigValues leaderBoard4;
-    private LeaderBoardConfigValues leaderBoard5;
+    private readonly LeaderBoardConfigValues leaderBoard1;
+    private readonly LeaderBoardConfigValues leaderBoard2;
+    private readonly LeaderBoardConfigValues leaderBoard3;
+    private readonly LeaderBoardConfigValues leaderBoard4;
+    private readonly LeaderBoardConfigValues leaderBoard5;
 
     public LeaderBoardConfig(ConfigFile configFile)
     {
         config = configFile;
-        
+
         leaderBoard1 = new LeaderBoardConfigValues(config, LEADER_BOARD_1);
         leaderBoard2 = new LeaderBoardConfigValues(config, LEADER_BOARD_2);
         leaderBoard3 = new LeaderBoardConfigValues(config, LEADER_BOARD_3);

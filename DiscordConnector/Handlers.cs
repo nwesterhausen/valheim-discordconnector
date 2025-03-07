@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+
 using DiscordConnector.Records;
+
 using UnityEngine;
 
 namespace DiscordConnector;

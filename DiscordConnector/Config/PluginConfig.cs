@@ -2,8 +2,10 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
 using BepInEx;
 using BepInEx.Configuration;
+
 using DiscordConnector.Config;
 
 namespace DiscordConnector;
@@ -39,7 +41,8 @@ internal class PluginConfig
         string messageConfigFilename = $"{DiscordConnectorPlugin.LegacyModName}-{MessagesConfig.ConfigExtension}.cfg";
         string togglesConfigFilename = $"{DiscordConnectorPlugin.LegacyModName}-{TogglesConfig.ConfigExtension}.cfg";
         string variableConfigFilename = $"{DiscordConnectorPlugin.LegacyModName}-{VariableConfig.ConfigExtension}.cfg";
-        string leaderBoardConfigFilename = $"{DiscordConnectorPlugin.LegacyModName}-{LeaderBoardConfig.ConfigExtension}.cfg";
+        string leaderBoardConfigFilename =
+            $"{DiscordConnectorPlugin.LegacyModName}-{LeaderBoardConfig.ConfigExtension}.cfg";
         string extraWebhooksConfigFilename =
             $"{DiscordConnectorPlugin.LegacyModName}-{ExtraWebhookConfig.ConfigExtension}.cfg";
 
@@ -230,7 +233,8 @@ internal class PluginConfig
 
         foreach (string extension in ConfigExtensions)
         {
-            string oldConfig = Path.Combine(Paths.ConfigPath, $"{DiscordConnectorPlugin.LegacyModName}-{extension}.cfg");
+            string oldConfig =
+                Path.Combine(Paths.ConfigPath, $"{DiscordConnectorPlugin.LegacyModName}-{extension}.cfg");
             string newConfig = Path.Combine(configPath, $"{DiscordConnectorPlugin.LegacyModName}-{extension}.cfg");
             // Main config has special handling (no -main extension on it)
             if (extension.Equals("main"))

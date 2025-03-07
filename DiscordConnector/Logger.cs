@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+
 using BepInEx;
 using BepInEx.Logging;
 
@@ -8,11 +9,11 @@ namespace DiscordConnector;
 
 internal class VDCLogger
 {
+    private const string LogName = "vdc.log";
+    private const int MaxLogFiles = 5;
     private static ManualLogSource _logger;
     private static string _logFilePath;
-    private const string LogName = "vdc.log";
     private bool logDebugMessages;
-    private const int MaxLogFiles = 5;
 
     public VDCLogger(ManualLogSource logger)
     {

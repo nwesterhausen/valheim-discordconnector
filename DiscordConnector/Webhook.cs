@@ -195,7 +195,8 @@ internal class WebhookEntry
 
         if (fireOnEvents == null || fireOnEvents.Count == 0)
         {
-            DiscordConnectorPlugin.StaticLogger.LogDebug($"Coerced null or empty {whichWebhook} webhook event list to empty list.");
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
+                $"Coerced null or empty {whichWebhook} webhook event list to empty list.");
             FireOnEvents = [];
         }
         else

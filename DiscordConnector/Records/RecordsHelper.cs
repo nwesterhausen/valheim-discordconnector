@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using DiscordConnector.Leaderboards;
 
 namespace DiscordConnector.Records;

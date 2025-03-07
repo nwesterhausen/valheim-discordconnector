@@ -1,4 +1,5 @@
 ﻿using System;
+
 using BepInEx.Configuration;
 
 namespace DiscordConnector.Config;
@@ -11,25 +12,25 @@ internal class VariableConfig
     private static ConfigFile config;
 
     public static string ConfigExtension = "variables";
-    private ConfigEntry<string> appendedPosFormat;
-    private ConfigEntry<string> posVarFormat;
+    private readonly ConfigEntry<string> appendedPosFormat;
+    private readonly ConfigEntry<string> posVarFormat;
 
     // Variable Definition
-    private ConfigEntry<string> userVar;
-    private ConfigEntry<string> userVar1;
-    private ConfigEntry<string> userVar2;
-    private ConfigEntry<string> userVar3;
-    private ConfigEntry<string> userVar4;
-    private ConfigEntry<string> userVar5;
-    private ConfigEntry<string> userVar6;
-    private ConfigEntry<string> userVar7;
-    private ConfigEntry<string> userVar8;
-    private ConfigEntry<string> userVar9;
+    private readonly ConfigEntry<string> userVar;
+    private readonly ConfigEntry<string> userVar1;
+    private readonly ConfigEntry<string> userVar2;
+    private readonly ConfigEntry<string> userVar3;
+    private readonly ConfigEntry<string> userVar4;
+    private readonly ConfigEntry<string> userVar5;
+    private readonly ConfigEntry<string> userVar6;
+    private readonly ConfigEntry<string> userVar7;
+    private readonly ConfigEntry<string> userVar8;
+    private readonly ConfigEntry<string> userVar9;
 
     public VariableConfig(ConfigFile configFile)
     {
         config = configFile;
-        
+
         // User Variable Settings
         userVar = config.Bind<string>(VARIABLE_SETTINGS,
             "Defined Variable 1",

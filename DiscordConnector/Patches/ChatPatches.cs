@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+
 using UnityEngine;
 
 namespace DiscordConnector.Patches;
@@ -25,9 +26,11 @@ internal class ChatPatches
         ///         The implementation here passes details of the chat message to one of the <see cref="Handlers" /> functions.
         ///     </para>
         /// </remarks>
-        private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type, ref UserInfo sender, ref string text)
+        private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type,
+            ref UserInfo sender, ref string text)
         {
-            DiscordConnectorPlugin.StaticLogger.LogDebug($"User details: name:{sender.Name}  DisplayName():{sender.GetDisplayName()}");
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
+                $"User details: name:{sender.Name}  DisplayName():{sender.GetDisplayName()} senderID:{senderID}  type:{type}  text:{text}");
 
             string userName = sender.Name;
             if (string.IsNullOrEmpty(userName))

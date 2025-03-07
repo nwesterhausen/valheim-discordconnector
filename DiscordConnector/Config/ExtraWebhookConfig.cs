@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+
 using BepInEx.Configuration;
 
 namespace DiscordConnector.Config;
@@ -39,7 +40,7 @@ internal class ExtraWebhookConfig
         webhookUsernameOverrideList = [];
         webhookAvatarOverrideList = [];
 
-        
+
         for (int i = 0; i < MAX_WEBHOOKS; i++)
         {
             webhookUrlList.Add(config.Bind<string>(
@@ -107,7 +108,7 @@ internal class ExtraWebhookConfig
     /// <summary>
     ///     The webhook entries defined in the config file.
     /// </summary>
-    private List<WebhookEntry> webhookEntries { get; set; }
+    private List<WebhookEntry> webhookEntries { get; }
 
     /// <summary>
     ///     Converts the config entries into a list of WebhookEntry objects

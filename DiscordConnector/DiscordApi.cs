@@ -4,7 +4,9 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+
 using Newtonsoft.Json;
+
 using UnityEngine;
 
 namespace DiscordConnector;
@@ -66,7 +68,7 @@ internal class DiscordApi
         {
             payload.embeds = [];
             List<DiscordField> discordFields = [];
-            
+
             foreach (Tuple<string, string> t in fields)
             {
                 discordFields.Add(new DiscordField { name = t.Item1, value = t.Item2 });
@@ -215,8 +217,9 @@ internal class DiscordApi
                         $"DispatchRequest.{requestId}: Error getting web response: {ex}");
                     return;
                 }
-                    if (responseExpected)
-                    {
+
+                if (responseExpected)
+                {
                     // Get the stream containing content returned by the server.
                     using (Stream? dataStream = response.GetResponseStream())
                     {
@@ -302,6 +305,17 @@ internal class DiscordApi
 internal class DiscordExecuteWebhook
 {
     /// <summary>
+    ///     Create an empty DiscordExecuteWebhook object.
+    /// </summary>
+    public DiscordExecuteWebhook()
+    {
+        // allowed mentions are set for all webhooks right now
+        allowed_mentions = new AllowedMentions();
+
+        ResetOverrides();
+    }
+
+    /// <summary>
     ///     The message contents (up to 2000 characters). Required if `embeds` is not provided.
     /// </summary>
     public string? content { get; set; }
@@ -327,23 +341,12 @@ internal class DiscordExecuteWebhook
     public AllowedMentions? allowed_mentions { get; set; }
 
     /// <summary>
-    ///     Create an empty DiscordExecuteWebhook object.
-    /// </summary>
-    public DiscordExecuteWebhook()
-    {
-        // allowed mentions are set for all webhooks right now
-        allowed_mentions = new AllowedMentions();
-
-        ResetOverrides();
-    }
-
-    /// <summary>
     ///     Set the username for the webhook.
     /// </summary>
     /// <param name="name">The username to set for the webhook</param>
     public void SetUsername(string name)
     {
-        this.username = name;
+        username = name;
     }
 
     /// <summary>
@@ -352,7 +355,7 @@ internal class DiscordExecuteWebhook
     /// <param name="url">The avatar URL to set for the webhook</param>
     public void SetAvatarUrl(string url)
     {
-        this.avatar_url = url;
+        avatar_url = url;
     }
 
     /// <summary>
@@ -434,27 +437,26 @@ internal class DiscordExecuteWebhook
                 DiscordApi.SendSerializedJson(secondaryWebhook, JsonConvert.SerializeObject(this));
             }
 
-                foreach (WebhookEntry webhook in DiscordConnectorPlugin.StaticConfig.ExtraWebhooks)
+            foreach (WebhookEntry webhook in DiscordConnectorPlugin.StaticConfig.ExtraWebhooks)
+            {
+                if (webhook.HasEvent(ev))
                 {
-                    if (webhook.HasEvent(ev))
+                    DiscordConnectorPlugin.StaticLogger.LogDebug($"Sending {ev} message to an Extra Webhook");
+                    ResetOverrides();
+
+                    if (webhook.HasUsernameOverride())
                     {
-                        DiscordConnectorPlugin.StaticLogger.LogDebug($"Sending {ev} message to an Extra Webhook");
-                        ResetOverrides();
-
-                        if (webhook.HasUsernameOverride())
-                        {
-                            SetUsername(webhook.UsernameOverride);
-                        }
-
-                        if (webhook.HasAvatarOverride())
-                        {
-                            SetAvatarUrl(webhook.AvatarOverride);
-                        }
-
-                        DiscordApi.SendSerializedJson(webhook, JsonConvert.SerializeObject(this));
+                        SetUsername(webhook.UsernameOverride);
                     }
+
+                    if (webhook.HasAvatarOverride())
+                    {
+                        SetAvatarUrl(webhook.AvatarOverride);
+                    }
+
+                    DiscordApi.SendSerializedJson(webhook, JsonConvert.SerializeObject(this));
                 }
-            
+            }
         }
         catch (Exception e)
         {

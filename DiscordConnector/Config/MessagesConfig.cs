@@ -1,4 +1,5 @@
 ﻿using System;
+
 using BepInEx.Configuration;
 
 namespace DiscordConnector.Config;
@@ -14,40 +15,40 @@ internal class MessagesConfig
     private static ConfigFile config;
 
     public static string ConfigExtension = "messages";
-    private ConfigEntry<string> eventPausedMessage;
-    private ConfigEntry<string> eventResumedMessage;
+    private readonly ConfigEntry<string> eventPausedMessage;
+    private readonly ConfigEntry<string> eventResumedMessage;
 
     // Event Messages
-    private ConfigEntry<string> eventStartMessage;
-    private ConfigEntry<string> eventStopMessage;
-    private ConfigEntry<string> leaderBoardBottomPlayersMessage;
-    private ConfigEntry<string> leaderBoardHighestPlayerMessage;
-    private ConfigEntry<string> leaderBoardLowestPlayerMessage;
+    private readonly ConfigEntry<string> eventStartMessage;
+    private readonly ConfigEntry<string> eventStopMessage;
+    private readonly ConfigEntry<string> leaderBoardBottomPlayersMessage;
+    private readonly ConfigEntry<string> leaderBoardHighestPlayerMessage;
+    private readonly ConfigEntry<string> leaderBoardLowestPlayerMessage;
 
     // Board Messages
-    private ConfigEntry<string> leaderBoardTopPlayersMessage;
-    private ConfigEntry<string> playerDeathMessage;
-    private ConfigEntry<string> playerFirstDeathMessage;
+    private readonly ConfigEntry<string> leaderBoardTopPlayersMessage;
+    private readonly ConfigEntry<string> playerDeathMessage;
+    private readonly ConfigEntry<string> playerFirstDeathMessage;
 
     // Player First Messages
-    private ConfigEntry<string> playerFirstJoinMessage;
-    private ConfigEntry<string> playerFirstLeaveMessage;
-    private ConfigEntry<string> playerFirstPingMessage;
-    private ConfigEntry<string> playerFirstShoutMessage;
+    private readonly ConfigEntry<string> playerFirstJoinMessage;
+    private readonly ConfigEntry<string> playerFirstLeaveMessage;
+    private readonly ConfigEntry<string> playerFirstPingMessage;
+    private readonly ConfigEntry<string> playerFirstShoutMessage;
 
     // Player Messages
-    private ConfigEntry<string> playerJoinMessage;
-    private ConfigEntry<string> playerLeaveMessage;
-    private ConfigEntry<string> playerPingMessage;
-    private ConfigEntry<string> playerShoutMessage;
+    private readonly ConfigEntry<string> playerJoinMessage;
+    private readonly ConfigEntry<string> playerLeaveMessage;
+    private readonly ConfigEntry<string> playerPingMessage;
+    private readonly ConfigEntry<string> playerShoutMessage;
 
     // Server Messages
-    private ConfigEntry<string> serverLaunchMessage;
-    private ConfigEntry<string> serverLoadedMessage;
-    private ConfigEntry<string> serverNewDayMessage;
-    private ConfigEntry<string> serverSavedMessage;
-    private ConfigEntry<string> serverShutdownMessage;
-    private ConfigEntry<string> serverStopMessage;
+    private readonly ConfigEntry<string> serverLaunchMessage;
+    private readonly ConfigEntry<string> serverLoadedMessage;
+    private readonly ConfigEntry<string> serverNewDayMessage;
+    private readonly ConfigEntry<string> serverSavedMessage;
+    private readonly ConfigEntry<string> serverShutdownMessage;
+    private readonly ConfigEntry<string> serverStopMessage;
 
     public MessagesConfig(ConfigFile configFile)
     {
