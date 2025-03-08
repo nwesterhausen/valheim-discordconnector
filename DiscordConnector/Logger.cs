@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using BepInEx;
@@ -132,27 +132,27 @@ internal class VDCLogger
         _logger.LogFatal(message);
     }
 
-    public void LogDebug(string message)
+    public virtual void LogDebug(string message)
     {
         LogDebugAsync(message).GetAwaiter().GetResult();
     }
 
-    public void LogInfo(string message)
+    public virtual void LogInfo(string message)
     {
         LogInfoAsync(message).GetAwaiter().GetResult();
     }
 
-    public void LogWarning(string message)
+    public virtual void LogWarning(string message)
     {
         LogWarningAsync(message).GetAwaiter().GetResult();
     }
 
-    public void LogError(string message)
+    public virtual void LogError(string message)
     {
         LogErrorAsync(message).GetAwaiter().GetResult();
     }
 
-    public void LogFatal(string message)
+    public virtual void LogFatal(string message)
     {
         LogFatalAsync(message).GetAwaiter().GetResult();
     }

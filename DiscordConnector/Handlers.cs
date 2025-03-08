@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using DiscordConnector.Records;
 using UnityEngine;
 
@@ -344,12 +344,14 @@ internal static class Handlers
 
     /// <summary>
     ///     Finish formatting the message based on the positional data (if allowed) and dispatch it to the Discord webhook.
+    ///     Enhanced to support rich Discord embeds for player events.
     /// </summary>
     /// <param name="peer">Player peer reference</param>
     /// <param name="playerHostName">Player host name</param>
     /// <param name="preFormattedMessage">Raw message to format for sending to discord</param>
     /// <param name="posEnabled">If we are allowed to include the position data</param>
     /// <param name="pos">Positional data to use in formatting</param>
+    /// <param name="ev">The event type that triggered this message</param>
     private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage,
         bool posEnabled, Vector3 pos, Webhook.Event ev)
     {
@@ -360,7 +362,7 @@ internal static class Handlers
         {
             if (!posEnabled)
             {
-                preFormattedMessage.Replace("%POS%", "");
+                preFormattedMessage = preFormattedMessage.Replace("%POS%", "");
             }
 
             finalMessage = MessageTransformer.FormatPlayerMessage(preFormattedMessage, peer.m_playerName,
@@ -372,26 +374,53 @@ internal static class Handlers
                 playerHostName, isPlayerLeaving);
         }
 
-        // If sending the position with the player join message is enabled
-        if (posEnabled)
+        // Determine whether to use embeds based on configuration
+        if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled)
         {
-            // If "fancier" discord messages are enabled OR if the message we intend to send DOES NOT contain the %POS% variable
-            if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !finalMessage.Contains("%POS%"))
+            // Create the appropriate embed based on event type and available data
+            EmbedBuilder embedBuilder;
+            
+            // Determine which type of embed to create based on event category
+            if (Webhook.PlayerDeathEvents.Contains(ev))
             {
-                // Send the message to discord with an auto-appended POS (or as a POS embed if "fancier" discord messages are enabled)
+                // For death events, use a specialized death embed
+                embedBuilder = MessageTransformer.CreateDeathEmbed(peer, finalMessage, ev);
+            }
+            else if (posEnabled)
+            {
+                // For events with position data, use player message embed with position
+                embedBuilder = MessageTransformer.CreatePlayerMessageEmbed(finalMessage, ev, peer.m_playerName, playerHostName, pos, isPlayerLeaving);
+            }
+            else
+            {
+                // For standard player events without position
+                embedBuilder = MessageTransformer.CreatePlayerMessageEmbed(finalMessage, ev, peer.m_playerName, playerHostName, isPlayerLeaving);
+            }
+            
+            // Send the embed using the enhanced API
+            DiscordApi.SendEmbed(ev, embedBuilder);
+        }
+        else
+        {
+            // Legacy behavior for non-embed mode
+            if (posEnabled)
+            {
+                // Send with position if enabled
                 DiscordApi.SendMessage(ev, finalMessage, pos);
-                return;
+            }
+            else
+            {
+                // Send without position
+                DiscordApi.SendMessage(ev, finalMessage);
             }
         }
-
-        // Sending position data is not allowed OR the message doesn't contain the %POS% variable
-        DiscordApi.SendMessage(ev, finalMessage);
     }
 
 
     /// <summary>
     ///     Finish formatting the message based on the positional data (if allowed) and dispatch it to the Discord webhook.
-    ///     This method handles the text from shouts and other chat-adjacent things
+    ///     This method handles the text from shouts and other chat-adjacent things.
+    ///     Enhanced to support rich Discord embeds for chat messages.
     /// </summary>
     /// <param name="peer">Player peer reference</param>
     /// <param name="playerHostName">Player host name</param>
@@ -399,16 +428,25 @@ internal static class Handlers
     /// <param name="posEnabled">If we are allowed to include the position data</param>
     /// <param name="pos">Positional data to use in formatting</param>
     /// <param name="text">Text that was sent</param>
+    /// <param name="ev">Event type</param>
     private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage,
         bool posEnabled, Vector3 pos, string text, Webhook.Event ev)
     {
+        if (preFormattedMessage.Contains("%SHOUT%"))
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                preFormattedMessage = preFormattedMessage.Replace("%SHOUT%", "");
+            }
+        }
+        
         // Format the message accordingly, depending if it has the %POS% variable or not
         string finalMessage;
         if (preFormattedMessage.Contains("%POS%"))
         {
             if (!posEnabled)
             {
-                preFormattedMessage.Replace("%POS%", "");
+                preFormattedMessage = preFormattedMessage.Replace("%POS%", "");
             }
 
             finalMessage =
@@ -421,20 +459,56 @@ internal static class Handlers
                 MessageTransformer.FormatPlayerMessage(preFormattedMessage, peer.m_playerName, playerHostName, text);
         }
 
-        // If sending the position with the player join message is enabled
-        if (posEnabled)
+        // Determine whether to use embeds based on configuration
+        if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled)
         {
-            // If "fancier" discord messages are enabled OR if the message we intend to send DOES NOT contain the %POS% variable
-            if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled || !finalMessage.Contains("%POS%"))
+            // Create the appropriate embed based on event type and available data
+            EmbedBuilder embedBuilder;
+            
+            // Determine which type of embed to create based on event category
+            if (Webhook.PlayerShoutEvents.Contains(ev))
             {
-                // Send the message to discord with an auto-appended POS (or as a POS embed if "fancier" discord messages are enabled)
+                // For shout events, use a specialized shout embed with the chat message
+                embedBuilder = MessageTransformer.CreateShoutMessageEmbed(finalMessage, ev, peer.m_playerName, playerHostName, text);
+                
+                // Add position field if enabled
+                if (posEnabled)
+                {
+                    embedBuilder.AddField("Position", MessageTransformer.FormatVector3AsPos(pos), true);
+                }
+            }
+            else
+            {
+                // For other chat-adjacent events
+                if (posEnabled)
+                {
+                    // Include position data in the embed
+                    embedBuilder = MessageTransformer.CreatePlayerMessageEmbed(finalMessage, ev, peer.m_playerName, playerHostName, pos);
+                }
+                else
+                {
+                    // Standard player message embed without position
+                    embedBuilder = MessageTransformer.CreatePlayerMessageEmbed(finalMessage, ev, peer.m_playerName, playerHostName);
+                }
+            }
+            
+            // Send the embed using the enhanced API
+            DiscordApi.SendEmbed(ev, embedBuilder);
+        }
+        else
+        {
+            // Legacy behavior for non-embed mode
+            if (posEnabled)
+            {
+                // Send message with position data
                 DiscordApi.SendMessage(ev, finalMessage, pos);
-                return;
+            }
+            else
+            {
+                // Send standard message without position
+                DiscordApi.SendMessage(ev, finalMessage);
             }
         }
-
-        // Sending position data is not allowed OR the message doesn't contain the %POS% variable
-        DiscordApi.SendMessage(ev, finalMessage);
     }
 
     /// <summary>
