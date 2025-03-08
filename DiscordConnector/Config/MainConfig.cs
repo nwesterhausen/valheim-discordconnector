@@ -28,6 +28,8 @@ internal class MainConfig
 
     public const string RetrieveByName = "Name: Treat each CharacterName as a separate player";
     private const string MAIN_SETTINGS = "Main Settings";
+    private const string EMBED_CONFIG_SETTINGS = "Settings - Embed Configuration";
+    private const string EMBED_STYLING_SETTINGS = "Settings - Embed Styling";
     private static List<string> mutedPlayers;
     private static Regex mutedPlayersRegex;
     private readonly ConfigFile config;
@@ -160,104 +162,104 @@ internal class MainConfig
             "Enable this setting to use embeds in the messages sent to Discord.");
             
         // Embed Field Visibility Configuration
-        embedTitleToggle = config.Bind("Settings - Embed Configuration",
+        embedTitleToggle = config.Bind(EMBED_CONFIG_SETTINGS,
             "Show Embed Title",
             true,
             "Enable this setting to show the title field in Discord embeds.");
             
-        embedDescriptionToggle = config.Bind("Settings - Embed Configuration",
+        embedDescriptionToggle = config.Bind(EMBED_CONFIG_SETTINGS,
             "Show Embed Description",
             true,
             "Enable this setting to show the description field in Discord embeds.");
             
-        embedAuthorToggle = config.Bind("Settings - Embed Configuration",
+        embedAuthorToggle = config.Bind(EMBED_CONFIG_SETTINGS,
             "Show Embed Author",
             true,
             "Enable this setting to show the author field in Discord embeds. This typically displays the server or player name.");
             
-        embedThumbnailToggle = config.Bind("Settings - Embed Configuration",
+        embedThumbnailToggle = config.Bind(EMBED_CONFIG_SETTINGS,
             "Show Embed Thumbnail",
             true,
             "Enable this setting to show a thumbnail image in Discord embeds. This appears in the top-right of the embed.");
             
-        embedFooterToggle = config.Bind("Settings - Embed Configuration",
+        embedFooterToggle = config.Bind(EMBED_CONFIG_SETTINGS,
             "Show Embed Footer",
             true,
             "Enable this setting to show the footer text in Discord embeds.");
             
-        embedTimestampToggle = config.Bind("Settings - Embed Configuration",
+        embedTimestampToggle = config.Bind(EMBED_CONFIG_SETTINGS,
             "Show Embed Timestamp",
             true,
             "Enable this setting to show a timestamp in Discord embeds.");
 
-        embedAuthorIconUrl = config.Bind("Settings - Embed Configuration",
+        embedAuthorIconUrl = config.Bind(EMBED_CONFIG_SETTINGS,
             "Author Icon URL",
             "https://cdn2.steamgriddb.com/icon/7d2b92b6726c241134dae6cd3fb8c182/32/32x32.png",
             "The URL for the small icon (32x32px) that appears next to the author name in Discord embeds.");
             
-        embedThumbnailUrl = config.Bind("Settings - Embed Configuration",
+        embedThumbnailUrl = config.Bind(EMBED_CONFIG_SETTINGS,
             "Thumbnail URL",
             "https://cdn2.steamgriddb.com/icon/d17892563a6984845a0e23df7841f903/32/256x256.png",
             "The URL for the larger thumbnail image (ideally 256x256px) that appears in the top-right of Discord embeds.");
             
         // Embed Color Configuration
-        embedDefaultColor = config.Bind("Settings - Embed Styling",
+        embedDefaultColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Default Embed Color",
             "#7289DA",
             "The default color for embeds when no specific color is defined. Use hex color format (e.g., #7289DA for Discord Blurple).");
             
-        embedServerStartColor = config.Bind("Settings - Embed Styling",
+        embedServerStartColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Server Start Color",
             "#43B581",
             "The color for server start/launch event embeds. Use hex color format (e.g., #43B581 for a green shade).");
             
-        embedServerStopColor = config.Bind("Settings - Embed Styling",
+        embedServerStopColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Server Stop Color",
             "#F04747",
             "The color for server stop/shutdown event embeds. Use hex color format (e.g., #F04747 for a red shade).");
             
-        embedPlayerJoinColor = config.Bind("Settings - Embed Styling",
+        embedPlayerJoinColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Player Join Color",
             "#43B581",
             "The color for player join event embeds. Use hex color format (e.g., #43B581 for a green shade).");
             
-        embedPlayerLeaveColor = config.Bind("Settings - Embed Styling",
+        embedPlayerLeaveColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Player Leave Color",
             "#FAA61A",
             "The color for player leave event embeds. Use hex color format (e.g., #FAA61A for an orange shade).");
             
-        embedDeathEventColor = config.Bind("Settings - Embed Styling",
+        embedDeathEventColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Death Event Color",
             "#F04747",
             "The color for player death event embeds. Use hex color format (e.g., #F04747 for a red shade).");
             
-        embedShoutMessageColor = config.Bind("Settings - Embed Styling",
+        embedShoutMessageColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Shout Message Color",
             "#7289DA",
             "The color for player shout message embeds. Use hex color format (e.g., #7289DA for Discord Blurple).");
             
-        embedOtherEventColor = config.Bind("Settings - Embed Styling",
+        embedOtherEventColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Other Event Color",
             "#747F8D",
             "The color for other miscellaneous event embeds. Use hex color format (e.g., #747F8D for a neutral gray).");
             
-        embedWorldEventColor = config.Bind("Settings - Embed Styling",
+        embedWorldEventColor = config.Bind(EMBED_STYLING_SETTINGS,
             "World Event Color",
             "#8B5CF6",
             "The color for world event embeds (e.g., forest events, raids). Use hex color format (e.g., #8B5CF6 for a purple shade).");
             
         // Other Embed Customization
-        embedFooterText = config.Bind("Settings - Embed Configuration",
+        embedFooterText = config.Bind(EMBED_CONFIG_SETTINGS,
             "Footer Text",
             "Valheim Server | {worldName}",
             "The text to display in the embed footer. You can use variables like {worldName}, {serverName}, and {timestamp}.");
             
-        embedFieldDisplayOrder = config.Bind("Settings - Embed Configuration",
+        embedFieldDisplayOrder = config.Bind(EMBED_CONFIG_SETTINGS,
             "Field Display Order",
             "position;event;player;details",
             "The order in which to display embed fields. Format should be a semicolon-separated list of field identifiers.");
             
-        embedUrlTemplate = config.Bind("Settings - Embed Configuration",
+        embedUrlTemplate = config.Bind(EMBED_CONFIG_SETTINGS,
             "Embed URL Template",
             "",
             "Optional URL template for the embed title. When set, the title becomes a clickable link. You can use variables like {worldName}, {serverName}, {playerName}.");
@@ -281,7 +283,7 @@ internal class MainConfig
             true,
             "Disable this setting to disable any positions/coordinates being sent with messages (e.g. players deaths or players joining/leaving). (Overwrites any individual setting.)");
 
-        showPlayerIdsToggle = config.Bind(MAIN_SETTINGS,
+        showPlayerIdsToggle = config.Bind(EMBED_CONFIG_SETTINGS,
             "Show Player IDs in Messages",
             false,
             "Enable this setting to show player IDs (Steam IDs) in Discord embed messages. This can be useful for server administration but may not be desired for regular public servers.");
