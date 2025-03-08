@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscordConnector.Config;
 using UnityEngine;
 
 namespace DiscordConnector;
@@ -20,6 +19,17 @@ internal class EmbedBuilder
     private readonly List<DiscordField> _fields;
     private int _currentRowFieldCount;
     private const int MAX_FIELDS_PER_ROW = 3;
+    
+    // Constants for Discord limits
+    public const int MAX_FIELDS_COUNT = 25;
+    public const string DEFAULT_COLOR = "#7289DA";          // Discord Blurple
+    public const string DEFAULT_SERVER_START_COLOR = "#43B581"; // Green
+    public const string DEFAULT_SERVER_STOP_COLOR = "#F04747";  // Red
+    public const string DEFAULT_PLAYER_JOIN_COLOR = "#43B581";  // Green
+    public const string DEFAULT_PLAYER_LEAVE_COLOR = "#FAA61A"; // Orange
+    public const string DEFAULT_DEATH_EVENT_COLOR = "#F04747";  // Red
+    public const string DEFAULT_SHOUT_MESSAGE_COLOR = "#7289DA"; // Discord Blurple
+    public const string DEFAULT_OTHER_EVENT_COLOR = "#747F8D";  // Gray
     
     // Reference to the configuration for field visibility and other settings
     private readonly PluginConfig _config;
@@ -44,7 +54,7 @@ internal class EmbedBuilder
     {
         if (_config.EmbedTitleEnabled)
         {
-            _embed.title = EmbedConfigValidator.ValidateTitle(title);
+            _embed.title = title;
         }
         return this;
     }
@@ -58,7 +68,7 @@ internal class EmbedBuilder
     {
         if (_config.EmbedDescriptionEnabled)
         {
-            _embed.description = EmbedConfigValidator.ValidateDescription(description);
+            _embed.description = description;
         }
         return this;
     }
@@ -71,7 +81,7 @@ internal class EmbedBuilder
     /// <returns>The current EmbedBuilder instance for method chaining</returns>
     public EmbedBuilder SetUrl(string? url)
     {
-        _embed.url = EmbedConfigValidator.ValidateUrl(url);
+        _embed.url = url;
         return this;
     }
     
@@ -120,8 +130,45 @@ internal class EmbedBuilder
     /// <returns>The current EmbedBuilder instance for method chaining</returns>
     public EmbedBuilder SetColor(string hexColor)
     {
-        _embed.color = EmbedConfigValidator.HexColorToDecimal(hexColor);
+        _embed.color = HexColorToDecimal(hexColor);
         return this;
+    }
+    
+    /// <summary>
+    ///     Converts a hex color string to its decimal representation.
+    /// </summary>
+    /// <param name="hexColor">The hex color string to convert</param>
+    /// <returns>The decimal value of the color</returns>
+    private int HexColorToDecimal(string hexColor)
+    {
+        if (string.IsNullOrEmpty(hexColor))
+        {
+            hexColor = DEFAULT_COLOR;
+        }
+        
+        if (!hexColor.StartsWith("#"))
+        {
+            hexColor = "#" + hexColor;
+        }
+        
+        try
+        {
+            // Remove the # if present and parse
+            string colorValue = hexColor.TrimStart('#');
+            
+            // Ensure we have a 6-character hex string
+            if (colorValue.Length != 6)
+            {
+                colorValue = DEFAULT_COLOR.TrimStart('#');
+            }
+            
+            return Convert.ToInt32(colorValue, 16);
+        }
+        catch
+        {
+            // If there's any error in parsing, use the default color
+            return Convert.ToInt32(DEFAULT_COLOR.TrimStart('#'), 16);
+        }
     }
     
     /// <summary>
@@ -131,7 +178,7 @@ internal class EmbedBuilder
     /// <returns>The current EmbedBuilder instance for method chaining</returns>
     public EmbedBuilder SetColorForEvent(Webhook.Event eventType)
     {
-        string hexColor = EmbedConfigValidator.DEFAULT_COLOR;
+        string hexColor = DEFAULT_COLOR;
         
         // Determine appropriate color based on event type
         if (Webhook.ServerLaunchEvents.Contains(eventType) || Webhook.ServerStartEvents.Contains(eventType))
@@ -187,9 +234,9 @@ internal class EmbedBuilder
         {
             _embed.author = new DiscordEmbedAuthor
             {
-                name = EmbedConfigValidator.ValidateAuthorName(name),
-                url = EmbedConfigValidator.ValidateUrl(url),
-                icon_url = EmbedConfigValidator.ValidateUrl(iconUrl)
+                name = name,
+                url = url,
+                icon_url = iconUrl
             };
         }
         return this;
@@ -202,11 +249,14 @@ internal class EmbedBuilder
     /// <returns>The current EmbedBuilder instance for method chaining</returns>
     public EmbedBuilder SetThumbnail(string? url)
     {
+        // Only set thumbnail if it's enabled and we have a valid URL
         if (_config.EmbedThumbnailEnabled && !string.IsNullOrEmpty(url))
         {
+            // At this point, we've verified url is not null or empty
+            // But we use null-coalescing to satisfy the compiler
             _embed.thumbnail = new DiscordEmbedThumbnail
             {
-                url = EmbedConfigValidator.ValidateUrl(url)
+                url = url! // Using null-forgiving operator as we've already checked it's not null
             };
         }
         return this;
@@ -219,11 +269,14 @@ internal class EmbedBuilder
     /// <returns>The current EmbedBuilder instance for method chaining</returns>
     public EmbedBuilder SetImage(string? url)
     {
+        // Only set image if we have a valid URL
         if (!string.IsNullOrEmpty(url))
         {
+            // At this point, we've verified url is not null or empty
+            // But we use null-forgiving to satisfy the compiler
             _embed.image = new DiscordEmbedImage
             {
-                url = EmbedConfigValidator.ValidateUrl(url)
+                url = url! // Using null-forgiving operator as we've already checked it's not null
             };
         }
         return this;
@@ -241,8 +294,8 @@ internal class EmbedBuilder
         {
             _embed.footer = new DiscordEmbedFooter
             {
-                text = EmbedConfigValidator.ValidateFooterText(text),
-                icon_url = EmbedConfigValidator.ValidateUrl(iconUrl)
+                text = text,
+                icon_url = iconUrl
             };
         }
         return this;
@@ -291,47 +344,51 @@ internal class EmbedBuilder
     }
     
     /// <summary>
-    ///     Adds a field to the embed.
-    ///     Fields will be displayed in the order they are added.
+    ///     Adds a field to the embed if fields are enabled in configuration.
     /// </summary>
     /// <param name="name">The field name</param>
     /// <param name="value">The field value</param>
-    /// <param name="inline">Whether the field should display inline</param>
+    /// <param name="inline">Whether the field should be displayed inline</param>
     /// <returns>The current EmbedBuilder instance for method chaining</returns>
     public EmbedBuilder AddField(string? name, string? value, bool inline = false)
     {
+        // Skip field if either name or value is null or empty
         if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value))
         {
             return this;
         }
         
-        if (_fields.Count >= EmbedConfigValidator.MAX_FIELDS_COUNT)
+        // Check for field count limit - Discord allows max 25 fields
+        if (_fields.Count >= MAX_FIELDS_COUNT)
         {
-            DiscordConnectorPlugin.StaticLogger.LogWarning($"Cannot add more than {EmbedConfigValidator.MAX_FIELDS_COUNT} fields to a Discord embed.");
+            DiscordConnectorPlugin.StaticLogger.LogWarning($"Cannot add more than {MAX_FIELDS_COUNT} fields to a Discord embed.");
             return this;
         }
-        
+
+        // Add the field
         _fields.Add(new DiscordField
         {
-            name = EmbedConfigValidator.ValidateFieldName(name),
-            value = EmbedConfigValidator.ValidateFieldValue(value),
+            name = name,
+            value = value,
             inline = inline
         });
-        
+
+        // Update row tracking for inline fields
         if (inline)
         {
             _currentRowFieldCount++;
             if (_currentRowFieldCount >= MAX_FIELDS_PER_ROW)
             {
+                // Start a new row
                 _currentRowFieldCount = 0;
             }
         }
         else
         {
-            // Non-inline fields break the row
+            // Non-inline fields always start a new row
             _currentRowFieldCount = 0;
         }
-        
+
         return this;
     }
     
@@ -464,22 +521,20 @@ internal class EmbedBuilder
     }
     
     /// <summary>
-    ///     Builds and returns the Discord embed object.
-    ///     Applies all fields and performs final validation.
+    ///     Builds the DiscordEmbed object with all the configured settings.
     /// </summary>
-    /// <returns>The built DiscordEmbed object</returns>
+    /// <returns>A fully configured DiscordEmbed object</returns>
     public DiscordEmbed Build()
     {
-        // Set fields on the embed
         if (_fields.Count > 0)
         {
             _embed.fields = _fields;
         }
         
-        // Validate the total character count
-        if (_fields.Count > 0 && !IsWithinCharacterLimit())
+        // Check for total character limit
+        if (!IsWithinCharacterLimit())
         {
-            DiscordConnectorPlugin.StaticLogger.LogWarning("Discord embed exceeds maximum character limit. Some content may be truncated.");
+            DiscordConnectorPlugin.StaticLogger.LogWarning("Embed exceeds Discord's character limit and will be truncated.");
             TruncateToFitCharacterLimit();
         }
         
@@ -487,22 +542,30 @@ internal class EmbedBuilder
     }
     
     /// <summary>
-    ///     Checks if the total character count in the embed is within Discord's limits.
+    ///     Checks if the current embed is within Discord's character limit.
     /// </summary>
-    /// <returns>true if within limits, false if exceeds</returns>
+    /// <returns>True if the embed is within limits, false otherwise</returns>
     private bool IsWithinCharacterLimit()
     {
-        string[] fieldNames = _fields.Select(f => f.name ?? string.Empty).ToArray();
-        string[] fieldValues = _fields.Select(f => f.value ?? string.Empty).ToArray();
+        // Calculate total character count for the embed
+        int totalChars = 0;
         
-        return EmbedConfigValidator.IsWithinCharacterLimit(
-            _embed.title,
-            _embed.description,
-            _embed.footer?.text,
-            _embed.author?.name,
-            fieldNames,
-            fieldValues
-        );
+        totalChars += _embed.title?.Length ?? 0;
+        totalChars += _embed.description?.Length ?? 0;
+        totalChars += _embed.footer?.text?.Length ?? 0;
+        totalChars += _embed.author?.name?.Length ?? 0;
+        
+        if (_fields != null && _fields.Count > 0)
+        {
+            foreach (var field in _fields)
+            {
+                totalChars += field.name?.Length ?? 0;
+                totalChars += field.value?.Length ?? 0;
+            }
+        }
+        
+        // Discord's limit is 6000 characters
+        return totalChars <= 6000;
     }
     
     /// <summary>

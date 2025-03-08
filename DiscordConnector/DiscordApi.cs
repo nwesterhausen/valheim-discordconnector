@@ -243,8 +243,8 @@ internal class DiscordApi
                     {
                         discordFields.Add(new DiscordField
                         {
-                            name = Config.EmbedConfigValidator.ValidateFieldName(t.Item1),
-                            value = Config.EmbedConfigValidator.ValidateFieldValue(t.Item2)
+                            name = t.Item1,
+                            value = t.Item2
                         });
                     }
                 }
@@ -335,12 +335,27 @@ internal class DiscordApi
             // If we have a valid embed, validate it and send it
             try
             {
-                // Validate the embed with our comprehensive validator and auto-fix issues if possible
-                bool isValid = Config.EmbedConfigValidator.ValidateEmbed(embed, true, true);
+                // Basic validation to ensure embed is not empty
+                bool isValid = true;
+                
+                // Check if the embed has any visible content
+                bool hasContent = !string.IsNullOrEmpty(embed.title) ||
+                                 !string.IsNullOrEmpty(embed.description) ||
+                                 (embed.fields != null && embed.fields.Count > 0) ||
+                                 (embed.footer != null && !string.IsNullOrEmpty(embed.footer.text)) ||
+                                 (embed.author != null && !string.IsNullOrEmpty(embed.author.name)) ||
+                                 (embed.image != null && !string.IsNullOrEmpty(embed.image.url)) ||
+                                 (embed.thumbnail != null && !string.IsNullOrEmpty(embed.thumbnail.url));
+                
+                if (!hasContent)
+                {
+                    DiscordConnectorPlugin.StaticLogger.LogWarning("Embed has no visible content and may not display correctly");
+                    isValid = false;
+                }
                 
                 if (!isValid)
                 {
-                    DiscordConnectorPlugin.StaticLogger.LogWarning("Embed validation failed and could not be automatically fixed");
+                    DiscordConnectorPlugin.StaticLogger.LogWarning("Embed validation failed");
                     
                     // Try to extract just the description for a fallback message
                     string fallbackContent = embedBuilder.GetDescriptionForFallback() ?? string.Empty;
