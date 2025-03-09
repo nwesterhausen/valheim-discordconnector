@@ -5,12 +5,15 @@ using DiscordConnector.Records;
 
 using HarmonyLib;
 
+using Jotunn;
+
 using UnityEngine.Device;
 using UnityEngine.Rendering;
 
 namespace DiscordConnector;
 
 [BepInPlugin(ModGUID, ModName, ModVersion)]
+[BepInDependency(Jotunn.Main.ModGuid)]
 public class DiscordConnectorPlugin : BaseUnityPlugin
 {
     internal const string ModName = "DiscordConnector";
@@ -54,10 +57,27 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
     {
         // Plugin startup logic
         StaticLogger.LogDebug($"Plugin {ModName} is loaded!");
-
-        if (!ZSteamSocket.m_hostSocket.IsHost())
+        try
         {
-            StaticLogger.LogDebug("Detected running client.");
+            if (ZNet.instance.IsServerInstance() && ZNet.instance.IsDedicated())
+            {
+                StaticLogger.LogDebug("Detected running dedicated server.");
+            }
+        } catch (System.Exception e)
+        {
+            StaticLogger.LogError($"Error checking server instance: {e.Message}");
+        }
+
+        try
+        {
+            if (!ZSteamSocket.m_hostSocket.IsHost())
+            {
+                StaticLogger.LogDebug("Detected running client.");
+            }
+        }
+        catch (System.Exception e)
+        {
+            StaticLogger.LogError($"Error checking client instance: {e.Message}");
         }
 
         if (string.IsNullOrEmpty(StaticConfig.PrimaryWebhook.Url) &&
