@@ -69,7 +69,6 @@ internal class MainConfig
     private ConfigEntry<string> embedNewDayColor;
     private ConfigEntry<string> embedServerSaveColor;
     private ConfigEntry<string> embedPositionMessageColor;
-    private ConfigEntry<string> embedLeaderboardColor;
     private ConfigEntry<string> embedActivePlayersColor;
     private ConfigEntry<string> embedLeaderboardEmbedColor;
     private ConfigEntry<string> embedFooterText;
@@ -268,11 +267,6 @@ internal class MainConfig
             "Position Message Color",
             "#3498DB",
             "The color for position message embeds. Use hex color format (e.g., #3498DB for a bright blue shade).");
-            
-        embedLeaderboardColor = config.Bind(EMBED_STYLING_SETTINGS,
-            "Leaderboard Color",
-            "#9B59B6",
-            "The color for leaderboard embeds. Use hex color format (e.g., #9B59B6 for a vibrant purple shade).");
             
         embedActivePlayersColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Active Players Color",
@@ -490,7 +484,6 @@ internal class MainConfig
     public string EmbedNewDayColor => embedNewDayColor.Value;
     public string EmbedServerSaveColor => embedServerSaveColor.Value;
     public string EmbedPositionMessageColor => embedPositionMessageColor.Value;
-    public string EmbedLeaderboardColor => embedLeaderboardColor.Value;
     public string EmbedActivePlayersColor => embedActivePlayersColor.Value;
     public string EmbedLeaderboardEmbedColor => embedLeaderboardEmbedColor.Value;
     
@@ -606,7 +599,6 @@ internal class MainConfig
         jsonString += $"\"newDayColor\":\"{EmbedNewDayColor}\",";
         jsonString += $"\"serverSaveColor\":\"{EmbedServerSaveColor}\",";
         jsonString += $"\"positionMessageColor\":\"{EmbedPositionMessageColor}\",";
-        jsonString += $"\"leaderboardColor\":\"{EmbedLeaderboardColor}\",";
         jsonString += $"\"activePlayersColor\":\"{EmbedActivePlayersColor}\",";
         jsonString += $"\"leaderboardEmbedColor\":\"{EmbedLeaderboardEmbedColor}\",";
         jsonString += $"\"footerText\":\"{EmbedFooterText}\",";

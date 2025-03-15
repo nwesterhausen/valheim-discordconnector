@@ -375,45 +375,6 @@ internal static class EmbedTemplates
     }
     
     /// <summary>
-    ///     Creates a leaderboard message embed.
-    /// </summary>
-    /// <param name="eventType">The specific leaderboard event type</param>
-    /// <param name="title">The leaderboard title</param>
-    /// <param name="description">The leaderboard description</param>
-    /// <param name="entries">The leaderboard entries as name/value tuples</param>
-    /// <param name="worldName">The name of the server world</param>
-    /// <returns>A configured EmbedBuilder instance</returns>
-    public static EmbedBuilder LeaderboardMessage(Webhook.Event eventType, string title, string description, 
-                                                 List<Tuple<string, string>> entries, string worldName = "")
-    {
-        var variables = new Dictionary<string, string>
-        {
-            {"worldName", worldName},
-            {"timestamp", DateTime.UtcNow.ToString("s")}
-        };
-        
-        var builder = new EmbedBuilder()
-            .SetColor(DiscordConnectorPlugin.StaticConfig.EmbedLeaderboardColor) // Use the configured color for leaderboards
-            .SetAuthor("Leaderboard", null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Trophy icon
-            .SetTitle(title)
-            .SetDescription(description)
-            .SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled ? 
-                        DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl : null)
-            .SetTimestamp();
-            
-        // Add all entries as inline fields
-        builder.AddInlineFields(entries);
-        
-        // Set footer with world info
-        builder.SetFooterFromTemplate(variables);
-        
-        // Set URL if configured
-        builder.SetUrlFromTemplate(variables);
-        
-        return builder;
-    }
-    
-    /// <summary>
     ///     Creates an active players announcement embed.
     /// </summary>
     /// <param name="message">The formatted message content with player counts</param>
@@ -449,42 +410,7 @@ internal static class EmbedTemplates
         
         return builder;
     }
-    
-    /// <summary>
-    ///     Gets the status text for a server event.
-    /// </summary>
-    /// <param name="eventType">The server event type</param>
-    /// <returns>A status text appropriate for the event</returns>
-    private static string GetStatusForEvent(Webhook.Event eventType)
-    {
-        if (Webhook.ServerLaunchEvents.Contains(eventType))
-        {
-            return "Launching";
-        }
-        else if (Webhook.ServerStartEvents.Contains(eventType))
-        {
-            return "Online";
-        }
-        else if (Webhook.ServerStopEvents.Contains(eventType))
-        {
-            return "Stopping";
-        }
-        else if (Webhook.ServerShutdownEvents.Contains(eventType))
-        {
-            return "Offline";
-        }
-        else if (eventType == Webhook.Event.ServerSave)
-        {
-            return "Online";
-        }
-        else if (eventType == Webhook.Event.NewDayNumber)
-        {
-            return "Online";
-        }
-        
-        return "Unknown";
-    }
-    
+
     /// <summary>
     ///     Creates a leaderboard announcement embed.
     /// </summary>
@@ -526,5 +452,40 @@ internal static class EmbedTemplates
         builder.SetUrlFromTemplate(variables);
 
         return builder;
+    }
+
+    /// <summary>
+    ///     Gets the status text for a server event.
+    /// </summary>
+    /// <param name="eventType">The server event type</param>
+    /// <returns>A status text appropriate for the event</returns>
+    private static string GetStatusForEvent(Webhook.Event eventType)
+    {
+        if (Webhook.ServerLaunchEvents.Contains(eventType))
+        {
+            return "Launching";
+        }
+        else if (Webhook.ServerStartEvents.Contains(eventType))
+        {
+            return "Online";
+        }
+        else if (Webhook.ServerStopEvents.Contains(eventType))
+        {
+            return "Stopping";
+        }
+        else if (Webhook.ServerShutdownEvents.Contains(eventType))
+        {
+            return "Offline";
+        }
+        else if (eventType == Webhook.Event.ServerSave)
+        {
+            return "Online";
+        }
+        else if (eventType == Webhook.Event.NewDayNumber)
+        {
+            return "Online";
+        }
+        
+        return "Unknown";
     }
 }
