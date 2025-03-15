@@ -683,7 +683,7 @@ internal static class MessageTransformer
             }
         }
         
-        return EmbedTemplates.LeaderboardEmbed(title, description, worldName);
+        return EmbedTemplates.LeaderboardEmbed(title, entries, worldName);
     }
     
     /// <summary>
