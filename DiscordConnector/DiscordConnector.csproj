@@ -231,7 +231,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="JotunnLib" Version="2.24.2" />
+    <PackageReference Include="JotunnLib" Version="2.24.3" />
     <PackageReference Include="LiteDB" Version="5.0.21" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Buffers" Version="4.6.0" />
