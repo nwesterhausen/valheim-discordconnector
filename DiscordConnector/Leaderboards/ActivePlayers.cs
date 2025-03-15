@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using System.Timers;
 using DiscordConnector.Records;
 
@@ -68,33 +68,50 @@ internal static class ActivePlayersAnnouncement
         }
 
         Webhook.Event ev = Webhook.Event.ActivePlayers;
-        string formattedAnnouncement = "**Active Players**\n";
+        string statsAnnouncement = "";
         if (DiscordConnectorPlugin.StaticConfig.ActivePlayersAnnouncement.IncludeCurrentlyOnline)
         {
             int currentlyOnline = CurrentOnlinePlayers();
-            formattedAnnouncement += $"Online now: {currentlyOnline}\n";
+            statsAnnouncement += $"Online now: {currentlyOnline}\n";
         }
 
         if (DiscordConnectorPlugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalToday)
         {
             int uniqueToday = Helper.CountUniquePlayers(Categories.Join, TimeRange.Today);
-            formattedAnnouncement += $"Players today: {uniqueToday}\n";
+            statsAnnouncement += $"Players today: {uniqueToday}\n";
         }
 
         if (DiscordConnectorPlugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalPastWeek)
         {
             int uniqueThisWeek = Helper.CountUniquePlayers(Categories.Join, TimeRange.PastWeek);
-            formattedAnnouncement += $"This week: {uniqueThisWeek}\n";
+            statsAnnouncement += $"This week: {uniqueThisWeek}\n";
         }
 
         if (DiscordConnectorPlugin.StaticConfig.ActivePlayersAnnouncement.IncludeTotalAllTime)
         {
             int uniqueAllTime = Helper.CountUniquePlayers(Categories.Join, TimeRange.AllTime);
-            formattedAnnouncement += $"All time: {uniqueAllTime}";
+            statsAnnouncement += $"All time: {uniqueAllTime}";
         }
 
-
-        DiscordApi.SendMessage(ev, formattedAnnouncement);
+        // Get world name from ZNet if available
+        string worldName = "";
+        if (ZNet.instance != null)
+        {
+            worldName = ZNet.instance.GetWorldName();
+        }
+        
+        // If embeds are enabled, use the new embed template
+        if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled)
+        {
+            var embedBuilder = EmbedTemplates.ActivePlayersAnnouncement(statsAnnouncement, worldName);
+            DiscordApi.SendEmbed(ev, embedBuilder);
+        }
+        else
+        {
+            // Fallback to plain text message if embeds are disabled
+            string formattedAnnouncement = "**Active Players**\n" + statsAnnouncement;
+            DiscordApi.SendMessage(ev, formattedAnnouncement);
+        }
     }
 
     /// <summary>

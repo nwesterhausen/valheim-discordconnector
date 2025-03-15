@@ -66,6 +66,12 @@ internal class MainConfig
     private ConfigEntry<string> embedShoutMessageColor;
     private ConfigEntry<string> embedOtherEventColor;
     private ConfigEntry<string> embedWorldEventColor;
+    private ConfigEntry<string> embedNewDayColor;
+    private ConfigEntry<string> embedServerSaveColor;
+    private ConfigEntry<string> embedPositionMessageColor;
+    private ConfigEntry<string> embedLeaderboardColor;
+    private ConfigEntry<string> embedActivePlayersColor;
+    private ConfigEntry<string> embedLeaderboardEmbedColor;
     private ConfigEntry<string> embedFooterText;
     private ConfigEntry<string> embedFieldDisplayOrder;
     private ConfigEntry<string> embedUrlTemplate;
@@ -247,6 +253,36 @@ internal class MainConfig
             "World Event Color",
             "#8B5CF6",
             "The color for world event embeds (e.g., forest events, raids). Use hex color format (e.g., #8B5CF6 for a purple shade).");
+            
+        embedNewDayColor = config.Bind(EMBED_STYLING_SETTINGS,
+            "New Day Color",
+            "#FFD700",
+            "The color for new day event embeds. Use hex color format (e.g., #FFD700 for a gold shade).");
+            
+        embedServerSaveColor = config.Bind(EMBED_STYLING_SETTINGS,
+            "Server Save Color",
+            "#1D8BF1",
+            "The color for server save event embeds. Use hex color format (e.g., #1D8BF1 for a vibrant blue shade).");
+            
+        embedPositionMessageColor = config.Bind(EMBED_STYLING_SETTINGS,
+            "Position Message Color",
+            "#3498DB",
+            "The color for position message embeds. Use hex color format (e.g., #3498DB for a bright blue shade).");
+            
+        embedLeaderboardColor = config.Bind(EMBED_STYLING_SETTINGS,
+            "Leaderboard Color",
+            "#9B59B6",
+            "The color for leaderboard embeds. Use hex color format (e.g., #9B59B6 for a vibrant purple shade).");
+            
+        embedActivePlayersColor = config.Bind(EMBED_STYLING_SETTINGS,
+            "Active Players Color",
+            "#4B84FF",
+            "The color for active player announcement embeds. Use hex color format (e.g., #4B84FF for a vibrant blue shade).");
+            
+        embedLeaderboardEmbedColor = config.Bind(EMBED_STYLING_SETTINGS,
+            "Leaderboard Embed Color",
+            "#FFAA00",
+            "The color for leaderboard announcement embeds. Use hex color format (e.g., #FFAA00 for a gold/yellow shade).");
             
         // Other Embed Customization
         embedFooterText = config.Bind(EMBED_CONFIG_SETTINGS,
@@ -451,6 +487,12 @@ internal class MainConfig
     public string EmbedShoutMessageColor => embedShoutMessageColor.Value;
     public string EmbedOtherEventColor => embedOtherEventColor.Value;
     public string EmbedWorldEventColor => embedWorldEventColor.Value;
+    public string EmbedNewDayColor => embedNewDayColor.Value;
+    public string EmbedServerSaveColor => embedServerSaveColor.Value;
+    public string EmbedPositionMessageColor => embedPositionMessageColor.Value;
+    public string EmbedLeaderboardColor => embedLeaderboardColor.Value;
+    public string EmbedActivePlayersColor => embedActivePlayersColor.Value;
+    public string EmbedLeaderboardEmbedColor => embedLeaderboardEmbedColor.Value;
     
     // Other Embed Customization Properties
     public string EmbedFooterText => embedFooterText.Value;
@@ -497,6 +539,9 @@ internal class MainConfig
             Webhook.Event.PlayerLeave or Webhook.Event.PlayerFirstLeave => EmbedPlayerLeaveColor,
             Webhook.Event.PlayerDeath or Webhook.Event.PlayerFirstDeath => EmbedDeathEventColor,
             Webhook.Event.PlayerShout or Webhook.Event.PlayerFirstShout => EmbedShoutMessageColor,
+            Webhook.Event.NewDayNumber => EmbedNewDayColor,
+            Webhook.Event.ServerSave => EmbedServerSaveColor,
+            Webhook.Event.EventStart or Webhook.Event.EventStop => EmbedWorldEventColor,
             _ => EmbedOtherEventColor
         };
     }
@@ -557,6 +602,13 @@ internal class MainConfig
         jsonString += $"\"deathEventColor\":\"{EmbedDeathEventColor}\",";
         jsonString += $"\"shoutMessageColor\":\"{EmbedShoutMessageColor}\",";
         jsonString += $"\"otherEventColor\":\"{EmbedOtherEventColor}\",";
+        jsonString += $"\"worldEventColor\":\"{EmbedWorldEventColor}\",";
+        jsonString += $"\"newDayColor\":\"{EmbedNewDayColor}\",";
+        jsonString += $"\"serverSaveColor\":\"{EmbedServerSaveColor}\",";
+        jsonString += $"\"positionMessageColor\":\"{EmbedPositionMessageColor}\",";
+        jsonString += $"\"leaderboardColor\":\"{EmbedLeaderboardColor}\",";
+        jsonString += $"\"activePlayersColor\":\"{EmbedActivePlayersColor}\",";
+        jsonString += $"\"leaderboardEmbedColor\":\"{EmbedLeaderboardEmbedColor}\",";
         jsonString += $"\"footerText\":\"{EmbedFooterText}\",";
         jsonString += $"\"urlTemplate\":\"{EmbedUrlTemplate}\",";
         jsonString += $"\"authorIconUrl\":\"{EmbedAuthorIconUrl}\",";

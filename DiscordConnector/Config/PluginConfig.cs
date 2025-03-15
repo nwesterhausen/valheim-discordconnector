@@ -137,6 +137,12 @@ internal class PluginConfig
     public string EmbedShoutMessageColor => mainConfig.EmbedShoutMessageColor;
     public string EmbedOtherEventColor => mainConfig.EmbedOtherEventColor;
     public string EmbedWorldEventColor => mainConfig.EmbedWorldEventColor;
+    public string EmbedNewDayColor => mainConfig.EmbedNewDayColor;
+    public string EmbedServerSaveColor => mainConfig.EmbedServerSaveColor;
+    public string EmbedPositionMessageColor => mainConfig.EmbedPositionMessageColor;
+    public string EmbedLeaderboardColor => mainConfig.EmbedLeaderboardColor;
+    public string EmbedActivePlayersColor => mainConfig.EmbedActivePlayersColor;
+    public string EmbedLeaderboardEmbedColor => mainConfig.EmbedLeaderboardEmbedColor;
     
     // Other Embed Customization Properties
     public string EmbedFooterText => mainConfig.EmbedFooterText;
@@ -224,6 +230,7 @@ internal class PluginConfig
     public bool DebugEveryEventChange => togglesConfig.DebugEveryEventChange;
     public bool DebugHttpRequestResponse => togglesConfig.DebugHttpRequestResponse;
     public bool DebugDatabaseMethods => togglesConfig.DebugDatabaseMethods;
+    public bool DebugLeaderboardOperations => togglesConfig.DebugLeaderboardOperations;
 
     // Leader board Messages
     public string LeaderBoardTopPlayerHeading => messagesConfig.LeaderBoardTopPlayerHeading;

@@ -133,6 +133,15 @@ internal static class EmbedTemplates
                 builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
             }
         }
+        else if (Webhook.PlayerPingEvents.Contains(eventType))
+        {
+            builder.SetTitle("📍 Player Pings");
+            // Use the thumbnail from config
+            if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
+            {
+                builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
+            }
+        }
         
         // Add the message as description
         builder.SetDescription(message);
@@ -188,6 +197,8 @@ internal static class EmbedTemplates
         if (Webhook.Event.EventStart == eventType)
         {
             builder.SetTitle($"🌩️ Event Started: {eventName}");
+            // Explicitly set color from config for world events to ensure it's applied
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
             if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
             {
                 builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
@@ -196,6 +207,8 @@ internal static class EmbedTemplates
         else if (Webhook.Event.EventStop == eventType)
         {
             builder.SetTitle($"☀️ Event Ended: {eventName}");
+            // Explicitly set color from config for world events to ensure it's applied
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
             if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
             {
                 builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
@@ -204,8 +217,8 @@ internal static class EmbedTemplates
         else if (Webhook.Event.NewDayNumber == eventType)
         {
             builder.SetTitle($"🌅 New Day: {eventName}");
-            // Use a bright, vibrant color for day number display
-            builder.SetColor("#FFD700"); // Gold color for better visibility
+            // Use the configured color for new day events
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedNewDayColor);
             // Add thumbnail for day number events
             if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
             {
@@ -215,8 +228,8 @@ internal static class EmbedTemplates
         else if (Webhook.Event.ServerSave == eventType)
         {
             builder.SetTitle($"💾 World Saved");
-            // Use a vibrant blue for world save events
-            builder.SetColor("#1D8BF1");
+            // Use the configured color for server save events
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedServerSaveColor);
         }
         
         // Add the message as description
@@ -335,7 +348,7 @@ internal static class EmbedTemplates
         }
         
         var builder = new EmbedBuilder()
-            .SetColor("#3498DB") // Use a bright blue color for position messages
+            .SetColor(DiscordConnectorPlugin.StaticConfig.EmbedPositionMessageColor) // Use the configured color for position messages
             .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Always use server name (Valheim) as author
             .SetTitle(title) // Use a cleaner title format without duplication
             .SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled ? 
@@ -374,7 +387,7 @@ internal static class EmbedTemplates
         };
         
         var builder = new EmbedBuilder()
-            .SetColor("#9B59B6") // Use a vibrant purple color for leaderboards
+            .SetColor(DiscordConnectorPlugin.StaticConfig.EmbedLeaderboardColor) // Use the configured color for leaderboards
             .SetAuthor("Leaderboard", null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Trophy icon
             .SetTitle(title)
             .SetDescription(description)
@@ -385,6 +398,43 @@ internal static class EmbedTemplates
         // Add all entries as inline fields
         builder.AddInlineFields(entries);
         
+        // Set footer with world info
+        builder.SetFooterFromTemplate(variables);
+        
+        // Set URL if configured
+        builder.SetUrlFromTemplate(variables);
+        
+        return builder;
+    }
+    
+    /// <summary>
+    ///     Creates an active players announcement embed.
+    /// </summary>
+    /// <param name="message">The formatted message content with player counts</param>
+    /// <param name="worldName">The name of the server world</param>
+    /// <returns>A configured EmbedBuilder instance</returns>
+    public static EmbedBuilder ActivePlayersAnnouncement(string message, string worldName = "")
+    {
+        var variables = new Dictionary<string, string>
+        {
+            {"worldName", worldName},
+            {"timestamp", DateTime.UtcNow.ToString("s")}
+        };
+        
+        string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
+        var builder = new EmbedBuilder()
+            .SetColor(DiscordConnectorPlugin.StaticConfig.EmbedActivePlayersColor) // Use the configured color for active player announcements
+            .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Always use server name as author
+            .SetTitle("👥 Active Players") // Use a people emoji for active players
+            .SetDescription(message)
+            .SetTimestamp();
+            
+        // Add thumbnail if enabled
+        if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
+        {
+            builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
+        }
+            
         // Set footer with world info
         builder.SetFooterFromTemplate(variables);
         
@@ -427,5 +477,48 @@ internal static class EmbedTemplates
         }
         
         return "Unknown";
+    }
+    
+    /// <summary>
+    ///     Creates a leaderboard announcement embed.
+    /// </summary>
+    /// <param name="title">The leaderboard title</param>
+    /// <param name="fields">List of field name/value tuples</param>
+    /// <param name="worldName">The name of the server world</param>
+    /// <returns>A configured EmbedBuilder instance</returns>
+    public static EmbedBuilder LeaderboardEmbed(string title, List<Tuple<string, string>> fields, string worldName = "")
+    {
+        var variables = new Dictionary<string, string>
+        {
+            {"worldName", worldName},
+            {"timestamp", DateTime.UtcNow.ToString("s")}
+        };
+
+        string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
+        var builder = new EmbedBuilder()
+            .SetColor(DiscordConnectorPlugin.StaticConfig.EmbedLeaderboardEmbedColor) // Use the configured color for leaderboard embeds
+            .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl)
+            .SetTitle($"🏆 {title}")
+            .SetTimestamp();
+
+        // Add thumbnail if enabled
+        if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
+        {
+            builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
+        }
+
+        // Add fields from the leaderboard entries
+        foreach (var field in fields)
+        {
+            builder.AddField(field.Item1, MessageTransformer.FormatFieldContent(field.Item2));
+        }
+
+        // Set footer with world info
+        builder.SetFooterFromTemplate(variables);
+
+        // Set URL if configured
+        builder.SetUrlFromTemplate(variables);
+
+        return builder;
     }
 }

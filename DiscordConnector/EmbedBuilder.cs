@@ -29,6 +29,7 @@ internal class EmbedBuilder
     public const string DEFAULT_PLAYER_LEAVE_COLOR = "#FAA61A"; // Orange
     public const string DEFAULT_DEATH_EVENT_COLOR = "#F04747";  // Red
     public const string DEFAULT_SHOUT_MESSAGE_COLOR = "#7289DA"; // Discord Blurple
+    public const string DEFAULT_POSITION_MESSAGE_COLOR = "#7289DA"; // Discord Blurple
     public const string DEFAULT_OTHER_EVENT_COLOR = "#747F8D";  // Gray
     
     // Reference to the configuration for field visibility and other settings
@@ -208,6 +209,10 @@ internal class EmbedBuilder
         else if (Webhook.PlayerShoutEvents.Contains(eventType))
         {
             hexColor = _config.EmbedShoutMessageColor;
+        }
+        else if (Webhook.PlayerPingEvents.Contains(eventType))
+        {
+            hexColor = _config.EmbedPositionMessageColor;
         }
         else if (Webhook.WorldEvents.Contains(eventType))
         {
