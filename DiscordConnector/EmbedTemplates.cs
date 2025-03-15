@@ -331,34 +331,40 @@ internal static class EmbedTemplates
         // Use server name for consistency across all embeds
         string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
         
-        // Determine the title based on the event type
-        string title;
+        // Create the builder first
+        var builder = new EmbedBuilder()
+            .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl)
+            .SetTimestamp();
+            
+        // Optional thumbnail
+        if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
+        {
+            builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
+        }
+
+        // Determine the title and color based on the event type
         if (Webhook.Event.EventStop == eventType)
         {
-            title = "Event Stopped";
+            builder.SetTitle("☀️ Event Stopped");
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
         }
         else if (Webhook.Event.EventStart == eventType)
         {
-            title = "Event Started";
+            builder.SetTitle("🌩️ Event Started");
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
         }
         else
         {
             // Default title if it's another event type
-            title = "Event Update";
+            builder.SetTitle("Event Update");
         }
-        
-        var builder = new EmbedBuilder()
-            .SetColor(DiscordConnectorPlugin.StaticConfig.EmbedPositionMessageColor) // Use the configured color for position messages
-            .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Always use server name (Valheim) as author
-            .SetTitle(title) // Use a cleaner title format without duplication
-            .SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled ? 
-                        DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl : null)
-            .SetDescription(message)
-            .SetTimestamp();
-            
+
+        // Set the description
+        builder.SetDescription(message);
+
         // Always add the position for position messages
         builder.AddField("Coordinates", MessageTransformer.FormatVector3AsPos(position));
-        
+
         // Set footer with world info
         builder.SetFooterFromTemplate(variables);
         
