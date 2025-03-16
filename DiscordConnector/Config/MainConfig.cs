@@ -275,8 +275,8 @@ internal class MainConfig
             
         embedLeaderboardEmbedColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Leaderboard Embed Color",
-            "#FFAA00",
-            "The color for leaderboard announcement embeds. Use hex color format (e.g., #FFAA00 for a gold/yellow shade).");
+            "#9B59B6",
+            "The color for leaderboard announcement embeds. Use hex color format (e.g., #9B59B6 for a purple shade).");
             
         // Other Embed Customization
         embedFooterText = config.Bind(EMBED_CONFIG_SETTINGS,
