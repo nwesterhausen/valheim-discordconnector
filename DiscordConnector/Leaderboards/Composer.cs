@@ -339,7 +339,10 @@ internal class Composer : Base
                                 }
                             }
                         }
-                        Dict.Add(Statistic.Death, deathResults);
+                        if (deathResults != null)
+                        {
+                            Dict.Add(Statistic.Death, deathResults);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -369,7 +372,10 @@ internal class Composer : Base
                                 }
                             }
                         }
-                        Dict.Add(Statistic.Session, sessionResults);
+                        if (sessionResults != null)
+                        {
+                            Dict.Add(Statistic.Session, sessionResults);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -512,7 +518,10 @@ internal class Composer : Base
                         }
                     }
                 }
-                Dict.Add(Statistic.Death, deathResults);
+                if (deathResults != null)
+                {
+                    Dict.Add(Statistic.Death, deathResults);
+                }
             }
 
             if (settings.Sessions)
@@ -533,25 +542,37 @@ internal class Composer : Base
                         }
                     }
                 }
-                Dict.Add(Statistic.Session, sessionResults);
+                if (sessionResults != null)
+                {
+                    Dict.Add(Statistic.Session, sessionResults);
+                }
             }
 
             if (settings.Shouts)
             {
-                Dict.Add(Statistic.Shout,
-                    Helper.TopNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate));
+                var shoutResults = Helper.TopNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate);
+                if (shoutResults != null)
+                {
+                    Dict.Add(Statistic.Shout, shoutResults);
+                }
             }
 
             if (settings.Pings)
             {
-                Dict.Add(Statistic.Ping,
-                    Helper.TopNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
+                var pingResults = Helper.TopNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate);
+                if (pingResults != null)
+                {
+                    Dict.Add(Statistic.Ping, pingResults);
+                }
             }
 
             if (settings.TimeOnline)
             {
-                Dict.Add(Statistic.TimeOnline,
-                    Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings, startDate, endDate));
+                var timeOnlineResults = Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings, startDate, endDate);
+                if (timeOnlineResults != null)
+                {
+                    Dict.Add(Statistic.TimeOnline, timeOnlineResults);
+                }
             }
         }
 
@@ -559,32 +580,47 @@ internal class Composer : Base
         {
             if (settings.Deaths)
             {
-                Dict.Add(Statistic.Death,
-                    Helper.BottomNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate));
+                var deathResults = Helper.BottomNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate);
+                if (deathResults != null)
+                {
+                    Dict.Add(Statistic.Death, deathResults);
+                }
             }
 
             if (settings.Sessions)
             {
-                Dict.Add(Statistic.Session,
-                    Helper.BottomNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate));
+                var sessionResults = Helper.BottomNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate);
+                if (sessionResults != null)
+                {
+                    Dict.Add(Statistic.Session, sessionResults);
+                }
             }
 
             if (settings.Shouts)
             {
-                Dict.Add(Statistic.Shout,
-                    Helper.BottomNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate));
+                var shoutResults = Helper.BottomNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate);
+                if (shoutResults != null)
+                {
+                    Dict.Add(Statistic.Shout, shoutResults);
+                }
             }
 
             if (settings.Pings)
             {
-                Dict.Add(Statistic.Ping,
-                    Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
+                var pingResults = Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate);
+                if (pingResults != null)
+                {
+                    Dict.Add(Statistic.Ping, pingResults);
+                }
             }
 
             if (settings.TimeOnline)
             {
-                Dict.Add(Statistic.TimeOnline,
-                    Helper.BottomNResultForCategory(Categories.TimeOnline, settings.NumberListings, startDate, endDate));
+                var timeOnlineResults = Helper.BottomNResultForCategory(Categories.TimeOnline, settings.NumberListings, startDate, endDate);
+                if (timeOnlineResults != null)
+                {
+                    Dict.Add(Statistic.TimeOnline, timeOnlineResults);
+                }
             }
         }
 
