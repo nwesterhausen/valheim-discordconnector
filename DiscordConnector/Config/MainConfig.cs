@@ -199,12 +199,12 @@ internal class MainConfig
 
         embedAuthorIconUrl = config.Bind(EMBED_CONFIG_SETTINGS,
             "Author Icon URL",
-            "https://cdn2.steamgriddb.com/icon/7d2b92b6726c241134dae6cd3fb8c182/32/32x32.png",
+            "https://discord-connector.valheim.games.nwest.one/embed/author_icon.png",
             "The URL for the small icon (32x32px) that appears next to the author name in Discord embeds.");
             
         embedThumbnailUrl = config.Bind(EMBED_CONFIG_SETTINGS,
             "Thumbnail URL",
-            "https://cdn2.steamgriddb.com/icon/d17892563a6984845a0e23df7841f903/32/256x256.png",
+            "https://discord-connector.valheim.games.nwest.one/embed/thumbnail.png",
             "The URL for the larger thumbnail image (ideally 256x256px) that appears in the top-right of Discord embeds.");
             
         // Embed Color Configuration
