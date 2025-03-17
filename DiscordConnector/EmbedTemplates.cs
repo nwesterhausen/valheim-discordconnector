@@ -353,6 +353,16 @@ internal static class EmbedTemplates
             builder.SetTitle("🌩️ Event Started");
             builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
         }
+        else if (Webhook.Event.EventPaused == eventType)
+        {
+            builder.SetTitle("⏸️ Event Paused");
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
+        }
+        else if (Webhook.Event.EventResumed == eventType)
+        {
+            builder.SetTitle("▶️ Event Resumed");
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
+        }
         else
         {
             // Default title if it's another event type
