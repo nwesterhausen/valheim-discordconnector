@@ -5,24 +5,22 @@ namespace DiscordConnector.Records;
 
 public class PlayerToName
 {
-    public PlayerToName(string characterName, string playerHostName)
-        : this(ObjectId.NewObjectId(), characterName, playerHostName, DateTime.Now)
+    public ObjectId _id { get; set; }
+    public string CharacterName { get; set; }
+    public string PlayerId { get; set; }
+    public DateTime InsertedDate { get; set; }
+    
+    // Parameterless constructor for serialization
+    public PlayerToName() { }
+    
+    // Domain constructor for normal code usage
+    public PlayerToName(string characterName, string playerId)
     {
-    }
-
-    [BsonCtor]
-    public PlayerToName(ObjectId id, string characterName, string playerId, DateTime insertedDate)
-    {
-        _id = id;
+        _id = ObjectId.NewObjectId();
         CharacterName = characterName;
         PlayerId = playerId;
-        InsertedDate = insertedDate;
+        InsertedDate = DateTime.Now;
     }
-
-    public ObjectId _id { get; }
-    public string CharacterName { get; }
-    public string PlayerId { get; }
-    public DateTime InsertedDate { get; }
 
     public override string ToString()
     {

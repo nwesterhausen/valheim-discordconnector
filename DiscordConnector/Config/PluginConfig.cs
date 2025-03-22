@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -116,7 +116,40 @@ internal class PluginConfig
     public bool CollectStatsEnabled => mainConfig.CollectStatsEnabled;
     public bool DiscordEmbedsEnabled => mainConfig.DiscordEmbedsEnabled;
     public bool SendPositionsEnabled => mainConfig.SendPositionsEnabled;
+    public bool ShowPlayerIds => mainConfig.ShowPlayerIds;
     public bool AnnouncePlayerFirsts => mainConfig.AnnouncePlayerFirsts;
+    
+    // Embed Field Visibility Properties
+    public bool EmbedTitleEnabled => mainConfig.EmbedTitleEnabled;
+    public bool EmbedDescriptionEnabled => mainConfig.EmbedDescriptionEnabled;
+    public bool EmbedAuthorEnabled => mainConfig.EmbedAuthorEnabled;
+    public bool EmbedThumbnailEnabled => mainConfig.EmbedThumbnailEnabled;
+    public bool EmbedFooterEnabled => mainConfig.EmbedFooterEnabled;
+    public bool EmbedTimestampEnabled => mainConfig.EmbedTimestampEnabled;
+    
+    // Embed Color Properties
+    public string EmbedDefaultColor => mainConfig.EmbedDefaultColor;
+    public string EmbedServerStartColor => mainConfig.EmbedServerStartColor;
+    public string EmbedServerStopColor => mainConfig.EmbedServerStopColor;
+    public string EmbedPlayerJoinColor => mainConfig.EmbedPlayerJoinColor;
+    public string EmbedPlayerLeaveColor => mainConfig.EmbedPlayerLeaveColor;
+    public string EmbedDeathEventColor => mainConfig.EmbedDeathEventColor;
+    public string EmbedShoutMessageColor => mainConfig.EmbedShoutMessageColor;
+    public string EmbedOtherEventColor => mainConfig.EmbedOtherEventColor;
+    public string EmbedWorldEventColor => mainConfig.EmbedWorldEventColor;
+    public string EmbedNewDayColor => mainConfig.EmbedNewDayColor;
+    public string EmbedServerSaveColor => mainConfig.EmbedServerSaveColor;
+    public string EmbedPositionMessageColor => mainConfig.EmbedPositionMessageColor;
+    public string EmbedActivePlayersColor => mainConfig.EmbedActivePlayersColor;
+    public string EmbedLeaderboardEmbedColor => mainConfig.EmbedLeaderboardEmbedColor;
+    
+    // Other Embed Customization Properties
+    public string EmbedFooterText => mainConfig.EmbedFooterText;
+    public List<string> EmbedFieldDisplayOrder => mainConfig.EmbedFieldDisplayOrder;
+    public string EmbedUrlTemplate => mainConfig.EmbedUrlTemplate;
+    public string EmbedAuthorIconUrl => mainConfig.EmbedAuthorIconUrl;
+    public string EmbedThumbnailUrl => mainConfig.EmbedThumbnailUrl;
+    public string ServerName => "Valheim"; // Default server name if not otherwise specified
 
     public MainConfig.RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod =>
         mainConfig.RecordRetrievalDiscernmentMethod;
@@ -196,6 +229,7 @@ internal class PluginConfig
     public bool DebugEveryEventChange => togglesConfig.DebugEveryEventChange;
     public bool DebugHttpRequestResponse => togglesConfig.DebugHttpRequestResponse;
     public bool DebugDatabaseMethods => togglesConfig.DebugDatabaseMethods;
+    public bool DebugLeaderboardOperations => togglesConfig.DebugLeaderboardOperations;
 
     // Leader board Messages
     public string LeaderBoardTopPlayerHeading => messagesConfig.LeaderBoardTopPlayerHeading;
