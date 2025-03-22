@@ -31,9 +31,6 @@ internal class ChatPatches
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug(
                 $"User details: name:{sender.Name}  DisplayName():{sender.GetDisplayName()} senderID:{senderID}  type:{type}  text:{text}");
-            // ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.instance.GetServerPeerID(), RPC.Common.RPC_OnNewChatMessage,
-            //     new ChatMessageDetail(pos, type, sender.Name, sender.UserId.ToString(), text).ToZPackage());
-            ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.instance.GetServerPeerID(), RPC.Common.RPC_OnNewChatMessage, new ZPackage());
 
             string userName = sender.Name;
             if (string.IsNullOrEmpty(userName))

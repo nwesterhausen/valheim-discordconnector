@@ -11,6 +11,7 @@ containsNsfwContent = false
 
 [package.dependencies]
 denikson-BepInExPack_Valheim = "5.4.2202"
+ValheimModding-Jotunn ="2.24.3"
 
 [build]
 icon = "./icon.png"

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Target Name="DetermineVersion" AfterTargets="CreateClientServerVersions" Condition="$(BuildBoth) == 'true'">
+        <GetAssemblyIdentity AssemblyFiles="$(ServerAssembly)">
+            <Output TaskParameter="Assemblies" ItemName="Targets"/>
+        </GetAssemblyIdentity>
+        <ItemGroup>
+            <AssemblyVersions Include="@(Targets->'%(Version)')"/>
+        </ItemGroup>
+        <Error Text="Failed to get Assembly Version." Condition="'%(AssemblyVersions.Identity)' == ''"/>
+        <PropertyGroup>
+            <AssemblyVersion>%(AssemblyVersions.Identity)</AssemblyVersion>
+            <Major>$(AssemblyVersion.Split('.')[0])</Major>
+            <Minor>$(AssemblyVersion.Split('.')[1])</Minor>
+            <Patch>$(AssemblyVersion.Split('.')[2])</Patch>
+            <PackageName>$(AssemblyName)_v$(Major).$(Minor).$(Patch)</PackageName>
+            <PackageVersion>$(Major).$(Minor).$(Patch)</PackageVersion>
+            <VersionString>$(Major).$(Minor).$(Patch)</VersionString>
+            <PackageDirServer>$(PackageOutputPath)$(PackageName)_Server</PackageDirServer>
+            <PackageDirClient>$(PackageOutputPath)$(PackageName)_Client</PackageDirClient>
+        </PropertyGroup>
+    </Target>
+
+    <Target Name="CopyOutputDLL" AfterTargets="DetermineVersion" Condition="$(BuildBoth) == 'true'">
+        <Error Text="DLL not found in target directory." Condition="!Exists('$(TargetDir)$(AssemblyName).dll')"/>
+        <Copy SourceFiles="$(ClientAssembly)" DestinationFolder="$(CopyOutputDLLPath)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath)')"/>
+        <Copy SourceFiles="$(ServerAssembly)" DestinationFolder="$(CopyOutputDLLPath2)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath2)')"/>
+        <!--  Copy into the package dirs  -->
+        <MakeDir Directories="$(PackageDirServer)"/>
+        <MakeDir Directories="$(PackageDirClient)"/>
+        <Copy SourceFiles="$(ServerAssembly)" DestinationFolder="$(PackageDirServer)" OverwriteReadOnlyFiles="true"/>
+        <Copy SourceFiles="$(ClientAssembly)" DestinationFolder="$(PackageDirClient)" OverwriteReadOnlyFiles="true"/>
+    </Target>
+
+    <Target Name="CopyReadMeToTSFolder" AfterTargets="CopyOutputDLL" Condition=" ('$(Configuration)|$(Platform)' == 'Release|AnyCPU') AND ('$(BuildBoth)' == 'true')">
+        <Copy SourceFiles="$(ProjectDir)\Metadata\Server\README.md" DestinationFolder="$(PackageDirServer)" OverwriteReadOnlyFiles="true"/>
+        <Copy SourceFiles="$(ProjectDir)..\docs\changelog.md" DestinationFolder="$(PackageDirServer)" OverwriteReadOnlyFiles="true"/>
+        <Copy SourceFiles="$(ProjectDir)\Metadata\Client\README.md" DestinationFolder="$(PackageDirClient)" OverwriteReadOnlyFiles="true"/>
+        <Copy SourceFiles="$(ProjectDir)..\docs\changelog.md" DestinationFolder="$(PackageDirClient)" OverwriteReadOnlyFiles="true"/>
+    </Target>
+
+    <Target Name="UpdateManifestVersion" AfterTargets="CopyReadmeToTSFolder" Condition=" ('$(Configuration)|$(Platform)' == 'Release|AnyCPU') AND ('$(BuildBoth)' == 'true')">
+        <ItemGroup>
+            <ServerManifestFile Include="$(ProjectDir)Metadata\Server\manifest.json"/>
+            <ClientManifestFile Include="$(ProjectDir)Metadata\Client\manifest.json"/>
+            <ServerTomlFile Include="$(ProjectDir)Metadata\Server\thunderstore.toml"/>
+            <ClientTomlFile Include="$(ProjectDir)Metadata\Client\thunderstore.toml"/>
+        </ItemGroup>
+        <!--  Update Server Manifest Versions   -->
+        <Message Text="ManifestFile is @(ServerManifestFile)" Importance="high"/>
+        <Message Text="Updating version number in Metadata\Server\manifest.json" Condition="Exists(@(ServerManifestFile))" Importance="high"/>
+        <Exec Condition="('$(OS)' == 'Windows_NT')"
+              Command="powershell.exe -ExecutionPolicy Bypass -Command &quot;&amp; { &amp; '$(ProjectDir)UpdateManifest.ps1' -manifestFile '@(ServerManifestFile)' -versionString '$(PackageVersion)' }&quot;"/>
+        <Exec Condition="!('$(OS)' == 'Windows_NT')"
+              Command="bash $(ProjectDir)/update-manifest.sh '@(ServerManifestFile)' '$(PackageVersion)'"/>
+        <!--  Thunderstore.toml update -->
+        <Message Text="Toml manifest is @(ServerTomlFile)" Importance="high"/>
+        <Message Text="Updating version number in Metadata\Server\thunderstore.toml" Condition="Exists(@(ServerTomlFile))" Importance="high"/>
+        <Exec Condition="('$(OS)' == 'Windows_NT')"
+              Command="powershell.exe -ExecutionPolicy Bypass -Command &quot;&amp; { &amp; '$(ProjectDir)UpdateThunderstoreToml.ps1' -tomlFile '@(ServerTomlFile)' -versionString '$(PackageVersion)' }&quot;"/>
+        <Exec Condition="!('$(OS)' == 'Windows_NT')"
+              Command="bash $(ProjectDir)/update-thunderstore-toml.sh '@(ServerTomlFile)' '$(PackageVersion)'"/>
+
+        <!--  Update Client Manifest Versions   -->
+        <Message Text="ManifestFile is @(ClientManifestFile)" Importance="high"/>
+        <Message Text="Updating version number in Metadata\Client\manifest.json" Condition="Exists(@(ClientManifestFile))" Importance="high"/>
+        <Exec Condition="('$(OS)' == 'Windows_NT')"
+              Command="powershell.exe -ExecutionPolicy Bypass -Command &quot;&amp; { &amp; '$(ProjectDir)UpdateManifest.ps1' -manifestFile '@(ClientManifestFile)' -versionString '$(PackageVersion)' }&quot;"/>
+        <Exec Condition="!('$(OS)' == 'Windows_NT')"
+              Command="bash $(ProjectDir)/update-manifest.sh '@(ClientManifestFile)' '$(PackageVersion)'"/>
+        <!--  Thunderstore.toml update -->
+        <Message Text="Toml manifest is @(ClientTomlFile)" Importance="high"/>
+        <Message Text="Updating version number in Metadata\Client\thunderstore.toml" Condition="Exists(@(ClientTomlFile))" Importance="high"/>
+        <Exec Condition="('$(OS)' == 'Windows_NT')"
+              Command="powershell.exe -ExecutionPolicy Bypass -Command &quot;&amp; { &amp; '$(ProjectDir)UpdateThunderstoreToml.ps1' -tomlFile '@(ClientTomlFile)' -versionString '$(PackageVersion)' }&quot;"/>
+        <Exec Condition="!('$(OS)' == 'Windows_NT')"
+              Command="bash $(ProjectDir)/update-thunderstore-toml.sh '@(ClientTomlFile)' '$(PackageVersion)'"/>
+    </Target>
+
+    <Target Name="MakeThunderstorePackage" AfterTargets="UpdateManifestVersion" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' AND ('$(BuildBoth)' == 'true')">
+        <Error Text="manifest.json not found in Thunderstore directory." Condition="!Exists('$(ProjectDir)\Metadata\Server\manifest.json')"/>
+        <Error Text="icon.png not found in Thunderstore directory. Please note that Thunderstore requires this image to be 256x256 in dimension" Condition="!Exists('$(ProjectDir)\Metadata\icon.png')"/>
+        <ItemGroup>
+            <ServerPackageFiles Include="$(ServerAssembly)" Condition="Exists('$(ServerAssembly)')"/>
+            <ClientPackageFiles Include="$(ClientAssembly)" Condition="Exists('$(ClientAssembly)')"/>
+            <PackageFiles Include="$(ProjectDir)\Metadata\icon.png" Condition="Exists('$(ProjectDir)\Metadata\icon.png')"/>
+            <ServerPackageFiles Include="$(ProjectDir)\Metadata\Server\manifest.json" Condition="Exists('$(ProjectDir)\Server\Metadata\manifest.json')"/>
+            <ServerPackageFiles Include="$(ProjectDir)\Metadata\Server\README.md" Condition="Exists('$(ProjectDir)\Server\Metadata\README.md')"/>
+            <ClientPackageFiles Include="$(ProjectDir)\Metadata\Client\manifest.json" Condition="Exists('$(ProjectDir)\Client\Metadata\manifest.json')"/>
+            <ClientPackageFiles Include="$(ProjectDir)\Metadata\Client\README.md" Condition="Exists('$(ProjectDir)\Client\Metadata\README.md')"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(PackageFiles);@(ServerPackageFiles)" DestinationFolder="$(PackageDirServer)"/>
+        <Copy SourceFiles="@(PackageFiles);@(ClientPackageFiles)" DestinationFolder="$(PackageDirClient)"/>
+        <Copy SourceFiles="$(ProjectDir)..\docs\changelog.md" DestinationFiles="$(PackageDirServer)\CHANGELOG.md"/>
+        <Message Importance="high" Text="Exporting to $(ThunderstoreDestination)"/>
+        <ZipDirectory SourceDirectory="$(PackageDirServer)" DestinationFile="$(ThunderstoreDestination)$(PackageName)-Server.zip" Overwrite="true"/>
+        <ZipDirectory SourceDirectory="$(PackageDirClient)" DestinationFile="$(ThunderstoreDestination)$(PackageName)-Client.zip" Overwrite="true"/>
+        <Message Importance="high" Text="Thunderstore export complete"/>
+    </Target>
+
+    <Target Name="MakeNexusPackage" AfterTargets="MakeThunderstorePackage" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' AND ('$(BuildBoth)' == 'true')">
+        <MakeDir Directories="$(ProjectDir)\Nexus"/>
+        <ItemGroup>
+            <NexusPackageFiles Include="$(ProjectDir)\Metadata\DiscordConnector-Nexus.readme;"/>
+        </ItemGroup>
+        <Message Importance="high" Text="Exporting to $(ProjectDir)\..\Packages\Nexus\"/>
+        <ZipDirectory SourceDirectory="$(PackageDirServer)" DestinationFile="$(NexusDestination)$(PackageName)-Server.zip" Overwrite="true"/>
+        <ZipDirectory SourceDirectory="$(PackageDirClient)" DestinationFile="$(NexusDestination)$(PackageName)-Client.zip" Overwrite="true"/>
+        <Message Importance="high" Text="Nexus export complete"/>
+    </Target>
+
+    <Target Name="CleanUpPackageDirs" AfterTargets="MakeNexusPackage" Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU' AND ('$(BuildBoth)' == 'true')">
+        <RemoveDir Directories="$(PackageDirClient)"/>
+        <RemoveDir Directories="$(PackageDirServer)"/>
+    </Target>
+</Project>

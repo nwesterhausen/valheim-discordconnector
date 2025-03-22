@@ -167,14 +167,11 @@
             <HintPath>$(BepInExPath)\core\BepInEx.dll</HintPath>
         </Reference>
         <Reference Include="mscorlib"/>
-<!--        <Reference Include="ServerSync">-->
-<!--            <HintPath>Libs\ServerSync.dll</HintPath>-->
-<!--        </Reference>-->
+        <Reference Include="ServerSync">
+            <HintPath>Libs\ServerSync.dll</HintPath>
+        </Reference>
         <Reference Include="SoftReferenceableAssets">
             <HintPath>$(PublicizedAssembliesPath)\SoftReferenceableAssets_publicized.dll</HintPath>
-        </Reference>
-        <Reference Include="Softplatform">
-            <HintPath>$(GamePath)\valheim_Data\Managed\Splatform.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine">
             <HintPath>$(CorlibPath)\UnityEngine.dll</HintPath>

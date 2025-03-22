@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Target Name="DerivePaths" BeforeTargets="BeforeBuild">
+        <PropertyGroup>
+            <GamePath Condition="!Exists('$(GamePath)') AND Exists('$(VALHEIM_INSTALL)')">$(VALHEIM_INSTALL)</GamePath>
+        </PropertyGroup>
+        <Error Text="GamePath not found. Please set the VALHEIM_INSTALL or GamePath property in Environment.props" Condition="!Exists('$(GamePath)')"/>
+        <PropertyGroup>
+            <BepInExPath Condition="!Exists('$(BepInExPath)')AND Exists('$(GamePath)')">$(GamePath)\BepInEx</BepInExPath>
+            <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed</CorlibPath>
+            <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\unstripped_corlib</CorlibPath>
+            <PublicizedAssembliesPath Condition="!Exists('$(PublicizedAssembliesPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssembliesPath>
+            <VALHEIM_INSTALL Condition="!Exists('$(VALHEIM_INSTALL)') AND Exists('$(GamePath)')">$(GamePath)</VALHEIM_INSTALL>
+        </PropertyGroup>
+        <Message Text="Derived Paths:" Importance="high"/>
+        <Message Text="VALHEIM_INSTALL: $(VALHEIM_INSTALL)" Importance="high"/>
+        <Message Text="GamePath: $(GamePath)" Importance="high"/>
+        <Message Text="BepInExPath: $(BepInExPath)" Importance="high"/>
+        <Message Text="CorlibPath: $(CorlibPath)" Importance="high"/>
+        <Message Text="PublicizedAssembliesPath: $(PublicizedAssembliesPath)" Importance="high"/>
+        <PropertyGroup>
+            <PackageOutputPath>$(ProjectDir)../Packages/</PackageOutputPath>
+            <ThunderstoreDestination>$(PackageOutputPath)Thunderstore/</ThunderstoreDestination>
+            <NexusDestination>$(PackageOutputPath)Nexus/</NexusDestination>
+        </PropertyGroup>
+        <Message Text="PackageOutputPath: $(PackageOutputPath)" Importance="high"/>
+        <Message Text="ThunderstoreDestination: $(ThunderstoreDestination)" Importance="high"/>
+        <Message Text="NexusDestination: $(NexusDestination)" Importance="high"/>
+        <Message Text="Preparing Package Destinations" Importance="high"/>
+        <MakeDir Directories="$(PackageOutputPath);$(ThunderstoreDestination);$(NexusDestination)"/>
+        <!--    Property list for client/server build process    -->
+        <PropertyGroup>
+            <ClientAssembly>$(TargetDir)$(AssemblyName)-Client.dll</ClientAssembly>
+            <ServerAssembly>$(TargetDir)$(AssemblyName)-Server.dll</ServerAssembly>
+        </PropertyGroup>
+    </Target>
+</Project>

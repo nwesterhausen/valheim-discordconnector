@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace DiscordConnector;
@@ -43,6 +43,83 @@ public class Webhook
         CronJob,
         NewDayNumber
     }
+
+    // Event category collections to facilitate easier event type checking
+    public static readonly HashSet<Event> ServerEvents = new HashSet<Event>
+    {
+        Event.ServerLaunch, Event.ServerStart, Event.ServerStop,
+        Event.ServerShutdown, Event.ServerSave, Event.ServerLifecycle
+    };
+    
+    // Server lifecycle specific event collections
+    public static readonly HashSet<Event> ServerLaunchEvents = new HashSet<Event>
+    {
+        Event.ServerLaunch
+    };
+    
+    public static readonly HashSet<Event> ServerStartEvents = new HashSet<Event>
+    {
+        Event.ServerStart
+    };
+    
+    public static readonly HashSet<Event> ServerStopEvents = new HashSet<Event>
+    {
+        Event.ServerStop
+    };
+    
+    public static readonly HashSet<Event> ServerShutdownEvents = new HashSet<Event>
+    {
+        Event.ServerShutdown
+    };
+    
+    public static readonly HashSet<Event> ServerSaveEvents = new HashSet<Event>
+    {
+        Event.ServerSave
+    };
+    
+    // World event collections
+    public static readonly HashSet<Event> WorldEvents = new HashSet<Event>
+    {
+        Event.EventStart, Event.EventPaused, Event.EventResumed, Event.EventStop,
+        Event.EventLifecycle, Event.NewDayNumber
+    };
+    
+    // Player event collections
+    public static readonly HashSet<Event> PlayerJoinEvents = new HashSet<Event>
+    {
+        Event.PlayerJoin, Event.PlayerFirstJoin
+    };
+    
+    public static readonly HashSet<Event> PlayerLeaveEvents = new HashSet<Event>
+    {
+        Event.PlayerLeave, Event.PlayerFirstLeave
+    };
+    
+    public static readonly HashSet<Event> PlayerDeathEvents = new HashSet<Event>
+    {
+        Event.PlayerDeath, Event.PlayerFirstDeath
+    };
+    
+    public static readonly HashSet<Event> PlayerShoutEvents = new HashSet<Event>
+    {
+        Event.PlayerShout, Event.PlayerFirstShout
+    };
+    
+    public static readonly HashSet<Event> PlayerPingEvents = new HashSet<Event>
+    {
+        Event.PlayerPing, Event.PlayerFirstPing
+    };
+    
+    // Combined player events
+    public static readonly HashSet<Event> AllPlayerEvents = new HashSet<Event>
+    {
+        Event.PlayerJoin, Event.PlayerFirstJoin,
+        Event.PlayerLeave, Event.PlayerFirstLeave,
+        Event.PlayerDeath, Event.PlayerFirstDeath,
+        Event.PlayerShout, Event.PlayerFirstShout,
+        Event.PlayerPing, Event.PlayerFirstPing,
+        Event.PlayerAll, Event.PlayerFirstAll
+    };
 
     public static Event StringToEvent(string eventToken)
     {

@@ -4,6 +4,7 @@
   "website_url": "https://discord-connector.valheim.games.nwest.one/",
   "description": "Connects your Valheim server to a Discord webhook. Works for both dedicated and client-hosted servers.",
   "dependencies": [
-    "denikson-BepInExPack_Valheim-5.4.2202"
+    "denikson-BepInExPack_Valheim-5.4.2202",
+    "ValheimModding-Jotunn-2.24.3"
   ]
 }
