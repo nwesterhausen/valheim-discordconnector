@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 
 namespace DiscordConnector.Patches;
 
@@ -21,10 +21,23 @@ internal class EnvManPatches
 
             if (oldDayFraction > 0.2f && oldDayFraction < 0.25f && newDayFraction > 0.25f && newDayFraction < 0.3f)
             {
-                DiscordApi.SendMessage(
-                    Webhook.Event.NewDayNumber,
-                    MessageTransformer.FormatServerMessage(DiscordConnectorPlugin.StaticConfig.NewDayMessage)
-                );
+                // Use the embed system for day number events
+                if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled)
+                {
+                    string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
+                    string dayNumber = EnvMan.instance.GetCurrentDay().ToString();
+                    var embed = EmbedTemplates.WorldEvent(Webhook.Event.NewDayNumber, 
+                        MessageTransformer.FormatServerMessage(DiscordConnectorPlugin.StaticConfig.NewDayMessage),
+                        $"Day Number {dayNumber}", worldName);
+                    DiscordApi.SendEmbed(Webhook.Event.NewDayNumber, embed);
+                }
+                else
+                {
+                    DiscordApi.SendMessage(
+                        Webhook.Event.NewDayNumber,
+                        MessageTransformer.FormatServerMessage(DiscordConnectorPlugin.StaticConfig.NewDayMessage)
+                    );
+                }
             }
         }
     }

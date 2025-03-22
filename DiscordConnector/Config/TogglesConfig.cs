@@ -39,6 +39,7 @@ internal class TogglesConfig
     private ConfigEntry<bool> debugEveryEventCheck;
     private ConfigEntry<bool> debugEveryEventPlayerPosCheck;
     private ConfigEntry<bool> debugHttpRequestResponses;
+    private ConfigEntry<bool> debugLeaderboardOperations;
     private ConfigEntry<bool> eventPausedMessageToggle;
     private ConfigEntry<bool> eventPausedPosToggle;
     private ConfigEntry<bool> eventResumedMessageToggle;
@@ -228,7 +229,6 @@ internal class TogglesConfig
             "Debug Message for Every Event Change",
             false,
             "If enabled, this will write a log message at the DEBUG level when a change in event status is detected.");
-        ;
         debugHttpRequestResponses = config.Bind(DEBUG_TOGGLES,
             "Debug Message for HTTP Request Responses",
             false,
@@ -239,6 +239,10 @@ internal class TogglesConfig
             "Debug Message for Database Methods",
             false,
             "If enabled, this will write a log message at the DEBUG level with logs generated while executing database methods.");
+        debugLeaderboardOperations = config.Bind(DEBUG_TOGGLES, 
+            "Debug Leaderboard Operations", 
+            false,
+            "If enabled, logs detailed information about leaderboard operations, including data retrieval and message sending.");
 
         config.Save();
     }
@@ -283,6 +287,7 @@ internal class TogglesConfig
     public bool DebugDatabaseMethods => debugDatabaseMethods.Value;
     public bool ChatShoutAllCaps => chatShoutAllCaps.Value;
     public bool NewDayNumberEnabled => newDayNumberToggle.Value;
+    public bool DebugLeaderboardOperations => debugLeaderboardOperations.Value;
 
     public string ConfigAsJson()
     {
@@ -338,7 +343,8 @@ internal class TogglesConfig
         jsonString += $"\"debugEveryEventCheck\":\"{DebugEveryEventCheck}\",";
         jsonString += $"\"debugEventChanges\":\"{DebugEveryEventChange}\",";
         jsonString += $"\"debugDatabaseMethods\":\"{DebugDatabaseMethods}\",";
-        jsonString += $"\"debugHttpRequestResponses\":\"{DebugHttpRequestResponse}\"";
+        jsonString += $"\"debugHttpRequestResponses\":\"{DebugHttpRequestResponse}\",";
+        jsonString += $"\"debugLeaderboardOperations\":\"{DebugLeaderboardOperations}\"";
         jsonString += "}";
 
         jsonString += "}";
