@@ -45,5 +45,5 @@ Breaking Changes
 - The `DiscordConnector-Client` plugin is required on clients for the new chat functionality to work. While you can still
   use just the server `DiscordConnector` plugin, you will not get the chat information (shouts, pings, etc.) from the clients.
 
-The client plugin is on [Thunderstore](https://thunderstore.io/c/valheim/p/nwesterhausen/DiscordConnector-Client/) or can
+The client plugin is on [Thunderstore](https://thunderstore.io/c/valheim/p/nwesterhausen/DiscordConnector_Client/) or can
 be downloaded from the [GitHub releases](https://github.com/nwesterhausen/valheim-discordconnector/releases).
