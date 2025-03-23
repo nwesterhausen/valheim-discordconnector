@@ -49,44 +49,14 @@ internal class ChatPatches
 
             ZNetPeer peer = ZNet.instance.GetPeerByPlayerName(userName);
 
-            // If peer or the peer socket is null, the message wasn't sent from a player
-            if (peer == null || peer.m_socket == null)
+            // If peer is null, the message wasn't sent from a player
+            if (peer == null)
             {
                 Handlers.NonPlayerChat(type, userName, text);
                 return;
             }
-
-            // Get the player's hostname to use for record keeping and logging
-            string playerHostName = peer.m_socket.GetHostName();
-
-            switch (type)
-            {
-                case Talker.Type.Ping:
-                    Handlers.Ping(peer, pos);
-                    break;
-                case Talker.Type.Shout:
-                    if (text.Equals(ArrivalShout))
-                    {
-                        if (DiscordConnectorPlugin.IsHeadless())
-                        {
-                            return;
-                        }
-
-                        // On servers hosted from the client version, the host player shouts instead of joining
-                        Handlers.Join(peer);
-                    }
-                    else
-                    {
-                        Handlers.Shout(peer, pos, text);
-                    }
-
-                    break;
-                default:
-                    DiscordConnectorPlugin.StaticLogger.LogDebug(
-                        $"Unmatched chat message. [{type}] {userName}: {text} at {pos}"
-                    );
-                    break;
-            }
+            
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"ChatMessage fell through: {userName} {text} {peer.GetType()} {peer.m_playerName}");
         }
     }
 }

@@ -22,7 +22,7 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>Valheim Plugin</PackageTags>
         <NeutralLanguage>en</NeutralLanguage>
-        <AssemblyName>DiscordConnector</AssemblyName>
+        <AssemblyName>DiscordConnector-Client</AssemblyName>
         <RootNamespace>DiscordConnector</RootNamespace>
         <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
         <GenerateResourceNeverLockTypeAssemblies>true</GenerateResourceNeverLockTypeAssemblies>

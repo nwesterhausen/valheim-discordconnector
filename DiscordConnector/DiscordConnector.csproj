@@ -39,9 +39,6 @@
         <DebugType>pdbonly</DebugType>
         <Optimize>true</Optimize>
     </PropertyGroup>
-    <PropertyGroup>
-        <BuildBoth Condition="!$([System.String]::Copy('$(DefineConstants)').Contains('CLIENT')) and !$([System.String]::Copy('$(DefineConstants)').Contains('SERVER'))">true</BuildBoth>
-    </PropertyGroup>
 
     <Import Project="..\Environment.props" Condition="Exists('..\Environment.props')"/>
     <Import Project="..\DoPrebuild.props" Condition="Exists('..\DoPrebuild.props')"/>
@@ -65,9 +62,6 @@
             <HintPath>$(BepInExPath)\core\BepInEx.dll</HintPath>
         </Reference>
         <Reference Include="mscorlib"/>
-        <Reference Include="ServerSync">
-            <HintPath>Libs\ServerSync.dll</HintPath>
-        </Reference>
         <Reference Include="SoftReferenceableAssets">
             <HintPath>$(PublicizedAssembliesPath)\SoftReferenceableAssets_publicized.dll</HintPath>
         </Reference>
@@ -117,7 +111,6 @@
         <Content Include="Metadata\manifest.json"/>
         <Content Include="Metadata\README.md"/>
         <Content Include="Metadata\thunderstore.toml"/>
-        <Content Include="UpdateManifest.ps1"/>
     </ItemGroup>
 
     <ItemGroup>
