@@ -17,6 +17,7 @@
             <PackageVersion>$(Major).$(Minor).$(Patch)</PackageVersion>
             <VersionString>$(Major).$(Minor).$(Patch)</VersionString>
             <PackageDir>$(PackageOutputPath)$(PackageName)</PackageDir>
+            <ChangelogFilename>changelog$(AssemblyName.Replace('DiscordConnector', '')).md</ChangelogFilename>
         </PropertyGroup>
     </Target>
 
@@ -58,7 +59,7 @@
             <PackageFiles Include="$(ProjectDir)\Metadata\README.md" Condition="Exists('$(ProjectDir)\Metadata\README.md')"/>
         </ItemGroup>
         <Copy SourceFiles="@(PackageFiles)" DestinationFolder="$(PackageDir)"/>
-        <Copy SourceFiles="$(ProjectDir)..\docs\changelog.md" DestinationFiles="$(PackageDir)\CHANGELOG.md"/>
+        <Copy SourceFiles="$(ProjectDir)..\docs\$(ChangelogFilename)" DestinationFiles="$(PackageDir)\CHANGELOG.md"/>
         <Message Importance="high" Text="Exporting to $(ThunderstoreDestination)"/>
         <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(ThunderstoreDestination)$(PackageName).zip" Overwrite="true"/>
         <RemoveDir Directories="$(PackageDir)"/>
