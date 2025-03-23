@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
-using DiscordConnector.Config;
 
 namespace DiscordConnector;
 
@@ -20,26 +20,25 @@ internal static class EmbedTemplates
     /// <param name="worldName">The name of the server world</param>
     /// <param name="serverName">The name of the server</param>
     /// <returns>A configured EmbedBuilder instance</returns>
-    public static EmbedBuilder ServerLifecycle(Webhook.Event eventType, string message, string worldName, string serverName)
+    public static EmbedBuilder ServerLifecycle(Webhook.Event eventType, string message, string worldName,
+        string serverName)
     {
-        var variables = new Dictionary<string, string>
+        Dictionary<string, string> variables = new()
         {
-            {"worldName", worldName},
-            {"serverName", serverName},
-            {"timestamp", DateTime.UtcNow.ToString("s")}
+            { "worldName", worldName }, { "serverName", serverName }, { "timestamp", DateTime.UtcNow.ToString("s") }
         };
-        
-        var builder = new EmbedBuilder()
+
+        EmbedBuilder builder = new EmbedBuilder()
             .SetColorForEvent(eventType)
             .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Default Valheim icon
             .SetTimestamp();
-            
+
         // Set the default thumbnail for server events
         if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
         {
             builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
         }
-            
+
         // Set different titles based on the event type
         if (Webhook.ServerLaunchEvents.Contains(eventType))
         {
@@ -61,23 +60,23 @@ internal static class EmbedTemplates
         {
             builder.SetTitle("💾 World Saved");
         }
-        
+
         // Add the message as description
         builder.SetDescription(message);
-        
+
         // Add world information as fields
         builder.AddInlineField("World", worldName);
         builder.AddInlineField("Status", GetStatusForEvent(eventType));
-        
+
         // Set footer with world info
         builder.SetFooterFromTemplate(variables);
-        
+
         // Set URL if configured
         builder.SetUrlFromTemplate(variables);
-        
+
         return builder;
     }
-    
+
     /// <summary>
     ///     Creates a player event embed (join, leave, death).
     /// </summary>
@@ -87,24 +86,22 @@ internal static class EmbedTemplates
     /// <param name="position">The player's position (optional)</param>
     /// <param name="worldName">The name of the server world</param>
     /// <returns>A configured EmbedBuilder instance</returns>
-    public static EmbedBuilder PlayerEvent(Webhook.Event eventType, string message, string playerName, 
-                                          Vector3? position = null, string worldName = "", string playerHostName = "")
+    public static EmbedBuilder PlayerEvent(Webhook.Event eventType, string message, string playerName,
+        Vector3? position = null, string worldName = "", string playerHostName = "")
     {
-        var variables = new Dictionary<string, string>
+        Dictionary<string, string> variables = new()
         {
-            {"worldName", worldName},
-            {"playerName", playerName},
-            {"timestamp", DateTime.UtcNow.ToString("s")}
+            { "worldName", worldName }, { "playerName", playerName }, { "timestamp", DateTime.UtcNow.ToString("s") }
         };
-        
+
         // Always use server name (Valheim) as the author name for consistency
         string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
-        
-        var builder = new EmbedBuilder()
+
+        EmbedBuilder builder = new EmbedBuilder()
             .SetColorForEvent(eventType)
             .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Valheim icon
             .SetTimestamp();
-            
+
         // Set different titles based on the event type
         if (Webhook.PlayerJoinEvents.Contains(eventType))
         {
@@ -142,34 +139,34 @@ internal static class EmbedTemplates
                 builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
             }
         }
-        
+
         // Add the message as description
         builder.SetDescription(message);
-        
+
         // Add player name as a field
         builder.AddInlineField("Player", playerName);
-        
+
         // Add player ID field if enabled in config and a player ID is provided
         if (DiscordConnectorPlugin.StaticConfig.ShowPlayerIds && !string.IsNullOrEmpty(playerHostName))
         {
             builder.AddInlineField("Player ID", playerHostName);
         }
-        
+
         // Add position field if available
         if (position.HasValue)
         {
             builder.AddPositionField(position.Value);
         }
-        
+
         // Set footer with world info
         builder.SetFooterFromTemplate(variables);
-        
+
         // Set URL if configured
         builder.SetUrlFromTemplate(variables);
-        
+
         return builder;
     }
-    
+
     /// <summary>
     ///     Creates a world event embed (random events, day changes).
     /// </summary>
@@ -180,19 +177,18 @@ internal static class EmbedTemplates
     /// <returns>A configured EmbedBuilder instance</returns>
     public static EmbedBuilder WorldEvent(Webhook.Event eventType, string message, string eventName, string worldName)
     {
-        var variables = new Dictionary<string, string>
+        Dictionary<string, string> variables = new()
         {
-            {"worldName", worldName},
-            {"eventName", eventName},
-            {"timestamp", DateTime.UtcNow.ToString("s")}
+            { "worldName", worldName }, { "eventName", eventName }, { "timestamp", DateTime.UtcNow.ToString("s") }
         };
-        
-        var serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
-        var builder = new EmbedBuilder()
+
+        string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
+        EmbedBuilder builder = new EmbedBuilder()
             .SetColorForEvent(eventType)
-            .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Always use Valheim as author
+            .SetAuthor(serverName, null,
+                DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Always use Valheim as author
             .SetTimestamp();
-            
+
         // Set different titles based on the event type
         if (Webhook.Event.EventStart == eventType)
         {
@@ -227,23 +223,23 @@ internal static class EmbedTemplates
         }
         else if (Webhook.Event.ServerSave == eventType)
         {
-            builder.SetTitle($"💾 World Saved");
+            builder.SetTitle("\ud83d\udcbe World Saved");
             // Use the configured color for server save events
             builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedServerSaveColor);
         }
-        
+
         // Add the message as description
         builder.SetDescription(message);
-        
+
         // Set footer with world info
         builder.SetFooterFromTemplate(variables);
-        
+
         // Set URL if configured
         builder.SetUrlFromTemplate(variables);
-        
+
         return builder;
     }
-    
+
     /// <summary>
     ///     Creates a chat/shout message embed.
     /// </summary>
@@ -253,27 +249,25 @@ internal static class EmbedTemplates
     /// <param name="position">The player's position (optional)</param>
     /// <param name="worldName">The name of the server world</param>
     /// <returns>A configured EmbedBuilder instance</returns>
-    public static EmbedBuilder ChatMessage(Webhook.Event eventType, string message, string playerName, 
-                                          Vector3? position = null, string worldName = "")
+    public static EmbedBuilder ChatMessage(Webhook.Event eventType, string message, string playerName,
+        Vector3? position = null, string worldName = "")
     {
-        var variables = new Dictionary<string, string>
+        Dictionary<string, string> variables = new()
         {
-            {"worldName", worldName},
-            {"playerName", playerName},
-            {"timestamp", DateTime.UtcNow.ToString("s")}
+            { "worldName", worldName }, { "playerName", playerName }, { "timestamp", DateTime.UtcNow.ToString("s") }
         };
-        
+
         // Use the server name from config for consistency across all embeds
         string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
-        
-        var builder = new EmbedBuilder()
+
+        EmbedBuilder builder = new EmbedBuilder()
             .SetColorForEvent(eventType)
             .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Valheim icon
             .SetTimestamp();
-            
+
         // Add player name as a field
         builder.AddInlineField("Player", playerName);
-            
+
         // Set title based on message type
         if (Webhook.PlayerShoutEvents.Contains(eventType))
         {
@@ -291,25 +285,25 @@ internal static class EmbedTemplates
                 builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
             }
         }
-        
+
         // Add the message as description with quotes
         builder.SetDescription($"> {message}");
-        
+
         // Add position field if available
         if (position.HasValue)
         {
             builder.AddPositionField(position.Value);
         }
-        
+
         // Set footer with world info
         builder.SetFooterFromTemplate(variables);
-        
+
         // Set URL if configured
         builder.SetUrlFromTemplate(variables);
-        
+
         return builder;
     }
-    
+
     /// <summary>
     ///     Creates a position message embed.
     /// </summary>
@@ -319,23 +313,22 @@ internal static class EmbedTemplates
     /// <param name="position">The player's position</param>
     /// <param name="worldName">The name of the server world</param>
     /// <returns>A configured EmbedBuilder instance</returns>
-    public static EmbedBuilder PositionMessage(Webhook.Event eventType, string message, string playerName, Vector3 position, string worldName = "")
+    public static EmbedBuilder PositionMessage(Webhook.Event eventType, string message, string playerName,
+        Vector3 position, string worldName = "")
     {
-        var variables = new Dictionary<string, string>
+        Dictionary<string, string> variables = new()
         {
-            {"worldName", worldName},
-            {"playerName", playerName},
-            {"timestamp", DateTime.UtcNow.ToString("s")}
+            { "worldName", worldName }, { "playerName", playerName }, { "timestamp", DateTime.UtcNow.ToString("s") }
         };
-        
+
         // Use server name for consistency across all embeds
         string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
-        
+
         // Create the builder first
-        var builder = new EmbedBuilder()
+        EmbedBuilder builder = new EmbedBuilder()
             .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl)
             .SetTimestamp();
-            
+
         // Optional thumbnail
         if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
         {
@@ -377,13 +370,13 @@ internal static class EmbedTemplates
 
         // Set footer with world info
         builder.SetFooterFromTemplate(variables);
-        
+
         // Set URL if configured
         builder.SetUrlFromTemplate(variables);
-        
+
         return builder;
     }
-    
+
     /// <summary>
     ///     Creates an active players announcement embed.
     /// </summary>
@@ -392,32 +385,33 @@ internal static class EmbedTemplates
     /// <returns>A configured EmbedBuilder instance</returns>
     public static EmbedBuilder ActivePlayersAnnouncement(string message, string worldName = "")
     {
-        var variables = new Dictionary<string, string>
+        Dictionary<string, string> variables = new()
         {
-            {"worldName", worldName},
-            {"timestamp", DateTime.UtcNow.ToString("s")}
+            { "worldName", worldName }, { "timestamp", DateTime.UtcNow.ToString("s") }
         };
-        
+
         string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
-        var builder = new EmbedBuilder()
-            .SetColor(DiscordConnectorPlugin.StaticConfig.EmbedActivePlayersColor) // Use the configured color for active player announcements
-            .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Always use server name as author
+        EmbedBuilder builder = new EmbedBuilder()
+            .SetColor(DiscordConnectorPlugin.StaticConfig
+                .EmbedActivePlayersColor) // Use the configured color for active player announcements
+            .SetAuthor(serverName, null,
+                DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Always use server name as author
             .SetTitle("👥 Active Players") // Use a people emoji for active players
             .SetDescription(message)
             .SetTimestamp();
-            
+
         // Add thumbnail if enabled
         if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
         {
             builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
         }
-            
+
         // Set footer with world info
         builder.SetFooterFromTemplate(variables);
-        
+
         // Set URL if configured
         builder.SetUrlFromTemplate(variables);
-        
+
         return builder;
     }
 
@@ -430,15 +424,15 @@ internal static class EmbedTemplates
     /// <returns>A configured EmbedBuilder instance</returns>
     public static EmbedBuilder LeaderboardEmbed(string title, List<Tuple<string, string>> fields, string worldName = "")
     {
-        var variables = new Dictionary<string, string>
+        Dictionary<string, string> variables = new()
         {
-            {"worldName", worldName},
-            {"timestamp", DateTime.UtcNow.ToString("s")}
+            { "worldName", worldName }, { "timestamp", DateTime.UtcNow.ToString("s") }
         };
 
         string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
-        var builder = new EmbedBuilder()
-            .SetColor(DiscordConnectorPlugin.StaticConfig.EmbedLeaderboardEmbedColor) // Use the configured color for leaderboard embeds
+        EmbedBuilder builder = new EmbedBuilder()
+            .SetColor(DiscordConnectorPlugin.StaticConfig
+                .EmbedLeaderboardEmbedColor) // Use the configured color for leaderboard embeds
             .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl)
             .SetTitle($"🏆 {title}")
             .SetTimestamp();
@@ -450,7 +444,7 @@ internal static class EmbedTemplates
         }
 
         // Add fields from the leaderboard entries
-        foreach (var field in fields)
+        foreach (Tuple<string, string>? field in fields)
         {
             builder.AddField(field.Item1, MessageTransformer.FormatFieldContent(field.Item2));
         }
@@ -475,27 +469,32 @@ internal static class EmbedTemplates
         {
             return "Launching";
         }
-        else if (Webhook.ServerStartEvents.Contains(eventType))
+
+        if (Webhook.ServerStartEvents.Contains(eventType))
         {
             return "Online";
         }
-        else if (Webhook.ServerStopEvents.Contains(eventType))
+
+        if (Webhook.ServerStopEvents.Contains(eventType))
         {
             return "Stopping";
         }
-        else if (Webhook.ServerShutdownEvents.Contains(eventType))
+
+        if (Webhook.ServerShutdownEvents.Contains(eventType))
         {
             return "Offline";
         }
-        else if (eventType == Webhook.Event.ServerSave)
+
+        if (eventType == Webhook.Event.ServerSave)
         {
             return "Online";
         }
-        else if (eventType == Webhook.Event.NewDayNumber)
+
+        if (eventType == Webhook.Event.NewDayNumber)
         {
             return "Online";
         }
-        
+
         return "Unknown";
     }
 }

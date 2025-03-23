@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+
 using DiscordConnector.Config;
 using DiscordConnector.Records;
+
 // Required for embedding support
-using DiscordConnector;
 
 namespace DiscordConnector.Leaderboards;
 
@@ -37,7 +38,8 @@ internal class Composer : Base
 
             if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
             {
-                DiscordConnectorPlugin.StaticLogger.LogInfo($"Leaderboard {leaderBoardIdx} settings: Enabled={settings.Enabled}, Webhook Event={ev}");
+                DiscordConnectorPlugin.StaticLogger.LogInfo(
+                    $"Leaderboard {leaderBoardIdx} settings: Enabled={settings.Enabled}, Webhook Event={ev}");
             }
 
             if (!settings.Enabled)
@@ -46,6 +48,7 @@ internal class Composer : Base
                 {
                     DiscordConnectorPlugin.StaticLogger.LogInfo($"Leaderboard {leaderBoardIdx} is disabled, exiting");
                 }
+
                 return;
             }
 
@@ -54,7 +57,7 @@ internal class Composer : Base
             {
                 DiscordConnectorPlugin.StaticLogger.LogInfo($"Building rankings for leaderboard {leaderBoardIdx}");
             }
-            
+
             Dictionary<Statistic, List<CountResult>> rankings;
             try
             {
@@ -72,8 +75,9 @@ internal class Composer : Base
             {
                 try
                 {
-                    DiscordConnectorPlugin.StaticLogger.LogInfo($"Rankings retrieved for leaderboard {leaderBoardIdx}: {string.Join(", ", rankings.Keys)}");
-                    foreach (var key in rankings.Keys)
+                    DiscordConnectorPlugin.StaticLogger.LogInfo(
+                        $"Rankings retrieved for leaderboard {leaderBoardIdx}: {string.Join(", ", rankings.Keys)}");
+                    foreach (Statistic key in rankings.Keys)
                     {
                         DiscordConnectorPlugin.StaticLogger.LogInfo($"  - {key}: {rankings[key]?.Count ?? 0} results");
                     }
@@ -98,11 +102,14 @@ internal class Composer : Base
                     {
                         if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
                         {
-                            DiscordConnectorPlugin.StaticLogger.LogInfo($"Found {deathRankings?.Count ?? 0} death rankings");
+                            DiscordConnectorPlugin.StaticLogger.LogInfo(
+                                $"Found {deathRankings?.Count ?? 0} death rankings");
                         }
+
                         if (deathRankings?.Count > 0)
                         {
-                            leaderFields.Add(Tuple.Create("Deaths", LeaderbBoard.RankedCountResultToString(deathRankings)));
+                            leaderFields.Add(Tuple.Create("Deaths",
+                                LeaderbBoard.RankedCountResultToString(deathRankings)));
                         }
                     }
                 }
@@ -114,7 +121,8 @@ internal class Composer : Base
                     {
                         if (sessionRankings?.Count > 0)
                         {
-                            leaderFields.Add(Tuple.Create("Sessions", LeaderbBoard.RankedCountResultToString(sessionRankings)));
+                            leaderFields.Add(Tuple.Create("Sessions",
+                                LeaderbBoard.RankedCountResultToString(sessionRankings)));
                         }
                     }
                 }
@@ -126,7 +134,8 @@ internal class Composer : Base
                     {
                         if (shoutRankings?.Count > 0)
                         {
-                            leaderFields.Add(Tuple.Create("Shouts", LeaderbBoard.RankedCountResultToString(shoutRankings)));
+                            leaderFields.Add(Tuple.Create("Shouts",
+                                LeaderbBoard.RankedCountResultToString(shoutRankings)));
                         }
                     }
                 }
@@ -138,7 +147,8 @@ internal class Composer : Base
                     {
                         if (pingRankings?.Count > 0)
                         {
-                            leaderFields.Add(Tuple.Create("Pings", LeaderbBoard.RankedCountResultToString(pingRankings)));
+                            leaderFields.Add(
+                                Tuple.Create("Pings", LeaderbBoard.RankedCountResultToString(pingRankings)));
                         }
                     }
                 }
@@ -167,10 +177,12 @@ internal class Composer : Base
             {
                 try
                 {
-                    DiscordConnectorPlugin.StaticLogger.LogInfo($"Built {leaderFields.Count} leader fields for leaderboard {leaderBoardIdx}");
-                    foreach (var field in leaderFields)
+                    DiscordConnectorPlugin.StaticLogger.LogInfo(
+                        $"Built {leaderFields.Count} leader fields for leaderboard {leaderBoardIdx}");
+                    foreach (Tuple<string, string>? field in leaderFields)
                     {
-                        DiscordConnectorPlugin.StaticLogger.LogInfo($"  - Field: {field.Item1}, Content: '{field.Item2}'");
+                        DiscordConnectorPlugin.StaticLogger.LogInfo(
+                            $"  - Field: {field.Item1}, Content: '{field.Item2}'");
                     }
                 }
                 catch (Exception ex)
@@ -185,7 +197,7 @@ internal class Composer : Base
                 discordContent = MessageTransformer.FormatLeaderBoardHeader(
                     settings.DisplayedHeading, settings.NumberListings
                 );
-                
+
                 if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
                 {
                     DiscordConnectorPlugin.StaticLogger.LogInfo($"Formatted header: '{discordContent}'");
@@ -210,22 +222,25 @@ internal class Composer : Base
             {
                 DiscordConnectorPlugin.StaticLogger.LogError($"Error getting world name: {ex.Message}");
             }
-            
+
             if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
             {
-                DiscordConnectorPlugin.StaticLogger.LogInfo($"About to send leaderboard {leaderBoardIdx} to Discord. Embed enabled: {DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled}, World: {worldName}, Field count: {leaderFields.Count}");
+                DiscordConnectorPlugin.StaticLogger.LogInfo(
+                    $"About to send leaderboard {leaderBoardIdx} to Discord. Embed enabled: {DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled}, World: {worldName}, Field count: {leaderFields.Count}");
             }
-            
+
             // Check if we have any fields to send
             if (leaderFields.Count == 0)
             {
                 if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
                 {
-                    DiscordConnectorPlugin.StaticLogger.LogWarning($"No leader fields to send for leaderboard {leaderBoardIdx} - skipping webhook message");
+                    DiscordConnectorPlugin.StaticLogger.LogWarning(
+                        $"No leader fields to send for leaderboard {leaderBoardIdx} - skipping webhook message");
                 }
+
                 return; // No point in sending an empty leaderboard
             }
-            
+
             // Send the leaderboard, with error handling
             try
             {
@@ -233,25 +248,30 @@ internal class Composer : Base
                 if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled)
                 {
                     // Create and send the embed using the new LeaderboardEmbed template
-                    var embedBuilder = EmbedTemplates.LeaderboardEmbed(
+                    EmbedBuilder embedBuilder = EmbedTemplates.LeaderboardEmbed(
                         settings.DisplayedHeading,
                         leaderFields,
                         worldName
                     );
-                    
+
                     if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
                     {
                         DiscordConnectorPlugin.StaticLogger.LogInfo($"Sending embed for leaderboard {leaderBoardIdx}");
                     }
-                    
-                    try {
+
+                    try
+                    {
                         DiscordApi.SendEmbed(ev, embedBuilder);
                         if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
                         {
-                            DiscordConnectorPlugin.StaticLogger.LogInfo($"Successfully sent embed for leaderboard {leaderBoardIdx}");
+                            DiscordConnectorPlugin.StaticLogger.LogInfo(
+                                $"Successfully sent embed for leaderboard {leaderBoardIdx}");
                         }
-                    } catch (Exception ex) {
-                        DiscordConnectorPlugin.StaticLogger.LogError($"Error sending leaderboard {leaderBoardIdx} embed: {ex.Message}");
+                    }
+                    catch (Exception ex)
+                    {
+                        DiscordConnectorPlugin.StaticLogger.LogError(
+                            $"Error sending leaderboard {leaderBoardIdx} embed: {ex.Message}");
                         DiscordConnectorPlugin.StaticLogger.LogDebug($"Exception details: {ex}");
                     }
                 }
@@ -260,17 +280,23 @@ internal class Composer : Base
                     // Fallback to plain text version if embeds are not enabled
                     if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
                     {
-                        DiscordConnectorPlugin.StaticLogger.LogInfo($"Sending plain text message for leaderboard {leaderBoardIdx}");
+                        DiscordConnectorPlugin.StaticLogger.LogInfo(
+                            $"Sending plain text message for leaderboard {leaderBoardIdx}");
                     }
-                    
-                    try {
+
+                    try
+                    {
                         DiscordApi.SendMessageWithFields(ev, discordContent, leaderFields);
                         if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
                         {
-                            DiscordConnectorPlugin.StaticLogger.LogInfo($"Successfully sent plain text message for leaderboard {leaderBoardIdx}");
+                            DiscordConnectorPlugin.StaticLogger.LogInfo(
+                                $"Successfully sent plain text message for leaderboard {leaderBoardIdx}");
                         }
-                    } catch (Exception ex) {
-                        DiscordConnectorPlugin.StaticLogger.LogError($"Error sending leaderboard {leaderBoardIdx} plain text: {ex.Message}");
+                    }
+                    catch (Exception ex)
+                    {
+                        DiscordConnectorPlugin.StaticLogger.LogError(
+                            $"Error sending leaderboard {leaderBoardIdx} plain text: {ex.Message}");
                         DiscordConnectorPlugin.StaticLogger.LogDebug($"Exception details: {ex}");
                     }
                 }
@@ -294,21 +320,24 @@ internal class Composer : Base
         {
             DiscordConnectorPlugin.StaticLogger.LogInfo($"Making rankings with time range: {settings.TimeRange}");
         }
-        
+
         if (settings.TimeRange == TimeRange.AllTime)
         {
             if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
             {
                 DiscordConnectorPlugin.StaticLogger.LogInfo("Using AllRankings method");
             }
+
             return AllRankings(settings);
         }
 
         Tuple<DateTime, DateTime>? BeginEndDate = DateHelper.StartEndDatesForTimeRange(settings.TimeRange);
         if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
         {
-            DiscordConnectorPlugin.StaticLogger.LogInfo($"Using TimeBasedRankings with range: {BeginEndDate.Item1} to {BeginEndDate.Item2}");
+            DiscordConnectorPlugin.StaticLogger.LogInfo(
+                $"Using TimeBasedRankings with range: {BeginEndDate.Item1} to {BeginEndDate.Item2}");
         }
+
         return TimeBasedRankings(settings, BeginEndDate.Item1, BeginEndDate.Item2);
     }
 
@@ -325,20 +354,25 @@ internal class Composer : Base
                     {
                         DiscordConnectorPlugin.StaticLogger.LogInfo("Getting death rankings for all time");
                     }
+
                     try
                     {
-                        var deathResults = Helper.TopNResultForCategory(Categories.Death, settings.NumberListings);
+                        List<CountResult>? deathResults =
+                            Helper.TopNResultForCategory(Categories.Death, settings.NumberListings);
                         if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
                         {
-                            DiscordConnectorPlugin.StaticLogger.LogInfo($"Got {deathResults?.Count ?? 0} death results");
+                            DiscordConnectorPlugin.StaticLogger.LogInfo(
+                                $"Got {deathResults?.Count ?? 0} death results");
                             if (deathResults != null && deathResults.Count > 0)
                             {
-                                foreach (var result in deathResults)
+                                foreach (CountResult? result in deathResults)
                                 {
-                                    DiscordConnectorPlugin.StaticLogger.LogInfo($"  Death result: {result?.Name ?? "null"} - {result?.Count ?? 0}");
+                                    DiscordConnectorPlugin.StaticLogger.LogInfo(
+                                        $"  Death result: {result?.Name ?? "null"} - {result?.Count ?? 0}");
                                 }
                             }
                         }
+
                         if (deathResults != null)
                         {
                             Dict.Add(Statistic.Death, deathResults);
@@ -358,20 +392,25 @@ internal class Composer : Base
                     {
                         DiscordConnectorPlugin.StaticLogger.LogInfo("Getting session rankings for all time");
                     }
+
                     try
                     {
-                        var sessionResults = Helper.TopNResultForCategory(Categories.Join, settings.NumberListings);
+                        List<CountResult>? sessionResults =
+                            Helper.TopNResultForCategory(Categories.Join, settings.NumberListings);
                         if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
                         {
-                            DiscordConnectorPlugin.StaticLogger.LogInfo($"Got {sessionResults?.Count ?? 0} session results");
+                            DiscordConnectorPlugin.StaticLogger.LogInfo(
+                                $"Got {sessionResults?.Count ?? 0} session results");
                             if (sessionResults != null && sessionResults.Count > 0)
                             {
-                                foreach (var result in sessionResults)
+                                foreach (CountResult? result in sessionResults)
                                 {
-                                    DiscordConnectorPlugin.StaticLogger.LogInfo($"  Session result: {result?.Name ?? "null"} - {result?.Count ?? 0}");
+                                    DiscordConnectorPlugin.StaticLogger.LogInfo(
+                                        $"  Session result: {result?.Name ?? "null"} - {result?.Count ?? 0}");
                                 }
                             }
                         }
+
                         if (sessionResults != null)
                         {
                             Dict.Add(Statistic.Session, sessionResults);
@@ -389,7 +428,8 @@ internal class Composer : Base
                 {
                     try
                     {
-                        Dict.Add(Statistic.Shout, Helper.TopNResultForCategory(Categories.Shout, settings.NumberListings));
+                        Dict.Add(Statistic.Shout,
+                            Helper.TopNResultForCategory(Categories.Shout, settings.NumberListings));
                     }
                     catch (Exception ex)
                     {
@@ -403,7 +443,8 @@ internal class Composer : Base
                 {
                     try
                     {
-                        Dict.Add(Statistic.Ping, Helper.TopNResultForCategory(Categories.Ping, settings.NumberListings));
+                        Dict.Add(Statistic.Ping,
+                            Helper.TopNResultForCategory(Categories.Ping, settings.NumberListings));
                     }
                     catch (Exception ex)
                     {
@@ -422,7 +463,8 @@ internal class Composer : Base
                     }
                     catch (Exception ex)
                     {
-                        DiscordConnectorPlugin.StaticLogger.LogError($"Error getting time online rankings: {ex.Message}");
+                        DiscordConnectorPlugin.StaticLogger.LogError(
+                            $"Error getting time online rankings: {ex.Message}");
                         DiscordConnectorPlugin.StaticLogger.LogDebug($"Exception details: {ex}");
                         Dict.Add(Statistic.TimeOnline, new List<CountResult>());
                     }
@@ -433,17 +475,20 @@ internal class Composer : Base
             {
                 if (settings.Deaths)
                 {
-                    Dict.Add(Statistic.Death, Helper.BottomNResultForCategory(Categories.Death, settings.NumberListings));
+                    Dict.Add(Statistic.Death,
+                        Helper.BottomNResultForCategory(Categories.Death, settings.NumberListings));
                 }
 
                 if (settings.Sessions)
                 {
-                    Dict.Add(Statistic.Session, Helper.BottomNResultForCategory(Categories.Join, settings.NumberListings));
+                    Dict.Add(Statistic.Session,
+                        Helper.BottomNResultForCategory(Categories.Join, settings.NumberListings));
                 }
 
                 if (settings.Shouts)
                 {
-                    Dict.Add(Statistic.Shout, Helper.BottomNResultForCategory(Categories.Shout, settings.NumberListings));
+                    Dict.Add(Statistic.Shout,
+                        Helper.BottomNResultForCategory(Categories.Shout, settings.NumberListings));
                 }
 
                 if (settings.Pings)
@@ -467,19 +512,20 @@ internal class Composer : Base
         if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
         {
             DiscordConnectorPlugin.StaticLogger.LogInfo("Final AllRankings dictionary contents:");
-            foreach (var key in Dict.Keys)
+            foreach (Statistic key in Dict.Keys)
             {
                 DiscordConnectorPlugin.StaticLogger.LogInfo($"  - {key}: {Dict[key]?.Count ?? 0} results");
                 if (Dict[key] != null && Dict[key].Count > 0)
                 {
-                    foreach (var result in Dict[key])
+                    foreach (CountResult? result in Dict[key])
                     {
-                        DiscordConnectorPlugin.StaticLogger.LogInfo($"    * {result?.Name ?? "null"} - {result?.Count ?? 0}");
+                        DiscordConnectorPlugin.StaticLogger.LogInfo(
+                            $"    * {result?.Name ?? "null"} - {result?.Count ?? 0}");
                     }
                 }
             }
         }
-        
+
         DiscordConnectorPlugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
         try
         {
@@ -504,20 +550,25 @@ internal class Composer : Base
             {
                 if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
                 {
-                    DiscordConnectorPlugin.StaticLogger.LogInfo($"Getting death rankings for time range {startDate} to {endDate}");
+                    DiscordConnectorPlugin.StaticLogger.LogInfo(
+                        $"Getting death rankings for time range {startDate} to {endDate}");
                 }
-                var deathResults = Helper.TopNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate);
+
+                List<CountResult>? deathResults =
+                    Helper.TopNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate);
                 if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
                 {
                     DiscordConnectorPlugin.StaticLogger.LogInfo($"Got {deathResults?.Count ?? 0} death results");
                     if (deathResults != null && deathResults.Count > 0)
                     {
-                        foreach (var result in deathResults)
+                        foreach (CountResult? result in deathResults)
                         {
-                            DiscordConnectorPlugin.StaticLogger.LogInfo($"  Death result: {result?.Name ?? "null"} - {result?.Count ?? 0}");
+                            DiscordConnectorPlugin.StaticLogger.LogInfo(
+                                $"  Death result: {result?.Name ?? "null"} - {result?.Count ?? 0}");
                         }
                     }
                 }
+
                 if (deathResults != null)
                 {
                     Dict.Add(Statistic.Death, deathResults);
@@ -528,20 +579,25 @@ internal class Composer : Base
             {
                 if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
                 {
-                    DiscordConnectorPlugin.StaticLogger.LogInfo($"Getting session rankings for time range {startDate} to {endDate}");
+                    DiscordConnectorPlugin.StaticLogger.LogInfo(
+                        $"Getting session rankings for time range {startDate} to {endDate}");
                 }
-                var sessionResults = Helper.TopNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate);
+
+                List<CountResult> sessionResults =
+                    Helper.TopNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate);
                 if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
                 {
                     DiscordConnectorPlugin.StaticLogger.LogInfo($"Got {sessionResults?.Count ?? 0} session results");
                     if (sessionResults != null && sessionResults.Count > 0)
                     {
-                        foreach (var result in sessionResults)
+                        foreach (CountResult? result in sessionResults)
                         {
-                            DiscordConnectorPlugin.StaticLogger.LogInfo($"  Session result: {result?.Name ?? "null"} - {result?.Count ?? 0}");
+                            DiscordConnectorPlugin.StaticLogger.LogInfo(
+                                $"  Session result: {result?.Name ?? "null"} - {result?.Count ?? 0}");
                         }
                     }
                 }
+
                 if (sessionResults != null)
                 {
                     Dict.Add(Statistic.Session, sessionResults);
@@ -550,7 +606,8 @@ internal class Composer : Base
 
             if (settings.Shouts)
             {
-                var shoutResults = Helper.TopNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate);
+                List<CountResult> shoutResults =
+                    Helper.TopNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate);
                 if (shoutResults != null)
                 {
                     Dict.Add(Statistic.Shout, shoutResults);
@@ -559,7 +616,8 @@ internal class Composer : Base
 
             if (settings.Pings)
             {
-                var pingResults = Helper.TopNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate);
+                List<CountResult> pingResults =
+                    Helper.TopNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate);
                 if (pingResults != null)
                 {
                     Dict.Add(Statistic.Ping, pingResults);
@@ -568,7 +626,8 @@ internal class Composer : Base
 
             if (settings.TimeOnline)
             {
-                var timeOnlineResults = Helper.TopNResultForCategory(Categories.TimeOnline, settings.NumberListings, startDate, endDate);
+                List<CountResult> timeOnlineResults = Helper.TopNResultForCategory(Categories.TimeOnline,
+                    settings.NumberListings, startDate, endDate);
                 if (timeOnlineResults != null)
                 {
                     Dict.Add(Statistic.TimeOnline, timeOnlineResults);
@@ -580,7 +639,8 @@ internal class Composer : Base
         {
             if (settings.Deaths)
             {
-                var deathResults = Helper.BottomNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate);
+                List<CountResult> deathResults =
+                    Helper.BottomNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate);
                 if (deathResults != null)
                 {
                     Dict.Add(Statistic.Death, deathResults);
@@ -589,7 +649,8 @@ internal class Composer : Base
 
             if (settings.Sessions)
             {
-                var sessionResults = Helper.BottomNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate);
+                List<CountResult> sessionResults =
+                    Helper.BottomNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate);
                 if (sessionResults != null)
                 {
                     Dict.Add(Statistic.Session, sessionResults);
@@ -598,7 +659,8 @@ internal class Composer : Base
 
             if (settings.Shouts)
             {
-                var shoutResults = Helper.BottomNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate);
+                List<CountResult> shoutResults =
+                    Helper.BottomNResultForCategory(Categories.Shout, settings.NumberListings, startDate, endDate);
                 if (shoutResults != null)
                 {
                     Dict.Add(Statistic.Shout, shoutResults);
@@ -607,7 +669,8 @@ internal class Composer : Base
 
             if (settings.Pings)
             {
-                var pingResults = Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate);
+                List<CountResult> pingResults =
+                    Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate);
                 if (pingResults != null)
                 {
                     Dict.Add(Statistic.Ping, pingResults);
@@ -616,7 +679,8 @@ internal class Composer : Base
 
             if (settings.TimeOnline)
             {
-                var timeOnlineResults = Helper.BottomNResultForCategory(Categories.TimeOnline, settings.NumberListings, startDate, endDate);
+                List<CountResult> timeOnlineResults = Helper.BottomNResultForCategory(Categories.TimeOnline,
+                    settings.NumberListings, startDate, endDate);
                 if (timeOnlineResults != null)
                 {
                     Dict.Add(Statistic.TimeOnline, timeOnlineResults);
@@ -628,18 +692,20 @@ internal class Composer : Base
         if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
         {
             DiscordConnectorPlugin.StaticLogger.LogInfo("Final dictionary contents:");
-            foreach (var key in Dict.Keys)
+            foreach (Statistic key in Dict.Keys)
             {
                 DiscordConnectorPlugin.StaticLogger.LogInfo($"  - {key}: {Dict[key]?.Count ?? 0} results");
                 if (Dict[key] != null && Dict[key].Count > 0)
                 {
-                    foreach (var result in Dict[key])
+                    foreach (CountResult? result in Dict[key])
                     {
-                        DiscordConnectorPlugin.StaticLogger.LogInfo($"    * {result?.Name ?? "null"} - {result?.Count ?? 0}");
+                        DiscordConnectorPlugin.StaticLogger.LogInfo(
+                            $"    * {result?.Name ?? "null"} - {result?.Count ?? 0}");
                     }
                 }
             }
         }
+
         printDict(Dict);
 
         return Dict;

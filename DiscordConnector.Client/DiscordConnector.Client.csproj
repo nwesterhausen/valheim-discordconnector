@@ -1,0 +1,121 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <LangVersion>12.0</LangVersion>
+        <Optimize>true</Optimize>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <Copyright>Copyright© 2025</Copyright>
+        <OutputPath>bin\$(Configuration)\</OutputPath>
+
+        <TargetFramework>net481</TargetFramework>
+        <Product>Client for Discord Connector for Valheim</Product>
+        <Id>DiscordConnectorClient</Id>
+        <PackageId>DiscordConnectorClient</PackageId>
+        <Description>Enhances Valheim servers by sending messages to a Discord Webhook: Client-Side Requirement</Description>
+        <Authors>nwesterhausen</Authors>
+        <projectUrl>https://github.com/nwesterhausen/valheim-discordconnector/</projectUrl>
+        <iconUrl>https://github.com/nwesterhausen/valheim-discordconnector/raw/main/DiscordConnector/Metadata/icon.png</iconUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/nwesterhausen/valheim-discordconnector</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/nwesterhausen/valheim-discordconnector</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>Valheim Plugin</PackageTags>
+        <NeutralLanguage>en</NeutralLanguage>
+        <AssemblyName>DiscordConnector-Client</AssemblyName>
+        <RootNamespace>DiscordConnector</RootNamespace>
+        <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+        <GenerateResourceNeverLockTypeAssemblies>true</GenerateResourceNeverLockTypeAssemblies>
+        <!--  Remove warnings for unable to resolve or can't find assembly. Disable this NOWARN if you run into compilation issues. (MSB3245, MSB3243) -->
+        <!--  Disable MSB4011 warning for importing .props files again (Environment.props and DoPrebuild.props are loaded by Jotunn dependency -->
+        <NoWarn>MSB3245;MSB3243;MSB4011;</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+    </PropertyGroup>
+
+    <Import Project="..\Environment.props" Condition="Exists('..\Environment.props')"/>
+    <Import Project="..\DoPrebuild.props" Condition="Exists('..\DoPrebuild.props')"/>
+    <Import Project="..\PublishSteps.targets" Condition="Exists('..\PublishSteps.targets')"/>
+    <Import Project="..\DeterminePaths.targets" Condition="Exists('..\DeterminePaths.targets')"/>
+
+    <ItemGroup>
+        <Reference Include="0Harmony">
+            <HintPath>$(BepInExPath)\core\0Harmony.dll</HintPath>
+        </Reference>
+        <Reference Include="assembly_guiutils">
+            <HintPath>$(PublicizedAssembliesPath)\assembly_guiutils_publicized.dll</HintPath>
+        </Reference>
+        <Reference Include="assembly_utils">
+            <HintPath>$(PublicizedAssembliesPath)\assembly_utils_publicized.dll</HintPath>
+        </Reference>
+        <Reference Include="assembly_valheim">
+            <HintPath>$(PublicizedAssembliesPath)\assembly_valheim_publicized.dll</HintPath>
+        </Reference>
+        <Reference Include="BepInEx">
+            <HintPath>$(BepInExPath)\core\BepInEx.dll</HintPath>
+        </Reference>
+        <Reference Include="mscorlib"/>
+        <Reference Include="ServerSync">
+            <HintPath>Libs\ServerSync.dll</HintPath>
+        </Reference>
+        <Reference Include="SoftReferenceableAssets">
+            <HintPath>$(PublicizedAssembliesPath)\SoftReferenceableAssets_publicized.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine">
+            <HintPath>$(CorlibPath)\UnityEngine.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.AssetBundleModule">
+            <HintPath>$(CorlibPath)\UnityEngine.AssetBundleModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>$(CorlibPath)\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.ImageConversionModule">
+            <HintPath>$(CorlibPath)\UnityEngine.ImageConversionModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.IMGUIModule">
+            <HintPath>$(CorlibPath)\UnityEngine.IMGUIModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.InputLegacyModule">
+            <HintPath>$(CorlibPath)\UnityEngine.InputLegacyModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.ParticleSystemModule">
+            <HintPath>$(CorlibPath)\UnityEngine.ParticleSystemModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.PhysicsModule">
+            <HintPath>$(CorlibPath)\UnityEngine.PhysicsModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.TextRenderingModule">
+            <HintPath>$(CorlibPath)\UnityEngine.TextRenderingModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UI">
+            <HintPath>$(CorlibPath)\UnityEngine.UI.dll</HintPath>
+        </Reference>
+        <Reference Include="Unity.TextMeshPro">
+            <HintPath>$(GamePath)\valheim_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="ILRepack" Version="2.0.40">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.40">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="JotunnLib" Version="2.24.1"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\DiscordConnector.Common\DiscordConnector.Common.csproj"/>
+    </ItemGroup>
+</Project>

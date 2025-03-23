@@ -1,5 +1,7 @@
 ﻿using System;
+
 using BepInEx.Configuration;
+
 using DiscordConnector.Leaderboards;
 
 namespace DiscordConnector.Config;

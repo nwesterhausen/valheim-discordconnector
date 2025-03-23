@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.Timers;
+
 using DiscordConnector.Records;
 
 namespace DiscordConnector.Leaderboards;
@@ -99,11 +100,11 @@ internal static class ActivePlayersAnnouncement
         {
             worldName = ZNet.instance.GetWorldName();
         }
-        
+
         // If embeds are enabled, use the new embed template
         if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled)
         {
-            var embedBuilder = EmbedTemplates.ActivePlayersAnnouncement(statsAnnouncement, worldName);
+            EmbedBuilder? embedBuilder = EmbedTemplates.ActivePlayersAnnouncement(statsAnnouncement, worldName);
             DiscordApi.SendEmbed(ev, embedBuilder);
         }
         else

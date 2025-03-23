@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using BepInEx;
+
 using DiscordConnector.Config;
 using DiscordConnector.Leaderboards;
+
 using LiteDB;
+
 using UnityEngine;
 
 namespace DiscordConnector.Records;
@@ -49,8 +53,6 @@ internal class Database
         {
             File.Move(oldDatabase, DbPath);
         }
-
-        Initialize();
     }
 
     /// <summary>

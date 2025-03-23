@@ -1,4 +1,5 @@
 ﻿using System;
+
 using BepInEx.Configuration;
 
 namespace DiscordConnector.Config;
@@ -6,54 +7,52 @@ namespace DiscordConnector.Config;
 internal class MessagesConfig
 {
     // config header strings
-    private const string SERVER_MESSAGES = "Messages.Server";
-    private const string PLAYER_MESSAGES = "Messages.Player";
-    private const string PLAYER_FIRSTS_MESSAGES = "Messages.PlayerFirsts";
-    private const string EVENT_MESSAGES = "Messages.Events";
-    private const string BOARD_MESSAGES = "Messages.LeaderBoards";
-    private static ConfigFile config;
+    private const string ServerMessages = "Messages.Server";
+    private const string PlayerMessages = "Messages.Player";
+    private const string PlayerFirstsMessages = "Messages.PlayerFirsts";
+    private const string EventMessages = "Messages.Events";
+    private const string BoardMessages = "Messages.LeaderBoards";
 
-    public static string ConfigExtension = "messages";
-    private ConfigEntry<string> eventPausedMessage;
-    private ConfigEntry<string> eventResumedMessage;
+    public const string ConfigExtension = "messages";
+    private readonly ConfigEntry<string> _eventPausedMessage;
+    private readonly ConfigEntry<string> _eventResumedMessage;
 
     // Event Messages
-    private ConfigEntry<string> eventStartMessage;
-    private ConfigEntry<string> eventStopMessage;
-    private ConfigEntry<string> leaderBoardBottomPlayersMessage;
-    private ConfigEntry<string> leaderBoardHighestPlayerMessage;
-    private ConfigEntry<string> leaderBoardLowestPlayerMessage;
+    private readonly ConfigEntry<string> _eventStartMessage;
+    private readonly ConfigEntry<string> _eventStopMessage;
+    private readonly ConfigEntry<string> _leaderBoardBottomPlayersMessage;
+    private readonly ConfigEntry<string> _leaderBoardHighestPlayerMessage;
+    private readonly ConfigEntry<string> _leaderBoardLowestPlayerMessage;
 
     // Board Messages
-    private ConfigEntry<string> leaderBoardTopPlayersMessage;
-    private ConfigEntry<string> playerDeathMessage;
-    private ConfigEntry<string> playerFirstDeathMessage;
+    private readonly ConfigEntry<string> _leaderBoardTopPlayersMessage;
+    private readonly ConfigEntry<string> _playerDeathMessage;
+    private readonly ConfigEntry<string> _playerFirstDeathMessage;
 
     // Player First Messages
-    private ConfigEntry<string> playerFirstJoinMessage;
-    private ConfigEntry<string> playerFirstLeaveMessage;
-    private ConfigEntry<string> playerFirstPingMessage;
-    private ConfigEntry<string> playerFirstShoutMessage;
+    private readonly ConfigEntry<string> _playerFirstJoinMessage;
+    private readonly ConfigEntry<string> _playerFirstLeaveMessage;
+    private readonly ConfigEntry<string> _playerFirstPingMessage;
+    private readonly ConfigEntry<string> _playerFirstShoutMessage;
 
     // Player Messages
-    private ConfigEntry<string> playerJoinMessage;
-    private ConfigEntry<string> playerLeaveMessage;
-    private ConfigEntry<string> playerPingMessage;
-    private ConfigEntry<string> playerShoutMessage;
+    private readonly ConfigEntry<string> _playerJoinMessage;
+    private readonly ConfigEntry<string> _playerLeaveMessage;
+    private readonly ConfigEntry<string> _playerPingMessage;
+    private readonly ConfigEntry<string> _playerShoutMessage;
 
     // Server Messages
-    private ConfigEntry<string> serverLaunchMessage;
-    private ConfigEntry<string> serverLoadedMessage;
-    private ConfigEntry<string> serverNewDayMessage;
-    private ConfigEntry<string> serverSavedMessage;
-    private ConfigEntry<string> serverShutdownMessage;
-    private ConfigEntry<string> serverStopMessage;
+    private readonly ConfigEntry<string> _serverLaunchMessage;
+    private readonly ConfigEntry<string> _serverLoadedMessage;
+    private readonly ConfigEntry<string> _serverNewDayMessage;
+    private readonly ConfigEntry<string> _serverSavedMessage;
+    private readonly ConfigEntry<string> _serverShutdownMessage;
+    private readonly ConfigEntry<string> _serverStopMessage;
 
     public MessagesConfig(ConfigFile configFile)
     {
-        config = configFile;
         // Messages.Server
-        serverLaunchMessage = config.Bind<string>(SERVER_MESSAGES,
+        _serverLaunchMessage = configFile.Bind<string>(ServerMessages,
             "Server Launch Message",
             "Server is starting up.",
             "Set the message that will be sent when the server starts up." + Environment.NewLine +
@@ -61,7 +60,7 @@ internal class MessagesConfig
             Environment.NewLine +
             "Random choice example: Server is starting;Server beginning to load" + Environment.NewLine +
             "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
-        serverLoadedMessage = config.Bind<string>(SERVER_MESSAGES,
+        _serverLoadedMessage = configFile.Bind<string>(ServerMessages,
             "Server Started Message",
             "Server has started!",
             "Set the message that will be sent when the server has loaded the map and is ready for connections." +
@@ -69,57 +68,57 @@ internal class MessagesConfig
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" +
             Environment.NewLine +
             "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
-        serverStopMessage = config.Bind<string>(SERVER_MESSAGES,
+        _serverStopMessage = configFile.Bind<string>(ServerMessages,
             "Server Stop Message",
             "Server is stopping.",
             "Set the message that will be sent when the server shuts down." + Environment.NewLine +
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" +
             Environment.NewLine +
             "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
-        serverShutdownMessage = config.Bind<string>(SERVER_MESSAGES,
+        _serverShutdownMessage = configFile.Bind<string>(ServerMessages,
             "Server Shutdown Message",
             "Server has stopped!",
             "Set the message that will be sent when the server finishes shutting down." + Environment.NewLine +
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" +
             Environment.NewLine +
             "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
-        serverSavedMessage = config.Bind<string>(SERVER_MESSAGES,
+        _serverSavedMessage = configFile.Bind<string>(ServerMessages,
             "Server Saved Message",
             "The world has been saved.",
             "Set the message that will be sent when the server saves the world data." + Environment.NewLine +
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" +
             Environment.NewLine +
             "If you use %PUBLICIP% in this message, it will be replaced with the public IP address of the server.");
-        serverNewDayMessage = config.Bind<string>(SERVER_MESSAGES,
+        _serverNewDayMessage = configFile.Bind<string>(ServerMessages,
             "Server New Day Message",
             "Day Number %DAY_NUMBER%",
             "Set the message that will be sent when a new day starts." + Environment.NewLine +
             "The %DAY_NUMBER% variable gets replaced with the day number.");
 
         // Messages.Player
-        playerJoinMessage = config.Bind<string>(PLAYER_MESSAGES,
+        _playerJoinMessage = configFile.Bind<string>(PlayerMessages,
             "Player Join Message",
             "%PLAYER_NAME% has joined.",
             "Set the message that will be sent when a player joins the server" + Environment.NewLine +
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" +
             Environment.NewLine +
             "Random choice example: %PLAYER_NAME% has joined;%PLAYER_NAME% awakens;%PLAYER_NAME% arrives");
-        playerDeathMessage = config.Bind<string>(PLAYER_MESSAGES,
+        _playerDeathMessage = configFile.Bind<string>(PlayerMessages,
             "Player Death Message",
             "%PLAYER_NAME% has died.",
             "Set the message that will be sent when a player dies." + Environment.NewLine +
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
-        playerLeaveMessage = config.Bind<string>(PLAYER_MESSAGES,
+        _playerLeaveMessage = configFile.Bind<string>(PlayerMessages,
             "Player Leave Message",
             "%PLAYER_NAME% has left.",
             "Set the message that will be sent when a player leaves the server." + Environment.NewLine +
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
-        playerPingMessage = config.Bind<string>(PLAYER_MESSAGES,
+        _playerPingMessage = configFile.Bind<string>(PlayerMessages,
             "Player Ping Message",
             "%PLAYER_NAME% pings the map.",
             "Set the message that will be sent when a player pings the map." + Environment.NewLine +
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
-        playerShoutMessage = config.Bind<string>(PLAYER_MESSAGES,
+        _playerShoutMessage = configFile.Bind<string>(PlayerMessages,
             "Player Shout Message",
             "%PLAYER_NAME% shouts **%SHOUT%**.",
             "Set the message that will be sent when a player shouts on the server. You can put %SHOUT% anywhere you want the content of the shout to be." +
@@ -127,27 +126,27 @@ internal class MessagesConfig
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
         // Messages.PlayerFirsts
-        playerFirstJoinMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
+        _playerFirstJoinMessage = configFile.Bind<string>(PlayerFirstsMessages,
             "Player First Join Message",
             "Welcome %PLAYER_NAME%, it's their first time on the server!",
             "Set the message that will be sent when a player joins the server" + Environment.NewLine +
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
-        playerFirstDeathMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
+        _playerFirstDeathMessage = configFile.Bind<string>(PlayerFirstsMessages,
             "Player First Death Message",
             "%PLAYER_NAME% has died for the first time.",
             "Set the message that will be sent when a player dies." + Environment.NewLine +
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
-        playerFirstLeaveMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
+        _playerFirstLeaveMessage = configFile.Bind<string>(PlayerFirstsMessages,
             "Player First Leave Message",
             "%PLAYER_NAME% has left for the first time.",
             "Set the message that will be sent when a player leaves the server." + Environment.NewLine +
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
-        playerFirstPingMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
+        _playerFirstPingMessage = configFile.Bind<string>(PlayerFirstsMessages,
             "Player First Ping Message",
             "%PLAYER_NAME% pings the map for the first time.",
             "Set the message that will be sent when a player pings the map." + Environment.NewLine +
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
-        playerFirstShoutMessage = config.Bind<string>(PLAYER_FIRSTS_MESSAGES,
+        _playerFirstShoutMessage = configFile.Bind<string>(PlayerFirstsMessages,
             "Player First Shout Message",
             "%PLAYER_NAME% shouts for the first time.",
             "Set the message that will be sent when a player shouts on the server. %SHOUT% works in this message to include what was shouted." +
@@ -155,7 +154,7 @@ internal class MessagesConfig
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'");
 
         // Messages.Events
-        eventStartMessage = config.Bind<string>(EVENT_MESSAGES,
+        _eventStartMessage = configFile.Bind<string>(EventMessages,
             "Event Start Message",
             "**Event**: %EVENT_MSG%",
             "Set the message that will be sent when a random event starts on the server. Sending the coordinates is enabled by default in the toggles config." +
@@ -164,7 +163,7 @@ internal class MessagesConfig
             Environment.NewLine +
             "The special string %EVENT_MSG% will be replaced with the message that is displayed on the screen when the event starts."); // + Environment.NewLine +
         // "The special string %PLAYERS% will be replaced with a list of players in the event area."); //! Removed due to unreliability
-        eventStopMessage = config.Bind<string>(EVENT_MESSAGES,
+        _eventStopMessage = configFile.Bind<string>(EventMessages,
             "Event Stop Message",
             "**Event**: %EVENT_MSG%",
             "Set the message that will be sent when a random event stops on the server. Sending the coordinates is enabled by default in the toggles config." +
@@ -172,7 +171,7 @@ internal class MessagesConfig
             "If you want to have this choose from a variety of messages at random, separate each message with a semicolon ';'" +
             Environment.NewLine +
             "The special string %EVENT_MSG% will be replaced with the message that is displayed on the screen when the event stops.");
-        eventPausedMessage = config.Bind<string>(EVENT_MESSAGES,
+        _eventPausedMessage = configFile.Bind<string>(EventMessages,
             "Event Paused Message",
             "**Event**: %EVENT_END_MSG% — for now! (Currently paused due to no players in the event area.)",
             "Set the message that will be sent when a random event is paused due to players leaving the area. Sending the coordinates is enabled by default in the toggles config." +
@@ -182,7 +181,7 @@ internal class MessagesConfig
             "The special string %EVENT_START_MSG% will be replaced with the message that is displayed on the screen when the event starts." +
             Environment.NewLine +
             "The special string %EVENT_END_MSG% will be replaced with the message that is displayed on the screen when the event ends.");
-        eventResumedMessage = config.Bind<string>(EVENT_MESSAGES,
+        _eventResumedMessage = configFile.Bind<string>(EventMessages,
             "Event Resumed Message",
             "**Event**: %EVENT_START_MSG%",
             "Set the message that will be sent when a random event is resumed due to players re-entering the area. Sending the coordinates is enabled by default in the toggles config." +
@@ -195,109 +194,109 @@ internal class MessagesConfig
         // "The special string %PLAYERS% will be replaced with a list of players in the event area."); //! Removed due to unreliability
 
         // Board Messages
-        leaderBoardTopPlayersMessage = config.Bind<string>(BOARD_MESSAGES,
+        _leaderBoardTopPlayersMessage = configFile.Bind<string>(BoardMessages,
             "Leader Board Heading for Top N Players",
             "Top %N% Player Leader Boards:",
             "Set the message that is included as a heading when this leader board is sent." + Environment.NewLine +
             "Include %N% to include the number of rankings returned (the configured number)");
-        leaderBoardBottomPlayersMessage = config.Bind<string>(BOARD_MESSAGES,
+        _leaderBoardBottomPlayersMessage = configFile.Bind<string>(BoardMessages,
             "Leader Board Heading for Bottom N Players",
             "Bottom %N% Player Leader Boards:",
             "Set the message that is included as a heading when this leader board is sent." + Environment.NewLine +
             "Include %N% to include the number of rankings returned (the configured number)");
-        leaderBoardHighestPlayerMessage = config.Bind<string>(BOARD_MESSAGES,
+        _leaderBoardHighestPlayerMessage = configFile.Bind<string>(BoardMessages,
             "Leader Board Heading for Highest Player",
             "Top Performer",
             "Set the message that is included as a heading when this leader board is sent." + Environment.NewLine +
             "Include %N% to include the number of rankings returned (the configured number)");
-        leaderBoardLowestPlayerMessage = config.Bind<string>(BOARD_MESSAGES,
+        _leaderBoardLowestPlayerMessage = configFile.Bind<string>(BoardMessages,
             "Leader Board Heading for Lowest Player",
             "Bottom Performer",
             "Set the message that is included as a heading when this leader board is sent." + Environment.NewLine +
             "Include %N% to include the number of rankings returned (the configured number)");
 
-        config.Save();
+        configFile.Save();
     }
 
     // Messages.Server
-    public string LaunchMessage => GetRandomStringFromValue(serverLaunchMessage);
-    public string LoadedMessage => GetRandomStringFromValue(serverLoadedMessage);
-    public string StopMessage => GetRandomStringFromValue(serverStopMessage);
-    public string ShutdownMessage => GetRandomStringFromValue(serverShutdownMessage);
-    public string SaveMessage => GetRandomStringFromValue(serverSavedMessage);
-    public string NewDayMessage => GetRandomStringFromValue(serverNewDayMessage);
+    public string LaunchMessage => GetRandomStringFromValue(_serverLaunchMessage);
+    public string LoadedMessage => GetRandomStringFromValue(_serverLoadedMessage);
+    public string StopMessage => GetRandomStringFromValue(_serverStopMessage);
+    public string ShutdownMessage => GetRandomStringFromValue(_serverShutdownMessage);
+    public string SaveMessage => GetRandomStringFromValue(_serverSavedMessage);
+    public string NewDayMessage => GetRandomStringFromValue(_serverNewDayMessage);
 
     // Messages.Player
-    public string JoinMessage => GetRandomStringFromValue(playerJoinMessage);
-    public string LeaveMessage => GetRandomStringFromValue(playerLeaveMessage);
-    public string DeathMessage => GetRandomStringFromValue(playerDeathMessage);
-    public string PingMessage => GetRandomStringFromValue(playerPingMessage);
-    public string ShoutMessage => GetRandomStringFromValue(playerShoutMessage);
+    public string JoinMessage => GetRandomStringFromValue(_playerJoinMessage);
+    public string LeaveMessage => GetRandomStringFromValue(_playerLeaveMessage);
+    public string DeathMessage => GetRandomStringFromValue(_playerDeathMessage);
+    public string PingMessage => GetRandomStringFromValue(_playerPingMessage);
+    public string ShoutMessage => GetRandomStringFromValue(_playerShoutMessage);
 
     // Messages.PlayerFirsts
-    public string PlayerFirstJoinMessage => GetRandomStringFromValue(playerFirstJoinMessage);
-    public string PlayerFirstLeaveMessage => GetRandomStringFromValue(playerFirstLeaveMessage);
-    public string PlayerFirstDeathMessage => GetRandomStringFromValue(playerFirstDeathMessage);
-    public string PlayerFirstPingMessage => GetRandomStringFromValue(playerFirstPingMessage);
-    public string PlayerFirstShoutMessage => GetRandomStringFromValue(playerFirstShoutMessage);
+    public string PlayerFirstJoinMessage => GetRandomStringFromValue(_playerFirstJoinMessage);
+    public string PlayerFirstLeaveMessage => GetRandomStringFromValue(_playerFirstLeaveMessage);
+    public string PlayerFirstDeathMessage => GetRandomStringFromValue(_playerFirstDeathMessage);
+    public string PlayerFirstPingMessage => GetRandomStringFromValue(_playerFirstPingMessage);
+    public string PlayerFirstShoutMessage => GetRandomStringFromValue(_playerFirstShoutMessage);
 
     // Messages.Events
-    public string EventStartMessage => GetRandomStringFromValue(eventStartMessage);
-    public string EventPausedMessage => GetRandomStringFromValue(eventPausedMessage);
-    public string EventStopMessage => GetRandomStringFromValue(eventStopMessage);
-    public string EventResumedMessage => GetRandomStringFromValue(eventResumedMessage);
+    public string EventStartMessage => GetRandomStringFromValue(_eventStartMessage);
+    public string EventPausedMessage => GetRandomStringFromValue(_eventPausedMessage);
+    public string EventStopMessage => GetRandomStringFromValue(_eventStopMessage);
+    public string EventResumedMessage => GetRandomStringFromValue(_eventResumedMessage);
 
     // Messages.LeaderBoards
-    public string LeaderBoardTopPlayerHeading => GetRandomStringFromValue(leaderBoardTopPlayersMessage);
-    public string LeaderBoardBottomPlayersHeading => GetRandomStringFromValue(leaderBoardBottomPlayersMessage);
-    public string LeaderBoardHighestHeading => GetRandomStringFromValue(leaderBoardHighestPlayerMessage);
-    public string LeaderBoardLowestHeading => GetRandomStringFromValue(leaderBoardLowestPlayerMessage);
+    public string LeaderBoardTopPlayerHeading => GetRandomStringFromValue(_leaderBoardTopPlayersMessage);
+    public string LeaderBoardBottomPlayersHeading => GetRandomStringFromValue(_leaderBoardBottomPlayersMessage);
+    public string LeaderBoardHighestHeading => GetRandomStringFromValue(_leaderBoardHighestPlayerMessage);
+    public string LeaderBoardLowestHeading => GetRandomStringFromValue(_leaderBoardLowestPlayerMessage);
 
     public string ConfigAsJson()
     {
         string jsonString = "{";
 
-        jsonString += $"\"{SERVER_MESSAGES}\":{{";
-        jsonString += $"\"launchMessage\":\"{serverLaunchMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"startMessage\":\"{serverLoadedMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"stopMessage\":\"{serverStopMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"shutdownMessage\":\"{serverShutdownMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"savedMessage\":\"{serverSavedMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"serverNewDayMessage\":\"{serverNewDayMessage.Value.Replace("\"", "\\\"")}\"";
+        jsonString += $"\"{ServerMessages}\":{{";
+        jsonString += $"\"launchMessage\":\"{_serverLaunchMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"startMessage\":\"{_serverLoadedMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"stopMessage\":\"{_serverStopMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"shutdownMessage\":\"{_serverShutdownMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"savedMessage\":\"{_serverSavedMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"serverNewDayMessage\":\"{_serverNewDayMessage.Value.Replace("\"", "\\\"")}\"";
         jsonString += "},";
 
-        jsonString += $"\"{PLAYER_MESSAGES}\":{{";
-        jsonString += $"\"joinMessage\":\"{playerJoinMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"deathMessage\":\"{playerDeathMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"leaveMessage\":\"{playerLeaveMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"pingMessage\":\"{playerPingMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"shoutMessage\":\"{playerShoutMessage.Value.Replace("\"", "\\\"")}\"";
+        jsonString += $"\"{PlayerMessages}\":{{";
+        jsonString += $"\"joinMessage\":\"{_playerJoinMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"deathMessage\":\"{_playerDeathMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"leaveMessage\":\"{_playerLeaveMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"pingMessage\":\"{_playerPingMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"shoutMessage\":\"{_playerShoutMessage.Value.Replace("\"", "\\\"")}\"";
         jsonString += "},";
 
-        jsonString += $"\"{PLAYER_FIRSTS_MESSAGES}\":{{";
-        jsonString += $"\"joinMessage\":\"{playerJoinMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"deathMessage\":\"{playerDeathMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"leaveMessage\":\"{playerLeaveMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"pingMessage\":\"{playerPingMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"shoutMessage\":\"{playerShoutMessage.Value.Replace("\"", "\\\"")}\"";
+        jsonString += $"\"{PlayerFirstsMessages}\":{{";
+        jsonString += $"\"joinMessage\":\"{_playerJoinMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"deathMessage\":\"{_playerDeathMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"leaveMessage\":\"{_playerLeaveMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"pingMessage\":\"{_playerPingMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"shoutMessage\":\"{_playerShoutMessage.Value.Replace("\"", "\\\"")}\"";
         jsonString += "},";
 
-        jsonString += $"\"{EVENT_MESSAGES}\":{{";
-        jsonString += $"\"eventStartMessage\":\"{eventStartMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"eventPausedMessage\":\"{eventPausedMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"eventResumedMessage\":\"{eventResumedMessage.Value.Replace("\"", "\\\"")}\",";
-        jsonString += $"\"eventStopMessage\":\"{eventStopMessage.Value.Replace("\"", "\\\"")}\"";
+        jsonString += $"\"{EventMessages}\":{{";
+        jsonString += $"\"eventStartMessage\":\"{_eventStartMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"eventPausedMessage\":\"{_eventPausedMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"eventResumedMessage\":\"{_eventResumedMessage.Value.Replace("\"", "\\\"")}\",";
+        jsonString += $"\"eventStopMessage\":\"{_eventStopMessage.Value.Replace("\"", "\\\"")}\"";
         jsonString += "},";
 
-        jsonString += $"\"{BOARD_MESSAGES}\":{{";
+        jsonString += $"\"{BoardMessages}\":{{";
         jsonString +=
-            $"\"leaderBoardTopPlayersMessage\":\"{leaderBoardTopPlayersMessage.Value.Replace("\"", "\\\"")}\",";
+            $"\"leaderBoardTopPlayersMessage\":\"{_leaderBoardTopPlayersMessage.Value.Replace("\"", "\\\"")}\",";
         jsonString +=
-            $"\"leaderBoardBottomPlayersMessage\":\"{leaderBoardBottomPlayersMessage.Value.Replace("\"", "\\\"")}\",";
+            $"\"leaderBoardBottomPlayersMessage\":\"{_leaderBoardBottomPlayersMessage.Value.Replace("\"", "\\\"")}\",";
         jsonString +=
-            $"\"leaderBoardHighestPlayerMessage\":\"{leaderBoardHighestPlayerMessage.Value.Replace("\"", "\\\"")}\",";
+            $"\"leaderBoardHighestPlayerMessage\":\"{_leaderBoardHighestPlayerMessage.Value.Replace("\"", "\\\"")}\",";
         jsonString +=
-            $"\"leaderBoardLowestPlayerMessage\":\"{leaderBoardLowestPlayerMessage.Value.Replace("\"", "\\\"")}\"";
+            $"\"leaderBoardLowestPlayerMessage\":\"{_leaderBoardLowestPlayerMessage.Value.Replace("\"", "\\\"")}\"";
         jsonString += "}";
 
         jsonString += "}";

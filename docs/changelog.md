@@ -2,6 +2,22 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 3.1.0
+
+Changes
+
+- Updated to the latest version of Valheim (0.222.4)
+- Improved discord embedding customization (thanks @engels74)
+- Use an RPC to have the clients tell the server when they say things
+
+Breaking Changes
+
+- There is a client version of Discord Connector which is required for shouts/pings to be sent to Discord.
+This will enable supporting regular chats and whispers in the future.
+
+Note: Even with the new client version, you can still choose to run only on the server. The experience should be the
+same as with 3.0.0, which is basically normal operation but not getting shouts sent to Discord.
+
 ## Version 3.0.0
 
 Changes

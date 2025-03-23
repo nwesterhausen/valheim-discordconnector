@@ -19,10 +19,14 @@ mv ~/BepInExRaw/BepInExPack_Valheim/* ~/VHINSTALL/
 # Use specific environment props
 cp .devcontainer/Environment.props Environment.props
 
+# Add bun
+curl -fsSL https://bun.sh/install | bash # for macOS, Linux, and WSL
+source /root/.bashrc
+
 # PreBuild
 dotnet restore
-pnpm install
+bun install
 
 # Build
 dotnet build DiscordConnector.sln /p:VALHEIM_INSTALL=/home/vscode/VHINSTALL
-pnpm docs:build
+bun run docs:build

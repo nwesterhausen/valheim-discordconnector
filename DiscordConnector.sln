@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordConnector", "DiscordConnector\DiscordConnector.csproj", "{4D35EB3F-E4D0-4FD9-9258-9066A85F1BFE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordConnector.Client", "DiscordConnector.Client\DiscordConnector.Client.csproj", "{E2942C94-F0B8-414E-A920-328E601BFF87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordConnector.Common", "DiscordConnector.Common\DiscordConnector.Common.csproj", "{DC7C956B-529D-4D54-8A3A-A63638A8B452}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{4D35EB3F-E4D0-4FD9-9258-9066A85F1BFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D35EB3F-E4D0-4FD9-9258-9066A85F1BFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D35EB3F-E4D0-4FD9-9258-9066A85F1BFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2942C94-F0B8-414E-A920-328E601BFF87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2942C94-F0B8-414E-A920-328E601BFF87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2942C94-F0B8-414E-A920-328E601BFF87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2942C94-F0B8-414E-A920-328E601BFF87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC7C956B-529D-4D54-8A3A-A63638A8B452}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC7C956B-529D-4D54-8A3A-A63638A8B452}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC7C956B-529D-4D54-8A3A-A63638A8B452}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC7C956B-529D-4D54-8A3A-A63638A8B452}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

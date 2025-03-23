@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+
 using UnityEngine;
-using System.Linq;
 
 namespace DiscordConnector;
 
@@ -413,9 +413,9 @@ internal static class MessageTransformer
         return DiscordConnectorPlugin.StaticConfig.AppendedPosFormat
             .Replace(POS, posStr);
     }
-    
+
     #region Embed Transformation Methods
-    
+
     /// <summary>
     ///     Creates an embed for a server message using the appropriate template and formatting.
     /// </summary>
@@ -427,10 +427,10 @@ internal static class MessageTransformer
         string formattedMessage = FormatServerMessage(rawMessage);
         string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
         string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
-        
+
         return EmbedTemplates.ServerLifecycle(eventType, formattedMessage, worldName, serverName);
     }
-    
+
     /// <summary>
     ///     Creates an embed for a player death event using the appropriate template and formatting.
     /// </summary>
@@ -445,7 +445,7 @@ internal static class MessageTransformer
         Vector3 position = peer.m_refPos;
         string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
         string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
-        
+
         // Create a death-specific embed with custom styling
         EmbedBuilder embedBuilder = new EmbedBuilder()
             .SetColorForEvent(eventType)
@@ -455,31 +455,31 @@ internal static class MessageTransformer
             // Always use server name (Valheim) as the author instead of player name
             .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl)
             .SetFooter($"World: {worldName} • Today at {DateTime.Now:HH:mm}");
-        
+
         // Set thumbnail if enabled in config
         if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
         {
             embedBuilder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
         }
-            
+
         // Add position field if enabled in config
         if (DiscordConnectorPlugin.StaticConfig.PlayerDeathPosEnabled)
         {
             embedBuilder.AddField("Death Location", FormatVector3AsPos(position), true);
         }
-        
+
         // Add player ID field if enabled in config
         if (DiscordConnectorPlugin.StaticConfig.ShowPlayerIds)
         {
             embedBuilder.AddField("Player ID", playerHostName, true);
         }
-        
+
         // Always add player name field
         embedBuilder.AddField("Player", playerName, true);
-        
+
         return embedBuilder;
     }
-    
+
     /// <summary>
     ///     Creates an embed for a shout event from a specific player.
     /// </summary>
@@ -492,13 +492,13 @@ internal static class MessageTransformer
         string playerName = peer.m_playerName;
         string playerHostName = peer.m_socket.GetHostName();
         string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
-        
+
         // Capitalize the shout if configuration requires it
         string shoutText = DiscordConnectorPlugin.StaticConfig.ChatShoutAllCaps ? text.ToUpper() : text;
-        
+
         return EmbedTemplates.ChatMessage(eventType, shoutText, playerName, null, worldName);
     }
-    
+
     /// <summary>
     ///     Creates an embed for a player-related message using the appropriate template and formatting.
     /// </summary>
@@ -508,15 +508,15 @@ internal static class MessageTransformer
     /// <param name="playerId">ID of the player</param>
     /// <param name="subtractOne">Whether to subtract one from player count</param>
     /// <returns>A configured EmbedBuilder instance</returns>
-    public static EmbedBuilder CreatePlayerMessageEmbed(string rawMessage, Webhook.Event eventType, 
-                                                      string playerName, string playerId, bool subtractOne = false)
+    public static EmbedBuilder CreatePlayerMessageEmbed(string rawMessage, Webhook.Event eventType,
+        string playerName, string playerId, bool subtractOne = false)
     {
         string formattedMessage = FormatPlayerMessage(rawMessage, playerName, playerId, subtractOne);
         string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
-        
+
         return EmbedTemplates.PlayerEvent(eventType, formattedMessage, playerName, null, worldName);
     }
-    
+
     /// <summary>
     ///     Creates an embed for a player-related message with position using the appropriate template and formatting.
     /// </summary>
@@ -527,16 +527,16 @@ internal static class MessageTransformer
     /// <param name="position">Position of the player</param>
     /// <param name="subtractOne">Whether to subtract one from player count</param>
     /// <returns>A configured EmbedBuilder instance</returns>
-    public static EmbedBuilder CreatePlayerMessageEmbed(string rawMessage, Webhook.Event eventType, 
-                                                      string playerName, string playerId, Vector3 position, 
-                                                      bool subtractOne = false)
+    public static EmbedBuilder CreatePlayerMessageEmbed(string rawMessage, Webhook.Event eventType,
+        string playerName, string playerId, Vector3 position,
+        bool subtractOne = false)
     {
         string formattedMessage = FormatPlayerMessage(rawMessage, playerName, playerId, position, subtractOne);
         string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
-        
+
         return EmbedTemplates.PlayerEvent(eventType, formattedMessage, playerName, position, worldName);
     }
-    
+
     /// <summary>
     ///     Creates an embed for a chat/shout message using the appropriate template and formatting.
     /// </summary>
@@ -547,18 +547,18 @@ internal static class MessageTransformer
     /// <param name="shout">Shout message</param>
     /// <param name="subtractOne">Whether to subtract one from player count</param>
     /// <returns>A configured EmbedBuilder instance</returns>
-    public static EmbedBuilder CreateShoutMessageEmbed(string rawMessage, Webhook.Event eventType, 
-                                                     string playerName, string playerId, string shout, 
-                                                     bool subtractOne = false)
+    public static EmbedBuilder CreateShoutMessageEmbed(string rawMessage, Webhook.Event eventType,
+        string playerName, string playerId, string shout,
+        bool subtractOne = false)
     {
         // For chat messages, we want to use the actual shout as the description
         // so we'll just process variables in the raw message
         string formattedMessage = FormatPlayerMessage(rawMessage, playerName, playerId, shout, subtractOne);
         string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
-        
+
         return EmbedTemplates.ChatMessage(eventType, shout, playerName, null, worldName);
     }
-    
+
     /// <summary>
     ///     Creates an embed for a chat/shout message with position using the appropriate template and formatting.
     /// </summary>
@@ -570,18 +570,18 @@ internal static class MessageTransformer
     /// <param name="position">Position of the player</param>
     /// <param name="subtractOne">Whether to subtract one from player count</param>
     /// <returns>A configured EmbedBuilder instance</returns>
-    public static EmbedBuilder CreateShoutMessageEmbed(string rawMessage, Webhook.Event eventType, 
-                                                     string playerName, string playerId, string shout, 
-                                                     Vector3 position, bool subtractOne = false)
+    public static EmbedBuilder CreateShoutMessageEmbed(string rawMessage, Webhook.Event eventType,
+        string playerName, string playerId, string shout,
+        Vector3 position, bool subtractOne = false)
     {
         // For chat messages, we want to use the actual shout as the description
         // so we'll just process variables in the raw message
         string formattedMessage = FormatPlayerMessage(rawMessage, playerName, playerId, shout, position, subtractOne);
         string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
-        
+
         return EmbedTemplates.ChatMessage(eventType, shout, playerName, position, worldName);
     }
-    
+
     /// <summary>
     ///     Creates an embed for an event message using the appropriate template and formatting.
     /// </summary>
@@ -590,13 +590,13 @@ internal static class MessageTransformer
     /// <param name="eventStartMsg">Event start message</param>
     /// <param name="eventEndMsg">Event end message</param>
     /// <returns>A configured EmbedBuilder instance</returns>
-    public static EmbedBuilder CreateEventMessageEmbed(string rawMessage, Webhook.Event eventType, 
-                                                     string eventStartMsg, string eventEndMsg)
+    public static EmbedBuilder CreateEventMessageEmbed(string rawMessage, Webhook.Event eventType,
+        string eventStartMsg, string eventEndMsg)
     {
         string formattedMessage = FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg);
         string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
         string eventName;
-        
+
         // Determine event name based on event type
         if (eventType == Webhook.Event.EventStart)
         {
@@ -611,12 +611,13 @@ internal static class MessageTransformer
         else
         {
             eventName = "Game Event";
-            DiscordConnectorPlugin.StaticLogger.LogInfo($"Creating other game event embed with name: {eventName} - Event type: {eventType}");
+            DiscordConnectorPlugin.StaticLogger.LogInfo(
+                $"Creating other game event embed with name: {eventName} - Event type: {eventType}");
         }
-        
+
         return EmbedTemplates.WorldEvent(eventType, formattedMessage, eventName, worldName);
     }
-    
+
     /// <summary>
     ///     Creates an embed for an event message with position using the appropriate template and formatting.
     /// </summary>
@@ -626,13 +627,13 @@ internal static class MessageTransformer
     /// <param name="eventEndMsg">Event end message</param>
     /// <param name="position">Position of the event</param>
     /// <returns>A configured EmbedBuilder instance</returns>
-    public static EmbedBuilder CreateEventMessageEmbed(string rawMessage, Webhook.Event eventType, 
-                                                     string eventStartMsg, string eventEndMsg, Vector3 position)
+    public static EmbedBuilder CreateEventMessageEmbed(string rawMessage, Webhook.Event eventType,
+        string eventStartMsg, string eventEndMsg, Vector3 position)
     {
         string formattedMessage = FormatEventMessage(rawMessage, eventStartMsg, eventEndMsg, position);
         string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
         string eventName;
-        
+
         // Determine event name based on event type
         if (eventType == Webhook.Event.EventStart)
         {
@@ -647,14 +648,15 @@ internal static class MessageTransformer
         else
         {
             eventName = "Game Event";
-            DiscordConnectorPlugin.StaticLogger.LogInfo($"Creating other game event embed with name: {eventName} - Event type: {eventType}");
+            DiscordConnectorPlugin.StaticLogger.LogInfo(
+                $"Creating other game event embed with name: {eventName} - Event type: {eventType}");
         }
-        
-        var embed = EmbedTemplates.WorldEvent(eventType, formattedMessage, eventName, worldName);
+
+        EmbedBuilder? embed = EmbedTemplates.WorldEvent(eventType, formattedMessage, eventName, worldName);
         embed.AddPositionField(position);
         return embed;
     }
-    
+
     /// <summary>
     ///     Creates an embed for a leaderboard message using the appropriate template and formatting.
     /// </summary>
@@ -662,30 +664,30 @@ internal static class MessageTransformer
     /// <param name="eventType">The event type for color selection</param>
     /// <param name="entries">Leaderboard entries as name/value tuples</param>
     /// <returns>A configured EmbedBuilder instance</returns>
-    public static EmbedBuilder CreateLeaderboardEmbed(string headerMessage, Webhook.Event eventType, 
-                                                    List<Tuple<string, string>> entries)
+    public static EmbedBuilder CreateLeaderboardEmbed(string headerMessage, Webhook.Event eventType,
+        List<Tuple<string, string>> entries)
     {
         string formattedHeader = FormatLeaderBoardHeader(headerMessage, entries.Count);
         string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
-        
+
         // Extract a title from the header, limited to the first 50 characters
         string title = "Leaderboard";
         string description = formattedHeader;
-        
+
         // If the header is long enough, try to split it into title and description
         if (formattedHeader.Length > 10 && formattedHeader.Contains("\n"))
         {
-            var parts = formattedHeader.Split(new[] { '\n' }, 2);
+            string[]? parts = formattedHeader.Split(new[] { '\n' }, 2);
             if (parts.Length > 1)
             {
                 title = parts[0].Trim();
                 description = parts[1].Trim();
             }
         }
-        
+
         return EmbedTemplates.LeaderboardEmbed(title, entries, worldName);
     }
-    
+
     /// <summary>
     ///     Creates an embed for a position message using the appropriate template and formatting.
     /// </summary>
@@ -694,14 +696,15 @@ internal static class MessageTransformer
     /// <param name="position">Position of the player</param>
     /// <param name="eventType">The event type to determine title formatting</param>
     /// <returns>A configured EmbedBuilder instance</returns>
-    public static EmbedBuilder CreatePositionEmbed(string rawMessage, string playerName, Vector3 position, Webhook.Event eventType)
+    public static EmbedBuilder CreatePositionEmbed(string rawMessage, string playerName, Vector3 position,
+        Webhook.Event eventType)
     {
         string formattedMessage = FormatServerMessage(rawMessage);
         string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
-        
+
         return EmbedTemplates.PositionMessage(eventType, formattedMessage, playerName, position, worldName);
     }
-    
+
     /// <summary>
     ///     Extracts player information for embed author usage.
     /// </summary>
@@ -713,13 +716,13 @@ internal static class MessageTransformer
         string authorName = playerName;
         string? authorUrl = null;
         string? iconUrl = null;
-        
+
         // No longer using icons for player author information
         // Just return the player name with null for URL and icon URL
-        
+
         return new Tuple<string, string?, string?>(authorName, authorUrl, iconUrl);
     }
-    
+
     /// <summary>
     ///     Creates field content for embed usage, applying proper formatting and line breaks.
     /// </summary>
@@ -732,18 +735,18 @@ internal static class MessageTransformer
         {
             return string.Empty;
         }
-        
+
         // Process Discord formatting (like code blocks, bold, etc.)
         string formattedContent = content;
-        
+
         // Ensure content doesn't exceed maximum length
         if (formattedContent.Length > maxLength)
         {
             formattedContent = formattedContent.Substring(0, maxLength - 3) + "...";
         }
-        
+
         return formattedContent;
     }
-    
+
     #endregion
 }
