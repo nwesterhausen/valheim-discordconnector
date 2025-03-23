@@ -1,20 +1,17 @@
 using System;
 
-using Jotunn.Utils;
-
 using UnityEngine;
 
 namespace DiscordConnector.RPC;
 
 public class ChatMessageDetail(Vector3 pos, Talker.Type type, string text)
 {
-    public Vector3 Pos { get; private set; } = pos;
-    public Talker.Type TalkerType { get; private set; } = type;
-    public string Text { get; private set; } = text;
-    public static string EmptyTextMessage { get; } = "#empty#";
-
     private static readonly char Separator = '|';
     private static readonly int ExpectedParts = 5;
+    public Vector3 Pos { get; } = pos;
+    public Talker.Type TalkerType { get; } = type;
+    public string Text { get; } = text;
+    public static string EmptyTextMessage { get; } = "#empty#";
 
     private string EncodeSelf()
     {
@@ -25,7 +22,7 @@ public class ChatMessageDetail(Vector3 pos, Talker.Type type, string text)
 
     private static ChatMessageDetail DecodeSelf(string encoded)
     {
-        var parts = encoded.Split(Separator);
+        string[] parts = encoded.Split(Separator);
         if (parts.Length != ExpectedParts)
         {
             throw new ArgumentException(
@@ -37,29 +34,34 @@ public class ChatMessageDetail(Vector3 pos, Talker.Type type, string text)
             throw new ArgumentException(
                 $"Failed to parse Pos.X component: {parts[0]}");
         }
+
         if (!float.TryParse(parts[1], out float y))
         {
             throw new ArgumentException(
                 $"Failed to parse Pos.Y component: {parts[1]}");
         }
+
         if (!float.TryParse(parts[2], out float z))
         {
             throw new ArgumentException(
                 $"Failed to parse Pos.Z component: {parts[2]}");
         }
-        var pos = new Vector3(x, y, z);
+
+        Vector3 pos = new(x, y, z);
 
         if (!int.TryParse(parts[3], out int talkerTypeInt))
         {
             throw new ArgumentException(
                 $"Failed to parse Talker.Type component: {parts[3]}");
         }
+
         if (!Enum.IsDefined(typeof(Talker.Type), talkerTypeInt))
         {
             throw new ArgumentException(
                 $"Invalid Talker.Type value: {talkerTypeInt}");
         }
-        var type = (Talker.Type)talkerTypeInt;
+
+        Talker.Type type = (Talker.Type)talkerTypeInt;
 
         return new ChatMessageDetail(pos, type, parts[4]);
     }

@@ -4,9 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using DiscordConnector.Config;
 using System.Threading.Tasks;
+
 using Newtonsoft.Json;
+
 using UnityEngine;
 
 namespace DiscordConnector;
@@ -29,12 +30,13 @@ internal class DiscordApi
                 try
                 {
                     // Create a position embed using the enhanced MessageTransformer
-                    string serverName = DiscordConnectorPlugin.StaticConfig.ServerName; // Use server name (Valheim) for consistency
-                    EmbedBuilder embedBuilder = MessageTransformer.CreatePositionEmbed(message, 
-                                                                   serverName, // Use server name instead of generic "Player" for all position embeds
-                                                                   pos,
-                                                                   ev); // Pass the event type directly to control the title
-                    
+                    string serverName =
+                        DiscordConnectorPlugin.StaticConfig.ServerName; // Use server name (Valheim) for consistency
+                    EmbedBuilder embedBuilder = MessageTransformer.CreatePositionEmbed(message,
+                        serverName, // Use server name instead of generic "Player" for all position embeds
+                        pos,
+                        ev); // Pass the event type directly to control the title
+
                     // Build the embed and send it
                     SendEmbed(ev, embedBuilder);
                 }
@@ -43,7 +45,7 @@ internal class DiscordApi
                     // Log embed creation error and fall back to plain text
                     DiscordConnectorPlugin.StaticLogger.LogError($"Failed to create position embed: {ex.Message}");
                     DiscordConnectorPlugin.StaticLogger.LogDebug(ex.StackTrace);
-                    
+
                     // Fall back to plain text message
                     SendMessage(ev, $"{message} {MessageTransformer.FormatAppendedPos(pos)}");
                 }
@@ -84,16 +86,17 @@ internal class DiscordApi
                 {
                     // Create a server message embed using the enhanced MessageTransformer
                     EmbedBuilder embedBuilder = MessageTransformer.CreateServerMessageEmbed(message, ev);
-                    
+
                     // Send the embed
                     SendEmbed(ev, embedBuilder);
                 }
                 catch (Exception ex)
                 {
                     // Log embed creation error and fall back to plain text
-                    DiscordConnectorPlugin.StaticLogger.LogError($"Failed to create server message embed: {ex.Message}");
+                    DiscordConnectorPlugin.StaticLogger.LogError(
+                        $"Failed to create server message embed: {ex.Message}");
                     DiscordConnectorPlugin.StaticLogger.LogDebug(ex.StackTrace);
-                    
+
                     // Fall back to plain text message
                     DiscordExecuteWebhook payload = new() { content = message };
                     payload.SendFor(ev);
@@ -130,7 +133,8 @@ internal class DiscordApi
             if (string.IsNullOrEmpty(content) && (fields == null || fields.Count == 0))
             {
                 content = "Uh-oh! An unexpectedly empty message was sent!";
-                DiscordConnectorPlugin.StaticLogger.LogWarning("Attempted to send message with neither content nor fields");
+                DiscordConnectorPlugin.StaticLogger.LogWarning(
+                    "Attempted to send message with neither content nor fields");
             }
 
             // Validate fields to remove any null or empty entries
@@ -139,7 +143,7 @@ internal class DiscordApi
                 fields = fields
                     .Where(f => f != null && !string.IsNullOrEmpty(f.Item1) && !string.IsNullOrEmpty(f.Item2))
                     .ToList();
-                
+
                 if (fields.Count == 0)
                 {
                     fields = null;
@@ -155,7 +159,7 @@ internal class DiscordApi
                         .SetColorForEvent(ev)
                         .SetDescription(content)
                         .SetTimestamp();
-                    
+
                     // Add all fields as inline where appropriate
                     if (fields != null && fields.Count > 0)
                     {
@@ -175,11 +179,12 @@ internal class DiscordApi
                         catch (Exception ex)
                         {
                             // Log field processing error, but continue with basic embed without fields
-                            DiscordConnectorPlugin.StaticLogger.LogError($"Error processing fields for embed: {ex.Message}");
+                            DiscordConnectorPlugin.StaticLogger.LogError(
+                                $"Error processing fields for embed: {ex.Message}");
                             DiscordConnectorPlugin.StaticLogger.LogDebug(ex.StackTrace);
                         }
                     }
-                    
+
                     // Send the enhanced embed
                     SendEmbed(ev, embedBuilder);
                 }
@@ -188,7 +193,7 @@ internal class DiscordApi
                     // Log embed creation error and fall back to plain text
                     DiscordConnectorPlugin.StaticLogger.LogError($"Failed to create embed with fields: {ex.Message}");
                     DiscordConnectorPlugin.StaticLogger.LogDebug(ex.StackTrace);
-                    
+
                     // Fall back to legacy format
                     FallbackToLegacyFormat(ev, content, fields);
                 }
@@ -203,11 +208,14 @@ internal class DiscordApi
             // Catch any unexpected errors to prevent crashes
             DiscordConnectorPlugin.StaticLogger.LogError($"Unexpected error in SendMessageWithFields: {ex.Message}");
             DiscordConnectorPlugin.StaticLogger.LogDebug(ex.StackTrace);
-            
+
             try
             {
                 // Ultimate fallback - just try to send a simple error message
-                DiscordExecuteWebhook payload = new() { content = "Error processing message with fields. See logs for details." };
+                DiscordExecuteWebhook payload = new()
+                {
+                    content = "Error processing message with fields. See logs for details."
+                };
                 payload.SendFor(ev);
             }
             catch
@@ -217,7 +225,7 @@ internal class DiscordApi
             }
         }
     }
-    
+
     /// <summary>
     ///     Helper method to send a message using the legacy embed format
     /// </summary>
@@ -236,16 +244,12 @@ internal class DiscordApi
             {
                 payload.embeds = [];
                 List<DiscordField> discordFields = [];
-                
+
                 foreach (Tuple<string, string> t in fields)
                 {
                     if (t != null && !string.IsNullOrEmpty(t.Item1) && !string.IsNullOrEmpty(t.Item2))
                     {
-                        discordFields.Add(new DiscordField
-                        {
-                            name = t.Item1,
-                            value = t.Item2
-                        });
+                        discordFields.Add(new DiscordField { name = t.Item1, value = t.Item2 });
                     }
                 }
 
@@ -262,7 +266,7 @@ internal class DiscordApi
         {
             DiscordConnectorPlugin.StaticLogger.LogError($"Error in fallback message format: {ex.Message}");
             DiscordConnectorPlugin.StaticLogger.LogDebug(ex.StackTrace);
-            
+
             // Last resort fallback with just the content
             try
             {
@@ -300,7 +304,7 @@ internal class DiscordApi
             try
             {
                 embed = embedBuilder.Build();
-                
+
                 if (embed == null)
                 {
                     throw new InvalidOperationException("Built embed was null");
@@ -309,12 +313,12 @@ internal class DiscordApi
             catch (Exception ex)
             {
                 LogDiscordError("Error building embed", ex, ev);
-                
+
                 // Try to extract just the description for a fallback message
                 string fallbackContent = "Error creating embed message. Please check logs.";
                 try
                 {
-                    var description = embedBuilder.GetDescriptionForFallback();
+                    string? description = embedBuilder.GetDescriptionForFallback();
                     if (!string.IsNullOrEmpty(description))
                     {
                         fallbackContent = description!;
@@ -325,57 +329,60 @@ internal class DiscordApi
                     // Log and ignore any errors in fallback extraction
                     LogDiscordError("Failed to extract fallback description", fallbackEx, ev, false);
                 }
-                
+
                 // Send a fallback plain text message
                 DiscordExecuteWebhook descriptionFallback = new() { content = fallbackContent };
                 descriptionFallback.SendFor(ev);
                 return;
             }
-            
+
             // If we have a valid embed, validate it and send it
             try
             {
                 // Basic validation to ensure embed is not empty
                 bool isValid = true;
-                
+
                 // Check if the embed has any visible content
                 bool hasContent = !string.IsNullOrEmpty(embed.title) ||
-                                 !string.IsNullOrEmpty(embed.description) ||
-                                 (embed.fields != null && embed.fields.Count > 0) ||
-                                 (embed.footer != null && !string.IsNullOrEmpty(embed.footer.text)) ||
-                                 (embed.author != null && !string.IsNullOrEmpty(embed.author.name)) ||
-                                 (embed.image != null && !string.IsNullOrEmpty(embed.image.url)) ||
-                                 (embed.thumbnail != null && !string.IsNullOrEmpty(embed.thumbnail.url));
-                
+                                  !string.IsNullOrEmpty(embed.description) ||
+                                  (embed.fields != null && embed.fields.Count > 0) ||
+                                  (embed.footer != null && !string.IsNullOrEmpty(embed.footer.text)) ||
+                                  (embed.author != null && !string.IsNullOrEmpty(embed.author.name)) ||
+                                  (embed.image != null && !string.IsNullOrEmpty(embed.image.url)) ||
+                                  (embed.thumbnail != null && !string.IsNullOrEmpty(embed.thumbnail.url));
+
                 if (!hasContent)
                 {
-                    DiscordConnectorPlugin.StaticLogger.LogWarning("Embed has no visible content and may not display correctly");
+                    DiscordConnectorPlugin.StaticLogger.LogWarning(
+                        "Embed has no visible content and may not display correctly");
                     isValid = false;
                 }
-                
+
                 if (!isValid)
                 {
                     DiscordConnectorPlugin.StaticLogger.LogWarning("Embed validation failed");
-                    
+
                     // Try to extract just the description for a fallback message
                     string fallbackContent = embedBuilder.GetDescriptionForFallback() ?? string.Empty;
                     if (string.IsNullOrEmpty(fallbackContent))
                     {
-                        fallbackContent = "Message could not be sent to Discord due to validation issues. Check logs for details.";
+                        fallbackContent =
+                            "Message could not be sent to Discord due to validation issues. Check logs for details.";
                     }
-                    
+
                     // Send a fallback plain text message
-                    DiscordConnectorPlugin.StaticLogger.LogInfo("Sending plain text fallback message instead of invalid embed");
+                    DiscordConnectorPlugin.StaticLogger.LogInfo(
+                        "Sending plain text fallback message instead of invalid embed");
                     DiscordExecuteWebhook descriptionFallback = new() { content = fallbackContent };
                     descriptionFallback.SendFor(ev);
                     return;
                 }
-                
+
                 // At this point, embed has been validated and fixed if needed
-                
+
                 // Create payload with the validated embed
                 DiscordExecuteWebhook payload = new() { embeds = [embed] };
-                
+
                 // Send the payload
                 payload.SendFor(ev);
             }
@@ -389,21 +396,23 @@ internal class DiscordApi
         {
             // Log error and fall back to plain text if anything fails
             LogDiscordError("Failed to send embed", ex, ev);
-            
+
             try
             {
                 // Send a fallback plain text message directly to avoid potential recursion
-                DiscordExecuteWebhook fallbackPayload = new() { content = "Error sending Discord message. Please check logs." };
+                DiscordExecuteWebhook fallbackPayload =
+                    new() { content = "Error sending Discord message. Please check logs." };
                 fallbackPayload.SendFor(ev);
             }
             catch (Exception fallbackEx)
             {
                 // Last resort logging if we can't even send the fallback
-                LogDiscordError("Complete failure sending Discord message - even fallback failed", fallbackEx, ev, false);
+                LogDiscordError("Complete failure sending Discord message - even fallback failed", fallbackEx, ev,
+                    false);
             }
         }
     }
-    
+
     /// <summary>
     ///     Helper method to log errors consistently across Discord API operations.
     /// </summary>
@@ -411,21 +420,22 @@ internal class DiscordApi
     /// <param name="ex">The exception that occurred, if any</param>
     /// <param name="eventType">The event type that was being processed, if any</param>
     /// <param name="logStackTrace">Whether to log the stack trace (default: true)</param>
-    private static void LogDiscordError(string message, Exception? ex = null, Webhook.Event? eventType = null, bool logStackTrace = true)
+    private static void LogDiscordError(string message, Exception? ex = null, Webhook.Event? eventType = null,
+        bool logStackTrace = true)
     {
         try
         {
-            var eventInfo = eventType.HasValue ? $" for event {eventType}" : string.Empty;
-            
+            string? eventInfo = eventType.HasValue ? $" for event {eventType}" : string.Empty;
+
             if (ex != null)
             {
                 DiscordConnectorPlugin.StaticLogger.LogError($"{message}{eventInfo}: {ex.Message}");
-                
+
                 if (logStackTrace && ex.StackTrace != null)
                 {
                     DiscordConnectorPlugin.StaticLogger.LogDebug(ex.StackTrace);
                 }
-                
+
                 // Log inner exception if present
                 if (ex.InnerException != null)
                 {
@@ -442,7 +452,8 @@ internal class DiscordApi
             // Last resort fallback if even logging fails
             try
             {
-                DiscordConnectorPlugin.StaticLogger.LogError("Failed to log Discord error details due to exception in logging");
+                DiscordConnectorPlugin.StaticLogger.LogError(
+                    "Failed to log Discord error details due to exception in logging");
             }
             catch
             {
@@ -450,7 +461,7 @@ internal class DiscordApi
             }
         }
     }
-    
+
     /// <summary>
     ///     Sends <paramref name="serializedJson" /> to the webhook specified in configuration.
     /// </summary>
@@ -587,8 +598,9 @@ internal class DiscordApi
                         $"DispatchRequest.{requestId}: Error getting web response: {ex}");
                     return;
                 }
-                    if (responseExpected)
-                    {
+
+                if (responseExpected)
+                {
                     // Get the stream containing content returned by the server.
                     using (Stream? dataStream = response.GetResponseStream())
                     {
@@ -674,6 +686,17 @@ internal class DiscordApi
 internal class DiscordExecuteWebhook
 {
     /// <summary>
+    ///     Create an empty DiscordExecuteWebhook object.
+    /// </summary>
+    public DiscordExecuteWebhook()
+    {
+        // allowed mentions are set for all webhooks right now
+        allowed_mentions = new AllowedMentions();
+
+        ResetOverrides();
+    }
+
+    /// <summary>
     ///     The message contents (up to 2000 characters). Required if `embeds` is not provided.
     /// </summary>
     public string? content { get; set; }
@@ -699,23 +722,12 @@ internal class DiscordExecuteWebhook
     public AllowedMentions? allowed_mentions { get; set; }
 
     /// <summary>
-    ///     Create an empty DiscordExecuteWebhook object.
-    /// </summary>
-    public DiscordExecuteWebhook()
-    {
-        // allowed mentions are set for all webhooks right now
-        allowed_mentions = new AllowedMentions();
-
-        ResetOverrides();
-    }
-
-    /// <summary>
     ///     Set the username for the webhook.
     /// </summary>
     /// <param name="name">The username to set for the webhook</param>
     public void SetUsername(string name)
     {
-        this.username = name;
+        username = name;
     }
 
     /// <summary>
@@ -724,7 +736,7 @@ internal class DiscordExecuteWebhook
     /// <param name="url">The avatar URL to set for the webhook</param>
     public void SetAvatarUrl(string url)
     {
-        this.avatar_url = url;
+        avatar_url = url;
     }
 
     /// <summary>
@@ -806,27 +818,26 @@ internal class DiscordExecuteWebhook
                 DiscordApi.SendSerializedJson(secondaryWebhook, JsonConvert.SerializeObject(this));
             }
 
-                foreach (WebhookEntry webhook in DiscordConnectorPlugin.StaticConfig.ExtraWebhooks)
+            foreach (WebhookEntry webhook in DiscordConnectorPlugin.StaticConfig.ExtraWebhooks)
+            {
+                if (webhook.HasEvent(ev))
                 {
-                    if (webhook.HasEvent(ev))
+                    DiscordConnectorPlugin.StaticLogger.LogDebug($"Sending {ev} message to an Extra Webhook");
+                    ResetOverrides();
+
+                    if (webhook.HasUsernameOverride())
                     {
-                        DiscordConnectorPlugin.StaticLogger.LogDebug($"Sending {ev} message to an Extra Webhook");
-                        ResetOverrides();
-
-                        if (webhook.HasUsernameOverride())
-                        {
-                            SetUsername(webhook.UsernameOverride);
-                        }
-
-                        if (webhook.HasAvatarOverride())
-                        {
-                            SetAvatarUrl(webhook.AvatarOverride);
-                        }
-
-                        DiscordApi.SendSerializedJson(webhook, JsonConvert.SerializeObject(this));
+                        SetUsername(webhook.UsernameOverride);
                     }
+
+                    if (webhook.HasAvatarOverride())
+                    {
+                        SetAvatarUrl(webhook.AvatarOverride);
+                    }
+
+                    DiscordApi.SendSerializedJson(webhook, JsonConvert.SerializeObject(this));
                 }
-            
+            }
         }
         catch (Exception e)
         {
@@ -1128,7 +1139,7 @@ internal class DiscordField
     public string? value { get; set; }
 
     /// <summary>
-    ///     Whether or not this field should display inline. 
+    ///     Whether or not this field should display inline.
     ///     When true, fields can be arranged horizontally (2-3 per row).
     ///     When false, fields will take up the full width of the embed.
     /// </summary>

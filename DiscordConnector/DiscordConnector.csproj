@@ -43,19 +43,10 @@
         <BuildBoth Condition="!$([System.String]::Copy('$(DefineConstants)').Contains('CLIENT')) and !$([System.String]::Copy('$(DefineConstants)').Contains('SERVER'))">true</BuildBoth>
     </PropertyGroup>
 
-    <Import Project="Environment.props" Condition="Exists('Environment.props')"/>
+    <Import Project="..\Environment.props" Condition="Exists('..\Environment.props')"/>
     <Import Project="DoPrebuild.props" Condition="Exists('DoPrebuild.props')"/>
     <Import Project="PublishSteps.targets" Condition="Exists('PublishSteps.targets')"/>
     <Import Project="DeterminePaths.targets" Condition="Exists('DeterminePaths.targets')"/>
-
-    <Target Name="CreateClientServerVersions" AfterTargets="Build" Condition="$(BuildBoth) == 'true'" >
-        <!-- Use a dotnet build command to build both a server and client version   -->
-        <Exec Command="dotnet build $(MSBuildProjectDirectory)\..\DiscordConnector.sln -c $(Configuration) -p:DefineConstants=&quot;CLIENT&quot;" WorkingDirectory="$(MSBuildProjectDirectory)"/>
-        <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(TargetDir)$(AssemblyName)-Client.dll"/>
-
-        <Exec Command="dotnet build $(MSBuildProjectDirectory)\..\DiscordConnector.sln -c $(Configuration) -p:DefineConstants=&quot;SERVER&quot;" WorkingDirectory="$(MSBuildProjectDirectory)"/>
-        <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(TargetDir)$(AssemblyName)-Server.dll"/>
-    </Target>
 
     <ItemGroup>
         <Reference Include="0Harmony">
@@ -145,7 +136,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DiscordConnector.Common\DiscordConnector.Common.csproj" />
+        <ProjectReference Include="..\DiscordConnector.Common\DiscordConnector.Common.csproj"/>
     </ItemGroup>
 
 </Project>

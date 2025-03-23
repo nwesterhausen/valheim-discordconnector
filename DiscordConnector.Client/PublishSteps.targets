@@ -22,7 +22,7 @@
 
     <Target Name="CopyOutputDLL" AfterTargets="DetermineVersion">
         <Error Text="DLL not found in target directory." Condition="!Exists('$(TargetDir)$(AssemblyName).dll')"/>
-        <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath2)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath2)')"/>
+        <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath)')"/>
         <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(PackageDir)" OverwriteReadOnlyFiles="true"/>
     </Target>
 
@@ -60,7 +60,7 @@
         <Copy SourceFiles="@(PackageFiles)" DestinationFolder="$(PackageDir)"/>
         <Copy SourceFiles="$(ProjectDir)..\docs\changelog.md" DestinationFiles="$(PackageDir)\CHANGELOG.md"/>
         <Message Importance="high" Text="Exporting to $(ThunderstoreDestination)"/>
-        <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(ThunderstoreDestination)$(PackageName).zip" Overwrite="true"/>
+        <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(ThunderstoreDestination)$(PackageName)-Client.zip" Overwrite="true"/>
         <RemoveDir Directories="$(PackageDir)"/>
     </Target>
 
@@ -73,7 +73,7 @@
         <MakeDir Directories="$(PackageDir)"/>
         <Copy SourceFiles="@(NexusPackageFiles)" DestinationFolder="$(PackageDir)"/>
         <Message Importance="high" Text="Exporting to $(ProjectDir)\..\Packages\Nexus\"/>
-        <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(NexusDestination)$(PackageName).zip" Overwrite="true"/>
+        <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(NexusDestination)$(PackageName)-Client.zip" Overwrite="true"/>
         <RemoveDir Directories="$(PackageDir)"/>
     </Target>
 

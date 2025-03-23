@@ -2,6 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
+        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
         width="72mm"
         height="72mm"
         viewBox="0 0 72 72"
@@ -13,9 +16,6 @@
         inkscape:export-filename="..\docs\public\configurator-icon.png"
         inkscape:export-xdpi="361.24445"
         inkscape:export-ydpi="361.24445"
-        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
         xmlns="http://www.w3.org/2000/svg"
 ><sodipodi:namedview
      id="namedview7"

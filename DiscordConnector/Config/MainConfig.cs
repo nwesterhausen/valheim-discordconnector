@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Text.RegularExpressions;
+
 using BepInEx.Configuration;
 
 namespace DiscordConnector.Config;
@@ -32,61 +33,61 @@ internal class MainConfig
     private const string EMBED_STYLING_SETTINGS = "Settings - Embed Styling";
     private static List<string> mutedPlayers;
     private static Regex mutedPlayersRegex;
+    private readonly ConfigEntry<string> allowedRoleMentions;
+    private readonly ConfigEntry<string> allowedUserMentions;
+    private readonly ConfigEntry<bool> allowMentionsAnyRole;
+    private readonly ConfigEntry<bool> allowMentionsAnyUser;
+    private readonly ConfigEntry<bool> allowMentionsHereEveryone;
+    private readonly ConfigEntry<bool> allowNonPlayerShoutLogging;
+    private readonly ConfigEntry<bool> announcePlayerFirsts;
+    private readonly ConfigEntry<bool> collectStatsToggle;
     private readonly ConfigFile config;
-    private ConfigEntry<string> allowedRoleMentions;
-    private ConfigEntry<string> allowedUserMentions;
-    private ConfigEntry<bool> allowMentionsAnyRole;
-    private ConfigEntry<bool> allowMentionsAnyUser;
-    private ConfigEntry<bool> allowMentionsHereEveryone;
-    private ConfigEntry<bool> allowNonPlayerShoutLogging;
-    private ConfigEntry<bool> announcePlayerFirsts;
-    private ConfigEntry<bool> collectStatsToggle;
 
     // Main Settings
-    private ConfigEntry<string> defaultWebhookUsernameOverride;
-    private ConfigEntry<bool> discordEmbedMessagesToggle;
-    private ConfigEntry<bool> logDebugMessages;
-    private ConfigEntry<string> mutedDiscordUserList;
-    private ConfigEntry<string> mutedDiscordUserListRegex;
-    private ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
-    
-    // Embed Configuration Settings
-    private ConfigEntry<bool> embedTitleToggle;
-    private ConfigEntry<bool> embedDescriptionToggle;
-    private ConfigEntry<bool> embedAuthorToggle;
-    private ConfigEntry<bool> embedThumbnailToggle;
-    private ConfigEntry<bool> embedFooterToggle;
-    private ConfigEntry<bool> embedTimestampToggle;
-    private ConfigEntry<string> embedDefaultColor;
-    private ConfigEntry<string> embedServerStartColor;
-    private ConfigEntry<string> embedServerStopColor;
-    private ConfigEntry<string> embedPlayerJoinColor;
-    private ConfigEntry<string> embedPlayerLeaveColor;
-    private ConfigEntry<string> embedDeathEventColor;
-    private ConfigEntry<string> embedShoutMessageColor;
-    private ConfigEntry<string> embedOtherEventColor;
-    private ConfigEntry<string> embedWorldEventColor;
-    private ConfigEntry<string> embedNewDayColor;
-    private ConfigEntry<string> embedServerSaveColor;
-    private ConfigEntry<string> embedPositionMessageColor;
-    private ConfigEntry<string> embedActivePlayersColor;
-    private ConfigEntry<string> embedLeaderboardEmbedColor;
-    private ConfigEntry<string> embedFooterText;
-    private ConfigEntry<string> embedFieldDisplayOrder;
-    private ConfigEntry<string> embedUrlTemplate;
-    private ConfigEntry<string> embedAuthorIconUrl;
-    private ConfigEntry<string> embedThumbnailUrl;
+    private readonly ConfigEntry<string> defaultWebhookUsernameOverride;
+    private readonly ConfigEntry<bool> discordEmbedMessagesToggle;
+    private readonly ConfigEntry<string> embedActivePlayersColor;
+    private readonly ConfigEntry<string> embedAuthorIconUrl;
+    private readonly ConfigEntry<bool> embedAuthorToggle;
+    private readonly ConfigEntry<string> embedDeathEventColor;
+    private readonly ConfigEntry<string> embedDefaultColor;
+    private readonly ConfigEntry<bool> embedDescriptionToggle;
+    private readonly ConfigEntry<string> embedFieldDisplayOrder;
+    private readonly ConfigEntry<string> embedFooterText;
+    private readonly ConfigEntry<bool> embedFooterToggle;
+    private readonly ConfigEntry<string> embedLeaderboardEmbedColor;
+    private readonly ConfigEntry<string> embedNewDayColor;
+    private readonly ConfigEntry<string> embedOtherEventColor;
+    private readonly ConfigEntry<string> embedPlayerJoinColor;
+    private readonly ConfigEntry<string> embedPlayerLeaveColor;
+    private readonly ConfigEntry<string> embedPositionMessageColor;
+    private readonly ConfigEntry<string> embedServerSaveColor;
+    private readonly ConfigEntry<string> embedServerStartColor;
+    private readonly ConfigEntry<string> embedServerStopColor;
+    private readonly ConfigEntry<string> embedShoutMessageColor;
+    private readonly ConfigEntry<bool> embedThumbnailToggle;
+    private readonly ConfigEntry<string> embedThumbnailUrl;
+    private readonly ConfigEntry<bool> embedTimestampToggle;
 
-    private ConfigEntry<bool> sendPositionsToggle;
-    private ConfigEntry<bool> showPlayerIdsToggle;
-    private ConfigEntry<string> webhook2AvatarOverride;
-    private ConfigEntry<string> webhook2Events;
-    private ConfigEntry<string> webhook2UsernameOverride;
-    private ConfigEntry<string> webhookAvatarOverride;
-    private ConfigEntry<string> webhookEvents;
-    private ConfigEntry<string> webhookUrl;
-    private ConfigEntry<string> webhookUrl2;
-    private ConfigEntry<string> webhookUsernameOverride;
+    // Embed Configuration Settings
+    private readonly ConfigEntry<bool> embedTitleToggle;
+    private readonly ConfigEntry<string> embedUrlTemplate;
+    private readonly ConfigEntry<string> embedWorldEventColor;
+    private readonly ConfigEntry<bool> logDebugMessages;
+    private readonly ConfigEntry<string> mutedDiscordUserList;
+    private readonly ConfigEntry<string> mutedDiscordUserListRegex;
+    private readonly ConfigEntry<RetrievalDiscernmentMethods> playerLookupPreference;
+
+    private readonly ConfigEntry<bool> sendPositionsToggle;
+    private readonly ConfigEntry<bool> showPlayerIdsToggle;
+    private readonly ConfigEntry<string> webhook2AvatarOverride;
+    private readonly ConfigEntry<string> webhook2Events;
+    private readonly ConfigEntry<string> webhook2UsernameOverride;
+    private readonly ConfigEntry<string> webhookAvatarOverride;
+    private readonly ConfigEntry<string> webhookEvents;
+    private readonly ConfigEntry<string> webhookUrl;
+    private readonly ConfigEntry<string> webhookUrl2;
+    private readonly ConfigEntry<string> webhookUsernameOverride;
 
     /// <summary>
     ///     Creates a new MainConfig object with the given config file.
@@ -94,7 +95,7 @@ internal class MainConfig
     public MainConfig(ConfigFile configFile)
     {
         config = configFile;
-        
+
         defaultWebhookUsernameOverride = config.Bind<string>(MAIN_SETTINGS,
             "Default Webhook Username Override",
             "",
@@ -165,33 +166,33 @@ internal class MainConfig
             "Use fancier discord messages",
             false,
             "Enable this setting to use embeds in the messages sent to Discord.");
-            
+
         // Embed Field Visibility Configuration
         embedTitleToggle = config.Bind(EMBED_CONFIG_SETTINGS,
             "Show Embed Title",
             true,
             "Enable this setting to show the title field in Discord embeds.");
-            
+
         embedDescriptionToggle = config.Bind(EMBED_CONFIG_SETTINGS,
             "Show Embed Description",
             true,
             "Enable this setting to show the description field in Discord embeds.");
-            
+
         embedAuthorToggle = config.Bind(EMBED_CONFIG_SETTINGS,
             "Show Embed Author",
             true,
             "Enable this setting to show the author field in Discord embeds. This typically displays the server or player name.");
-            
+
         embedThumbnailToggle = config.Bind(EMBED_CONFIG_SETTINGS,
             "Show Embed Thumbnail",
             true,
             "Enable this setting to show a thumbnail image in Discord embeds. This appears in the top-right of the embed.");
-            
+
         embedFooterToggle = config.Bind(EMBED_CONFIG_SETTINGS,
             "Show Embed Footer",
             true,
             "Enable this setting to show the footer text in Discord embeds.");
-            
+
         embedTimestampToggle = config.Bind(EMBED_CONFIG_SETTINGS,
             "Show Embed Timestamp",
             true,
@@ -201,94 +202,94 @@ internal class MainConfig
             "Author Icon URL",
             "https://discord-connector.valheim.games.nwest.one/embed/author_icon.png",
             "The URL for the small icon (32x32px) that appears next to the author name in Discord embeds.");
-            
+
         embedThumbnailUrl = config.Bind(EMBED_CONFIG_SETTINGS,
             "Thumbnail URL",
             "https://discord-connector.valheim.games.nwest.one/embed/thumbnail.png",
             "The URL for the larger thumbnail image (ideally 256x256px) that appears in the top-right of Discord embeds.");
-            
+
         // Embed Color Configuration
         embedDefaultColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Default Embed Color",
             "#7289DA",
             "The default color for embeds when no specific color is defined. Use hex color format (e.g., #7289DA for Discord Blurple).");
-            
+
         embedServerStartColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Server Start Color",
             "#43B581",
             "The color for server start/launch event embeds. Use hex color format (e.g., #43B581 for a green shade).");
-            
+
         embedServerStopColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Server Stop Color",
             "#F04747",
             "The color for server stop/shutdown event embeds. Use hex color format (e.g., #F04747 for a red shade).");
-            
+
         embedPlayerJoinColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Player Join Color",
             "#43B581",
             "The color for player join event embeds. Use hex color format (e.g., #43B581 for a green shade).");
-            
+
         embedPlayerLeaveColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Player Leave Color",
             "#FAA61A",
             "The color for player leave event embeds. Use hex color format (e.g., #FAA61A for an orange shade).");
-            
+
         embedDeathEventColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Death Event Color",
             "#F04747",
             "The color for player death event embeds. Use hex color format (e.g., #F04747 for a red shade).");
-            
+
         embedShoutMessageColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Shout Message Color",
             "#7289DA",
             "The color for player shout message embeds. Use hex color format (e.g., #7289DA for Discord Blurple).");
-            
+
         embedOtherEventColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Other Event Color",
             "#747F8D",
             "The color for other miscellaneous event embeds. Use hex color format (e.g., #747F8D for a neutral gray).");
-            
+
         embedWorldEventColor = config.Bind(EMBED_STYLING_SETTINGS,
             "World Event Color",
             "#8B5CF6",
             "The color for world event embeds (e.g., forest events, raids). Use hex color format (e.g., #8B5CF6 for a purple shade).");
-            
+
         embedNewDayColor = config.Bind(EMBED_STYLING_SETTINGS,
             "New Day Color",
             "#FFD700",
             "The color for new day event embeds. Use hex color format (e.g., #FFD700 for a gold shade).");
-            
+
         embedServerSaveColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Server Save Color",
             "#1D8BF1",
             "The color for server save event embeds. Use hex color format (e.g., #1D8BF1 for a vibrant blue shade).");
-            
+
         embedPositionMessageColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Position Message Color",
             "#3498DB",
             "The color for position message embeds. Use hex color format (e.g., #3498DB for a bright blue shade).");
-            
+
         embedActivePlayersColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Active Players Color",
             "#4B84FF",
             "The color for active player announcement embeds. Use hex color format (e.g., #4B84FF for a vibrant blue shade).");
-            
+
         embedLeaderboardEmbedColor = config.Bind(EMBED_STYLING_SETTINGS,
             "Leaderboard Embed Color",
             "#9B59B6",
             "The color for leaderboard announcement embeds. Use hex color format (e.g., #9B59B6 for a purple shade).");
-            
+
         // Other Embed Customization
         embedFooterText = config.Bind(EMBED_CONFIG_SETTINGS,
             "Footer Text",
             "Valheim Server | {worldName}",
             "The text to display in the embed footer. You can use variables like {worldName}, {serverName}, and {timestamp}.");
-            
+
         embedFieldDisplayOrder = config.Bind(EMBED_CONFIG_SETTINGS,
             "Field Display Order",
             "position;event;player;details",
             "The order in which to display embed fields. Format should be a semicolon-separated list of field identifiers.");
-            
+
         embedUrlTemplate = config.Bind(EMBED_CONFIG_SETTINGS,
             "Embed URL Template",
             "",
@@ -401,9 +402,10 @@ internal class MainConfig
         {
             mutedPlayersRegex = new Regex(mutedDiscordUserListRegex.Value);
         }
-        
+
         // Update Webhooks
-        PrimaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value), whichWebhook: "Primary");
+        PrimaryWebhook = new WebhookEntry(webhookUrl.Value, Webhook.StringToEventList(webhookEvents.Value),
+            whichWebhook: "Primary");
         if (!string.IsNullOrEmpty(webhookUsernameOverride.Value))
         {
             PrimaryWebhook.UsernameOverride = webhookUsernameOverride.Value;
@@ -414,7 +416,8 @@ internal class MainConfig
             PrimaryWebhook.AvatarOverride = webhookAvatarOverride.Value;
         }
 
-        SecondaryWebhook = new WebhookEntry(webhookUrl2.Value, Webhook.StringToEventList(webhook2Events.Value), whichWebhook: "Secondary");
+        SecondaryWebhook = new WebhookEntry(webhookUrl2.Value, Webhook.StringToEventList(webhook2Events.Value),
+            whichWebhook: "Secondary");
         if (!string.IsNullOrEmpty(webhook2UsernameOverride.Value))
         {
             SecondaryWebhook.UsernameOverride = webhook2UsernameOverride.Value;
@@ -424,7 +427,7 @@ internal class MainConfig
         {
             SecondaryWebhook.AvatarOverride = webhook2AvatarOverride.Value;
         }
-        
+
         // Update Allowed Mentions
         if (string.IsNullOrEmpty(allowedRoleMentions.Value))
         {
@@ -443,7 +446,7 @@ internal class MainConfig
         {
             AllowedUserMentions = new List<string>(allowedUserMentions.Value.Split(';'));
         }
-        
+
         // Update Embed Field Display Order
         if (string.IsNullOrEmpty(embedFieldDisplayOrder.Value))
         {
@@ -456,13 +459,13 @@ internal class MainConfig
     }
 
     public string DefaultWebhookUsernameOverride => defaultWebhookUsernameOverride.Value;
-    public WebhookEntry PrimaryWebhook { get; private set; }
+    public WebhookEntry PrimaryWebhook { get; }
 
-    public WebhookEntry SecondaryWebhook { get; private set; }
+    public WebhookEntry SecondaryWebhook { get; }
 
     public bool CollectStatsEnabled => collectStatsToggle.Value;
     public bool DiscordEmbedsEnabled => discordEmbedMessagesToggle.Value;
-    
+
     // Embed Field Visibility Properties
     public bool EmbedTitleEnabled => embedTitleToggle.Value;
     public bool EmbedDescriptionEnabled => embedDescriptionToggle.Value;
@@ -470,7 +473,7 @@ internal class MainConfig
     public bool EmbedThumbnailEnabled => embedThumbnailToggle.Value;
     public bool EmbedFooterEnabled => embedFooterToggle.Value;
     public bool EmbedTimestampEnabled => embedTimestampToggle.Value;
-    
+
     // Embed Color Properties
     public string EmbedDefaultColor => embedDefaultColor.Value;
     public string EmbedServerStartColor => embedServerStartColor.Value;
@@ -486,14 +489,27 @@ internal class MainConfig
     public string EmbedPositionMessageColor => embedPositionMessageColor.Value;
     public string EmbedActivePlayersColor => embedActivePlayersColor.Value;
     public string EmbedLeaderboardEmbedColor => embedLeaderboardEmbedColor.Value;
-    
+
     // Other Embed Customization Properties
     public string EmbedFooterText => embedFooterText.Value;
     public List<string> EmbedFieldDisplayOrder { get; private set; }
     public string EmbedUrlTemplate => embedUrlTemplate.Value;
     public string EmbedAuthorIconUrl => embedAuthorIconUrl.Value;
     public string EmbedThumbnailUrl => embedThumbnailUrl.Value;
-    
+    public bool SendPositionsEnabled => sendPositionsToggle.Value;
+    public bool ShowPlayerIds => showPlayerIdsToggle.Value;
+    public List<string> MutedPlayers => mutedPlayers;
+    public Regex MutedPlayersRegex => mutedPlayersRegex;
+    public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
+    public RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
+    public bool AllowNonPlayerShoutLogging => allowNonPlayerShoutLogging.Value;
+    public bool AllowMentionsHereEveryone => allowMentionsHereEveryone.Value;
+    public bool AllowMentionsAnyRole => allowMentionsAnyRole.Value;
+    public bool AllowMentionsAnyUser => allowMentionsAnyUser.Value;
+    public List<string> AllowedRoleMentions { get; }
+
+    public List<string> AllowedUserMentions { get; }
+
     // Color conversion utility methods
     public int GetColorDecimal(string hexColor)
     {
@@ -502,7 +518,7 @@ internal class MainConfig
             // Return a default Discord blurple color if invalid
             return 7506394; // #7289DA
         }
-        
+
         try
         {
             // Remove the # character and parse as hex
@@ -511,7 +527,7 @@ internal class MainConfig
             {
                 return colorValue;
             }
-            
+
             return 7506394; // Default if parsing fails
         }
         catch
@@ -520,7 +536,7 @@ internal class MainConfig
             return 7506394;
         }
     }
-    
+
     // Get color for specific event types
     public string GetEventColor(Webhook.Event eventType)
     {
@@ -538,7 +554,7 @@ internal class MainConfig
             _ => EmbedOtherEventColor
         };
     }
-    
+
     // Validate a hex color code
     public bool IsValidHexColor(string color)
     {
@@ -546,22 +562,9 @@ internal class MainConfig
         {
             return false;
         }
-        
+
         return int.TryParse(color.TrimStart('#'), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out _);
     }
-    public bool SendPositionsEnabled => sendPositionsToggle.Value;
-    public bool ShowPlayerIds => showPlayerIdsToggle.Value;
-    public List<string> MutedPlayers => mutedPlayers;
-    public Regex MutedPlayersRegex => mutedPlayersRegex;
-    public bool AnnouncePlayerFirsts => announcePlayerFirsts.Value;
-    public RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => playerLookupPreference.Value;
-    public bool AllowNonPlayerShoutLogging => allowNonPlayerShoutLogging.Value;
-    public bool AllowMentionsHereEveryone => allowMentionsHereEveryone.Value;
-    public bool AllowMentionsAnyRole => allowMentionsAnyRole.Value;
-    public bool AllowMentionsAnyUser => allowMentionsAnyUser.Value;
-    public List<string> AllowedRoleMentions { get; private set; }
-
-    public List<string> AllowedUserMentions { get; private set; }
 
     public string ConfigAsJson()
     {
@@ -578,7 +581,7 @@ internal class MainConfig
         jsonString += $"\"webhook2AvatarOverride\":\"{webhook2AvatarOverride.Value}\",";
         jsonString += $"\"logDebugMessages\":\"{logDebugMessages.Value}\",";
         jsonString += $"\"fancierMessages\":\"{DiscordEmbedsEnabled}\",";
-        
+
         // Add embed configuration to JSON
         jsonString += "\"embedConfig\":{";
         jsonString += $"\"titleEnabled\":\"{EmbedTitleEnabled}\",";

@@ -1,4 +1,5 @@
 ﻿using System;
+
 using BepInEx.Configuration;
 
 namespace DiscordConnector.Config;
@@ -15,55 +16,55 @@ internal class TogglesConfig
     public static string ConfigExtension = "toggles";
 
     // Player-firsts Settings
-    private ConfigEntry<bool> announcePlayerFirstDeath;
-    private ConfigEntry<bool> announcePlayerFirstJoin;
-    private ConfigEntry<bool> announcePlayerFirstLeave;
-    private ConfigEntry<bool> announcePlayerFirstPing;
-    private ConfigEntry<bool> announcePlayerFirstShout;
-    private ConfigEntry<bool> chatPingPosToggle;
-    private ConfigEntry<bool> chatPingToggle;
-    private ConfigEntry<bool> chatShoutAllCaps;
-    private ConfigEntry<bool> chatShoutPosToggle;
-    private ConfigEntry<bool> chatShoutToggle;
-    private ConfigEntry<bool> collectStatsDeaths;
+    private readonly ConfigEntry<bool> announcePlayerFirstDeath;
+    private readonly ConfigEntry<bool> announcePlayerFirstJoin;
+    private readonly ConfigEntry<bool> announcePlayerFirstLeave;
+    private readonly ConfigEntry<bool> announcePlayerFirstPing;
+    private readonly ConfigEntry<bool> announcePlayerFirstShout;
+    private readonly ConfigEntry<bool> chatPingPosToggle;
+    private readonly ConfigEntry<bool> chatPingToggle;
+    private readonly ConfigEntry<bool> chatShoutAllCaps;
+    private readonly ConfigEntry<bool> chatShoutPosToggle;
+    private readonly ConfigEntry<bool> chatShoutToggle;
+    private readonly ConfigEntry<bool> collectStatsDeaths;
 
     // Statistic collection settings
-    private ConfigEntry<bool> collectStatsJoins;
-    private ConfigEntry<bool> collectStatsLeaves;
-    private ConfigEntry<bool> collectStatsPings;
-    private ConfigEntry<bool> collectStatsShouts;
-    private ConfigEntry<bool> debugDatabaseMethods;
-    private ConfigEntry<bool> debugEventChanges;
+    private readonly ConfigEntry<bool> collectStatsJoins;
+    private readonly ConfigEntry<bool> collectStatsLeaves;
+    private readonly ConfigEntry<bool> collectStatsPings;
+    private readonly ConfigEntry<bool> collectStatsShouts;
+    private readonly ConfigEntry<bool> debugDatabaseMethods;
+    private readonly ConfigEntry<bool> debugEventChanges;
 
     // Debug Message Toggles
-    private ConfigEntry<bool> debugEveryEventCheck;
-    private ConfigEntry<bool> debugEveryEventPlayerPosCheck;
-    private ConfigEntry<bool> debugHttpRequestResponses;
-    private ConfigEntry<bool> debugLeaderboardOperations;
-    private ConfigEntry<bool> eventPausedMessageToggle;
-    private ConfigEntry<bool> eventPausedPosToggle;
-    private ConfigEntry<bool> eventResumedMessageToggle;
-    private ConfigEntry<bool> eventResumedPosToggle;
-    private ConfigEntry<bool> eventStartMessageToggle;
-    private ConfigEntry<bool> eventStartPosToggle;
-    private ConfigEntry<bool> eventStopMessageToggle;
-    private ConfigEntry<bool> eventStopPosToggle;
-    private ConfigEntry<bool> newDayNumberToggle;
-    private ConfigEntry<bool> playerDeathPosToggle;
-    private ConfigEntry<bool> playerDeathToggle;
-    private ConfigEntry<bool> playerJoinPosToggle;
-    private ConfigEntry<bool> playerJoinToggle;
+    private readonly ConfigEntry<bool> debugEveryEventCheck;
+    private readonly ConfigEntry<bool> debugEveryEventPlayerPosCheck;
+    private readonly ConfigEntry<bool> debugHttpRequestResponses;
+    private readonly ConfigEntry<bool> debugLeaderboardOperations;
+    private readonly ConfigEntry<bool> eventPausedMessageToggle;
+    private readonly ConfigEntry<bool> eventPausedPosToggle;
+    private readonly ConfigEntry<bool> eventResumedMessageToggle;
+    private readonly ConfigEntry<bool> eventResumedPosToggle;
+    private readonly ConfigEntry<bool> eventStartMessageToggle;
+    private readonly ConfigEntry<bool> eventStartPosToggle;
+    private readonly ConfigEntry<bool> eventStopMessageToggle;
+    private readonly ConfigEntry<bool> eventStopPosToggle;
+    private readonly ConfigEntry<bool> newDayNumberToggle;
+    private readonly ConfigEntry<bool> playerDeathPosToggle;
+    private readonly ConfigEntry<bool> playerDeathToggle;
+    private readonly ConfigEntry<bool> playerJoinPosToggle;
+    private readonly ConfigEntry<bool> playerJoinToggle;
 
     // Position Coordinates Toggles
-    private ConfigEntry<bool> playerLeavePosToggle;
-    private ConfigEntry<bool> playerLeaveToggle;
+    private readonly ConfigEntry<bool> playerLeavePosToggle;
+    private readonly ConfigEntry<bool> playerLeaveToggle;
 
     // Logged Information Toggles
-    private ConfigEntry<bool> serverLaunchToggle;
-    private ConfigEntry<bool> serverLoadedToggle;
-    private ConfigEntry<bool> serverSaveToggle;
-    private ConfigEntry<bool> serverShutdownToggle;
-    private ConfigEntry<bool> serverStopToggle;
+    private readonly ConfigEntry<bool> serverLaunchToggle;
+    private readonly ConfigEntry<bool> serverLoadedToggle;
+    private readonly ConfigEntry<bool> serverSaveToggle;
+    private readonly ConfigEntry<bool> serverShutdownToggle;
+    private readonly ConfigEntry<bool> serverStopToggle;
 
     public TogglesConfig(ConfigFile configFile)
     {
@@ -239,8 +240,8 @@ internal class TogglesConfig
             "Debug Message for Database Methods",
             false,
             "If enabled, this will write a log message at the DEBUG level with logs generated while executing database methods.");
-        debugLeaderboardOperations = config.Bind(DEBUG_TOGGLES, 
-            "Debug Leaderboard Operations", 
+        debugLeaderboardOperations = config.Bind(DEBUG_TOGGLES,
+            "Debug Leaderboard Operations",
             false,
             "If enabled, logs detailed information about leaderboard operations, including data retrieval and message sending.");
 

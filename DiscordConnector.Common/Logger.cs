@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-using BepInEx;
 using BepInEx.Logging;
 
 namespace DiscordConnector.Common;

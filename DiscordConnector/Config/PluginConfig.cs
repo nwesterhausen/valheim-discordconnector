@@ -121,7 +121,7 @@ internal class PluginConfig
     public bool SendPositionsEnabled => mainConfig.SendPositionsEnabled;
     public bool ShowPlayerIds => mainConfig.ShowPlayerIds;
     public bool AnnouncePlayerFirsts => mainConfig.AnnouncePlayerFirsts;
-    
+
     // Embed Field Visibility Properties
     public bool EmbedTitleEnabled => mainConfig.EmbedTitleEnabled;
     public bool EmbedDescriptionEnabled => mainConfig.EmbedDescriptionEnabled;
@@ -129,7 +129,7 @@ internal class PluginConfig
     public bool EmbedThumbnailEnabled => mainConfig.EmbedThumbnailEnabled;
     public bool EmbedFooterEnabled => mainConfig.EmbedFooterEnabled;
     public bool EmbedTimestampEnabled => mainConfig.EmbedTimestampEnabled;
-    
+
     // Embed Color Properties
     public string EmbedDefaultColor => mainConfig.EmbedDefaultColor;
     public string EmbedServerStartColor => mainConfig.EmbedServerStartColor;
@@ -145,7 +145,7 @@ internal class PluginConfig
     public string EmbedPositionMessageColor => mainConfig.EmbedPositionMessageColor;
     public string EmbedActivePlayersColor => mainConfig.EmbedActivePlayersColor;
     public string EmbedLeaderboardEmbedColor => mainConfig.EmbedLeaderboardEmbedColor;
-    
+
     // Other Embed Customization Properties
     public string EmbedFooterText => mainConfig.EmbedFooterText;
     public List<string> EmbedFieldDisplayOrder => mainConfig.EmbedFieldDisplayOrder;

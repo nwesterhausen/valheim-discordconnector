@@ -39,7 +39,7 @@
         <Optimize>true</Optimize>
     </PropertyGroup>
 
-    <Import Project="Environment.props" Condition="Exists('Environment.props')"/>
+    <Import Project="..\Environment.props" Condition="Exists('..\Environment.props')"/>
     <Import Project="DoPrebuild.props" Condition="Exists('DoPrebuild.props')"/>
     <Import Project="PublishSteps.targets" Condition="Exists('PublishSteps.targets')"/>
     <Import Project="DeterminePaths.targets" Condition="Exists('DeterminePaths.targets')"/>

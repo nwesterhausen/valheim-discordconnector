@@ -8,9 +8,6 @@ using DiscordConnector.Records;
 
 using HarmonyLib;
 
-using Jotunn.Entities;
-using Jotunn.Managers;
-
 using UnityEngine.Device;
 using UnityEngine.Rendering;
 
@@ -20,7 +17,7 @@ namespace DiscordConnector;
 public class DiscordConnectorPlugin : BaseUnityPlugin
 {
     internal const string ModName = "DiscordConnector";
-    internal const string ModVersion = "3.0.0";
+    internal const string ModVersion = "3.1.0";
     internal const string Author = "nwesterhausen";
     private const string ModGUID = Author + "." + ModName;
     internal const string LegacyConfigPath = "games.nwest.valheim.discordconnector";
@@ -33,8 +30,6 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
     internal static EventWatcher StaticEventWatcher = new();
     private static string _publicIpAddress = "";
     private Harmony _harmony;
-
-    internal static CustomRPC ChatMessageRPC;
 
     public DiscordConnectorPlugin()
     {
@@ -62,11 +57,6 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
     {
         // Plugin startup logic
         StaticLogger.LogDebug($"Plugin {ModName} is loaded!");
-
-        ChatMessageRPC = NetworkManager.Instance.AddRPC(
-            RPC.Common.RPC_OnNewChatMessage,
-            RPC.RPCServer.RPC_OnNewChatMessage,
-            RPC.Client.RPC_OnNewChatMessage);
 
         if (string.IsNullOrEmpty(StaticConfig.PrimaryWebhook.Url) &&
             string.IsNullOrEmpty(StaticConfig.SecondaryWebhook.Url))

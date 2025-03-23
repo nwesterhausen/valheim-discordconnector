@@ -381,7 +381,7 @@ internal static class Handlers
         {
             // Create the appropriate embed based on event type and available data
             EmbedBuilder embedBuilder;
-            
+
             // Determine which type of embed to create based on event category
             if (Webhook.PlayerDeathEvents.Contains(ev))
             {
@@ -391,14 +391,16 @@ internal static class Handlers
             else if (posEnabled)
             {
                 // For events with position data, use player message embed with position
-                embedBuilder = MessageTransformer.CreatePlayerMessageEmbed(finalMessage, ev, peer.m_playerName, playerHostName, pos, isPlayerLeaving);
+                embedBuilder = MessageTransformer.CreatePlayerMessageEmbed(finalMessage, ev, peer.m_playerName,
+                    playerHostName, pos, isPlayerLeaving);
             }
             else
             {
                 // For standard player events without position
-                embedBuilder = MessageTransformer.CreatePlayerMessageEmbed(finalMessage, ev, peer.m_playerName, playerHostName, isPlayerLeaving);
+                embedBuilder = MessageTransformer.CreatePlayerMessageEmbed(finalMessage, ev, peer.m_playerName,
+                    playerHostName, isPlayerLeaving);
             }
-            
+
             // Send the embed using the enhanced API
             DiscordApi.SendEmbed(ev, embedBuilder);
         }
@@ -441,7 +443,7 @@ internal static class Handlers
                 preFormattedMessage = preFormattedMessage.Replace("%SHOUT%", "");
             }
         }
-        
+
         // Format the message accordingly, depending if it has the %POS% variable or not
         string finalMessage;
         if (preFormattedMessage.Contains("%POS%"))
@@ -466,13 +468,15 @@ internal static class Handlers
         {
             // Create the appropriate embed based on event type and available data
             EmbedBuilder embedBuilder;
-            
+
             // Determine which type of embed to create based on event category
             if (Webhook.PlayerShoutEvents.Contains(ev))
             {
                 // For shout events, use a specialized shout embed with the chat message
-                embedBuilder = MessageTransformer.CreateShoutMessageEmbed(finalMessage, ev, peer.m_playerName, playerHostName, text);
-                
+                embedBuilder =
+                    MessageTransformer.CreateShoutMessageEmbed(finalMessage, ev, peer.m_playerName, playerHostName,
+                        text);
+
                 // Add position field if enabled
                 if (posEnabled)
                 {
@@ -485,15 +489,18 @@ internal static class Handlers
                 if (posEnabled)
                 {
                     // Include position data in the embed
-                    embedBuilder = MessageTransformer.CreatePlayerMessageEmbed(finalMessage, ev, peer.m_playerName, playerHostName, pos);
+                    embedBuilder = MessageTransformer.CreatePlayerMessageEmbed(finalMessage, ev, peer.m_playerName,
+                        playerHostName, pos);
                 }
                 else
                 {
                     // Standard player message embed without position
-                    embedBuilder = MessageTransformer.CreatePlayerMessageEmbed(finalMessage, ev, peer.m_playerName, playerHostName);
+                    embedBuilder =
+                        MessageTransformer.CreatePlayerMessageEmbed(finalMessage, ev, peer.m_playerName,
+                            playerHostName);
                 }
             }
-            
+
             // Send the embed using the enhanced API
             DiscordApi.SendEmbed(ev, embedBuilder);
         }

@@ -1,31 +1,26 @@
-using System;
-using System.Collections;
-
 using DiscordConnector.Patches;
-
-using HarmonyLib;
 
 namespace DiscordConnector.RPC;
 
-public static class RPCServer
+public static class Server
 {
-    internal static IEnumerator RPC_OnNewChatMessage(long sender, ZPackage pkg)
+    internal static void RPC_OnNewChatMessage(long sender, ZPackage pkg)
     {
         DiscordConnectorPlugin.StaticLogger.LogDebug($"Server Received {Common.RPC_OnNewChatMessage} from {sender}");
-        
+
         if (sender == 0)
         {
             DiscordConnectorPlugin.StaticLogger.LogError($"Server.{Common.RPC_OnNewChatMessage}: Sender is 0");
-            yield break;
+            return;
         }
-         
+
         ZNetPeer peer = ZNet.instance.GetPeer(sender);
         if (peer == null)
         {
             DiscordConnectorPlugin.StaticLogger.LogError($"Server.{Common.RPC_OnNewChatMessage}: Peer is null");
-            yield break;
+            return;
         }
-                     
+
         string hostName = peer.m_socket.GetHostName();
         string playerName = peer.m_playerName;
         DiscordConnectorPlugin.StaticLogger.LogDebug(
@@ -33,15 +28,15 @@ public static class RPCServer
         ChatMessageDetail chatMessageDetail = ChatMessageDetail.FromZPackage(pkg);
         DiscordConnectorPlugin.StaticLogger.LogDebug(
             $"Pkg: {chatMessageDetail}");
-        
+
         if (chatMessageDetail == null)
         {
             DiscordConnectorPlugin.StaticLogger.LogError(
                 $"Server.{Common.RPC_OnNewChatMessage}: ChatMessageDetail is null");
-            yield break;
+            return;
         }
 
-        switch (chatMessageDetail.TalkerType)   
+        switch (chatMessageDetail.TalkerType)
         {
             case Talker.Type.Normal:
                 // Handlers.PlayerChat(peer, chatMessageDetail.Pos, chatMessageDetail.Text);
@@ -51,17 +46,19 @@ public static class RPCServer
             case Talker.Type.Shout:
                 if (chatMessageDetail.Text == ChatMessageDetail.EmptyTextMessage)
                 {
-                    DiscordConnectorPlugin.StaticLogger.LogDebug($"Skipping shout message '{ChatMessageDetail.EmptyTextMessage}'");
-                    yield break;
+                    DiscordConnectorPlugin.StaticLogger.LogDebug(
+                        $"Skipping shout message '{ChatMessageDetail.EmptyTextMessage}'");
+                    return;
                 }
+
                 if (chatMessageDetail.Text == ChatPatches.ArrivalShout)
                 {
                     DiscordConnectorPlugin.StaticLogger.LogInfo(
                         $"Server.{Common.RPC_OnNewChatMessage}: Arrival shout message '{ChatPatches.ArrivalShout}' at {chatMessageDetail.Pos}");
                     Handlers.Join(peer);
-                    yield break;
+                    return;
                 }
-                
+
                 Handlers.Shout(peer, chatMessageDetail.Pos, chatMessageDetail.Text);
                 break;
             case Talker.Type.Whisper:
@@ -76,8 +73,6 @@ public static class RPCServer
                 DiscordConnectorPlugin.StaticLogger.LogError(
                     $"Server.{Common.RPC_OnNewChatMessage}: Unknown TalkerType {chatMessageDetail.TalkerType}");
                 break;
-            
         }
-        
     }
 }

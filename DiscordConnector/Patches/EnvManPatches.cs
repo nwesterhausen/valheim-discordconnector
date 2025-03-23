@@ -26,7 +26,7 @@ internal class EnvManPatches
                 {
                     string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
                     string dayNumber = EnvMan.instance.GetCurrentDay().ToString();
-                    var embed = EmbedTemplates.WorldEvent(Webhook.Event.NewDayNumber, 
+                    EmbedBuilder? embed = EmbedTemplates.WorldEvent(Webhook.Event.NewDayNumber,
                         MessageTransformer.FormatServerMessage(DiscordConnectorPlugin.StaticConfig.NewDayMessage),
                         $"Day Number {dayNumber}", worldName);
                     DiscordApi.SendEmbed(Webhook.Event.NewDayNumber, embed);

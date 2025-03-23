@@ -22,7 +22,7 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>Valheim Plugin</PackageTags>
         <NeutralLanguage>en</NeutralLanguage>
-        <AssemblyName>DiscordConnector-Client</AssemblyName>
+        <AssemblyName>DiscordConnector</AssemblyName>
         <RootNamespace>DiscordConnector</RootNamespace>
         <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
         <GenerateResourceNeverLockTypeAssemblies>true</GenerateResourceNeverLockTypeAssemblies>
@@ -39,11 +39,11 @@
         <Optimize>true</Optimize>
     </PropertyGroup>
 
-    <Import Project="Environment.props" Condition="Exists('Environment.props')"/>
+    <Import Project="..\Environment.props" Condition="Exists('..\Environment.props')"/>
     <Import Project="DoPrebuild.props" Condition="Exists('DoPrebuild.props')"/>
     <Import Project="PublishSteps.targets" Condition="Exists('PublishSteps.targets')"/>
     <Import Project="DeterminePaths.targets" Condition="Exists('DeterminePaths.targets')"/>
-    
+
     <ItemGroup>
         <Reference Include="0Harmony">
             <HintPath>$(BepInExPath)\core\0Harmony.dll</HintPath>
@@ -101,12 +101,20 @@
             <HintPath>$(GamePath)\valheim_Data\Managed\Unity.TextMeshPro.dll</HintPath>
         </Reference>
     </ItemGroup>
-    
+
     <ItemGroup>
+        <PackageReference Include="ILRepack" Version="2.0.40">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.40">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="JotunnLib" Version="2.24.1"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DiscordConnector.Common\DiscordConnector.Common.csproj" />
+        <ProjectReference Include="..\DiscordConnector.Common\DiscordConnector.Common.csproj"/>
     </ItemGroup>
 </Project>

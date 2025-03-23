@@ -1,0 +1,5 @@
+DISCORD CONNECTOR CLIENT - 1.0.0
+Connects a Valheim client to the Discord Connector server plugin.
+
+:: REQUIREMENTS ::
+- BepInEx 5.*

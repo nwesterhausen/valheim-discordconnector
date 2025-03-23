@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using UnityEngine;
 
 namespace DiscordConnector;
@@ -12,29 +12,30 @@ namespace DiscordConnector;
 /// </summary>
 internal class EmbedBuilder
 {
+    private const int MAX_FIELDS_PER_ROW = 3;
+
+    // Constants for Discord limits
+    public const int MAX_FIELDS_COUNT = 25;
+    public const string DEFAULT_COLOR = "#7289DA"; // Discord Blurple
+    public const string DEFAULT_SERVER_START_COLOR = "#43B581"; // Green
+    public const string DEFAULT_SERVER_STOP_COLOR = "#F04747"; // Red
+    public const string DEFAULT_PLAYER_JOIN_COLOR = "#43B581"; // Green
+    public const string DEFAULT_PLAYER_LEAVE_COLOR = "#FAA61A"; // Orange
+    public const string DEFAULT_DEATH_EVENT_COLOR = "#F04747"; // Red
+    public const string DEFAULT_SHOUT_MESSAGE_COLOR = "#7289DA"; // Discord Blurple
+    public const string DEFAULT_POSITION_MESSAGE_COLOR = "#7289DA"; // Discord Blurple
+    public const string DEFAULT_OTHER_EVENT_COLOR = "#747F8D"; // Gray
+
+    // Reference to the configuration for field visibility and other settings
+    private readonly PluginConfig _config;
+
     // Discord embed object being constructed
     private readonly DiscordEmbed _embed;
-    
+
     // Field tracking for organizing fields into rows
     private readonly List<DiscordField> _fields;
     private int _currentRowFieldCount;
-    private const int MAX_FIELDS_PER_ROW = 3;
-    
-    // Constants for Discord limits
-    public const int MAX_FIELDS_COUNT = 25;
-    public const string DEFAULT_COLOR = "#7289DA";          // Discord Blurple
-    public const string DEFAULT_SERVER_START_COLOR = "#43B581"; // Green
-    public const string DEFAULT_SERVER_STOP_COLOR = "#F04747";  // Red
-    public const string DEFAULT_PLAYER_JOIN_COLOR = "#43B581";  // Green
-    public const string DEFAULT_PLAYER_LEAVE_COLOR = "#FAA61A"; // Orange
-    public const string DEFAULT_DEATH_EVENT_COLOR = "#F04747";  // Red
-    public const string DEFAULT_SHOUT_MESSAGE_COLOR = "#7289DA"; // Discord Blurple
-    public const string DEFAULT_POSITION_MESSAGE_COLOR = "#7289DA"; // Discord Blurple
-    public const string DEFAULT_OTHER_EVENT_COLOR = "#747F8D";  // Gray
-    
-    // Reference to the configuration for field visibility and other settings
-    private readonly PluginConfig _config;
-    
+
     /// <summary>
     ///     Initializes a new instance of the EmbedBuilder class with default settings.
     /// </summary>
@@ -45,7 +46,7 @@ internal class EmbedBuilder
         _currentRowFieldCount = 0;
         _config = DiscordConnectorPlugin.StaticConfig;
     }
-    
+
     /// <summary>
     ///     Sets the title of the embed if enabled in configuration.
     /// </summary>
@@ -57,9 +58,10 @@ internal class EmbedBuilder
         {
             _embed.title = title;
         }
+
         return this;
     }
-    
+
     /// <summary>
     ///     Sets the description of the embed if enabled in configuration.
     /// </summary>
@@ -71,9 +73,10 @@ internal class EmbedBuilder
         {
             _embed.description = description;
         }
+
         return this;
     }
-    
+
     /// <summary>
     ///     Sets the URL of the embed.
     ///     When set, makes the embed title a clickable link.
@@ -85,7 +88,7 @@ internal class EmbedBuilder
         _embed.url = url;
         return this;
     }
-    
+
     /// <summary>
     ///     Sets the URL of the embed using the configured URL template.
     ///     Variable placeholders in the template will be replaced with the provided values.
@@ -98,20 +101,20 @@ internal class EmbedBuilder
         {
             return this;
         }
-        
+
         string url = _config.EmbedUrlTemplate;
-        
+
         if (variables != null)
         {
-            foreach (var pair in variables)
+            foreach (KeyValuePair<string, string> pair in variables)
             {
                 url = url.Replace($"{{{pair.Key}}}", pair.Value ?? string.Empty);
             }
         }
-        
+
         return SetUrl(url);
     }
-    
+
     /// <summary>
     ///     Sets the color of the embed sidebar using decimal color representation (0-16777215).
     /// </summary>
@@ -123,7 +126,7 @@ internal class EmbedBuilder
         _embed.color = Math.Max(0, Math.Min(color, 16777215));
         return this;
     }
-    
+
     /// <summary>
     ///     Sets the color of the embed sidebar using a hex color code (e.g., "#7289DA").
     /// </summary>
@@ -134,7 +137,7 @@ internal class EmbedBuilder
         _embed.color = HexColorToDecimal(hexColor);
         return this;
     }
-    
+
     /// <summary>
     ///     Converts a hex color string to its decimal representation.
     /// </summary>
@@ -146,23 +149,23 @@ internal class EmbedBuilder
         {
             hexColor = DEFAULT_COLOR;
         }
-        
+
         if (!hexColor.StartsWith("#"))
         {
             hexColor = "#" + hexColor;
         }
-        
+
         try
         {
             // Remove the # if present and parse
             string colorValue = hexColor.TrimStart('#');
-            
+
             // Ensure we have a 6-character hex string
             if (colorValue.Length != 6)
             {
                 colorValue = DEFAULT_COLOR.TrimStart('#');
             }
-            
+
             return Convert.ToInt32(colorValue, 16);
         }
         catch
@@ -171,7 +174,7 @@ internal class EmbedBuilder
             return Convert.ToInt32(DEFAULT_COLOR.TrimStart('#'), 16);
         }
     }
-    
+
     /// <summary>
     ///     Sets the color based on the event type using configuration settings.
     /// </summary>
@@ -180,7 +183,7 @@ internal class EmbedBuilder
     public EmbedBuilder SetColorForEvent(Webhook.Event eventType)
     {
         string hexColor = DEFAULT_COLOR;
-        
+
         // Determine appropriate color based on event type
         if (Webhook.ServerLaunchEvents.Contains(eventType) || Webhook.ServerStartEvents.Contains(eventType))
         {
@@ -222,10 +225,10 @@ internal class EmbedBuilder
         {
             hexColor = _config.EmbedOtherEventColor;
         }
-        
+
         return SetColor(hexColor);
     }
-    
+
     /// <summary>
     ///     Sets the author information of the embed if enabled in configuration.
     /// </summary>
@@ -237,16 +240,12 @@ internal class EmbedBuilder
     {
         if (_config.EmbedAuthorEnabled)
         {
-            _embed.author = new DiscordEmbedAuthor
-            {
-                name = name,
-                url = url,
-                icon_url = iconUrl
-            };
+            _embed.author = new DiscordEmbedAuthor { name = name, url = url, icon_url = iconUrl };
         }
+
         return this;
     }
-    
+
     /// <summary>
     ///     Sets the thumbnail image in the top-right of the embed if enabled in configuration.
     /// </summary>
@@ -264,9 +263,10 @@ internal class EmbedBuilder
                 url = url! // Using null-forgiving operator as we've already checked it's not null
             };
         }
+
         return this;
     }
-    
+
     /// <summary>
     ///     Sets the main image of the embed.
     /// </summary>
@@ -284,9 +284,10 @@ internal class EmbedBuilder
                 url = url! // Using null-forgiving operator as we've already checked it's not null
             };
         }
+
         return this;
     }
-    
+
     /// <summary>
     ///     Sets the footer information of the embed if enabled in configuration.
     /// </summary>
@@ -297,15 +298,12 @@ internal class EmbedBuilder
     {
         if (_config.EmbedFooterEnabled)
         {
-            _embed.footer = new DiscordEmbedFooter
-            {
-                text = text,
-                icon_url = iconUrl
-            };
+            _embed.footer = new DiscordEmbedFooter { text = text, icon_url = iconUrl };
         }
+
         return this;
     }
-    
+
     /// <summary>
     ///     Sets the footer information using the configured footer text template.
     ///     Variable placeholders in the template will be replaced with the provided values.
@@ -319,20 +317,20 @@ internal class EmbedBuilder
         {
             return this;
         }
-        
+
         string footerText = _config.EmbedFooterText;
-        
+
         if (variables != null)
         {
-            foreach (var pair in variables)
+            foreach (KeyValuePair<string, string> pair in variables)
             {
                 footerText = footerText.Replace($"{{{pair.Key}}}", pair.Value);
             }
         }
-        
+
         return SetFooter(footerText, iconUrl);
     }
-    
+
     /// <summary>
     ///     Sets the timestamp of the embed if enabled in configuration.
     ///     If no timestamp is provided, the current UTC time is used.
@@ -345,9 +343,10 @@ internal class EmbedBuilder
         {
             _embed.timestamp = (timestamp ?? DateTimeOffset.UtcNow).ToString("o");
         }
+
         return this;
     }
-    
+
     /// <summary>
     ///     Adds a field to the embed if fields are enabled in configuration.
     /// </summary>
@@ -362,21 +361,17 @@ internal class EmbedBuilder
         {
             return this;
         }
-        
+
         // Check for field count limit - Discord allows max 25 fields
         if (_fields.Count >= MAX_FIELDS_COUNT)
         {
-            DiscordConnectorPlugin.StaticLogger.LogWarning($"Cannot add more than {MAX_FIELDS_COUNT} fields to a Discord embed.");
+            DiscordConnectorPlugin.StaticLogger.LogWarning(
+                $"Cannot add more than {MAX_FIELDS_COUNT} fields to a Discord embed.");
             return this;
         }
 
         // Add the field
-        _fields.Add(new DiscordField
-        {
-            name = name,
-            value = value,
-            inline = inline
-        });
+        _fields.Add(new DiscordField { name = name, value = value, inline = inline });
 
         // Update row tracking for inline fields
         if (inline)
@@ -396,7 +391,7 @@ internal class EmbedBuilder
 
         return this;
     }
-    
+
     /// <summary>
     ///     Adds an inline field to the embed.
     ///     Inline fields appear side-by-side (up to 3 per row).
@@ -408,7 +403,7 @@ internal class EmbedBuilder
     {
         return AddField(name, value, true);
     }
-    
+
     /// <summary>
     ///     Adds a formatted position field to the embed based on a Vector3 position.
     ///     This creates a field with the position formatted according to the configured format.
@@ -421,7 +416,7 @@ internal class EmbedBuilder
         string positionText = MessageTransformer.FormatVector3AsPos(position);
         return AddField("Position", positionText, inline);
     }
-    
+
     /// <summary>
     ///     Forces a new row in the field layout by adding an empty non-inline field if needed.
     ///     Only adds a row break if there are already inline fields in the current row.
@@ -440,9 +435,10 @@ internal class EmbedBuilder
             });
             _currentRowFieldCount = 0;
         }
+
         return this;
     }
-    
+
     /// <summary>
     ///     Adds multiple fields from a list of tuples.
     ///     Each tuple contains field name and value.
@@ -456,15 +452,15 @@ internal class EmbedBuilder
         {
             return this;
         }
-        
+
         foreach (Tuple<string, string> field in fields)
         {
             AddField(field.Item1, field.Item2, inline);
         }
-        
+
         return this;
     }
-    
+
     /// <summary>
     ///     Adds multiple inline fields from a list of tuples, automatically organizing them into rows.
     ///     Each tuple contains field name and value.
@@ -475,7 +471,7 @@ internal class EmbedBuilder
     {
         return AddFields(fields, true);
     }
-    
+
     /// <summary>
     ///     Adds a field with position information if position sending is enabled.
     /// </summary>
@@ -488,9 +484,10 @@ internal class EmbedBuilder
             string formattedPos = MessageTransformer.FormatVector3AsPos(position);
             AddField("Coordinates", formattedPos);
         }
+
         return this;
     }
-    
+
     /// <summary>
     ///     Organizes fields to ensure they are arranged according to the configuration settings.
     ///     Can be used to group and order fields before building the embed.
@@ -502,29 +499,29 @@ internal class EmbedBuilder
         {
             return this;
         }
-        
+
         // If no field display order is defined, use the current order
         if (_config.EmbedFieldDisplayOrder == null || _config.EmbedFieldDisplayOrder.Count == 0)
         {
             return this;
         }
-        
+
         // The field identifiers from the display order configuration are already available as a list
         List<string> fieldOrder = _config.EmbedFieldDisplayOrder;
-        
+
         // If the order is empty, return
         if (fieldOrder.Count == 0)
         {
             return this;
         }
-        
+
         // Attempt to reorder fields based on the provided identifiers
         // This is a placeholder - in a real implementation, you'd have logic to identify field types
         // and reorder them according to the configuration
-        
+
         return this;
     }
-    
+
     /// <summary>
     ///     Builds the DiscordEmbed object with all the configured settings.
     /// </summary>
@@ -535,17 +532,18 @@ internal class EmbedBuilder
         {
             _embed.fields = _fields;
         }
-        
+
         // Check for total character limit
         if (!IsWithinCharacterLimit())
         {
-            DiscordConnectorPlugin.StaticLogger.LogWarning("Embed exceeds Discord's character limit and will be truncated.");
+            DiscordConnectorPlugin.StaticLogger.LogWarning(
+                "Embed exceeds Discord's character limit and will be truncated.");
             TruncateToFitCharacterLimit();
         }
-        
+
         return _embed;
     }
-    
+
     /// <summary>
     ///     Checks if the current embed is within Discord's character limit.
     /// </summary>
@@ -554,25 +552,25 @@ internal class EmbedBuilder
     {
         // Calculate total character count for the embed
         int totalChars = 0;
-        
+
         totalChars += _embed.title?.Length ?? 0;
         totalChars += _embed.description?.Length ?? 0;
         totalChars += _embed.footer?.text?.Length ?? 0;
         totalChars += _embed.author?.name?.Length ?? 0;
-        
+
         if (_fields != null && _fields.Count > 0)
         {
-            foreach (var field in _fields)
+            foreach (DiscordField? field in _fields)
             {
                 totalChars += field.name?.Length ?? 0;
                 totalChars += field.value?.Length ?? 0;
             }
         }
-        
+
         // Discord's limit is 6000 characters
         return totalChars <= 6000;
     }
-    
+
     /// <summary>
     ///     Truncates embed content to fit within Discord's character limits.
     /// </summary>
@@ -583,7 +581,7 @@ internal class EmbedBuilder
         {
             _embed.description = _embed.description!.Substring(0, 1000) + "...";
         }
-        
+
         // If there are fields, truncate their values
         if (_fields.Count > 0)
         {
@@ -595,14 +593,14 @@ internal class EmbedBuilder
                 }
             }
         }
-        
+
         // If still too large, remove fields starting from the end
         while (_fields.Count > 1 && !IsWithinCharacterLimit())
         {
             _fields.RemoveAt(_fields.Count - 1);
         }
     }
-    
+
     /// <summary>
     ///     Gets the description for use in fallback messages when embed creation fails.
     ///     This provides a way to extract important content when falling back to plain text.
@@ -617,28 +615,28 @@ internal class EmbedBuilder
             {
                 return _embed.description;
             }
-            
+
             // If no description, try to use title
             if (!string.IsNullOrEmpty(_embed.title))
             {
                 return _embed.title;
             }
-            
+
             // If no title, try to use author name
             if (_embed.author != null && !string.IsNullOrEmpty(_embed.author.name))
             {
                 return _embed.author.name!;
             }
-            
+
             // If no core content, try to concatenate field values with a max length
             if (_fields.Count > 0)
             {
                 const int MAX_FIELD_LENGTH = 100;
                 const int MAX_FIELDS = 3;
-                
-                var fieldTexts = new List<string>();
+
+                List<string> fieldTexts = new();
                 int fieldsToUse = Math.Min(_fields.Count, MAX_FIELDS);
-                
+
                 for (int i = 0; i < fieldsToUse; i++)
                 {
                     if (!string.IsNullOrEmpty(_fields[i].name) && !string.IsNullOrEmpty(_fields[i].value))
@@ -648,6 +646,7 @@ internal class EmbedBuilder
                         {
                             fieldText = fieldText!.Substring(0, MAX_FIELD_LENGTH) + "...";
                         }
+
                         // Ensure fieldText is not null before adding to the list
                         if (fieldText != null)
                         {
@@ -655,13 +654,13 @@ internal class EmbedBuilder
                         }
                     }
                 }
-                
+
                 if (fieldTexts.Count > 0)
                 {
                     return string.Join(" | ", fieldTexts);
                 }
             }
-            
+
             // Nothing useful found
             return null;
         }

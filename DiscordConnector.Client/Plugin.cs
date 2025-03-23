@@ -6,12 +6,6 @@ using DiscordConnector.Common;
 
 using HarmonyLib;
 
-using Jotunn.Entities;
-using Jotunn.Managers;
-
-using UnityEngine.Device;
-using UnityEngine.Rendering;
-
 namespace DiscordConnector.Client;
 
 [BepInPlugin(ModGUID, ModName, ModVersion)]
@@ -26,8 +20,6 @@ public class DiscordConnectorClientPlugin : BaseUnityPlugin
 
     internal static VDCLogger StaticLogger;
     private Harmony _harmony;
-    
-    internal static CustomRPC ChatMessageRPC;
 
     public DiscordConnectorClientPlugin()
     {
@@ -38,12 +30,6 @@ public class DiscordConnectorClientPlugin : BaseUnityPlugin
     {
         // Plugin startup logic
         StaticLogger.LogDebug($"Plugin {ModName} is loaded!");
-
-        // Register RPCs.. since this is client, there is no need to register the actual server RPC
-        NetworkManager.Instance.AddRPC(
-            RPC.Common.RPC_OnNewChatMessage,
-            RPC.Client.RPC_OnNewChatMessage,
-            RPC.Client.RPC_OnNewChatMessage);
 
         _harmony = Harmony.CreateAndPatchAll(typeof(DiscordConnectorClientPlugin).Assembly, ModGUID);
     }
