@@ -103,6 +103,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="JotunnLib" Version="2.24.1"/>
+        <PackageReference Include="JotunnLib" Version="2.24.3"/>
     </ItemGroup>
 </Project>
