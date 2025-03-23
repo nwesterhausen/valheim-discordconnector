@@ -6,7 +6,7 @@
 ![Dynamic JSON Badge - Client Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fnwesterhausen%2Fvalheim-discordconnector%2Fraw%2Frefs%2Fheads%2Fmain%2FDiscordConnector.Client%2FMetadata%2Fmanifest.json&query=%24.version_number&prefix=v&style=flat&label=Client%20Version%20(Main)&color=darkviolet&labelColor=%2332393F)
 ![Built against Valheim version](https://img.shields.io/badge/Built_against_Valheim-0.220.4-purple?style=flat&labelColor=%2332393F)
 ![Thunderstore Version](https://img.shields.io/thunderstore/v/nwesterhausen/DiscordConnector?label=Thunderstore&labelColor=%2332393F)
-![Thunderstore Version Client](https://img.shields.io/thunderstore/v/nwesterhausen/DiscordConnector-Client?label=Thunderstore%20(Client)&labelColor=%2332393F)
+![Thunderstore Version Client](https://img.shields.io/thunderstore/v/nwesterhausen/DiscordConnector_Client?label=Thunderstore%20(Client)&labelColor=%2332393F)
 [![NexusMods](https://img.shields.io/badge/NexusMods-2.1.14-%23D98F40?style=flat&labelColor=%2332393F)](https://www.nexusmods.com/valheim/mods/1551/)
 
 Connect your Valheim server to Discord. ([See website for installation or configuration instructions](https://discord-connector.valheim.games.nwest.one/)). This plugin is largely based on [valheim-discord-notifier](https://github.com/aequasi/valheim-discord-notifier), but this plugin supports randomized messages, muting players, and Discord message embeds.
