@@ -6,7 +6,7 @@ namespace DiscordConnector.Patches;
 
 internal class ChatPatches
 {
-    private const string ArrivalShout = "I have arrived!";
+    internal const string ArrivalShout = "I have arrived!";
 
     [HarmonyPatch(typeof(Chat), nameof(Chat.OnNewChatMessage))]
     internal class OnNewChatMessage
