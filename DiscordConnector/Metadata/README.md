@@ -29,6 +29,11 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 
 ## Version 3.1.0
 
+Known Issues
+
+- no leave notification
+- a died notification is sent when a player logs in
+
 Changes
 
 - Updated to the latest version of Valheim (0.222.4)
