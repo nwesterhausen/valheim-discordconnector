@@ -27,14 +27,18 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 
 ## Abridged Changelog
 
-## Version 3.0.0
+## Version 3.1.0
 
 Changes
 
-- No longer tries to re-load the config if a change is detected. This never worked quite right.
-- Build process changes, including using ILRepack to merge the dependencies into the main assembly.
-  This means that there is now just a single `DiscordConnector.dll` file which includes this plugin & its dependencies.
+- Updated to the latest version of Valheim (0.222.4)
+- Improved discord embedding customization (thanks @engels74)
+- Use an RPC to have the clients tell the server when they say things
 
-Fixes
+Breaking Changes
 
-- Fixed a bug where the plugin would crash on the new version of Valheim due to the user detail changes.
+- The `DiscordConnector-Client` plugin is required on clients for the new chat functionality to work. While you can still
+  use just the server `DiscordConnector` plugin, you will not get the chat information (shouts, pings, etc.) from the clients.
+
+The client plugin is on [Thunderstore](https://thunderstore.io/c/valheim/p/nwesterhausen/DiscordConnector-Client/) or can
+be downloaded from the [GitHub releases](https://github.com/nwesterhausen/valheim-discordconnector/releases).
