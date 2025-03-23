@@ -1,6 +1,5 @@
 ﻿using System;
 
-using DiscordConnector.Client;
 using DiscordConnector.RPC;
 
 using HarmonyLib;

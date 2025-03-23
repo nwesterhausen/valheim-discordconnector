@@ -26,8 +26,9 @@
         <RootNamespace>DiscordConnector</RootNamespace>
         <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
         <GenerateResourceNeverLockTypeAssemblies>true</GenerateResourceNeverLockTypeAssemblies>
-        <!--  Remove warnings for unable to resolve or can't find assembly. Disable this NOWARN if you run into compilation issues. -->
-        <NoWarn>MSB3245;MSB3243</NoWarn>
+        <!--  Remove warnings for unable to resolve or can't find assembly. Disable this NOWARN if you run into compilation issues. (MSB3245, MSB3243) -->
+        <!--  Disable MSB4011 warning for importing .props files again (Environment.props and DoPrebuild.props are loaded by Jotunn dependency -->
+        <NoWarn>MSB3245;MSB3243;MSB4011;</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

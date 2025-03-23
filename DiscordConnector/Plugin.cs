@@ -23,7 +23,7 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
     internal const string LegacyConfigPath = "games.nwest.valheim.discordconnector";
     internal const string LegacyModName = "discordconnector";
 
-    internal static VDCLogger StaticLogger;
+    internal static VdcLogger StaticLogger;
     internal static PluginConfig StaticConfig;
     internal static Database StaticDatabase;
     internal static LeaderbBoard StaticLeaderBoards = new();
@@ -33,7 +33,7 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
 
     public DiscordConnectorPlugin()
     {
-        StaticLogger = new VDCLogger(Logger, Path.Combine(Paths.ConfigPath, LegacyConfigPath));
+        StaticLogger = new VdcLogger(Logger, Path.Combine(Paths.ConfigPath, LegacyConfigPath));
         StaticConfig = new PluginConfig(Config);
         StaticDatabase = new Database(Paths.GameRootPath);
     }
