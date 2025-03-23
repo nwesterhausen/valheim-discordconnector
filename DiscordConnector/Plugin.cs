@@ -13,23 +13,23 @@ using UnityEngine.Rendering;
 
 namespace DiscordConnector;
 
-[BepInPlugin(ModGUID, ModName, ModVersion)]
+[BepInPlugin(ModGuid, ModName, ModVersion)]
 public class DiscordConnectorPlugin : BaseUnityPlugin
 {
     internal const string ModName = "DiscordConnector";
     internal const string ModVersion = "3.1.0";
     internal const string Author = "nwesterhausen";
-    private const string ModGUID = Author + "." + ModName;
+    private const string ModGuid = Author + "." + ModName;
     internal const string LegacyConfigPath = "games.nwest.valheim.discordconnector";
     internal const string LegacyModName = "discordconnector";
 
-    internal static VdcLogger StaticLogger;
-    internal static PluginConfig StaticConfig;
-    internal static Database StaticDatabase;
-    internal static LeaderbBoard StaticLeaderBoards = new();
-    internal static EventWatcher StaticEventWatcher = new();
-    private static string _publicIpAddress = "";
-    private Harmony _harmony;
+    internal static VdcLogger StaticLogger = null!; // initialized in constructor
+    internal static PluginConfig StaticConfig = null!; // initialized in constructor
+    internal static Database StaticDatabase = null!; // initialized in constructor
+    private static readonly LeaderbBoard StaticLeaderBoards = new();
+    internal static readonly EventWatcher StaticEventWatcher = new();
+    private static string s_publicIpAddress = "";
+    private Harmony? _harmony;
 
     public DiscordConnectorPlugin()
     {
@@ -43,13 +43,13 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
     {
         get
         {
-            if (!string.IsNullOrEmpty(_publicIpAddress))
+            if (!string.IsNullOrEmpty(s_publicIpAddress))
             {
-                return _publicIpAddress;
+                return s_publicIpAddress;
             }
 
-            _publicIpAddress = PublicIPChecker.GetPublicIP();
-            return _publicIpAddress;
+            s_publicIpAddress = PublicIPChecker.GetPublicIP();
+            return s_publicIpAddress;
         }
     }
 
@@ -131,13 +131,13 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
             playerActivityTimer.Start();
         }
 
-        _harmony = Harmony.CreateAndPatchAll(typeof(DiscordConnectorPlugin).Assembly, ModGUID);
+        _harmony = Harmony.CreateAndPatchAll(typeof(DiscordConnectorPlugin).Assembly, ModGuid);
     }
 
     private void OnDestroy()
     {
         StaticDatabase.Dispose();
-        _harmony.UnpatchSelf();
+        _harmony?.UnpatchSelf();
     }
 
     /// <summary>

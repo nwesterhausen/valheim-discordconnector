@@ -7,78 +7,75 @@ namespace DiscordConnector.Config;
 internal class VariableConfig
 {
     // config header strings
-    private const string VARIABLE_SETTINGS = "Variable Definition";
-    private const string DYNAMIC_VARIABLE_CONFIG = "Variables.DynamicConfig";
-    private static ConfigFile config;
+    private const string VariableSettings = "Variable Definition";
+    private const string DynamicVariableConfig = "Variables.DynamicConfig";
 
-    public static string ConfigExtension = "variables";
-    private readonly ConfigEntry<string> appendedPosFormat;
-    private readonly ConfigEntry<string> posVarFormat;
+    public const string ConfigExtension = "variables";
+    private readonly ConfigEntry<string> _appendedPosFormat;
+    private readonly ConfigEntry<string> _posVarFormat;
 
     // Variable Definition
-    private readonly ConfigEntry<string> userVar;
-    private readonly ConfigEntry<string> userVar1;
-    private readonly ConfigEntry<string> userVar2;
-    private readonly ConfigEntry<string> userVar3;
-    private readonly ConfigEntry<string> userVar4;
-    private readonly ConfigEntry<string> userVar5;
-    private readonly ConfigEntry<string> userVar6;
-    private readonly ConfigEntry<string> userVar7;
-    private readonly ConfigEntry<string> userVar8;
-    private readonly ConfigEntry<string> userVar9;
+    private readonly ConfigEntry<string> _userVar;
+    private readonly ConfigEntry<string> _userVar1;
+    private readonly ConfigEntry<string> _userVar2;
+    private readonly ConfigEntry<string> _userVar3;
+    private readonly ConfigEntry<string> _userVar4;
+    private readonly ConfigEntry<string> _userVar5;
+    private readonly ConfigEntry<string> _userVar6;
+    private readonly ConfigEntry<string> _userVar7;
+    private readonly ConfigEntry<string> _userVar8;
+    private readonly ConfigEntry<string> _userVar9;
 
     public VariableConfig(ConfigFile configFile)
     {
-        config = configFile;
-
         // User Variable Settings
-        userVar = config.Bind<string>(VARIABLE_SETTINGS,
+        _userVar = configFile.Bind<string>(VariableSettings,
             "Defined Variable 1",
             "",
             "This variable can be reference in any of the message content settings with %VAR1%");
-        userVar1 = config.Bind<string>(VARIABLE_SETTINGS,
+        _userVar1 = configFile.Bind<string>(VariableSettings,
             "Defined Variable 2",
             "",
             "This variable can be reference in any of the message content settings with %VAR2%");
-        userVar2 = config.Bind<string>(VARIABLE_SETTINGS,
+        _userVar2 = configFile.Bind<string>(VariableSettings,
             "Defined Variable 3",
             "",
             "This variable can be reference in any of the message content settings with %VAR3%");
-        userVar3 = config.Bind<string>(VARIABLE_SETTINGS,
+        _userVar3 = configFile.Bind<string>(VariableSettings,
             "Defined Variable 4",
             "",
             "This variable can be reference in any of the message content settings with %VAR4%");
-        userVar4 = config.Bind<string>(VARIABLE_SETTINGS,
+        _userVar4 = configFile.Bind<string>(VariableSettings,
             "Defined Variable 5",
             "",
             "This variable can be reference in any of the message content settings with %VAR5%");
-        userVar5 = config.Bind<string>(VARIABLE_SETTINGS,
+        _userVar5 = configFile.Bind<string>(VariableSettings,
             "Defined Variable 6",
             "",
             "This variable can be reference in any of the message content settings with %VAR6%");
-        userVar6 = config.Bind<string>(VARIABLE_SETTINGS,
+        _userVar6 = configFile.Bind<string>(VariableSettings,
             "Defined Variable 7",
             "",
             "This variable can be reference in any of the message content settings with %VAR7%");
-        userVar7 = config.Bind<string>(VARIABLE_SETTINGS,
+        _userVar7 = configFile.Bind<string>(VariableSettings,
             "Defined Variable 8",
             "",
             "This variable can be reference in any of the message content settings with %VAR8%");
-        userVar8 = config.Bind<string>(VARIABLE_SETTINGS,
+        _userVar8 = configFile.Bind<string>(VariableSettings,
             "Defined Variable 9",
             "",
             "This variable can be reference in any of the message content settings with %VAR9%");
-        userVar9 = config.Bind<string>(VARIABLE_SETTINGS,
+        _userVar9 = configFile.Bind<string>(VariableSettings,
             "Defined Variable 10",
             "",
             "This variable can be reference in any of the message content settings with %VAR10%");
 
-        posVarFormat = config.Bind<string>(DYNAMIC_VARIABLE_CONFIG,
+        _posVarFormat = configFile.Bind<string>(DynamicVariableConfig,
             "POS Variable Formatting",
             "%X%, %Y%, %Z%",
             "Modify this to change how the %POS% variable gets displayed." + Environment.NewLine +
             "You can use %X%, %Y%, and %Z% in this value to customize how the %POS% gets sent.");
-        appendedPosFormat = config.Bind<string>(DYNAMIC_VARIABLE_CONFIG,
+        _appendedPosFormat = configFile.Bind<string>(DynamicVariableConfig,
             "Auto-Appended POS Format",
             "Coords: (%POS%)",
             "This defines how the automatic inclusion of the position data is included. This gets appended to the messages sent." +
@@ -89,22 +86,22 @@ internal class VariableConfig
             Environment.NewLine +
             "but you have sent position data enabled for that message.");
 
-        config.Save();
+        configFile.Save();
     }
 
     // Variables
-    public string UserVariable => userVar.Value;
-    public string UserVariable1 => userVar1.Value;
-    public string UserVariable2 => userVar2.Value;
-    public string UserVariable3 => userVar3.Value;
-    public string UserVariable4 => userVar4.Value;
-    public string UserVariable5 => userVar5.Value;
-    public string UserVariable6 => userVar6.Value;
-    public string UserVariable7 => userVar7.Value;
-    public string UserVariable8 => userVar8.Value;
-    public string UserVariable9 => userVar9.Value;
-    public string PosVarFormat => posVarFormat.Value;
-    public string AppendedPosFormat => appendedPosFormat.Value;
+    public string UserVariable => _userVar.Value;
+    public string UserVariable1 => _userVar1.Value;
+    public string UserVariable2 => _userVar2.Value;
+    public string UserVariable3 => _userVar3.Value;
+    public string UserVariable4 => _userVar4.Value;
+    public string UserVariable5 => _userVar5.Value;
+    public string UserVariable6 => _userVar6.Value;
+    public string UserVariable7 => _userVar7.Value;
+    public string UserVariable8 => _userVar8.Value;
+    public string UserVariable9 => _userVar9.Value;
+    public string PosVarFormat => _posVarFormat.Value;
+    public string AppendedPosFormat => _appendedPosFormat.Value;
 
     public string ConfigAsJson()
     {

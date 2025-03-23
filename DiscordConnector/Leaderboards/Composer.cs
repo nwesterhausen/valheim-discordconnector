@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using DiscordConnector.Config;
 using DiscordConnector.Records;
+
 // Required for embedding support
 
 namespace DiscordConnector.Leaderboards;

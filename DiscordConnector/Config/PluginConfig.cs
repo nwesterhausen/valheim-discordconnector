@@ -148,7 +148,7 @@ internal class PluginConfig
 
     // Other Embed Customization Properties
     public string EmbedFooterText => mainConfig.EmbedFooterText;
-    public List<string> EmbedFieldDisplayOrder => mainConfig.EmbedFieldDisplayOrder;
+    public List<string> EmbedFieldDisplayOrder => mainConfig.EmbedFieldDisplayOrderList;
     public string EmbedUrlTemplate => mainConfig.EmbedUrlTemplate;
     public string EmbedAuthorIconUrl => mainConfig.EmbedAuthorIconUrl;
     public string EmbedThumbnailUrl => mainConfig.EmbedThumbnailUrl;
