@@ -1,8 +1,6 @@
 name: Publish Thunderstore
 on:
-  push:
-    tags:
-      - "v*.*.*"
+  # Remove automatic triggers until this gets rewritten for the Client/Server split
   workflow_dispatch:
 
 jobs:

@@ -12,11 +12,11 @@ Changes
 
 Breaking Changes
 
-- There is a client version of Discord Connector which is required for shouts/pings to be sent to Discord.
-This will enable supporting regular chats and whispers in the future.
+- The `DiscordConnector-Client` plugin is required on clients for the new chat functionality to work. While you can still
+use just the server `DiscordConnector` plugin, you will not get the chat information (shouts, pings, etc.) from the clients.
 
-Note: Even with the new client version, you can still choose to run only on the server. The experience should be the
-same as with 3.0.0, which is basically normal operation but not getting shouts sent to Discord.
+The client plugin is on [Thunderstore](https://thunderstore.io/c/valheim/p/nwesterhausen/DiscordConnector-Client/) or can
+be downloaded from the [GitHub releases](https://github.com/nwesterhausen/valheim-discordconnector/releases).
 
 ## Version 3.0.0
 

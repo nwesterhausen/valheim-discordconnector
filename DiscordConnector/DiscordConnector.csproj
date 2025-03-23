@@ -1,35 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Nullable>enable</Nullable>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <LangVersion>12.0</LangVersion>
-        <Optimize>true</Optimize>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <Copyright>Copyright© 2025</Copyright>
         <OutputPath>bin\$(Configuration)\</OutputPath>
 
         <TargetFramework>net481</TargetFramework>
-        <Product>Discord Connector for Valheim</Product>
         <Id>DiscordConnector</Id>
         <PackageId>DiscordConnector</PackageId>
-        <Description>Enhances Valheim servers by sending messages to a Discord Webhook</Description>
-        <Authors>nwesterhausen</Authors>
-        <projectUrl>https://github.com/nwesterhausen/valheim-discordconnector/</projectUrl>
-        <PackageIcon>Metadata\icon.png</PackageIcon>
-        <iconUrl>https://github.com/nwesterhausen/valheim-discordconnector/raw/main/DiscordConnector/Metadata/icon.png</iconUrl>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/nwesterhausen/valheim-discordconnector</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/nwesterhausen/valheim-discordconnector</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <PackageTags>Valheim Plugin</PackageTags>
-        <NeutralLanguage>en</NeutralLanguage>
         <AssemblyName>DiscordConnector</AssemblyName>
-        <RootNamespace>DiscordConnector</RootNamespace>
-        <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
-        <GenerateResourceNeverLockTypeAssemblies>true</GenerateResourceNeverLockTypeAssemblies>
-        <!--  Remove warnings for unable to resolve or can't find assembly. Disable this NOWARN if you run into compilation issues. (MSB3245, MSB3243) -->
-        <!--  Disable MSB4011 warning for importing .props files again (Environment.props and DoPrebuild.props are loaded by Jotunn dependency -->
-        <NoWarn>MSB3245;MSB3243;MSB4011;</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
