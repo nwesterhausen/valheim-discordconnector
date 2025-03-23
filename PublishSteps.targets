@@ -18,12 +18,14 @@
             <VersionString>$(Major).$(Minor).$(Patch)</VersionString>
             <PackageDir>$(PackageOutputPath)$(PackageName)</PackageDir>
             <ChangelogFilename>changelog$(AssemblyName.Replace('DiscordConnector', '')).md</ChangelogFilename>
+            <IsClientAssembly Condition=" '$(AssemblyName)' != '' and $(AssemblyName.IndexOf('-Client')) != -1 ">true</IsClientAssembly>
         </PropertyGroup>
     </Target>
 
     <Target Name="CopyOutputDLL" AfterTargets="DetermineVersion">
         <Error Text="DLL not found in target directory." Condition="!Exists('$(TargetDir)$(AssemblyName).dll')"/>
-        <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath)')"/>
+        <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyClientPluginPath)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyClientPluginPath)') AND '$(IsClientAssembly)' == 'true'"/>
+        <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyServerPLuginPath)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyServerPLuginPath)') AND '$(IsClientAssembly)' != 'true'"/>
         <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(PackageDir)" OverwriteReadOnlyFiles="true"/>
     </Target>
 
