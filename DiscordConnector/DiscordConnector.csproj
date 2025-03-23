@@ -39,115 +39,22 @@
         <DebugType>pdbonly</DebugType>
         <Optimize>true</Optimize>
     </PropertyGroup>
-
-    <Target Name="DerivePaths" BeforeTargets="BeforeBuild">
-        <PropertyGroup>
-            <GamePath Condition="!Exists('$(GamePath)')      AND Exists('$(VALHEIM_INSTALL)')">$(VALHEIM_INSTALL)</GamePath>
-        </PropertyGroup>
-        <Error Text="GamePath not found. Please set the VALHEIM_INSTALL or GamePath property in Environment.props" Condition="!Exists('$(GamePath)')"/>
-        <PropertyGroup>
-            <BepInExPath Condition="!Exists('$(BepInExPath)')AND Exists('$(GamePath)')">$(GamePath)\BepInEx</BepInExPath>
-            <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed</CorlibPath>
-            <CorlibPath Condition="!Exists('$(CorlibPath)')  AND Exists('$(GamePath)')">$(GamePath)\unstripped_corlib</CorlibPath>
-            <PublicizedAssembliesPath Condition="!Exists('$(PublicizedAssembliesPath)') AND Exists('$(GamePath)')">$(GamePath)\valheim_Data\Managed\publicized_assemblies</PublicizedAssembliesPath>
-            <VALHEIM_INSTALL Condition="!Exists('$(VALHEIM_INSTALL)') AND Exists('$(GamePath)')">$(GamePath)</VALHEIM_INSTALL>
-        </PropertyGroup>
-        <Message Text="Derived Paths:" Importance="high"/>
-        <Message Text="VALHEIM_INSTALL: $(VALHEIM_INSTALL)" Importance="high"/>
-        <Message Text="GamePath: $(GamePath)" Importance="high"/>
-        <Message Text="BepInExPath: $(BepInExPath)" Importance="high"/>
-        <Message Text="CorlibPath: $(CorlibPath)" Importance="high"/>
-        <Message Text="PublicizedAssembliesPath: $(PublicizedAssembliesPath)" Importance="high"/>
-        <PropertyGroup>
-            <PackageOutputPath>$(ProjectDir)../Packages/</PackageOutputPath>
-            <ThunderstoreDestination>$(PackageOutputPath)Thunderstore/</ThunderstoreDestination>
-            <NexusDestination>$(PackageOutputPath)Nexus/</NexusDestination>
-        </PropertyGroup>
-        <Message Text="PackageOutputPath: $(PackageOutputPath)" Importance="high"/>
-        <Message Text="ThunderstoreDestination: $(ThunderstoreDestination)" Importance="high"/>
-        <Message Text="NexusDestination: $(NexusDestination)" Importance="high"/>
-        <Message Text="Preparing Package Destinations" Importance="high"/>
-        <MakeDir Directories="$(PackageOutputPath);$(ThunderstoreDestination);$(NexusDestination)"/>
-    </Target>
+    <PropertyGroup>
+        <BuildBoth Condition="!$([System.String]::Copy('$(DefineConstants)').Contains('CLIENT')) and !$([System.String]::Copy('$(DefineConstants)').Contains('SERVER'))">true</BuildBoth>
+    </PropertyGroup>
 
     <Import Project="Environment.props" Condition="Exists('Environment.props')"/>
     <Import Project="DoPrebuild.props" Condition="Exists('DoPrebuild.props')"/>
+    <Import Project="PublishSteps.targets" Condition="Exists('PublishSteps.targets')"/>
+    <Import Project="DeterminePaths.targets" Condition="Exists('DeterminePaths.targets')"/>
 
-    <Target Name="DetermineVersion" AfterTargets="ILRepacker">
-        <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
-            <Output TaskParameter="Assemblies" ItemName="Targets"/>
-        </GetAssemblyIdentity>
-        <ItemGroup>
-            <AssemblyVersions Include="@(Targets->'%(Version)')"/>
-        </ItemGroup>
-        <Error Text="Failed to get Assembly Version." Condition="'%(AssemblyVersions.Identity)' == ''"/>
-        <PropertyGroup>
-            <AssemblyVersion>%(AssemblyVersions.Identity)</AssemblyVersion>
-            <Major>$(AssemblyVersion.Split('.')[0])</Major>
-            <Minor>$(AssemblyVersion.Split('.')[1])</Minor>
-            <Patch>$(AssemblyVersion.Split('.')[2])</Patch>
-            <PackageName>$(AssemblyName)_v$(Major).$(Minor).$(Patch)</PackageName>
-            <PackageVersion>$(Major).$(Minor).$(Patch)</PackageVersion>
-            <VersionString>$(Major).$(Minor).$(Patch)</VersionString>
-            <PackageDir>$(PackageOutputPath)$(PackageName)</PackageDir>
-        </PropertyGroup>
-    </Target>
+    <Target Name="CreateClientServerVersions" AfterTargets="Build" Condition="$(BuildBoth) == 'true'" >
+        <!-- Use a dotnet build command to build both a server and client version   -->
+        <Exec Command="dotnet build $(MSBuildProjectDirectory)\..\DiscordConnector.sln -c $(Configuration) -p:DefineConstants=&quot;CLIENT&quot;" WorkingDirectory="$(MSBuildProjectDirectory)"/>
+        <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(TargetDir)$(AssemblyName)-Client.dll"/>
 
-    <Target Name="CopyOutputDLL" AfterTargets="DetermineVersion">
-        <Error Text="DLL not found in target directory." Condition="!Exists('$(TargetDir)$(AssemblyName).dll')"/>
-        <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath)')"/>
-        <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath2)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath2)')"/>
-        <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(CopyOutputDLLPath3)" OverwriteReadOnlyFiles="true" Condition="Exists('$(CopyOutputDLLPath3)')"/>
-        <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(PackageDir)" OverwriteReadOnlyFiles="true"/>
-    </Target>
-
-    <Target Name="CopyReadMeToTSFolder" AfterTargets="CopyOutputDLL" Condition=" ('$(Configuration)|$(Platform)' == 'Release|AnyCPU') And ('$(OS)' == 'Windows_NT') ">
-        <Copy SourceFiles="$(ProjectDir)\Metadata\README.md" DestinationFolder="$(PackageDir)" OverwriteReadOnlyFiles="true"/>
-        <Copy SourceFiles="$(ProjectDir)..\docs\changelog.md" DestinationFolder="$(PackageDir)" OverwriteReadOnlyFiles="true"/>
-    </Target>
-
-    <Target Name="UpdateManifestVersion" AfterTargets="CopyReadmeToTSFolder" Condition=" ('$(Configuration)|$(Platform)' == 'Release|AnyCPU') And ('$(OS)' == 'Windows_NT') ">
-        <ItemGroup>
-            <ManifestFile Include="$(ProjectDir)Metadata\manifest.json"/>
-        </ItemGroup>
-        <Message Text="ManifestFile is @(ManifestFile)" Importance="high"/>
-        <Message Text="Updating version number in Metadata\manifest.json" Condition="Exists(@(ManifestFile))" Importance="high"/>
-        <Exec Command="powershell.exe -ExecutionPolicy Bypass -Command &quot;&amp; { &amp; '$(ProjectDir)UpdateManifest.ps1' -manifestFile '@(ManifestFile)' -versionString '$(PackageVersion)' }&quot;"/>
-        <ItemGroup>
-            <TomlFile Include="$(ProjectDir)Metadata\thunderstore.toml"/>
-        </ItemGroup>
-        <Message Text="Toml manifest is @(TomlFile)" Importance="high"/>
-        <Message Text="Updating version number in Metadata\thunderstore.toml" Condition="Exists(@(TomlFile))" Importance="high"/>
-        <Exec Command="powershell.exe -ExecutionPolicy Bypass -Command &quot;&amp; { &amp; '$(ProjectDir)UpdateThunderstoreToml.ps1' -tomlFile '@(TomlFile)' -versionString '$(PackageVersion)' }&quot;"/>
-    </Target>
-
-    <Target Name="MakeThunderstorePackage" AfterTargets="UpdateManifestVersion" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-        <Error Text="manifest.json not found in Thunderstore directory." Condition="!Exists('$(ProjectDir)\Metadata\manifest.json')"/>
-        <Error Text="icon.png not found in Thunderstore directory. Please note that Thunderstore requires this image to be 256x256 in dimension" Condition="!Exists('$(ProjectDir)\Metadata\icon.png')"/>
-        <ItemGroup>
-            <PackageFiles Include="$(TargetDir)$(AssemblyName).dll" Condition="Exists('$(TargetDir)$(AssemblyName).dll')"/>
-            <PackageFiles Include="$(ProjectDir)\Metadata\manifest.json" Condition="Exists('$(ProjectDir)\Metadata\manifest.json')"/>
-            <PackageFiles Include="$(ProjectDir)\Metadata\icon.png" Condition="Exists('$(ProjectDir)\Metadata\icon.png')"/>
-            <PackageFiles Include="$(ProjectDir)\Metadata\README.md" Condition="Exists('$(ProjectDir)\Metadata\README.md')"/>
-        </ItemGroup>
-        <Copy SourceFiles="@(PackageFiles)" DestinationFolder="$(PackageDir)"/>
-        <Copy SourceFiles="$(ProjectDir)..\docs\changelog.md" DestinationFiles="$(PackageDir)\CHANGELOG.md"/>
-        <Message Importance="high" Text="Exporting to $(ThunderstoreDestination)"/>
-        <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(ThunderstoreDestination)$(PackageName).zip" Overwrite="true"/>
-        <RemoveDir Directories="$(PackageDir)"/>
-    </Target>
-
-    <Target Name="MakeNexusPackage" AfterTargets="MakeThunderstorePackage" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-        <MakeDir Directories="$(ProjectDir)\Nexus"/>
-        <ItemGroup>
-            <NexusPackageFiles Include="$(TargetDir)$(AssemblyName).dll;"/>
-            <NexusPackageFiles Include="$(ProjectDir)\Metadata\DiscordConnector-Nexus.readme;"/>
-        </ItemGroup>
-        <MakeDir Directories="$(PackageDir)"/>
-        <Copy SourceFiles="@(NexusPackageFiles)" DestinationFolder="$(PackageDir)"/>
-        <Message Importance="high" Text="Exporting to $(ProjectDir)\..\Packages\Nexus\"/>
-        <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(NexusDestination)$(PackageName).zip" Overwrite="true"/>
-        <RemoveDir Directories="$(PackageDir)"/>
+        <Exec Command="dotnet build $(MSBuildProjectDirectory)\..\DiscordConnector.sln -c $(Configuration) -p:DefineConstants=&quot;SERVER&quot;" WorkingDirectory="$(MSBuildProjectDirectory)"/>
+        <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(TargetDir)$(AssemblyName)-Server.dll"/>
     </Target>
 
     <ItemGroup>
