@@ -7,7 +7,7 @@ using HarmonyLib;
 
 namespace DiscordConnector.RPC;
 
-public static class Server
+public static class RPCServer
 {
     internal static IEnumerator RPC_OnNewChatMessage(long sender, ZPackage pkg)
     {

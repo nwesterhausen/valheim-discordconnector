@@ -1,9 +1,15 @@
+using System.IO;
+
 using BepInEx;
 
+using DiscordConnector.Common;
 using DiscordConnector.Leaderboards;
 using DiscordConnector.Records;
 
 using HarmonyLib;
+
+using Jotunn.Entities;
+using Jotunn.Managers;
 
 using UnityEngine.Device;
 using UnityEngine.Rendering;
@@ -28,9 +34,11 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
     private static string _publicIpAddress = "";
     private Harmony _harmony;
 
+    internal static CustomRPC ChatMessageRPC;
+
     public DiscordConnectorPlugin()
     {
-        StaticLogger = new VDCLogger(Logger);
+        StaticLogger = new VDCLogger(Logger, Path.Combine(Paths.ConfigPath, LegacyConfigPath));
         StaticConfig = new PluginConfig(Config);
         StaticDatabase = new Database(Paths.GameRootPath);
     }
@@ -55,10 +63,10 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
         // Plugin startup logic
         StaticLogger.LogDebug($"Plugin {ModName} is loaded!");
 
-        if (!ZSteamSocket.m_hostSocket.IsHost())
-        {
-            StaticLogger.LogDebug("Detected running client.");
-        }
+        ChatMessageRPC = NetworkManager.Instance.AddRPC(
+            RPC.Common.RPC_OnNewChatMessage,
+            RPC.RPCServer.RPC_OnNewChatMessage,
+            RPC.Client.RPC_OnNewChatMessage);
 
         if (string.IsNullOrEmpty(StaticConfig.PrimaryWebhook.Url) &&
             string.IsNullOrEmpty(StaticConfig.SecondaryWebhook.Url))

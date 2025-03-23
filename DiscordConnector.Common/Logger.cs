@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Logging;
 
-namespace DiscordConnector;
+namespace DiscordConnector.Common;
 
-internal class VDCLogger
+public class VDCLogger
 {
     private const string LogName = "vdc.log";
     private const int MaxLogFiles = 5;
@@ -15,15 +15,15 @@ internal class VDCLogger
     private static string _logFilePath;
     private bool logDebugMessages;
 
-    public VDCLogger(ManualLogSource logger)
+    public VDCLogger(ManualLogSource logger, string basePath)
     {
         _logger = logger;
-        _logFilePath = Path.Combine(Paths.ConfigPath, DiscordConnectorPlugin.LegacyConfigPath, LogName);
+        _logFilePath = Path.Combine(basePath, LogName);
         InitializeLogFile();
         _logger.LogInfo("Logger initialized.");
     }
 
-    internal void SetLogLevel(bool logDebugMessages)
+    public void SetLogLevel(bool logDebugMessages)
     {
         this.logDebugMessages = logDebugMessages;
     }
