@@ -12,7 +12,7 @@ namespace DiscordConnector;
 public class DiscordConnectorClientPlugin : BaseUnityPlugin
 {
     internal const string ModName = "DiscordConnectorClient";
-    internal const string ModVersion = "1.0.0";
+    internal const string ModVersion = "1.0.1";
     internal const string Author = "nwesterhausen";
     private const string ModGuid = Author + "." + ModName;
     private const string LegacyConfigPath = "games.nwest.valheim.discordconnector";
@@ -23,7 +23,7 @@ public class DiscordConnectorClientPlugin : BaseUnityPlugin
 
     public DiscordConnectorClientPlugin()
     {
-        StaticLogger = new VdcLogger(Logger, Path.Combine(Paths.ConfigPath, LegacyConfigPath));
+        StaticLogger = new VdcLogger(Logger, Paths.ConfigPath);
     }
 
     private void Awake()

@@ -1,6 +1,6 @@
 {
   "name": "DiscordConnector_Client",
-  "version_number": "1.0.0",
+  "version_number": "1.0.1",
   "website_url": "https://discord-connector.valheim.games.nwest.one/",
   "description": "Connects your Valheim server to a Discord webhook. This must be installed on the client.",
   "dependencies": [
