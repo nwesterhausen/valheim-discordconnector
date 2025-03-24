@@ -23,7 +23,7 @@ public class DiscordConnectorClientPlugin : BaseUnityPlugin
 
     public DiscordConnectorClientPlugin()
     {
-        StaticLogger = new VdcLogger(Logger, Path.Combine(Paths.ConfigPath, LegacyConfigPath));
+        StaticLogger = new VdcLogger(Logger, Paths.ConfigPath);
     }
 
     private void Awake()
