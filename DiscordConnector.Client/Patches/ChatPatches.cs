@@ -33,6 +33,12 @@ internal class ChatPatches
         private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type,
             ref UserInfo sender, ref string text)
         {
+            if (senderID != ZNet.GetUID())
+            {
+                DiscordConnectorClientPlugin.StaticLogger.LogDebug($"Ignoring message from other {senderID} != {ZNet.GetUID()}");
+                return;
+            }
+            
             DiscordConnectorClientPlugin.StaticLogger.LogDebug(
                 $"User details: name:{sender.Name}  DisplayName():{sender.GetDisplayName()} senderID:{senderID}  type:{type}  text:{text}");
 
