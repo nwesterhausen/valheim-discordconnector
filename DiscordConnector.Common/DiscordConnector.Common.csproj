@@ -80,6 +80,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="JotunnLib" Version="2.25.0"/>
+        <PackageReference Include="JotunnLib" Version="2.26.0"/>
     </ItemGroup>
 </Project>
