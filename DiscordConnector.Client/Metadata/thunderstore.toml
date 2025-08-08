@@ -4,13 +4,13 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "nwesterhausen"
 name = "DiscordConnector_Client"
-versionNumber = "1.0.1"
+versionNumber = "1.0.2"
 description = "Connects your Valheim server to a Discord webhook. This must be installed on the client."
 websiteUrl = "https://discord-connector.valheim.games.nwest.one/"
 containsNsfwContent = false
 
 [package.dependencies]
-denikson-BepInExPack_Valheim = "5.4.2202"
+denikson-BepInExPack_Valheim = "5.4.2331"
 
 [build]
 icon = "./icon.png"
