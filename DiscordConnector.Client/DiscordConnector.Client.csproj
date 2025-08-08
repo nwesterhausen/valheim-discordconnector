@@ -85,7 +85,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.40">
+        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.43">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
