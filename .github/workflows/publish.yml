@@ -34,7 +34,7 @@ jobs:
         run: echo "valheimversion=$(curl -s https://api.steamcmd.net/v1/info/896660 | jq -r ".data.\"896660\".depots.branches.public.buildid")" >> $GITHUB_OUTPUT
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '8.x'
 
