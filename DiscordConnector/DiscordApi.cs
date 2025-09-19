@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
@@ -485,19 +484,16 @@ internal class DiscordApi
             return;
         }
 
-        // Responsible for sending a JSON string to the webhook.
-        byte[] byteArray = Encoding.UTF8.GetBytes(serializedJson);
-
         if (DiscordConnectorPlugin.StaticConfig.PrimaryWebhook.HasEvent(ev))
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug($"Sending {ev} message to Primary Webhook");
-            DispatchRequest(DiscordConnectorPlugin.StaticConfig.PrimaryWebhook, byteArray);
+            DispatchRequest(DiscordConnectorPlugin.StaticConfig.PrimaryWebhook, serializedJson);
         }
 
         if (DiscordConnectorPlugin.StaticConfig.SecondaryWebhook.HasEvent(ev))
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug($"Sending {ev} message to Secondary Webhook");
-            DispatchRequest(DiscordConnectorPlugin.StaticConfig.SecondaryWebhook, byteArray);
+            DispatchRequest(DiscordConnectorPlugin.StaticConfig.SecondaryWebhook, serializedJson);
         }
 
         // Check for any extra webhooks that should be sent to
@@ -506,7 +502,7 @@ internal class DiscordApi
             if (webhook.HasEvent(ev))
             {
                 DiscordConnectorPlugin.StaticLogger.LogDebug($"Sending {ev} message to Extra Webhook: {webhook.Url}");
-                DispatchRequest(webhook, byteArray);
+                DispatchRequest(webhook, serializedJson);
             }
         }
     }
@@ -529,7 +525,7 @@ internal class DiscordApi
         // Responsible for sending a JSON string to the webhook.
         byte[] byteArray = Encoding.UTF8.GetBytes(serializedJson);
 
-        DispatchRequest(webhook, byteArray);
+        DispatchRequest(webhook, serializedJson);
     }
 
     /// <summary>
@@ -537,7 +533,7 @@ internal class DiscordApi
     /// </summary>
     /// <param name="webhook">The webhook to use for the request</param>
     /// <param name="byteArray">The payload as a byte array</param>
-    private static void DispatchRequest(WebhookEntry webhook, byte[] byteArray)
+    private static async void DispatchRequest(WebhookEntry webhook, string serializedJson)
     {
         if (string.IsNullOrEmpty(webhook.Url))
         {
@@ -548,100 +544,39 @@ internal class DiscordApi
         // Create an identifier for the request
         string requestId = GuidHelper.GenerateShortHexGuid();
         DiscordConnectorPlugin.StaticLogger.LogDebug(
-            $"DispatchRequest.{requestId}: sending {byteArray.Length} bytes to Discord");
+            $"DispatchRequest.{requestId}: sending {serializedJson} to Discord");
 
         // Create a web request to send the payload to discord
-        WebRequest request = WebRequest.Create(webhook.Url);
-        request.Method = "POST";
-        request.ContentType = "application/json";
-        request.ContentLength = byteArray.Length;
+        HttpClient request = new();
+        StringContent content = new(serializedJson, Encoding.UTF8, "application/json");
 
-        // Dispatch the request to discord and the response processing to an async task
-        Task.Run(() =>
+        try
         {
-            try
+            HttpResponseMessage response = await request.PostAsync(webhook.Url, content);
+            DiscordConnectorPlugin.StaticLogger.LogDebug(
+                                $"DispatchRequest.{requestId}: Response Code: {response.StatusCode}");
+
+            if(response.StatusCode != HttpStatusCode.NoContent)
             {
-                // We have to write the data to the request
-                using (Stream dataStream = request.GetRequestStream())
+                var responseFromServer = await response.Content.ReadAsStringAsync();
+                if (responseFromServer.Length > 0)
                 {
-                    dataStream.Write(byteArray, 0, byteArray.Length);
+                    DiscordConnectorPlugin.StaticLogger.LogDebug(
+                        $"DispatchRequest.{requestId}: Response from server: {responseFromServer}");
                 }
-
-                // Wait for a response to the web request
-                bool responseExpected = true;
-                WebResponse response;
-                try
+                else
                 {
-                    response = request.GetResponse();
-                    if (DiscordConnectorPlugin.StaticConfig.DebugHttpRequestResponse)
-                    {
-                        if (response is HttpWebResponse webResponse)
-                        {
-                            if (webResponse.StatusCode == HttpStatusCode.NoContent)
-                            {
-                                responseExpected = false;
-                            }
-
-                            DiscordConnectorPlugin.StaticLogger.LogDebug(
-                                $"DispatchRequest.{requestId}: Response Code: {webResponse.StatusCode}");
-                        }
-                        else
-                        {
-                            DiscordConnectorPlugin.StaticLogger.LogDebug(
-                                $"DispatchRequest.{requestId}: Response was not an HttpWebResponse");
-                        }
-                    }
+                    DiscordConnectorPlugin.StaticLogger.LogDebug(
+                        $"DispatchRequest.{requestId}: Empty response from server (normal)");
                 }
-                catch (WebException ex)
-                {
-                    DiscordConnectorPlugin.StaticLogger.LogError(
+            }
+        }
+        catch (Exception ex)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogError(
                         $"DispatchRequest.{requestId}: Error getting web response: {ex}");
-                    return;
-                }
-
-                if (responseExpected)
-                {
-                    // Get the stream containing content returned by the server.
-                    using (Stream? dataStream = response.GetResponseStream())
-                    {
-                        if (dataStream == null)
-                        {
-                            DiscordConnectorPlugin.StaticLogger.LogError(
-                                $"DispatchRequest.{requestId}: Response stream is null");
-                            return;
-                        }
-
-                        // Open the stream using a StreamReader for easy access.
-                        using (StreamReader reader = new(dataStream))
-                        {
-                            // Read the content.
-                            string responseFromServer = reader.ReadToEnd();
-                            // Display the content.
-                            if (DiscordConnectorPlugin.StaticConfig.DebugHttpRequestResponse)
-                            {
-                                if (responseFromServer.Length > 0)
-                                {
-                                    DiscordConnectorPlugin.StaticLogger.LogDebug(
-                                        $"DispatchRequest.{requestId}: Response from server: {responseFromServer}");
-                                }
-                                else
-                                {
-                                    DiscordConnectorPlugin.StaticLogger.LogDebug(
-                                        $"DispatchRequest.{requestId}: Empty response from server (normal)");
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Close the response.
-                response.Close();
-            }
-            catch (Exception e)
-            {
-                DiscordConnectorPlugin.StaticLogger.LogWarning($"Error dispatching webhook: {e}");
-            }
-        }).ConfigureAwait(false);
+            return;
+        }
     }
 
     /// <summary>
