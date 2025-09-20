@@ -40,7 +40,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/VHINSTALL
-          key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2331   
+          key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2333   
 
       - name: Install SteamCMD
         if: steps.cachevalheim.outputs.cache-hit != 'true'
@@ -67,7 +67,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: ~/VHINSTALL
-          key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2331
+          key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2333
           
       - name: Set references to DLLs
         run: |
