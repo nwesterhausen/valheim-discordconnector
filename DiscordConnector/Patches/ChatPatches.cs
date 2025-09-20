@@ -8,8 +8,8 @@ internal class ChatPatches
 {
     internal const string ArrivalShout = "I have arrived!";
 
-    [HarmonyPatch(typeof(Chat), nameof(Chat.OnNewChatMessage))]
-    internal class OnNewChatMessage
+    [HarmonyPatch(typeof(Chat), nameof(Chat.RPC_ChatMessage))]
+    internal class RpcChatMessagePatch
     {
         /// <summary>
         ///     Look into the chat message and perform some actions depending on what it is. No modifications are made to the
@@ -26,13 +26,13 @@ internal class ChatPatches
         ///         The implementation here passes details of the chat message to one of the <see cref="Handlers" /> functions.
         ///     </para>
         /// </remarks>
-        private static void Prefix(ref GameObject go, ref long senderID, ref Vector3 pos, ref Talker.Type type,
-            ref UserInfo sender, ref string text)
+        private static void Prefix(long sender, Vector3 position, int type, UserInfo userInfo, string text)
+
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug(
-                $"User details: name:{sender.Name}  DisplayName():{sender.GetDisplayName()} senderID:{senderID}  type:{type}  text:{text}");
+                $"User details: name:{userInfo.Name}  DisplayName():{userInfo.GetDisplayName()} senderID:{sender}  type:{(Talker.Type)type}  text:{text}");
 
-            string userName = sender.Name;
+            string userName = userInfo.Name;
             if (string.IsNullOrEmpty(userName))
             {
                 DiscordConnectorPlugin.StaticLogger.LogInfo("Ignored shout from invalid user (null reference)");
@@ -52,7 +52,7 @@ internal class ChatPatches
             // If peer is null, the message wasn't sent from a player
             if (peer == null)
             {
-                Handlers.NonPlayerChat(type, userName, text);
+                Handlers.NonPlayerChat((Talker.Type)type, userName, text);
                 return;
             }
             
