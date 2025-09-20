@@ -2,7 +2,8 @@
 #
 Environment.props
 *.zip
-
+server-data
+server-steam-data
 #
 ##
 

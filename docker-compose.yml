@@ -1,0 +1,19 @@
+﻿services:
+  valheim:
+    image: ghcr.io/community-valheim-tools/valheim-server:latest
+    container_name: valheim-dev-server
+    restart: unless-stopped
+    ports:
+      - "2456-2457:2456-2457/udp"
+    environment:
+      - SERVER_NAME=My Dev Server
+      - WORLD_NAME=DevWorld
+      - SERVER_PASS=secret
+      # Enables the automatic installation of BepInEx
+      - BEPINEX=true
+    volumes:
+      # Maps the container's config to a local 'server-data' folder.
+      # This is how we access the plugins directory.
+      - ./server-data:/config
+      # Mounts the Valheim server data itself for persistence.
+      - ./server-steam-data:/home/steam/valheim
