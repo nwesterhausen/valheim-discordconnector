@@ -1,4 +1,6 @@
 using System.IO;
+using System.Net;
+using System.Threading.Tasks;
 
 using BepInEx;
 
@@ -28,7 +30,7 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
     internal static Database StaticDatabase = null!; // initialized in constructor
     private static readonly LeaderbBoard StaticLeaderBoards = new();
     internal static readonly EventWatcher StaticEventWatcher = new();
-    private static string s_publicIpAddress = "";
+    private static string s_publicIpAddress = "Checking...";
     private Harmony? _harmony;
 
     public DiscordConnectorPlugin()
@@ -38,25 +40,33 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
         StaticDatabase = new Database(Paths.GameRootPath);
     }
 
+    /// <summary>
+    ///     Returns the public IP address of the server.
+    /// </summary>
+    internal static string PublicIpAddress => s_publicIpAddress;
 
-    internal static string PublicIpAddress
+    /// <summary>
+    /// Starts the asynchronous task to fetch and cache the public IP address.
+    /// This method should be called once at startup.
+    /// </summary>
+    private static void InitializePublicIP()
     {
-        get
+        // "Fire-and-forget" a task to run our async method in the background.
+        Task.Run(async () =>
         {
-            if (!string.IsNullOrEmpty(s_publicIpAddress))
-            {
-                return s_publicIpAddress;
-            }
-
-            s_publicIpAddress = PublicIPChecker.GetPublicIP();
-            return s_publicIpAddress;
-        }
+            // This will await the result from the IP checker and then update
+            // the static field once the result is available.
+            s_publicIpAddress = await PublicIPChecker.GetPublicIPAsync().ConfigureAwait(false);
+            await StaticLogger.LogDebugAsync($"Public IP address determined to be {s_publicIpAddress}").ConfigureAwait(false);
+        }).ConfigureAwait(false);
     }
 
     private void Awake()
     {
         // Plugin startup logic
         StaticLogger.LogDebug($"Plugin {ModName} is loaded!");
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+        InitializePublicIP();
 
         if (string.IsNullOrEmpty(StaticConfig.PrimaryWebhook.Url) &&
             string.IsNullOrEmpty(StaticConfig.SecondaryWebhook.Url))

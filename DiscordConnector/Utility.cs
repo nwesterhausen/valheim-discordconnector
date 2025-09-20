@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace DiscordConnector;
 
@@ -42,25 +44,36 @@ internal static class Strings
 internal static class PublicIPChecker
 {
     /// <summary>
-    ///     Get the public IP address of the server from https://ifconfig.me/ip
+    /// Efficient handler for HTTP requests.
     /// </summary>
-    /// <returns>The public IP address of the server</returns>
-    public static string GetPublicIP()
+    private static readonly HttpClient httpClient = new HttpClient();
+
+    /// <summary>
+    /// Asynchronously gets the public IP address of the server from https://api.ipify.org
+    /// </summary>
+    /// <remarks>
+    /// In the Plugins main Awake() method, you must have this line:
+    /// ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+    /// </remarks>   
+    /// <returns>A Task that resolves to the public IP address string, or an empty string on failure.</returns>
+    public static async Task<string> GetPublicIPAsync()
     {
         DiscordConnectorPlugin.StaticLogger.LogDebug("Getting public IP address.");
         string address = string.Empty;
         try
         {
-            using WebClient client = new();
-            address = client.DownloadString("https://ifconfig.me/ip");
+            address = await httpClient.GetStringAsync("https://api.ipify.org").ConfigureAwait(false);
+            address = address.Trim();
         }
         catch (Exception e)
         {
-            DiscordConnectorPlugin.StaticLogger.LogError(
-                $"Failed to get public IP address, an empty string will be used: {e.Message}");
+            await DiscordConnectorPlugin.StaticLogger.LogErrorAsync(
+                $"Failed to get public IP address, an empty string will be used. Details:\n{e}")
+                .ConfigureAwait(false);
         }
 
-        DiscordConnectorPlugin.StaticLogger.LogDebug($"Public IP address is '{address}'");
+        await DiscordConnectorPlugin.StaticLogger.LogDebugAsync($"Public IP address is '{address}'")
+            .ConfigureAwait(false);
         return address;
     }
 }
