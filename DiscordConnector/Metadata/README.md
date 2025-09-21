@@ -27,23 +27,12 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 
 ## Abridged Changelog
 
-## Version 3.1.0
+## Version 4.0.0
 
-Known Issues
+Fixes
 
-- no leave notification
-- a died notification is sent when a player logs in
+- Should be logging all shouts correctly now.
 
 Changes
 
-- Updated to the latest version of Valheim (0.222.4)
-- Improved discord embedding customization (thanks @engels74)
-- Use an RPC to have the clients tell the server when they say things
-
-Breaking Changes
-
-- The `DiscordConnector-Client` plugin is required on clients for the new chat functionality to work. While you can still
-  use just the server `DiscordConnector` plugin, you will not get the chat information (shouts, pings, etc.) from the clients.
-
-The client plugin is on [Thunderstore](https://thunderstore.io/c/valheim/p/nwesterhausen/DiscordConnector_Client/) or can
-be downloaded from the [GitHub releases](https://github.com/nwesterhausen/valheim-discordconnector/releases).
+- No longer requires the `DiscordConnector-Client` plugin to be installed on clients.

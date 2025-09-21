@@ -1,9 +1,9 @@
 {
-  "name": "DiscordConnector",
-  "version_number": "3.1.2",
-  "website_url": "https://discord-connector.valheim.games.nwest.one/",
-  "description": "Connects your Valheim server to a Discord webhook. Works for both dedicated and client-hosted servers.",
-  "dependencies": [
-    "denikson-BepInExPack_Valheim-5.4.2333"
-  ]
+	"name": "DiscordConnector",
+	"version_number": "4.0.0",
+	"website_url": "https://discord-connector.valheim.games.nwest.one/",
+	"description": "Connects your Valheim server to a Discord webhook. Works for both dedicated and client-hosted servers.",
+	"dependencies": [
+		"denikson-BepInExPack_Valheim-5.4.2333"
+	]
 }

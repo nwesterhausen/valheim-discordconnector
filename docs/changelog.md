@@ -2,6 +2,23 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 4.0.0
+
+Fixes
+
+- Should be logging all shouts correctly now.
+
+Changes
+
+- No longer requires the `DiscordConnector-Client` plugin to be installed on clients.
+
+
+## Version 3.1.2
+
+Fixes
+
+- Change from `WebRequests` to `HTTPClient` to fix URI error preventing posting to Discord.
+
 ## Version 3.1.0
 
 Changes
