@@ -1,7 +1,5 @@
 ﻿using System;
 
-using DiscordConnector.RPC;
-
 using HarmonyLib;
 
 namespace DiscordConnector.Patches;

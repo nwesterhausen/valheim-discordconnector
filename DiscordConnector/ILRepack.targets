@@ -3,7 +3,6 @@
     <Target Name="ILRepacker" AfterTargets="Build">
         <ItemGroup>
             <InputAssemblies Include="$(TargetPath)"/>
-            <InputAssemblies Include="$(OutputPath)\DiscordConnector.Common.dll"/>
             <!-- <InputAssemblies Include="$(OutputPath)\ServerSync.dll"/> -->
             <!-- Include here the other dependencies to be bundled -->
             <InputAssemblies Include="$(OutputPath)\Newtonsoft.Json.dll"/>
