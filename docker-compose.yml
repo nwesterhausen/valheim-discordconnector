@@ -11,6 +11,11 @@
       - SERVER_PASS=secret
       # Enables the automatic installation of BepInEx
       - BEPINEX=true
+      - 'VALHEIM_LOG_FILTER_CONTAINS_ShaderWarning=WARNING: Shader'
+      - 'VALHEIM_LOG_FILTER_CONTAINS_ShaderError=ERROR: Shader'
+      - VALHEIM_LOG_FILTER_CONTAINS_MemorySetup=    "memorysetup
+      - VALHEIM_LOG_FILTER_ENDSWITH_ConsoleCode=^[[0m
+      - CROSSPLAY=true
     volumes:
       # Maps the container's config to a local 'server-data' folder.
       # This is how we access the plugins directory.
