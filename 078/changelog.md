@@ -2,6 +2,17 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 4.0.0
+
+Fixes
+
+- Should be logging all shouts correctly now.
+
+Changes
+
+- No longer requires the `DiscordConnector-Client` plugin to be installed on clients.
+
+
 ## Version 3.1.2
 
 Fixes
