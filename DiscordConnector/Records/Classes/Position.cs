@@ -2,26 +2,23 @@
 
 public class Position
 {
-    public Position()
-    {
-        x = 0;
-        y = 0;
-        z = 0;
-    }
+	public Position()
+	{
+		this.x = 0;
+		this.y = 0;
+		this.z = 0;
+	}
 
-    public Position(float _x, float _y, float _z)
-    {
-        x = _x;
-        y = _y;
-        z = _z;
-    }
+	public Position(float _x, float _y, float _z)
+	{
+		this.x = _x;
+		this.y = _y;
+		this.z = _z;
+	}
 
-    public float x { get; }
-    public float y { get; }
-    public float z { get; }
+	public float x { get; }
+	public float y { get; }
+	public float z { get; }
 
-    public override string ToString()
-    {
-        return $"({x},{y},{z})";
-    }
+	public override string ToString() => $"({this.x},{this.y},{this.z})";
 }
