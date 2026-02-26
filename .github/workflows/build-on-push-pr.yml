@@ -83,7 +83,7 @@ jobs:
           dotnet build DiscordConnector.sln --configuration Release
 
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           # Artifact name
           name: DiscordConnector-artifact.zip
