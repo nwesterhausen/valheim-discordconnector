@@ -229,7 +229,7 @@ internal class WebhookEntry
     /// <param name="url">webhook endpoint</param>
     public WebhookEntry(string url)
     {
-        Url = url;
+        Url = url.Trim().Trim('"', '\'');
         FireOnEvents = [Webhook.Event.ALL];
     }
 

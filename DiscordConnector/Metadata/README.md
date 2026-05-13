@@ -27,12 +27,18 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 
 ## Abridged Changelog
 
+## Version 3.1.3
+
+Fixes
+
+- Fixed player death notifications so they are sent once during the death/respawn state.
+- Replaced the public IP lookup `WebClient` call with `HttpClient` for better dedicated server compatibility.
+
 ## Version 3.1.0
 
 Known Issues
 
 - no leave notification
-- a died notification is sent when a player logs in
 
 Changes
 
