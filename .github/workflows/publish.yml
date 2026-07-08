@@ -13,7 +13,7 @@ jobs:
       # Caching build dependencies and tcli tool
       - name: TCLI Cache
         id: cache-tcli
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           key: tcli-${{ vars.TCLI_VERSION }}
           path: /home/runner/tcli-bin
@@ -44,7 +44,7 @@ jobs:
       # Cache the results
       - name: Cache Valheim
         id: cachevalheim
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/VHINSTALL
           key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2333
@@ -71,7 +71,7 @@ jobs:
 
       - name: Save Cache
         if: steps.cachevalheim.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: ~/VHINSTALL
           key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2333
