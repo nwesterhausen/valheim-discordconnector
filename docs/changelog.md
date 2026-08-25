@@ -2,6 +2,18 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
+## Version 3.1.3
+
+Fixes
+
+- Fix `records.db` database not being initialized and null reference (thanks @Yibbzz)
+
+## Version 3.1.2
+
+Fixes
+
+- Change from `WebRequests` to `HTTPClient` to fix URI error preventing posting to Discord (thanks @aaronmray)
+
 ## Version 3.1.0
 
 Changes
