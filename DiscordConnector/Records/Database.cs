@@ -53,6 +53,7 @@ internal class Database
         {
             File.Move(oldDatabase, DbPath);
         }
+        Initialize();
     }
 
     /// <summary>
@@ -117,6 +118,7 @@ internal class Database
     /// </summary>
     public void Dispose()
     {
+        if (db == null) return;
         DiscordConnectorPlugin.StaticLogger.LogDebug("Closing LiteDB connection");
         db.Dispose();
     }
@@ -507,7 +509,12 @@ internal class Database
                 .Where(x => x.Name.Equals(playerName))
                 .Count();
         }
-        catch
+        catch (NullReferenceException)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogError($"Database not initialized when counting {playerName}!");
+            return -3;
+        }
+        catch (Exception)
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug($"Error when trying to find {playerName} to count!");
             return -3;
