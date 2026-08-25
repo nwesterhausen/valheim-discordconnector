@@ -30,22 +30,22 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '8.x'
-          
+
       - name: Install Dependencies
         run: dotnet restore DiscordConnector/DiscordConnector.csproj
-        
+
       # Cache the results
       - name: Cache Valheim
         id: cachevalheim
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/VHINSTALL
-          key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2333   
+          key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2333
 
       - name: Install SteamCMD
         if: steps.cachevalheim.outputs.cache-hit != 'true'
         uses: CyberAndrii/setup-steamcmd@v1
-        
+
       # Prepare Valheim dependencies
       - name: Prepare Valheim dependencies
         if: steps.cachevalheim.outputs.cache-hit != 'true'
@@ -53,7 +53,7 @@ jobs:
           wget -O bepinex.zip "https://thunderstore.io/package/download/denikson/BepInExPack_Valheim/5.4.2331/"
           unzip bepinex.zip -d ~/BepInExRaw
           steamcmd +force_install_dir ~/VHINSTALL +login anonymous +app_update 896660 validate +exit
-          mv ~/VHINSTALL/valheim_server_Data/ ~/VHINSTALL/valheim_Data/
+          mv ~/VHINSTALL/valheim_server_Data/ ~/VHINSTALL/Valheim_Data/
           mv ~/BepInExRaw/BepInExPack_Valheim/* ~/VHINSTALL/
 
       - name: Remove old publicized dlls from cache
@@ -64,11 +64,11 @@ jobs:
 
       - name: Save Cache
         if: steps.cachevalheim.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: ~/VHINSTALL
           key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2333
-          
+
       - name: Set references to DLLs
         run: |
           echo "<?xml version=\"1.0\" encoding=\"utf-8\"?><Project ToolsVersion=\"Current\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"><PropertyGroup><VALHEIM_INSTALL>$HOME/VHINSTALL/</VALHEIM_INSTALL></PropertyGroup></Project>" > Environment.props
@@ -83,7 +83,7 @@ jobs:
           dotnet build DiscordConnector.sln --configuration Release
 
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           # Artifact name
           name: DiscordConnector-artifact.zip
