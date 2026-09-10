@@ -40,6 +40,7 @@ public static class Server
         {
             case Talker.Type.Normal:
                 // Handlers.PlayerChat(peer, chatMessageDetail.Pos, chatMessageDetail.Text);
+                InGameChatRelay.TryRelay(peer, chatMessageDetail);
                 DiscordConnectorPlugin.StaticLogger.LogInfo(
                     $"Server.{Common.RPC_OnNewChatMessage}: Normal message '{chatMessageDetail.Text}' at {chatMessageDetail.Pos}");
                 break;
@@ -59,10 +60,12 @@ public static class Server
                     return;
                 }
 
+                InGameChatRelay.TryRelay(peer, chatMessageDetail);
                 Handlers.Shout(peer, chatMessageDetail.Pos, chatMessageDetail.Text);
                 break;
             case Talker.Type.Whisper:
                 // Handlers.Whisper(peer, chatMessageDetail.Pos, chatMessageDetail.Text);
+                InGameChatRelay.TryRelay(peer, chatMessageDetail);
                 DiscordConnectorPlugin.StaticLogger.LogInfo(
                     $"Server.{Common.RPC_OnNewChatMessage}: Whisper message '{chatMessageDetail.Text}' at {chatMessageDetail.Pos}");
                 break;

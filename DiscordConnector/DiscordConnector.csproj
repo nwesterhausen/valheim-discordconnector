@@ -42,6 +42,9 @@
         <Reference Include="SoftReferenceableAssets">
             <HintPath>$(PublicizedAssembliesPath)\SoftReferenceableAssets_publicized.dll</HintPath>
         </Reference>
+        <Reference Include="Splatform">
+            <HintPath>$(CorlibPath)\Splatform.dll</HintPath>
+        </Reference>
         <Reference Include="System.Net.Http" />
         <Reference Include="UnityEngine">
             <HintPath>$(CorlibPath)\UnityEngine.dll</HintPath>

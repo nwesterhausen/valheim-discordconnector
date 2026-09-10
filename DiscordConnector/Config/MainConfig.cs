@@ -78,6 +78,8 @@ internal class MainConfig
     private readonly ConfigEntry<string> _mutedDiscordUserList;
     private readonly ConfigEntry<string> _mutedDiscordUserListRegex;
     private readonly ConfigEntry<RetrievalDiscernmentMethods> _playerLookupPreference;
+    private readonly ConfigEntry<string> _relayedPlayerChatSteamIds;
+    private readonly ConfigEntry<bool> _relaySelectedPlayerChatToGame;
 
     private readonly ConfigEntry<bool> _sendPositionsToggle;
     private readonly ConfigEntry<bool> _showPlayerIdsToggle;
@@ -160,6 +162,18 @@ internal class MainConfig
             "Log Debug Messages",
             false,
             "Enable this setting to listen to debug messages from the mod. This will help with troubleshooting issues.");
+
+        _relaySelectedPlayerChatToGame = configFile.Bind(MainSettings,
+            "Relay Selected Player Chat To Game",
+            false,
+            "Enable this setting to relay locally observed player chat back into Valheim chat for selected Steam IDs. This is intended for players whose client chat reaches Discord Connector but does not reach other in-game clients.");
+
+        _relayedPlayerChatSteamIds = configFile.Bind<string>(MainSettings,
+            "Relayed Player Chat Steam IDs",
+            "",
+            "Steam IDs whose locally observed chat should be relayed back into Valheim chat when relay is enabled." +
+            Environment.NewLine +
+            "Format should be a semicolon-separated list: 76561198000000000;76561198000000001");
 
         _discordEmbedMessagesToggle = configFile.Bind(MainSettings,
             "Use fancier discord messages",
@@ -502,6 +516,8 @@ internal class MainConfig
     public bool AnnouncePlayerFirsts => _announcePlayerFirsts.Value;
     public RetrievalDiscernmentMethods RecordRetrievalDiscernmentMethod => _playerLookupPreference.Value;
     public bool AllowNonPlayerShoutLogging => _allowNonPlayerShoutLogging.Value;
+    public bool RelaySelectedPlayerChatToGame => _relaySelectedPlayerChatToGame.Value;
+    public string RelayedPlayerChatSteamIds => _relayedPlayerChatSteamIds.Value;
     public bool AllowMentionsHereEveryone => _allowMentionsHereEveryone.Value;
     public bool AllowMentionsAnyRole => _allowMentionsAnyRole.Value;
     public bool AllowMentionsAnyUser => _allowMentionsAnyUser.Value;
