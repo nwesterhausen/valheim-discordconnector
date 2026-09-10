@@ -89,7 +89,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="JotunnLib" Version="2.29.2" />
+        <PackageReference Include="JotunnLib" Version="2.30.0" />
     </ItemGroup>
 
     <ItemGroup>
