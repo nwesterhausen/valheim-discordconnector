@@ -14,6 +14,11 @@ internal static class Handlers
     public static HashSet<string> joinedPlayers = new();
 
     /// <summary>
+    ///     Track players whose current character ID has been cleared after death.
+    /// </summary>
+    private static HashSet<string> deadPlayers = new();
+
+    /// <summary>
     ///     Perform the necessary steps for a player joining the server.
     /// </summary>
     public static void Join(ZNetPeer peer)
@@ -42,15 +47,28 @@ internal static class Handlers
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug($"{playerHostName} already exists in list of joined players.");
 
-            // Seems that player is dead if character ZDOID id is 0
-            // m_characterID id=0 means dead, user_id always matches peer.m_uid
-            if (peer.m_characterID.ID != 0)
+            // Valheim clears the character ID while the player is dead and waiting to respawn.
+            if (peer.m_characterID.IsNone())
             {
-                Death(peer);
+                if (deadPlayers.Add(playerHostName))
+                {
+                    Death(peer);
+                }
+                else
+                {
+                    DiscordConnectorPlugin.StaticLogger.LogDebug(
+                        $"{playerHostName} already exists in list of dead players.");
+                }
+            }
+            else
+            {
+                deadPlayers.Remove(playerHostName);
             }
 
             return;
         }
+
+        deadPlayers.Remove(playerHostName);
 
         DiscordConnectorPlugin.StaticLogger.LogDebug(
             $"Added player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) to joined player list.");
@@ -120,6 +138,8 @@ internal static class Handlers
                 $"{playerHostName} did not exist in the list of joined players!");
             return;
         }
+
+        deadPlayers.Remove(playerHostName);
 
         DiscordConnectorPlugin.StaticLogger.LogDebug(
             $"Removed player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) from joined player list.");

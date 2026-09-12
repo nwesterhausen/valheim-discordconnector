@@ -121,6 +121,8 @@ internal class PluginConfig
     public bool SendPositionsEnabled => mainConfig.SendPositionsEnabled;
     public bool ShowPlayerIds => mainConfig.ShowPlayerIds;
     public bool AnnouncePlayerFirsts => mainConfig.AnnouncePlayerFirsts;
+    public bool RelaySelectedPlayerChatToGame => mainConfig.RelaySelectedPlayerChatToGame;
+    public string RelayedPlayerChatSteamIds => mainConfig.RelayedPlayerChatSteamIds;
 
     // Embed Field Visibility Properties
     public bool EmbedTitleEnabled => mainConfig.EmbedTitleEnabled;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 
 namespace DiscordConnector;
@@ -41,6 +41,11 @@ internal static class Strings
 
 internal static class PublicIPChecker
 {
+    private static readonly HttpClient HttpClient = new()
+    {
+        Timeout = TimeSpan.FromSeconds(5)
+    };
+
     /// <summary>
     ///     Get the public IP address of the server from https://ifconfig.me/ip
     /// </summary>
@@ -51,8 +56,7 @@ internal static class PublicIPChecker
         string address = string.Empty;
         try
         {
-            using WebClient client = new();
-            address = client.DownloadString("https://ifconfig.me/ip");
+            address = HttpClient.GetStringAsync("https://ifconfig.me/ip").GetAwaiter().GetResult();
         }
         catch (Exception e)
         {

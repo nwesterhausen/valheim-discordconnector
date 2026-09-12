@@ -2,9 +2,15 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
-## Version 3.1.3
+## Version 3.1.4
 
 Fixes
+
+- Fixed player death notifications so they are sent when Valheim clears the player's character ID during death, not when a live character ID is present.
+- Prevented duplicate death notifications while the player remains in the death/respawn state.
+- Replaced the public IP lookup `WebClient` call with `HttpClient` so dedicated server runtimes that reject HTTPS through the old API can still resolve `%PUBLICIP%`.
+
+## Version 3.1.3
 
 - Fix `records.db` database not being initialized and null reference (thanks @Yibbzz)
 
