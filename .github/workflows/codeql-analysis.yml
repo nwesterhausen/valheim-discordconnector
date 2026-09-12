@@ -39,11 +39,11 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
           # If you wish to specify custom queries, you can do so here or in a config file.
@@ -59,11 +59,11 @@ jobs:
 
       - name: Install Dependencies
         run: dotnet restore DiscordConnector/DiscordConnector.csproj
-      
+
       # Cache the results
       - name: Cache Valheim
         id: cachevalheim
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/VHINSTALL
           key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2333
@@ -71,12 +71,12 @@ jobs:
       - name: Install SteamCMD
         if: steps.cachevalheim.outputs.cache-hit != 'true'
         uses: CyberAndrii/setup-steamcmd@v1
-      
+
       # Prepare Valheim dependencies
       - name: Prepare Valheim dependencies
         if: steps.cachevalheim.outputs.cache-hit != 'true'
         run: |
-          wget -O bepinex.zip "https://thunderstore.io/package/download/denikson/BepInExPack_Valheim/5.4.2331/"
+          wget -O bepinex.zip "https://thunderstore.io/package/download/denikson/BepInExPack_Valheim/5.4.2333/"
           unzip bepinex.zip -d ~/BepInExRaw
           steamcmd +force_install_dir ~/VHINSTALL +login anonymous +app_update 896660 validate +exit
           mv ~/VHINSTALL/valheim_server_Data/ ~/VHINSTALL/valheim_Data/
@@ -90,7 +90,7 @@ jobs:
 
       - name: Save Cache
         if: steps.cachevalheim.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: ~/VHINSTALL
           key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2333
@@ -106,7 +106,7 @@ jobs:
       # Build DLLs
       - name: Build solution
         run: |
-          dotnet build DiscordConnector.sln 
+          dotnet build DiscordConnector.sln
 
       # ℹ️ Command-line programs to run using the OS shell.
       # 📚 https://git.io/JvXDl
@@ -120,4 +120,4 @@ jobs:
       #   make release
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4

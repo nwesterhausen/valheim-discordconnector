@@ -32,10 +32,10 @@ Take note that some of these events are subsets of the [special cases](/config/w
 | eventResumed     | An event resumes                              | Yes                |
 | eventStop        | An event finishes                             | Yes                |
 | playerJoin       | A player joins the server                     | Yes                |
-| playerLeave      | A player joins the server                     | Yes                |
-| playerShout      | A player joins the server                     | Yes                |
-| playerPing       | A player joins the server                     | Yes                |
-| playerDeath      | A player joins the server                     | Yes                |
+| playerLeave      | A player leaves the server                    | Yes                |
+| playerShout      | A player shouts in chat                       | Yes                |
+| playerPing       | A player pings the map                        | Yes                |
+| playerDeath      | A player dies                                 | Yes                |
 | playerFirstJoin  | A new player joins the server                 | Yes                |
 | playerFirstLeave | A player leaves the server for the first time | No                 |
 | playerFirstShout | A player shouts in chat for the first time    | No                 |

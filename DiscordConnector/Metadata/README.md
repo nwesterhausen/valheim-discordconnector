@@ -27,12 +27,26 @@ Connect your Valheim server (dedicated or served from the game itself) to a Disc
 
 ## Abridged Changelog
 
-## Version 3.1.3
+## Version 3.1.4
 
 Fixes
 
 - Fixed player death notifications so they are sent once during the death/respawn state.
 - Replaced the public IP lookup `WebClient` call with `HttpClient` for better dedicated server compatibility.
+
+## Version 3.1.3
+
+- Fix `records.db` database not being initialized and null reference (thanks @Yibbzz)
+
+## Version 3.1.2
+
+Fixes
+
+- Change from `WebRequests` to `HTTPClient` to fix URI error preventing posting to Discord (thanks @aaronmray)
+
+## Version 3.1.1
+
+Dependency updates only.
 
 ## Version 3.1.0
 
