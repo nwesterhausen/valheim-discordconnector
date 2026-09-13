@@ -442,7 +442,7 @@ internal static class MessageTransformer
     {
         string playerName = peer.m_playerName;
         string playerHostName = peer.m_socket.GetHostName();
-        Vector3 position = peer.m_refPos;
+        Vector3 position = Handlers.GetLivePosition(peer);
         string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
         string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
 

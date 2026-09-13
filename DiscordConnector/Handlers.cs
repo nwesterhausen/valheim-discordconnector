@@ -14,6 +14,29 @@ internal static class Handlers
     public static HashSet<string> joinedPlayers = new();
 
     /// <summary>
+    ///     Get the player's current, live position on the server.
+    /// </summary>
+    /// <remarks>
+    ///     <see cref="ZNetPeer.m_refPos" /> is only updated by the engine when a peer's interest-management
+    ///     sector changes (i.e. when they cross into a new zone). A player who dies and respawns within the
+    ///     same zone repeatedly (e.g. near their base) will therefore report the same stale position for every
+    ///     such event. Looking up the character's ZDO directly gives the true current position instead.
+    /// </remarks>
+    internal static Vector3 GetLivePosition(ZNetPeer peer)
+    {
+        if (peer.m_characterID.ID != 0)
+        {
+            ZDO characterZdo = ZDOMan.instance.GetZDO(peer.m_characterID);
+            if (characterZdo != null)
+            {
+                return characterZdo.GetPosition();
+            }
+        }
+
+        return peer.m_refPos;
+    }
+
+    /// <summary>
     ///     Perform the necessary steps for a player joining the server.
     /// </summary>
     public static void Join(ZNetPeer peer)
@@ -75,7 +98,7 @@ internal static class Handlers
         if (DiscordConnectorPlugin.StaticConfig.StatsJoinEnabled)
         {
             DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Categories.Join, peer.m_playerName,
-                playerHostName, peer.m_refPos);
+                playerHostName, GetLivePosition(peer));
         }
 
 
@@ -144,7 +167,7 @@ internal static class Handlers
         if (DiscordConnectorPlugin.StaticConfig.StatsLeaveEnabled)
         {
             DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Categories.Leave, peer.m_playerName,
-                playerHostName, peer.m_refPos);
+                playerHostName, GetLivePosition(peer));
         }
 
 
@@ -200,7 +223,7 @@ internal static class Handlers
         if (DiscordConnectorPlugin.StaticConfig.StatsDeathEnabled)
         {
             DiscordConnectorPlugin.StaticDatabase.InsertSimpleStatRecord(Categories.Death, peer.m_playerName,
-                playerHostName, peer.m_refPos);
+                playerHostName, GetLivePosition(peer));
         }
 
 
@@ -341,7 +364,7 @@ internal static class Handlers
     private static void FinalizeFormattingAndSend(ZNetPeer peer, string playerHostName, string preFormattedMessage,
         bool posEnabled, Webhook.Event ev)
     {
-        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, posEnabled, peer.m_refPos, ev);
+        FinalizeFormattingAndSend(peer, playerHostName, preFormattedMessage, posEnabled, GetLivePosition(peer), ev);
     }
 
     /// <summary>
