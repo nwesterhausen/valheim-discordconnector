@@ -31,6 +31,9 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Run ServerStart regression harness
+        run: dotnet run --project tests/ServerStartRegression/ServerStartRegression.csproj
+
       - name: Install Dependencies
         run: dotnet restore DiscordConnector/DiscordConnector.csproj
 
