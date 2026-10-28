@@ -2,6 +2,15 @@
 
 Here will be the record of changes for the client plugin.
 
+## Unreleased
+
+### Fixes
+
+- Shout/ping positions were sent using the player's number format (e.g. `1,5` in German), so servers with a
+  different language setting read them wrongly. Older clients are still understood by the server.
+- Messages containing `|` were dropped
+- Messages the server already saw directly are no longer posted twice
+
 ## Version 1.0.1
 
 ### Fixes
