@@ -465,8 +465,14 @@ internal class Database
             return [];
         }
 
-        PlayerToName[] players = PlayerToNameCollection.Query().ToArray();
+        // One entry per (player, character), so a duplicated name row can't count the same sessions twice.
+        PlayerToName[] players = PlayerToNameCollection.Query().ToArray()
+            .GroupBy(p => p.PlayerId + "\n" + p.CharacterName)
+            .Select(g => g.First())
+            .ToArray();
         List<CountResult> results = new();
+        Dictionary<string, int> totals = new();
+        Dictionary<string, string> names = new();
 
         foreach (PlayerToName player in players)
         {
@@ -478,12 +484,12 @@ internal class Database
             ILiteQueryable<SimpleStat>? leavesQuery = LeaveCollection.Query().Where(x =>
                 x.PlayerId.Equals(player.PlayerId) && x.Name.Equals(player.CharacterName));
 
-            // LiteDB can only translate plain comparisons, not calls to C# delegates, so filter with DayRange bounds.
+            // With a date range, only the part of each session inside the range counts. (Filtering joins by date
+            // dropped sessions that started before the range, and counted all of a session that ran past its end.)
+            DateTime rangeFrom = DateTime.MinValue, rangeBefore = DateTime.MaxValue;
             if (startDate != null && endDate != null)
             {
-                (DateTime from, DateTime before) = DayRange(startDate.Value, endDate.Value, inclusiveStart,
-                    inclusiveEnd);
-                joinsQuery = joinsQuery.Where(x => x.Date >= from && x.Date < before);
+                (rangeFrom, rangeBefore) = DayRange(startDate.Value, endDate.Value, inclusiveStart, inclusiveEnd);
             }
 
             // Grab joins and leaves for player and sort them by time.
@@ -523,7 +529,13 @@ internal class Database
                     }
                     else
                     {
-                        onlineTime += joinLeaveTime.Time.Subtract(joinedTime ?? joinLeaveTime.Time);
+                        DateTime sessionStart = joinedTime.Value > rangeFrom ? joinedTime.Value : rangeFrom;
+                        DateTime sessionEnd = joinLeaveTime.Time < rangeBefore ? joinLeaveTime.Time : rangeBefore;
+                        if (sessionEnd > sessionStart)
+                        {
+                            onlineTime += sessionEnd - sessionStart;
+                        }
+
                         joinedTime = null;
                     }
                 }
@@ -532,8 +544,35 @@ internal class Database
             // Total time is then stored
             DiscordConnectorPlugin.StaticLogger.LogDebug($"{onlineTime} total online time.");
 
-            // Append to list
-            results.Add(new CountResult(player.CharacterName, (int)onlineTime.TotalSeconds));
+            // Players with no time in the range aren't ranked (they used to fill "today" boards with "0 seconds").
+            int seconds = (int)onlineTime.TotalSeconds;
+            if (seconds <= 0)
+            {
+                continue;
+            }
+
+            // Combine characters the same way the other statistics do ("How to discern players" setting). This
+            // used to always list each character separately.
+            string key = DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod switch
+            {
+                MainConfig.RetrievalDiscernmentMethods.PlayerId => player.PlayerId,
+                MainConfig.RetrievalDiscernmentMethods.Name => player.CharacterName,
+                _ => player.PlayerId + "\n" + player.CharacterName
+            };
+            totals.TryGetValue(key, out int sofar);
+            totals[key] = sofar + seconds;
+            if (!names.ContainsKey(key))
+            {
+                names[key] = DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod ==
+                             MainConfig.RetrievalDiscernmentMethods.PlayerId
+                    ? GetLatestCharacterNameForPlayer(player.PlayerId)
+                    : player.CharacterName;
+            }
+        }
+
+        foreach (KeyValuePair<string, int> total in totals)
+        {
+            results.Add(new CountResult(names[total.Key], total.Value));
         }
 
         return results;

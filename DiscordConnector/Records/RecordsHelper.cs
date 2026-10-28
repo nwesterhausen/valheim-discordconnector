@@ -115,8 +115,9 @@ public static class Helper
         }
 
         // Perform sorting of results
-        queryResults.Sort(CountResult.CompareByCount); // sorts lowest to highest
-        queryResults.Reverse(); // Now high --> low
+        // High to low; ties in name order. (Sort is unstable, and the old Sort+Reverse listed tied players in a
+        // different order from one post to the next.)
+        queryResults.Sort((a, b) => b.Count != a.Count ? b.Count.CompareTo(a.Count) : CountResult.CompareByName(a, b));
 
         // If the amount of results is less than the number desired, just return it
         if (queryResults.Count <= n)
@@ -189,7 +190,8 @@ public static class Helper
         }
 
         // Perform sorting of results
-        queryResults.Sort(CountResult.CompareByCount); // sorts lowest to highest
+        // Low to high; ties in name order.
+        queryResults.Sort((a, b) => a.Count != b.Count ? a.Count.CompareTo(b.Count) : CountResult.CompareByName(a, b));
 
         // If the amount of results is less than the number desired, just return it
         if (queryResults.Count <= n)

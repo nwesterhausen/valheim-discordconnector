@@ -61,6 +61,25 @@ internal static class Suite
         yield return new TestCase { Name = "no host player on dedicated server", Body = NoHostOnDedicated };
         yield return new TestCase { Name = "database checkpoint keeps records", Body = DatabaseCheckpoint };
         yield return new TestCase { Name = "flush waits for queued webhooks", Body = FlushWaits };
+        yield return new TestCase { Name = "week ranges on every weekday", Body = WeekRanges };
+        yield return new TestCase { Name = "today, yesterday and past 7 days ranges", Body = DayRanges };
+        yield return new TestCase { Name = "tied players listed in name order", Body = TiesInNameOrder };
+        yield return new TestCase { Name = "ascending ranking lists least first", Body = AscendingOrder };
+        yield return new TestCase { Name = "ranking text fits in a Discord field", Body = RankingFitsField };
+        yield return new TestCase { Name = "time online skips players with no time", Body = TimeOnlineSkipsZero };
+        yield return new TestCase { Name = "time online clips sessions to the range", Body = TimeOnlineClipsRange };
+        yield return new TestCase
+        {
+            Name = "time online combines characters by player id", Body = TimeOnlineByPlayerId
+        };
+        yield return new TestCase { Name = "time online combines players by name", Body = TimeOnlineByName };
+        yield return new TestCase
+        {
+            Name = "time online separates name+id combos", Body = TimeOnlineByNameAndPlayerId
+        };
+        yield return new TestCase { Name = "deaths combine characters by player id", Body = DeathsByPlayerId };
+        yield return new TestCase { Name = "today leaderboard sends today's deaths", Body = TodayLeaderboard };
+        yield return new TestCase { Name = "time online leaderboard is sent", Body = TimeOnlineLeaderboard };
         yield return new TestCase
         {
             Name = "leaderboard 5 timer sends leaderboard 5", Body = Leaderboard5Timer, Slow = true
@@ -667,5 +686,312 @@ internal static class Suite
         foreach (object y in Check.Eventually(() => Capture.Count(text) == 1, () => "flushed message not captured",
                      2f))
             yield return y;
+    }
+
+    // ---- Leaderboard date ranges -----------------------------------------------------------------
+
+    private static string Range(TimeRange range, DateTime today)
+    {
+        Tuple<DateTime, DateTime> r = DateHelper.StartEndDatesForTimeRange(range, today);
+        return $"{r.Item1:yyyy-MM-dd}..{r.Item2:yyyy-MM-dd}";
+    }
+
+    private static IEnumerator WeekRanges()
+    {
+        // 2024-03-04 is a Monday, 2024-03-10 a Sunday.
+        for (int d = 4; d <= 10; d++)
+        {
+            DateTime day = new(2024, 3, d, 15, 30, 0);
+            Check.Equal("2024-03-04..2024-03-10", Range(TimeRange.WeekMondayToSunday, day),
+                $"Monday-Sunday week on {day:dddd}");
+            string sundayWeek = d == 10 ? "2024-03-10..2024-03-16" : "2024-03-03..2024-03-09";
+            Check.Equal(sundayWeek, Range(TimeRange.WeekSundayToSaturday, day), $"Sunday-Saturday week on {day:dddd}");
+        }
+
+        yield break;
+    }
+
+    private static IEnumerator DayRanges()
+    {
+        DateTime day = new(2024, 3, 1, 0, 30, 0);
+        Check.Equal("2024-03-01..2024-03-01", Range(TimeRange.Today, day), "today");
+        Check.Equal("2024-02-29..2024-02-29", Range(TimeRange.Yesterday, day), "yesterday (leap year)");
+        Check.Equal("2024-02-24..2024-03-01", Range(TimeRange.PastWeek, day), "past 7 days, including today");
+        yield break;
+    }
+
+    // ---- Ranking order and formatting ------------------------------------------------------------
+
+    private static void SeedDeaths(string name, string host, int deaths, DateTime when)
+    {
+        Db.Instance.InsertSimpleStatRecordAt(Categories.Join, name, host, new DateTime(2019, 1, 1));
+        for (int i = 0; i < deaths; i++)
+        {
+            Db.Instance.InsertSimpleStatRecordAt(Categories.Death, name, host, when);
+        }
+    }
+
+    private static string Order(List<CountResult> results, params string[] names)
+    {
+        return string.Join(",", results.Where(r => names.Contains(r.Name)).Select(r => r.Name).ToArray());
+    }
+
+    private static IEnumerator TiesInNameOrder()
+    {
+        string a = "TieA" + Run, b = "TieB" + Run, c = "TieC" + Run;
+        // Inserted out of order on purpose.
+        foreach (string n in new[] { c, a, b })
+        {
+            SeedDeaths(n, "Steam_" + Math.Abs(n.GetHashCode()), 4, new DateTime(2019, 1, 2));
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            Check.Equal($"{a},{b},{c}", Order(Helper.TopNResultForCategory(Categories.Death, 1000), a, b, c),
+                "tied players (descending)");
+            Check.Equal($"{a},{b},{c}", Order(Helper.BottomNResultForCategory(Categories.Death, 1000), a, b, c),
+                "tied players (ascending)");
+        }
+
+        yield break;
+    }
+
+    private static IEnumerator AscendingOrder()
+    {
+        string few = "AscFew" + Run, mid = "AscMid" + Run, lots = "AscLots" + Run;
+        SeedDeaths(lots, "Steam_" + Math.Abs(lots.GetHashCode()), 3, new DateTime(2019, 1, 2));
+        SeedDeaths(few, "Steam_" + Math.Abs(few.GetHashCode()), 1, new DateTime(2019, 1, 2));
+        SeedDeaths(mid, "Steam_" + Math.Abs(mid.GetHashCode()), 2, new DateTime(2019, 1, 2));
+        Check.Equal($"{few},{mid},{lots}",
+            Order(Helper.BottomNResultForCategory(Categories.Death, 1000), few, mid, lots), "ascending order");
+        Check.Equal($"{lots},{mid},{few}",
+            Order(Helper.TopNResultForCategory(Categories.Death, 1000), few, mid, lots), "descending order");
+        yield break;
+    }
+
+    private static IEnumerator RankingFitsField()
+    {
+        // The config allows up to 48 rankings. Long names with long durations went over Discord's 1024 limit.
+        List<CountResult> rows = new();
+        for (int i = 0; i < 48; i++)
+        {
+            rows.Add(new CountResult("AVeryLongCharacterName" + i, 3 * 86400 + 23 * 3600 + 59 * 60 + 59));
+        }
+
+        foreach (string text in new[]
+                 {
+                     LeaderbBoard.RankedSecondsToString(rows), LeaderbBoard.RankedCountResultToString(rows)
+                 })
+        {
+            Check.True(text.Length <= 1024, $"ranking text is {text.Length} characters, Discord allows 1024");
+            Check.True(text.StartsWith("1: AVeryLongCharacterName0: "), "first ranking missing: " + text);
+            Check.True(text.EndsWith(Environment.NewLine), "last line was cut off mid-line");
+        }
+
+        List<CountResult> three = rows.GetRange(0, 3);
+        Check.Equal(3, LeaderbBoard.RankedCountResultToString(three).Split('\n').Length - 1, "short list lines");
+        yield break;
+    }
+
+    // ---- Time online -----------------------------------------------------------------------------
+
+    private static void Session(string name, string host, DateTime join, DateTime leave)
+    {
+        Db.Instance.InsertSimpleStatRecordAt(Categories.Join, name, host, join);
+        Db.Instance.InsertSimpleStatRecordAt(Categories.Leave, name, host, leave);
+    }
+
+    private static IEnumerator TimeOnlineSkipsZero()
+    {
+        string name = "NoTime" + Run;
+        string host = "Steam_" + Math.Abs(name.GetHashCode());
+        Db.Instance.InsertSimpleStatRecordAt(Categories.Join, name, host, new DateTime(2021, 6, 1, 10, 0, 0));
+
+        Check.Equal(-1, Db.Lookup(Db.Instance.CountAllRecordsGrouped(Categories.TimeOnline), name),
+            "player who never left (0 seconds) in all-time results");
+
+        string other = "Tim2" + Run;
+        string otherHost = "Steam_" + Math.Abs(other.GetHashCode());
+        Session(other, otherHost, new DateTime(2021, 6, 1, 10, 0, 0), new DateTime(2021, 6, 1, 11, 0, 0));
+        Check.Equal(-1, Db.Lookup(Db.Instance.CountRecordsBetweenDatesGrouped(Categories.TimeOnline,
+                new DateTime(2022, 1, 1), new DateTime(2022, 1, 1)), other),
+            "player with no sessions in the range");
+        yield break;
+    }
+
+    private static IEnumerator TimeOnlineClipsRange()
+    {
+        string name = "Night" + Run;
+        string host = "Steam_" + Math.Abs(name.GetHashCode());
+        // 23:00 on the 1st to 01:00 on the 2nd.
+        Session(name, host, new DateTime(2021, 7, 1, 23, 0, 0), new DateTime(2021, 7, 2, 1, 0, 0));
+
+        Check.Equal(3600, Db.Lookup(Db.Instance.CountRecordsBetweenDatesGrouped(Categories.TimeOnline,
+            new DateTime(2021, 7, 1), new DateTime(2021, 7, 1)), name), "seconds on the 1st");
+        Check.Equal(3600, Db.Lookup(Db.Instance.CountRecordsBetweenDatesGrouped(Categories.TimeOnline,
+            new DateTime(2021, 7, 2), new DateTime(2021, 7, 2)), name), "seconds on the 2nd");
+        Check.Equal(7200, Db.Lookup(Db.Instance.CountRecordsBetweenDatesGrouped(Categories.TimeOnline,
+            new DateTime(2021, 7, 1), new DateTime(2021, 7, 2)), name), "seconds over both days");
+        yield break;
+    }
+
+    /// <summary>Runs <paramref name="body" /> with the "How to discern players" setting changed.</summary>
+    private static void WithDiscernment(MainConfig.RetrievalDiscernmentMethods method, Action body)
+    {
+        object main = AccessTools.Field(typeof(PluginConfig), "mainConfig").GetValue(DiscordConnectorPlugin.StaticConfig);
+        BepInEx.Configuration.ConfigEntry<MainConfig.RetrievalDiscernmentMethods> entry =
+            (BepInEx.Configuration.ConfigEntry<MainConfig.RetrievalDiscernmentMethods>)AccessTools
+                .Field(typeof(MainConfig), "_playerLookupPreference").GetValue(main);
+        MainConfig.RetrievalDiscernmentMethods old = entry.Value;
+        entry.Value = method;
+        try
+        {
+            body();
+        }
+        finally
+        {
+            entry.Value = old;
+        }
+    }
+
+    private static IEnumerator TimeOnlineByPlayerId()
+    {
+        string host = "Steam_Alt" + Run;
+        string first = "AltOne" + Run, second = "AltTwo" + Run;
+        Session(first, host, new DateTime(2021, 8, 1, 10, 0, 0), new DateTime(2021, 8, 1, 11, 0, 0));
+        Session(second, host, new DateTime(2021, 8, 2, 10, 0, 0), new DateTime(2021, 8, 2, 11, 0, 0));
+
+        WithDiscernment(MainConfig.RetrievalDiscernmentMethods.PlayerId, () =>
+        {
+            List<CountResult> results = Db.Instance.CountAllRecordsGrouped(Categories.TimeOnline);
+            List<CountResult> mine = results.Where(r => r.Name == first || r.Name == second).ToList();
+            Check.Equal(1, mine.Count, "rows for one player with two characters: " + Db.Describe(mine));
+            Check.Equal(7200, mine[0].Count, "seconds for both characters together");
+        });
+        yield break;
+    }
+
+    private static IEnumerator TimeOnlineByName()
+    {
+        string name = "Twin" + Run;
+        Session(name, "Steam_TwinA" + Run, new DateTime(2021, 9, 1, 10, 0, 0), new DateTime(2021, 9, 1, 11, 0, 0));
+        Session(name, "Steam_TwinB" + Run, new DateTime(2021, 9, 1, 12, 0, 0), new DateTime(2021, 9, 1, 12, 30, 0));
+
+        WithDiscernment(MainConfig.RetrievalDiscernmentMethods.Name, () =>
+        {
+            List<CountResult> mine = Db.Instance.CountAllRecordsGrouped(Categories.TimeOnline)
+                .Where(r => r.Name == name).ToList();
+            Check.Equal(1, mine.Count, "rows for two players sharing a name: " + Db.Describe(mine));
+            Check.Equal(5400, mine[0].Count, "seconds for both players together");
+        });
+        yield break;
+    }
+
+    private static IEnumerator TimeOnlineByNameAndPlayerId()
+    {
+        string name = "Combo" + Run;
+        Session(name, "Steam_ComboA" + Run, new DateTime(2021, 10, 1, 10, 0, 0), new DateTime(2021, 10, 1, 11, 0, 0));
+        Session(name, "Steam_ComboB" + Run, new DateTime(2021, 10, 1, 12, 0, 0),
+            new DateTime(2021, 10, 1, 12, 30, 0));
+
+        WithDiscernment(MainConfig.RetrievalDiscernmentMethods.NameAndPlayerId, () =>
+        {
+            List<int> counts = Db.Instance.CountAllRecordsGrouped(Categories.TimeOnline)
+                .Where(r => r.Name == name).Select(r => r.Count).OrderBy(c => c).ToList();
+            Check.Equal("1800,3600", string.Join(",", counts.Select(c => c.ToString()).ToArray()),
+                "separate rows for the two players");
+        });
+        yield break;
+    }
+
+    private static IEnumerator DeathsByPlayerId()
+    {
+        string host = "Steam_DAlt" + Run;
+        string first = "DAltOne" + Run, second = "DAltTwo" + Run;
+        SeedDeaths(first, host, 2, new DateTime(2019, 1, 2));
+        SeedDeaths(second, host, 3, new DateTime(2019, 1, 2));
+
+        WithDiscernment(MainConfig.RetrievalDiscernmentMethods.PlayerId, () =>
+        {
+            List<CountResult> mine = Db.Instance.CountAllRecordsGrouped(Categories.Death)
+                .Where(r => r.Name == first || r.Name == second).ToList();
+            Check.Equal(1, mine.Count, "rows for one player with two characters: " + Db.Describe(mine));
+            Check.Equal(5, mine[0].Count, "deaths for both characters together");
+        });
+        WithDiscernment(MainConfig.RetrievalDiscernmentMethods.Name, () =>
+        {
+            List<CountResult> mine = Db.Instance.CountAllRecordsGrouped(Categories.Death)
+                .Where(r => r.Name == first || r.Name == second).ToList();
+            Check.Equal(2, mine.Count, "rows by character name: " + Db.Describe(mine));
+        });
+        yield break;
+    }
+
+    // ---- Leaderboards with other settings --------------------------------------------------------
+
+    /// <summary>Runs leaderboard 2 once with the given settings, then puts its settings back.</summary>
+    private static void SendLeaderboard2(Action<LeaderBoardConfigReference> configure)
+    {
+        LeaderBoardConfigReference lb = DiscordConnectorPlugin.StaticConfig.LeaderBoards[1];
+        LeaderBoardConfigReference saved = (LeaderBoardConfigReference)AccessTools
+            .Method(typeof(object), "MemberwiseClone").Invoke(lb, null);
+        try
+        {
+            lb.Enabled = true;
+            lb.Deaths = lb.Sessions = lb.Shouts = lb.Pings = lb.TimeOnline = false;
+            configure(lb);
+            new Composer(1).SendLeaderBoard();
+        }
+        finally
+        {
+            foreach (FieldInfo f in typeof(LeaderBoardConfigReference).GetFields())
+            {
+                f.SetValue(lb, f.GetValue(saved));
+            }
+        }
+    }
+
+    private static IEnumerator TodayLeaderboard()
+    {
+        string today = "TodayDie" + Run, old = "OldDie" + Run;
+        SeedDeaths(today, "Steam_" + Math.Abs(today.GetHashCode()), 1, DateTime.Now);
+        SeedDeaths(old, "Steam_" + Math.Abs(old.GetHashCode()), 40, DateTime.Now.AddDays(-3));
+
+        string heading = "DCTEST-TODAY" + Run;
+        SendLeaderboard2(lb =>
+        {
+            lb.DisplayedHeading = heading;
+            lb.TimeRange = TimeRange.Today;
+            lb.Deaths = true;
+            lb.NumberListings = 16;
+        });
+
+        foreach (object y in Check.Eventually(() => Capture.Count(heading) >= 1, () => "today leaderboard not sent"))
+            yield return y;
+        string sent = Capture.Search(heading);
+        Check.True(sent.Contains(today), "today's death missing: " + sent);
+        Check.True(!sent.Contains(old), "a death from 3 days ago is on today's board: " + sent);
+    }
+
+    private static IEnumerator TimeOnlineLeaderboard()
+    {
+        string name = "LbTime" + Run;
+        Session(name, "Steam_" + Math.Abs(name.GetHashCode()), DateTime.Now.AddHours(-2), DateTime.Now.AddHours(-1));
+
+        string heading = "DCTEST-TIME" + Run;
+        SendLeaderboard2(lb =>
+        {
+            lb.DisplayedHeading = heading;
+            lb.TimeRange = TimeRange.PastWeek;
+            lb.TimeOnline = true;
+            lb.NumberListings = 16;
+        });
+
+        foreach (object y in Check.Eventually(() => Capture.Count(heading) >= 1,
+                     () => "time online leaderboard not sent"))
+            yield return y;
+        string sent = Capture.Search(heading);
+        Check.True(sent.Contains(name + ": 1 hour"), "expected '" + name + ": 1 hour' in: " + sent);
+        Check.True(!sent.Contains("0 seconds"), "board lists players with no time online: " + sent);
     }
 }
