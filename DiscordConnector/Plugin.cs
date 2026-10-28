@@ -112,7 +112,7 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
         if (StaticConfig.LeaderBoards[4].Enabled)
         {
             System.Timers.Timer leaderBoard5Timer = new();
-            leaderBoard5Timer.Elapsed += StaticLeaderBoards.LeaderBoard4.SendLeaderBoardOnTimer;
+            leaderBoard5Timer.Elapsed += StaticLeaderBoards.LeaderBoard5.SendLeaderBoardOnTimer;
             // Interval is learned from config file in minutes
             leaderBoard5Timer.Interval = 60 * 1000 * StaticConfig.LeaderBoards[4].PeriodInMinutes;
             StaticLogger.LogInfo(

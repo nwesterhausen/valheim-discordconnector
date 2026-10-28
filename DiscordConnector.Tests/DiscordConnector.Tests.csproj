@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!--
+        In-server test plugin. Load it next to DiscordConnector on a dedicated server and
+        start the server with DCTEST_RUN=1. See tests/README.md.
+    -->
+    <PropertyGroup>
+        <OutputPath>bin\$(Configuration)\</OutputPath>
+        <TargetFramework>net481</TargetFramework>
+        <AssemblyName>DiscordConnector.Tests</AssemblyName>
+        <RootNamespace>DiscordConnector.Tests</RootNamespace>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
+
+    <Import Project="..\Environment.props" Condition="Exists('..\Environment.props')" />
+    <Import Project="..\DoPrebuild.props" Condition="Exists('..\DoPrebuild.props')" />
+    <Import Project="..\DeterminePaths.targets" Condition="Exists('..\DeterminePaths.targets')" />
+
+    <ItemGroup>
+        <Reference Include="0Harmony">
+            <HintPath>$(BepInExPath)\core\0Harmony.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="assembly_valheim">
+            <HintPath>$(PublicizedAssembliesPath)\assembly_valheim_publicized.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="assembly_utils">
+            <HintPath>$(PublicizedAssembliesPath)\assembly_utils_publicized.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="BepInEx">
+            <HintPath>$(BepInExPath)\core\BepInEx.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine">
+            <HintPath>$(CorlibPath)\UnityEngine.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>$(CorlibPath)\UnityEngine.CoreModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="System.Net.Http" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="JotunnLib" Version="2.29.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Build the mod first, then compile against its merged output (its internals are visible to this assembly). -->
+        <ProjectReference Include="..\DiscordConnector\DiscordConnector.csproj" ReferenceOutputAssembly="false" />
+        <Reference Include="DiscordConnector">
+            <HintPath>..\DiscordConnector\bin\$(Configuration)\net481\DiscordConnector.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+</Project>

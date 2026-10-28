@@ -17,6 +17,11 @@ internal class Composer : Base
         leaderBoardIdx = leaderBoard;
     }
 
+    internal bool IsIndexValid()
+    {
+        return leaderBoardIdx >= 0 && leaderBoardIdx < DiscordConnectorPlugin.StaticConfig.LeaderBoards.Length;
+    }
+
     public override void SendLeaderBoard()
     {
         try
@@ -26,7 +31,7 @@ internal class Composer : Base
                 DiscordConnectorPlugin.StaticLogger.LogInfo($"Starting to build leaderboard {leaderBoardIdx}");
             }
 
-            if (leaderBoardIdx > DiscordConnectorPlugin.StaticConfig.LeaderBoards.Length || leaderBoardIdx < 0)
+            if (!IsIndexValid())
             {
                 DiscordConnectorPlugin.StaticLogger.LogWarning(
                     $"Tried to get leader board out of index bounds (index:{leaderBoardIdx}, length:{DiscordConnectorPlugin.StaticConfig.LeaderBoards.Length})");

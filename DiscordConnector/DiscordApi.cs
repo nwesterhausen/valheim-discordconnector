@@ -533,6 +533,8 @@ internal class DiscordApi
     /// </summary>
     /// <param name="webhook">The webhook to use for the request</param>
     /// <param name="byteArray">The payload as a byte array</param>
+    private static readonly HttpClient s_httpClient = new() { Timeout = TimeSpan.FromSeconds(30) };
+
     private static async void DispatchRequest(WebhookEntry webhook, string serializedJson)
     {
         if (string.IsNullOrEmpty(webhook.Url))
@@ -546,13 +548,13 @@ internal class DiscordApi
         DiscordConnectorPlugin.StaticLogger.LogDebug(
             $"DispatchRequest.{requestId}: sending {serializedJson} to Discord");
 
-        // Create a web request to send the payload to discord
-        HttpClient request = new();
-        StringContent content = new(serializedJson, Encoding.UTF8, "application/json");
+        // One shared client; disposing each response returns its connection to the pool. Creating a client per
+        // request and never disposing the response held connections open until garbage collection.
+        using StringContent content = new(serializedJson, Encoding.UTF8, "application/json");
 
         try
         {
-            HttpResponseMessage response = await request.PostAsync(webhook.Url, content);
+            using HttpResponseMessage response = await s_httpClient.PostAsync(webhook.Url, content);
             DiscordConnectorPlugin.StaticLogger.LogDebug(
                                 $"DispatchRequest.{requestId}: Response Code: {response.StatusCode}");
 
