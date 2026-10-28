@@ -1,6 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+
+using HarmonyLib;
 
 using DiscordConnector.Config;
 using DiscordConnector.Leaderboards;
@@ -44,6 +48,19 @@ internal static class Suite
         yield return new TestCase { Name = "time online adds up sessions", Body = TimeOnline };
         yield return new TestCase { Name = "leaderboard 1 ranks deaths (all time)", Body = LeaderboardAllTime };
         yield return new TestCase { Name = "leaderboard with bad index does not crash", Body = LeaderboardBadIndex };
+        yield return new TestCase { Name = "chat relay hooks are patched", Body = ChatRelayHooksPatched };
+        yield return new TestCase { Name = "shout copies to several players count once", Body = ShoutCopiesCountOnce };
+        yield return new TestCase { Name = "arrival shout is not reported", Body = ArrivalShoutIgnored };
+        yield return new TestCase { Name = "translated arrival shout is not reported", Body = TranslatedArrivalIgnored };
+        yield return new TestCase { Name = "relayed ping counts once", Body = RelayedPingCountsOnce };
+        yield return new TestCase { Name = "muted player's shout is not reported", Body = MutedPlayerIgnored };
+        yield return new TestCase { Name = "webhook event names parse loosely", Body = WebhookEventParsing };
+        yield return new TestCase { Name = "positions read back from database", Body = PositionsReadBack };
+        yield return new TestCase { Name = "names with trailing spaces match", Body = TrailingSpaceName };
+        yield return new TestCase { Name = "active players board is sent", Body = ActivePlayersSent };
+        yield return new TestCase { Name = "no host player on dedicated server", Body = NoHostOnDedicated };
+        yield return new TestCase { Name = "database checkpoint keeps records", Body = DatabaseCheckpoint };
+        yield return new TestCase { Name = "flush waits for queued webhooks", Body = FlushWaits };
         yield return new TestCase
         {
             Name = "leaderboard 5 timer sends leaderboard 5", Body = Leaderboard5Timer, Slow = true
@@ -406,6 +423,249 @@ internal static class Suite
         // run-tests.ps1 enables leaderboard 5 with a 1 minute period and heading DCTEST-LB5, and disables 4.
         foreach (object y in Check.Eventually(() => Capture.Count("DCTEST-LB5") >= 1,
                      () => "leaderboard 5 never sent (timer wired to the wrong leaderboard?)", 90f))
+            yield return y;
+    }
+
+    // ---- Chat relay (shouts/pings seen as they pass through the server, issues #338, #319) ---------
+
+    /// <summary>A pretend player the server knows about (in ZNet's peer list) but who hasn't spawned yet.</summary>
+    private static ZNetPeer AddPeer(string name)
+    {
+        ZNetPeer p = Player(name);
+        ZNet.instance.m_peers.Add(p);
+        return p;
+    }
+
+    /// <summary>
+    ///     Builds the "ChatMessage" routed RPC a client sends, laid out like Chat.RPC_ChatMessage expects:
+    ///     position, talker type, UserInfo (name, platform id), text.
+    /// </summary>
+    private static ZRoutedRpc.RoutedRPCData ChatRpc(ZNetPeer from, Talker.Type type, string text, long target,
+        long messageId)
+    {
+        ZPackage pkg = new();
+        pkg.Write(new Vector3(10, 20, 30));
+        pkg.Write((int)type);
+        pkg.Write(from.m_playerName);
+        pkg.Write(from.m_socket.GetHostName());
+        pkg.Write(text);
+        pkg.SetPos(0);
+        return new ZRoutedRpc.RoutedRPCData
+        {
+            m_msgID = messageId,
+            m_senderPeerID = from.m_uid,
+            m_targetPeerID = target,
+            m_methodHash = "ChatMessage".GetStableHashCode(),
+            m_parameters = pkg
+        };
+    }
+
+    private static long s_msgId = DateTime.Now.Ticks;
+
+    private static IEnumerator ChatRelayHooksPatched()
+    {
+        string owner = DiscordConnectorPlugin.ModGuid;
+        foreach (string method in new[] { "HandleRoutedRPC", "RouteRPC" })
+        {
+            MethodInfo target = AccessTools.Method(typeof(ZRoutedRpc), method);
+            HarmonyLib.Patches info = Harmony.GetPatchInfo(target);
+            Check.True(info != null && info.Prefixes.Any(p => p.owner == owner),
+                $"ZRoutedRpc.{method} has no DiscordConnector prefix, so shouts are never seen");
+        }
+
+        yield break;
+    }
+
+    private static IEnumerator ShoutCopiesCountOnce()
+    {
+        ZNetPeer p = AddPeer("Hal");
+        string text = "hello all " + Run;
+        try
+        {
+            // The sender's client sends one copy per other player; one copy can pass both server hooks.
+            long id1 = ++s_msgId, id2 = ++s_msgId;
+            Patches.ChatRelay.Observe(ChatRpc(p, Talker.Type.Shout, text, 111, id1));
+            Patches.ChatRelay.Observe(ChatRpc(p, Talker.Type.Shout, text, 111, id1));
+            Patches.ChatRelay.Observe(ChatRpc(p, Talker.Type.Shout, text, 222, id2));
+            Check.Equal(1, Db.Count(Categories.Shout, p.m_playerName), "shouts after three copies of one shout");
+
+            // Saying the same thing again (a new copy to a player who already got one) is a second shout.
+            Patches.ChatRelay.Observe(ChatRpc(p, Talker.Type.Shout, text, 111, ++s_msgId));
+            Check.Equal(2, Db.Count(Categories.Shout, p.m_playerName), "shouts after repeating it");
+        }
+        finally
+        {
+            Drop(p);
+        }
+
+        foreach (object y in Check.Eventually(() => Capture.Count(text) == 2,
+                     () => $"expected 2 shout webhooks, got {Capture.Count(text)}"))
+            yield return y;
+    }
+
+    private static IEnumerator ArrivalShoutIgnored()
+    {
+        ZNetPeer p = Connect("Ida");
+        try
+        {
+            Patches.ChatRelay.Observe(ChatRpc(p, Talker.Type.Shout, Patches.ChatPatches.ArrivalShout, 111,
+                ++s_msgId));
+            Check.Equal(0, Db.Count(Categories.Shout, p.m_playerName), "shouts after the arrival shout");
+
+            // A real shout afterwards still counts.
+            Patches.ChatRelay.Observe(ChatRpc(p, Talker.Type.Shout, "after arrival " + Run, 111, ++s_msgId));
+            Check.Equal(1, Db.Count(Categories.Shout, p.m_playerName), "shouts after a real shout");
+        }
+        finally
+        {
+            Drop(p);
+        }
+
+        yield break;
+    }
+
+    /// <summary>The arrival shout is translated by the client, so it's recognised by timing, not text.</summary>
+    private static IEnumerator TranslatedArrivalIgnored()
+    {
+        ZNetPeer p = Connect("Jon");
+        try
+        {
+            Patches.ChatRelay.Observe(ChatRpc(p, Talker.Type.Shout, "Ich bin angekommen!", 111, ++s_msgId));
+            Check.Equal(0, Db.Count(Categories.Shout, p.m_playerName), "shouts after a German arrival shout");
+        }
+        finally
+        {
+            Drop(p);
+        }
+
+        yield break;
+    }
+
+    private static IEnumerator RelayedPingCountsOnce()
+    {
+        ZNetPeer p = AddPeer("Kim");
+        try
+        {
+            // Pings are broadcast (target Everybody); the server both handles and routes the same message.
+            long id = ++s_msgId;
+            Patches.ChatRelay.Observe(ChatRpc(p, Talker.Type.Ping, "", ZRoutedRpc.Everybody, id));
+            Patches.ChatRelay.Observe(ChatRpc(p, Talker.Type.Ping, "", ZRoutedRpc.Everybody, id));
+            Check.Equal(1, Db.Count(Categories.Ping, p.m_playerName), "pings after one broadcast ping");
+        }
+        finally
+        {
+            Drop(p);
+        }
+
+        yield break;
+    }
+
+    private static IEnumerator MutedPlayerIgnored()
+    {
+        ZNetPeer p = AddPeer("Mute");
+        List<string> muted = DiscordConnectorPlugin.StaticConfig.MutedPlayers;
+        muted.Add(p.m_playerName);
+        try
+        {
+            Patches.ChatRelay.Observe(ChatRpc(p, Talker.Type.Shout, "muted " + Run, 111, ++s_msgId));
+            Check.Equal(0, Db.Count(Categories.Shout, p.m_playerName), "shouts from a muted player");
+        }
+        finally
+        {
+            muted.Remove(p.m_playerName);
+            Drop(p);
+        }
+
+        yield break;
+    }
+
+    // ---- Config parsing --------------------------------------------------------------------------
+
+    private static string Names(List<Webhook.Event> events)
+    {
+        return string.Join(",", events.Select(e => e.ToString()).ToArray());
+    }
+
+    private static IEnumerator WebhookEventParsing()
+    {
+        Check.Equal(Webhook.Event.PlayerDeath, Webhook.StringToEvent("playerdeath"), "lower case");
+        Check.Equal(Webhook.Event.PlayerDeath, Webhook.StringToEvent(" PLAYERDEATH "), "upper case with spaces");
+        Check.Equal(Webhook.Event.Other, Webhook.StringToEvent("other"), "'other' (issue #382)");
+        Check.Equal(Webhook.Event.None, Webhook.StringToEvent("notAnEvent"), "unknown name");
+
+        Check.Equal("PlayerJoin,PlayerLeave,PlayerDeath",
+            Names(Webhook.StringToEventList("playerJoin, playerLeave;playerDeath playerJoin")),
+            "mixed separators, duplicates removed");
+        Check.Equal("PlayerJoin", Names(Webhook.StringToEventList("playerJoin;typo;;")),
+            "unknown and empty names dropped");
+        Check.Equal("ALL", Names(Webhook.StringToEventList("all")), "'all' in lower case");
+        yield break;
+    }
+
+    // ---- Database --------------------------------------------------------------------------------
+
+    private static IEnumerator PositionsReadBack()
+    {
+        string name = "Pos" + Run;
+        string host = "Steam_" + Math.Abs(name.GetHashCode());
+        Db.Instance.InsertSimpleStatRecord(Categories.Ping, name, host, new Vector3(12.5f, -3f, 400f));
+
+        List<SimpleStat> records = Db.Instance.RecordsFor(Categories.Ping, name);
+        Check.Equal(1, records.Count, "ping records");
+        Position pos = records[0].Pos;
+        Check.True(Math.Abs(pos.x - 12.5f) < 0.01f && Math.Abs(pos.y + 3f) < 0.01f && Math.Abs(pos.z - 400f) < 0.01f,
+            $"position read back as ({pos.x}, {pos.y}, {pos.z}), expected (12.5, -3, 400)");
+        yield break;
+    }
+
+    /// <summary>LiteDB trims stored strings, so lookups must trim too (issue #190).</summary>
+    private static IEnumerator TrailingSpaceName()
+    {
+        ZNetPeer p = FakePeer.Create("Spacey" + Run + "  ", "Steam_" + Math.Abs(("Spacey" + Run).GetHashCode()));
+        Handlers.Join(p);
+        Handlers.joinedPlayers.Remove(p.m_socket.GetHostName());
+        Check.Equal(1, Db.Count(Categories.Join, p.m_playerName), "joins looked up with the spaces");
+        Check.Equal(1, Db.Count(Categories.Join, p.m_playerName.Trim()), "joins looked up without the spaces");
+        yield break;
+    }
+
+    private static IEnumerator DatabaseCheckpoint()
+    {
+        string name = "Ckpt" + Run;
+        string host = "Steam_" + Math.Abs(name.GetHashCode());
+        Db.Instance.InsertSimpleStatRecord(Categories.Death, name, host);
+        Db.Instance.Checkpoint();
+        Check.Equal(1, Db.Count(Categories.Death, name), "deaths after checkpoint");
+        yield break;
+    }
+
+    // ---- Misc ------------------------------------------------------------------------------------
+
+    private static IEnumerator ActivePlayersSent()
+    {
+        ActivePlayersAnnouncement.SendActivePlayersBoard();
+        foreach (object y in Check.Eventually(() => Capture.Count("Active Players") >= 1,
+                     () => "active players announcement not sent"))
+            yield return y;
+        Check.True(Capture.Search("Active Players").Contains("Online now"),
+            "announcement is missing 'Online now': " + Capture.Search("Active Players"));
+    }
+
+    private static IEnumerator NoHostOnDedicated()
+    {
+        Check.True(!HostPlayer.IsListenServer, "dedicated server reported as having a host player");
+        Check.True(HostPlayer.Peer() == null, "dedicated server returned a host peer");
+        yield break;
+    }
+
+    private static IEnumerator FlushWaits()
+    {
+        string text = "flush " + Run;
+        DiscordApi.SendMessage(Webhook.Event.ServerSave, text);
+        Check.True(DiscordApi.Flush(TimeSpan.FromSeconds(10)), "Flush timed out");
+        // Flush returns once the HTTP request has completed, so the capture should already have it.
+        foreach (object y in Check.Eventually(() => Capture.Count(text) == 1, () => "flushed message not captured",
+                     2f))
             yield return y;
     }
 }

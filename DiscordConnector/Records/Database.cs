@@ -116,9 +116,46 @@ internal class Database
     /// </summary>
     public void Dispose()
     {
+        LiteDatabase? toClose = db;
+        if (toClose == null) return;
+        db = null!;
+        try
+        {
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Closing LiteDB connection");
+            toClose.Dispose();
+        }
+        catch (Exception e)
+        {
+            // Shutdown order isn't guaranteed (issue #326); never let closing the database throw.
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Error closing database: {e.Message}");
+        }
+    }
+
+    /// <summary>
+    ///     Copies pending changes from records-log.db into records.db. LiteDB only does this on a clean close or
+    ///     when the log gets large, so a server that is killed instead of stopped could lose a lot of stats
+    ///     (issue #214). Called after each world save.
+    /// </summary>
+    internal void Checkpoint()
+    {
         if (db == null) return;
-        DiscordConnectorPlugin.StaticLogger.LogDebug("Closing LiteDB connection");
-        db.Dispose();
+        try
+        {
+            db.Checkpoint();
+        }
+        catch (Exception e)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogWarning($"Database checkpoint failed: {e.Message}");
+        }
+    }
+
+    /// <summary>
+    ///     LiteDB trims whitespace from strings when it stores them, so a character called "Shadow " is stored as
+    ///     "Shadow". Lookups must trim too, or that player is "new" on every join (issue #190).
+    /// </summary>
+    internal static string NormalizeName(string? name)
+    {
+        return name?.Trim() ?? "";
     }
 
     /// <summary>
@@ -162,6 +199,8 @@ internal class Database
         {
             return;
         }
+
+        characterName = NormalizeName(characterName);
 
         try
         {
@@ -265,6 +304,29 @@ internal class Database
 
         collection.Insert(new SimpleStat(ObjectId.NewObjectId(), playerName, date, playerHostName,
             new Position(0, 0, 0)));
+    }
+
+    /// <summary>
+    ///     Test hook: read back every stored record of <paramref name="key" /> for one character name.
+    /// </summary>
+    internal List<SimpleStat> RecordsFor(string key, string playerName)
+    {
+        ILiteCollection<SimpleStat>? collection = key switch
+        {
+            Categories.Death => DeathCollection,
+            Categories.Join => JoinCollection,
+            Categories.Leave => LeaveCollection,
+            Categories.Ping => PingCollection,
+            Categories.Shout => ShoutCollection,
+            _ => null
+        };
+        if (collection == null)
+        {
+            return [];
+        }
+
+        playerName = NormalizeName(playerName);
+        return collection.Query().Where(x => x.Name.Equals(playerName)).ToList();
     }
 
     /// <summary>
@@ -397,6 +459,12 @@ internal class Database
     private List<CountResult> TimeOnlineRecordsGrouped(DateTime? startDate = null, DateTime? endDate = null,
         bool inclusiveStart = true, bool inclusiveEnd = true)
     {
+        if (PlayerToNameCollection == null || JoinCollection == null || LeaveCollection == null)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogWarning("Records database is not open; time online is empty.");
+            return [];
+        }
+
         PlayerToName[] players = PlayerToNameCollection.Query().ToArray();
         List<CountResult> results = new();
 
@@ -545,6 +613,7 @@ internal class Database
 
     internal int CountOfRecordsByName(ILiteCollection<SimpleStat> collection, string playerName)
     {
+        playerName = NormalizeName(playerName);
         try
         {
             return collection.Query()
@@ -572,6 +641,13 @@ internal class Database
     /// <returns>List of counts with CharacterName and Total (x) for the provided SimpleStat collection.</returns>
     internal List<CountResult> CountAllRecordsGrouped(ILiteCollection<SimpleStat> collection)
     {
+        if (collection == null)
+        {
+            // Database failed to open (the error is logged at startup). Used to throw NullReferenceException (#357).
+            DiscordConnectorPlugin.StaticLogger.LogWarning("Records database is not open; leaderboard data is empty.");
+            return [];
+        }
+
         if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods)
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug(
@@ -640,6 +716,12 @@ internal class Database
     internal List<CountResult> CountAllRecordsGroupsWhereDate(ILiteCollection<SimpleStat> collection,
         DateTime startDate, DateTime endDate, bool inclusiveStart = true, bool inclusiveEnd = true)
     {
+        if (collection == null)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogWarning("Records database is not open; leaderboard data is empty.");
+            return [];
+        }
+
         if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods)
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug(

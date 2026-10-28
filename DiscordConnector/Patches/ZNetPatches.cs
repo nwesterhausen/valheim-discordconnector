@@ -50,6 +50,9 @@ internal class ZNetPatches
                     MessageTransformer.FormatServerMessage(DiscordConnectorPlugin.StaticConfig.SaveMessage)
                 );
             }
+
+            // Save the stats along with the world, so a killed server loses as little as the world does.
+            DiscordConnectorPlugin.StaticDatabase.Checkpoint();
         }
     }
 
@@ -106,7 +109,13 @@ internal class ZNetPatches
                 return;
             }
 
-            ZNetPeer peer = ZNet.instance.GetPeer(data.m_senderPeerID);
+            ZNetPeer? peer = ZNet.instance.GetPeer(data.m_senderPeerID);
+            if (peer == null && data.m_senderPeerID == ZNet.GetUID())
+            {
+                // The host of a non-dedicated server has no peer of their own.
+                peer = HostPlayer.Peer();
+            }
+
             // Only count it when the RPC targets the sender's own character.
             if (peer == null || peer.m_characterID.IsNone() || data.m_targetZDO != peer.m_characterID)
             {

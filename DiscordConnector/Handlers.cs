@@ -48,6 +48,7 @@ internal static class Handlers
 
         DiscordConnectorPlugin.StaticLogger.LogDebug(
             $"Added player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) to joined player list.");
+        Patches.ChatRelay.ExpectArrival(peer);
 
         // Create basic message pre-formatting
         string preFormattedMessage = "";
