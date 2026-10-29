@@ -40,6 +40,7 @@ Fixes: stats and leaderboards
   and correctly splits sessions that cross midnight
 - Long leaderboards could go over Discord's 1024-character limit, which made Discord reject the whole post
 - Tied players are listed in name order instead of a different order on each post
+- The startup log showed leaderboard periods of a day or more without the days (3 days was logged as `00h:00m`)
 - Characters whose names end in a space were treated as new players on every join (#190)
 - Leaderboards and stats no longer crash when the stats database failed to open (#357)
 - Stats are saved with each world save, so less is lost if the server is killed (#214)
@@ -51,7 +52,7 @@ Fixes: stats and leaderboards
 
 Development
 
-- New in-server test suite (`tests/run-tests.ps1`) with a fake Discord webhook server: 45 tests covering joins,
+- New in-server test suite (`tests/run-tests.ps1`) with a fake Discord webhook server: 46 tests covering joins,
   deaths, shouts, webhooks, the stats database and leaderboards
 
 ## Version 3.1.3

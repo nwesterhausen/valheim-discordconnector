@@ -80,6 +80,7 @@ internal static class Suite
         yield return new TestCase { Name = "deaths combine characters by player id", Body = DeathsByPlayerId };
         yield return new TestCase { Name = "today leaderboard sends today's deaths", Body = TodayLeaderboard };
         yield return new TestCase { Name = "time online leaderboard is sent", Body = TimeOnlineLeaderboard };
+        yield return new TestCase { Name = "timer intervals of a day or more log in full", Body = IntervalText };
         yield return new TestCase
         {
             Name = "leaderboard 5 timer sends leaderboard 5", Body = Leaderboard5Timer, Slow = true
@@ -993,5 +994,16 @@ internal static class Suite
         string sent = Capture.Search(heading);
         Check.True(sent.Contains(name + ": 1 hour"), "expected '" + name + ": 1 hour' in: " + sent);
         Check.True(!sent.Contains("0 seconds"), "board lists players with no time online: " + sent);
+    }
+
+    private static IEnumerator IntervalText()
+    {
+        // The plugin logs each leaderboard timer's period at startup ("Enabling LeaderBoard.1 timer with interval ...").
+        Check.Equal("06h:00m", Strings.HumanReadableMs(360 * 60 * 1000), "6 hours");
+        Check.Equal("24h:00m", Strings.HumanReadableMs(1440 * 60 * 1000), "1 day");
+        Check.Equal("72h:00m", Strings.HumanReadableMs(4320 * 60 * 1000), "3 days");
+        Check.Equal("26h:01m:05s:250ms", Strings.HumanReadableMs(((26 * 60 + 1) * 60 + 5) * 1000 + 250),
+            "with seconds");
+        yield break;
     }
 }
