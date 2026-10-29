@@ -64,34 +64,32 @@ internal class Database
     /// </summary>
     public void Initialize()
     {
-        Task.Run(() =>
+        // Opened synchronously: it takes milliseconds, and opening in the background meant early events
+        // (and their records) were silently lost while the collections were still null.
+        try
         {
-            try
-            {
-                db = new LiteDatabase(DbPath);
-                DiscordConnectorPlugin.StaticLogger.LogDebug($"LiteDB Connection Established to {DbPath}");
+            db = new LiteDatabase(DbPath);
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"LiteDB Connection Established to {DbPath}");
 
-                // Grab references to the collections
-                DeathCollection = db.GetCollection<SimpleStat>("deaths");
-                JoinCollection = db.GetCollection<SimpleStat>("joins");
-                LeaveCollection = db.GetCollection<SimpleStat>("leaves");
-                ShoutCollection = db.GetCollection<SimpleStat>("shouts");
-                PingCollection = db.GetCollection<SimpleStat>("pings");
-                PlayerToNameCollection = db.GetCollection<PlayerToName>("player_name");
+            // Grab references to the collections
+            DeathCollection = db.GetCollection<SimpleStat>("deaths");
+            JoinCollection = db.GetCollection<SimpleStat>("joins");
+            LeaveCollection = db.GetCollection<SimpleStat>("leaves");
+            ShoutCollection = db.GetCollection<SimpleStat>("shouts");
+            PingCollection = db.GetCollection<SimpleStat>("pings");
+            PlayerToNameCollection = db.GetCollection<PlayerToName>("player_name");
 
-                // Ensure indices on the collections
-                Task.Run(() =>
-                {
-                    EnsureIndicesOnCollections();
-                    DiscordConnectorPlugin.StaticLogger.LogDebug("Created indices on database collections");
-                }).ConfigureAwait(false);
-            }
-            catch (IOException e)
-            {
-                DiscordConnectorPlugin.StaticLogger.LogError($"Unable to acquire un-shared access to {DbPath}");
-                DiscordConnectorPlugin.StaticLogger.LogDebug(e.ToString());
-            }
-        }).ConfigureAwait(false);
+            EnsureIndicesOnCollections();
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Created indices on database collections");
+        }
+        catch (Exception e)
+        {
+            // LiteDB reports a locked or corrupt file as LiteException, not IOException, so catch everything.
+            DiscordConnectorPlugin.StaticLogger.LogError(
+                $"Could not open the records database at {DbPath}. Player stats and leaderboards are disabled " +
+                $"until this is fixed. Is another server using the same config folder? Error: {e.Message}");
+            DiscordConnectorPlugin.StaticLogger.LogDebug(e.ToString());
+        }
     }
 
     /// <summary>
@@ -118,9 +116,46 @@ internal class Database
     /// </summary>
     public void Dispose()
     {
+        LiteDatabase? toClose = db;
+        if (toClose == null) return;
+        db = null!;
+        try
+        {
+            DiscordConnectorPlugin.StaticLogger.LogDebug("Closing LiteDB connection");
+            toClose.Dispose();
+        }
+        catch (Exception e)
+        {
+            // Shutdown order isn't guaranteed (issue #326); never let closing the database throw.
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Error closing database: {e.Message}");
+        }
+    }
+
+    /// <summary>
+    ///     Copies pending changes from records-log.db into records.db. LiteDB only does this on a clean close or
+    ///     when the log gets large, so a server that is killed instead of stopped could lose a lot of stats
+    ///     (issue #214). Called after each world save.
+    /// </summary>
+    internal void Checkpoint()
+    {
         if (db == null) return;
-        DiscordConnectorPlugin.StaticLogger.LogDebug("Closing LiteDB connection");
-        db.Dispose();
+        try
+        {
+            db.Checkpoint();
+        }
+        catch (Exception e)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogWarning($"Database checkpoint failed: {e.Message}");
+        }
+    }
+
+    /// <summary>
+    ///     LiteDB trims whitespace from strings when it stores them, so a character called "Shadow " is stored as
+    ///     "Shadow". Lookups must trim too, or that player is "new" on every join (issue #190).
+    /// </summary>
+    internal static string NormalizeName(string? name)
+    {
+        return name?.Trim() ?? "";
     }
 
     /// <summary>
@@ -133,15 +168,24 @@ internal class Database
     private void InsertSimpleStatRecord(ILiteCollection<SimpleStat> collection, string playerName,
         string playerHostName, Vector3 pos)
     {
-        Task.Run(() =>
+        // Synchronous so the record exists before the next "is this their first death?" check, and so failures
+        // are logged instead of vanishing inside a background task.
+        if (collection == null)
         {
-            SimpleStat newRecord = new(
-                playerName,
-                playerHostName,
-                pos.x, pos.y, pos.z
-            );
-            collection.Insert(newRecord);
-        }).ConfigureAwait(false);
+            DiscordConnectorPlugin.StaticLogger.LogWarning(
+                $"Records database is not open; not recording stat for {playerName}.");
+            return;
+        }
+
+        try
+        {
+            collection.Insert(new SimpleStat(playerName, playerHostName, pos.x, pos.y, pos.z));
+        }
+        catch (Exception e)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogError($"Failed to record stat for {playerName}: {e.Message}");
+            DiscordConnectorPlugin.StaticLogger.LogDebug(e.ToString());
+        }
     }
 
     /// <summary>
@@ -151,7 +195,14 @@ internal class Database
     /// <param name="playerHostName">Player's connection hostname</param>
     private void EnsurePlayerNameRecorded(string characterName, string playerHostName)
     {
-        Task.Run(() =>
+        if (PlayerToNameCollection == null)
+        {
+            return;
+        }
+
+        characterName = NormalizeName(characterName);
+
+        try
         {
             if (PlayerToNameCollection.Exists(x =>
                     x.PlayerId.Equals(playerHostName) && x.CharacterName.Equals(characterName)))
@@ -168,9 +219,12 @@ internal class Database
             }
 
             // Insert the player name record if it doesn't exist
-            PlayerToName newPlayer = new(characterName, playerHostName);
-            PlayerToNameCollection.Insert(newPlayer);
-        }).ConfigureAwait(false);
+            PlayerToNameCollection.Insert(new PlayerToName(characterName, playerHostName));
+        }
+        catch (Exception e)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogError($"Failed to record name for {playerHostName}: {e.Message}");
+        }
     }
 
     /// <summary>
@@ -216,6 +270,63 @@ internal class Database
                 DiscordConnectorPlugin.StaticLogger.LogDebug($"InsertSimpleStatRecord, invalid key '{key}'");
                 break;
         }
+    }
+
+    /// <summary>
+    ///     True once the database connection and collections are set up.
+    /// </summary>
+    internal bool IsReady => db != null && DeathCollection != null && PlayerToNameCollection != null;
+
+    /// <summary>
+    ///     Test hook: synchronously insert a record with an explicit date, so date-range queries can be tested.
+    /// </summary>
+    internal void InsertSimpleStatRecordAt(string key, string playerName, string playerHostName, DateTime date)
+    {
+        ILiteCollection<SimpleStat>? collection = key switch
+        {
+            Categories.Death => DeathCollection,
+            Categories.Join => JoinCollection,
+            Categories.Leave => LeaveCollection,
+            Categories.Ping => PingCollection,
+            Categories.Shout => ShoutCollection,
+            _ => null
+        };
+        if (collection == null)
+        {
+            throw new ArgumentException($"Invalid key '{key}'");
+        }
+
+        if (key == Categories.Join &&
+            !PlayerToNameCollection.Exists(x => x.PlayerId.Equals(playerHostName) && x.CharacterName.Equals(playerName)))
+        {
+            PlayerToNameCollection.Insert(new PlayerToName(playerName, playerHostName));
+        }
+
+        collection.Insert(new SimpleStat(ObjectId.NewObjectId(), playerName, date, playerHostName,
+            new Position(0, 0, 0)));
+    }
+
+    /// <summary>
+    ///     Test hook: read back every stored record of <paramref name="key" /> for one character name.
+    /// </summary>
+    internal List<SimpleStat> RecordsFor(string key, string playerName)
+    {
+        ILiteCollection<SimpleStat>? collection = key switch
+        {
+            Categories.Death => DeathCollection,
+            Categories.Join => JoinCollection,
+            Categories.Leave => LeaveCollection,
+            Categories.Ping => PingCollection,
+            Categories.Shout => ShoutCollection,
+            _ => null
+        };
+        if (collection == null)
+        {
+            return [];
+        }
+
+        playerName = NormalizeName(playerName);
+        return collection.Query().Where(x => x.Name.Equals(playerName)).ToList();
     }
 
     /// <summary>
@@ -298,11 +409,8 @@ internal class Database
                 $"GetLatestNameForCharacterId {playerHostName} result = {result}");
         }
 
-        Task.Run(() =>
-        {
-            // Insert the player name, since we didn't have it in the player_name database!
-            EnsurePlayerNameRecorded(result["Name"], playerHostName);
-        }).ConfigureAwait(false);
+        // Insert the player name, since we didn't have it in the player_name database!
+        EnsurePlayerNameRecorded(result["Name"], playerHostName);
 
         return result["Name"].AsString;
     }
@@ -351,8 +459,20 @@ internal class Database
     private List<CountResult> TimeOnlineRecordsGrouped(DateTime? startDate = null, DateTime? endDate = null,
         bool inclusiveStart = true, bool inclusiveEnd = true)
     {
-        PlayerToName[] players = PlayerToNameCollection.Query().ToArray();
+        if (PlayerToNameCollection == null || JoinCollection == null || LeaveCollection == null)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogWarning("Records database is not open; time online is empty.");
+            return [];
+        }
+
+        // One entry per (player, character), so a duplicated name row can't count the same sessions twice.
+        PlayerToName[] players = PlayerToNameCollection.Query().ToArray()
+            .GroupBy(p => p.PlayerId + "\n" + p.CharacterName)
+            .Select(g => g.First())
+            .ToArray();
         List<CountResult> results = new();
+        Dictionary<string, int> totals = new();
+        Dictionary<string, string> names = new();
 
         foreach (PlayerToName player in players)
         {
@@ -364,16 +484,12 @@ internal class Database
             ILiteQueryable<SimpleStat>? leavesQuery = LeaveCollection.Query().Where(x =>
                 x.PlayerId.Equals(player.PlayerId) && x.Name.Equals(player.CharacterName));
 
-            Func<int, bool> startCompare = inclusiveStart ? x => x >= 0 : x => x > 0;
-            Func<int, bool> endCompare = inclusiveEnd ? x => x <= 0 : x => x < 0;
-            if (startDate != null)
+            // With a date range, only the part of each session inside the range counts. (Filtering joins by date
+            // dropped sessions that started before the range, and counted all of a session that ran past its end.)
+            DateTime rangeFrom = DateTime.MinValue, rangeBefore = DateTime.MaxValue;
+            if (startDate != null && endDate != null)
             {
-                joinsQuery = joinsQuery.Where(x => startCompare(x.Date.CompareTo(startDate.GetValueOrDefault())));
-            }
-
-            if (endDate != null)
-            {
-                joinsQuery = joinsQuery.Where(x => endCompare(x.Date.CompareTo(endDate.GetValueOrDefault())));
+                (rangeFrom, rangeBefore) = DayRange(startDate.Value, endDate.Value, inclusiveStart, inclusiveEnd);
             }
 
             // Grab joins and leaves for player and sort them by time.
@@ -413,7 +529,13 @@ internal class Database
                     }
                     else
                     {
-                        onlineTime += joinLeaveTime.Time.Subtract(joinedTime ?? joinLeaveTime.Time);
+                        DateTime sessionStart = joinedTime.Value > rangeFrom ? joinedTime.Value : rangeFrom;
+                        DateTime sessionEnd = joinLeaveTime.Time < rangeBefore ? joinLeaveTime.Time : rangeBefore;
+                        if (sessionEnd > sessionStart)
+                        {
+                            onlineTime += sessionEnd - sessionStart;
+                        }
+
                         joinedTime = null;
                     }
                 }
@@ -422,8 +544,35 @@ internal class Database
             // Total time is then stored
             DiscordConnectorPlugin.StaticLogger.LogDebug($"{onlineTime} total online time.");
 
-            // Append to list
-            results.Add(new CountResult(player.CharacterName, (int)onlineTime.TotalSeconds));
+            // Players with no time in the range aren't ranked (they used to fill "today" boards with "0 seconds").
+            int seconds = (int)onlineTime.TotalSeconds;
+            if (seconds <= 0)
+            {
+                continue;
+            }
+
+            // Combine characters the same way the other statistics do ("How to discern players" setting). This
+            // used to always list each character separately.
+            string key = DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod switch
+            {
+                MainConfig.RetrievalDiscernmentMethods.PlayerId => player.PlayerId,
+                MainConfig.RetrievalDiscernmentMethods.Name => player.CharacterName,
+                _ => player.PlayerId + "\n" + player.CharacterName
+            };
+            totals.TryGetValue(key, out int sofar);
+            totals[key] = sofar + seconds;
+            if (!names.ContainsKey(key))
+            {
+                names[key] = DiscordConnectorPlugin.StaticConfig.RecordRetrievalDiscernmentMethod ==
+                             MainConfig.RetrievalDiscernmentMethods.PlayerId
+                    ? GetLatestCharacterNameForPlayer(player.PlayerId)
+                    : player.CharacterName;
+            }
+        }
+
+        foreach (KeyValuePair<string, int> total in totals)
+        {
+            results.Add(new CountResult(names[total.Key], total.Value));
         }
 
         return results;
@@ -503,6 +652,7 @@ internal class Database
 
     internal int CountOfRecordsByName(ILiteCollection<SimpleStat> collection, string playerName)
     {
+        playerName = NormalizeName(playerName);
         try
         {
             return collection.Query()
@@ -530,6 +680,13 @@ internal class Database
     /// <returns>List of counts with CharacterName and Total (x) for the provided SimpleStat collection.</returns>
     internal List<CountResult> CountAllRecordsGrouped(ILiteCollection<SimpleStat> collection)
     {
+        if (collection == null)
+        {
+            // Database failed to open (the error is logged at startup). Used to throw NullReferenceException (#357).
+            DiscordConnectorPlugin.StaticLogger.LogWarning("Records database is not open; leaderboard data is empty.");
+            return [];
+        }
+
         if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods)
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug(
@@ -598,6 +755,12 @@ internal class Database
     internal List<CountResult> CountAllRecordsGroupsWhereDate(ILiteCollection<SimpleStat> collection,
         DateTime startDate, DateTime endDate, bool inclusiveStart = true, bool inclusiveEnd = true)
     {
+        if (collection == null)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogWarning("Records database is not open; leaderboard data is empty.");
+            return [];
+        }
+
         if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods)
         {
             DiscordConnectorPlugin.StaticLogger.LogDebug(
@@ -632,71 +795,16 @@ internal class Database
             SelectClause = "{Name: @Key, Count: Count(*)}";
         }
 
-        List<CountResult> result;
-        if (inclusiveStart && inclusiveEnd)
-        {
-            result = CountResult.ConvertFromBsonDocuments(
-                collection.Query()
-                    // Filter to dates inclusively
-                    .Where(x => x.Date.Year >= startDate.Date.Year
-                                && x.Date.Month >= startDate.Date.Month
-                                && x.Date.Day >= startDate.Date.Day
-                                && x.Date.Year <= endDate.Date.Year
-                                && x.Date.Month <= endDate.Date.Month
-                                && x.Date.Day <= endDate.Date.Day)
-                    .GroupBy(GroupByClause)
-                    .Select(SelectClause)
-                    .ToList()
-            );
-        }
-        else if (inclusiveEnd)
-        {
-            result = CountResult.ConvertFromBsonDocuments(
-                collection.Query()
-                    // Filter to dates: end date inclusively, start date exclusively
-                    .Where(x => x.Date.Year > startDate.Date.Year
-                                && x.Date.Month > startDate.Date.Month
-                                && x.Date.Day > startDate.Date.Day
-                                && x.Date.Year <= endDate.Date.Year
-                                && x.Date.Month <= endDate.Date.Month
-                                && x.Date.Day <= endDate.Date.Day)
-                    .GroupBy(GroupByClause)
-                    .Select(SelectClause)
-                    .ToList()
-            );
-        }
-        else if (inclusiveStart)
-        {
-            result = CountResult.ConvertFromBsonDocuments(
-                collection.Query()
-                    // Filter to dates: start date inclusively, end date exclusively
-                    .Where(x => x.Date.Year >= startDate.Date.Year
-                                && x.Date.Month >= startDate.Date.Month
-                                && x.Date.Day >= startDate.Date.Day
-                                && x.Date.Year < endDate.Date.Year
-                                && x.Date.Month < endDate.Date.Month
-                                && x.Date.Day < endDate.Date.Day)
-                    .GroupBy(GroupByClause)
-                    .Select(SelectClause)
-                    .ToList()
-            );
-        }
-        else
-        {
-            result = CountResult.ConvertFromBsonDocuments(
-                collection.Query()
-                    // Filter to dates exclusively
-                    .Where(x => x.Date.Year > startDate.Date.Year
-                                && x.Date.Month > startDate.Date.Month
-                                && x.Date.Day > startDate.Date.Day
-                                && x.Date.Year < endDate.Date.Year
-                                && x.Date.Month < endDate.Date.Month
-                                && x.Date.Day < endDate.Date.Day)
-                    .GroupBy(GroupByClause)
-                    .Select(SelectClause)
-                    .ToList()
-            );
-        }
+        // Compare whole dates. The old code compared year, month and day separately, which dropped every record
+        // when a range crossed a month or year boundary (e.g. Apr 27 - May 3 excluded Apr 29 because 29 > 3).
+        (DateTime from, DateTime before) = DayRange(startDate, endDate, inclusiveStart, inclusiveEnd);
+        List<CountResult> result = CountResult.ConvertFromBsonDocuments(
+            collection.Query()
+                .Where(x => x.Date >= from && x.Date < before)
+                .GroupBy(GroupByClause)
+                .Select(SelectClause)
+                .ToList()
+        );
 
         if (DiscordConnectorPlugin.StaticConfig.DebugDatabaseMethods)
         {
@@ -705,6 +813,17 @@ internal class Database
         }
 
         return result;
+    }
+
+    /// <summary>
+    ///     Turns a day-based range into [from, before) timestamps. Inclusive means the whole day is included.
+    /// </summary>
+    internal static (DateTime from, DateTime before) DayRange(DateTime startDate, DateTime endDate,
+        bool inclusiveStart, bool inclusiveEnd)
+    {
+        DateTime from = inclusiveStart ? startDate.Date : startDate.Date.AddDays(1);
+        DateTime before = inclusiveEnd ? endDate.Date.AddDays(1) : endDate.Date;
+        return (from, before);
     }
 
     private struct JoinLeaveTime

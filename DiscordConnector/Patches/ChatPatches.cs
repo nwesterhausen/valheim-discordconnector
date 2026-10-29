@@ -47,6 +47,12 @@ internal class ChatPatches
                 return;
             }
 
+            if (senderID == ZNet.GetUID() && HostPlayer.IsListenServer)
+            {
+                // The host player's own shouts are reported by ChatRelay.
+                return;
+            }
+
             ZNetPeer peer = ZNet.instance.GetPeerByPlayerName(userName);
 
             // If peer is null, the message wasn't sent from a player

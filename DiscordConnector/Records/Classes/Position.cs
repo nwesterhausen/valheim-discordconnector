@@ -1,4 +1,6 @@
-﻿namespace DiscordConnector.Records;
+﻿using LiteDB;
+
+namespace DiscordConnector.Records;
 
 public class Position
 {
@@ -9,11 +11,16 @@ public class Position
         z = 0;
     }
 
-    public Position(float _x, float _y, float _z)
+    /// <summary>
+    ///     LiteDB fills read-only properties through this constructor, matching parameter names to field names.
+    ///     Without [BsonCtor] it used the empty constructor, so every stored position read back as (0,0,0).
+    /// </summary>
+    [BsonCtor]
+    public Position(float x, float y, float z)
     {
-        x = _x;
-        y = _y;
-        z = _z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     public float x { get; }

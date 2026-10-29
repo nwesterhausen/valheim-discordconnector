@@ -37,23 +37,18 @@ internal static class Handlers
         // Get the player's hostname to use for record keeping and logging
         string playerHostName = $"{peer.m_socket.GetHostName()}";
 
-        // Try adding the player to the joinedPlayers list. If we are not able to add them, check if it's a dead player before doing nothing.
+        // Try adding the player to the joinedPlayers list. If they're already there, this is a respawn, not a join.
+        // Deaths are detected from the OnDeath RPC instead (see ZNetPatches.DeathRpc), because players also respawn
+        // without dying (e.g. TeleportHome) and that used to be counted as a death.
         if (!joinedPlayers.Add(playerHostName))
         {
-            DiscordConnectorPlugin.StaticLogger.LogDebug($"{playerHostName} already exists in list of joined players.");
-
-            // Seems that player is dead if character ZDOID id is 0
-            // m_characterID id=0 means dead, user_id always matches peer.m_uid
-            if (peer.m_characterID.ID != 0)
-            {
-                Death(peer);
-            }
-
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"{playerHostName} respawned (already in joined players).");
             return;
         }
 
         DiscordConnectorPlugin.StaticLogger.LogDebug(
             $"Added player {playerHostName} peer_id:{peer.m_uid} ({peer.m_playerName}) to joined player list.");
+        Patches.ChatRelay.ExpectArrival(peer);
 
         // Create basic message pre-formatting
         string preFormattedMessage = "";
@@ -553,10 +548,7 @@ internal static class Handlers
                     DiscordConnectorPlugin.StaticConfig.ShoutMessage, userCleaned, nonPlayerHostName, text);
 
                 // Non-players shouldn't have a position, so disregard any position in the message formatting
-                if (message.Contains("%POS%"))
-                {
-                    message.Replace("%POS%", "");
-                }
+                message = message.Replace("%POS%", "");
 
                 DiscordApi.SendMessage(Webhook.Event.PlayerShout, message);
             }

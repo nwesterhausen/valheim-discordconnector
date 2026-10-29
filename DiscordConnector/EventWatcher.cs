@@ -33,6 +33,9 @@ internal class EventWatcher
     /// <summary>
     ///     Activate the EventWatcher after the Event System has loaded! Otherwise it will provide false-positives.
     /// </summary>
+    /// <summary>True while the watcher is checking for random events.</summary>
+    internal bool IsActive => randEventTimer.Enabled;
+
     public void Activate()
     {
         randEventTimer.Start();

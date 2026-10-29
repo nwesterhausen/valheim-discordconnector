@@ -19,7 +19,7 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
     internal const string ModName = "DiscordConnector";
     internal const string ModVersion = "3.1.3";
     internal const string Author = "nwesterhausen";
-    private const string ModGuid = Author + "." + ModName;
+    internal const string ModGuid = Author + "." + ModName;
     internal const string LegacyConfigPath = "games.nwest.valheim.discordconnector";
     internal const string LegacyModName = "discordconnector";
 
@@ -112,7 +112,7 @@ public class DiscordConnectorPlugin : BaseUnityPlugin
         if (StaticConfig.LeaderBoards[4].Enabled)
         {
             System.Timers.Timer leaderBoard5Timer = new();
-            leaderBoard5Timer.Elapsed += StaticLeaderBoards.LeaderBoard4.SendLeaderBoardOnTimer;
+            leaderBoard5Timer.Elapsed += StaticLeaderBoards.LeaderBoard5.SendLeaderBoardOnTimer;
             // Interval is learned from config file in minutes
             leaderBoard5Timer.Interval = 60 * 1000 * StaticConfig.LeaderBoards[4].PeriodInMinutes;
             StaticLogger.LogInfo(

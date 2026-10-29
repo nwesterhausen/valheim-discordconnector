@@ -556,7 +556,8 @@ internal static class MessageTransformer
         string formattedMessage = FormatPlayerMessage(rawMessage, playerName, playerId, shout, subtractOne);
         string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
 
-        return EmbedTemplates.ChatMessage(eventType, shout, playerName, null, worldName);
+        // Use the message built from the configured shout format, not just the raw shout text (issue #353).
+        return EmbedTemplates.ChatMessage(eventType, formattedMessage, playerName, null, worldName);
     }
 
     /// <summary>
@@ -579,7 +580,8 @@ internal static class MessageTransformer
         string formattedMessage = FormatPlayerMessage(rawMessage, playerName, playerId, shout, position, subtractOne);
         string worldName = ZNet.instance != null ? ZNet.instance.GetWorldName() : "Unknown World";
 
-        return EmbedTemplates.ChatMessage(eventType, shout, playerName, position, worldName);
+        // Use the message built from the configured shout format, not just the raw shout text (issue #353).
+        return EmbedTemplates.ChatMessage(eventType, formattedMessage, playerName, position, worldName);
     }
 
     /// <summary>

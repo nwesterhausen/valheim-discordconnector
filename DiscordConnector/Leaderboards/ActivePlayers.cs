@@ -58,7 +58,7 @@ internal static class ActivePlayersAnnouncement
     ///     about and then doing an meta count of how many records come back (see
     ///     <see cref="Records.Helper.CountUniquePlayers" />).
     /// </summary>
-    private static void SendActivePlayersBoard()
+    internal static void SendActivePlayersBoard()
     {
         if (DiscordConnectorPlugin.StaticConfig.ActivePlayersAnnouncement.DisabledWhenNooneOnline &&
             CurrentOnlinePlayers() == 0)
@@ -122,7 +122,16 @@ internal static class ActivePlayersAnnouncement
     {
         Task.Run(() =>
         {
-            SendActivePlayersBoard();
+            // Errors on a background task vanish silently, which made a broken announcement look like it was never
+            // sent at all (issues #319, #356). Log them instead.
+            try
+            {
+                SendActivePlayersBoard();
+            }
+            catch (System.Exception e)
+            {
+                DiscordConnectorPlugin.StaticLogger.LogError($"Active players announcement failed: {e}");
+            }
         });
     }
 }
