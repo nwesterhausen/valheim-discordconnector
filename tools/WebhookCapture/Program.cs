@@ -17,6 +17,7 @@ var messages = new ConcurrentQueue<JsonObject>();
 var logPath = Environment.GetEnvironmentVariable("CAPTURE_LOG");
 var forwardUrl = Environment.GetEnvironmentVariable("FORWARD_URL");
 var http = new HttpClient();
+var logLock = new object();
 
 app.MapPost("/webhook/{name}", async (string name, HttpRequest req) =>
 {
@@ -34,7 +35,17 @@ app.MapPost("/webhook/{name}", async (string name, HttpRequest req) =>
     messages.Enqueue(entry);
     var line = entry.ToJsonString();
     Console.WriteLine(line);
-    if (!string.IsNullOrEmpty(logPath)) await File.AppendAllTextAsync(logPath, line + Environment.NewLine);
+    if (!string.IsNullOrEmpty(logPath))
+    {
+        // The primary and secondary webhooks get each message at the same moment. Two appends at once failed
+        // with "file in use" and returned 500, so writes take turns (and readers may keep the file open).
+        lock (logLock)
+        {
+            using var fs = new FileStream(logPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite | FileShare.Delete);
+            using var w = new StreamWriter(fs, new UTF8Encoding(false));
+            w.WriteLine(line);
+        }
+    }
 
     if (!string.IsNullOrEmpty(forwardUrl))
     {

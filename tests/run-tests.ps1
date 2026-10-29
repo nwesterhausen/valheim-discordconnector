@@ -188,6 +188,9 @@ $modErrors = Select-String -Path $bepLog -Pattern '^\[(Error|Fatal)\s*:\s*Discor
 $patchErrors = Select-String -Path $bepLog -Pattern 'HarmonyLib|Failed to patch|MissingMethodException|TypeLoadException' | ForEach-Object { $_.Line }
 if ($modErrors) { $modErrors | Select-Object -First 10 | ForEach-Object { Fail "mod logged: $_" } } else { Pass "no errors logged by DiscordConnector" }
 if ($patchErrors) { $patchErrors | Select-Object -First 10 | ForEach-Object { Fail "patch/load problem: $_" } } else { Pass "no Harmony patch or type-load errors" }
+# A webhook that answered with an error means a message was lost (the mod only retries rate limits).
+$webhookErrors = Select-String -Path $bepLog -Pattern 'Discord returned \d+' | ForEach-Object { $_.Line }
+if ($webhookErrors) { $webhookErrors | Select-Object -First 10 | ForEach-Object { Fail "webhook error: $_" } } else { Pass "every webhook request succeeded" }
 Copy-Item $bepLog (Join-Path $outDir "LogOutput-$stamp.log")
 
 if ($captureProc) { $captureProc | Stop-Process -Force -ErrorAction SilentlyContinue }
