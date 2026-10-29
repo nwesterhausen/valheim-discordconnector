@@ -26,10 +26,10 @@ see the messages.
 ## Running
 
 ```powershell
-.\tests\run-tests.ps1 -ServerPath E:\valheim-dev\server
-.\tests\run-tests.ps1 -ServerPath E:\valheim-dev\server -Slow        # includes the ~1 minute timer test
-.\tests\run-tests.ps1 -ServerPath E:\valheim-dev\server -Embeds      # with "fancier" embed messages
-.\tests\run-tests.ps1 -ServerPath E:\valheim-dev\server -DiscordWebhook https://discord.com/api/webhooks/...
+.\tests\run-tests.ps1 -ServerPath C:\valheim-server
+.\tests\run-tests.ps1 -ServerPath C:\valheim-server -Slow        # includes the ~1 minute timer test
+.\tests\run-tests.ps1 -ServerPath C:\valheim-server -Embeds      # with "fancier" embed messages
+.\tests\run-tests.ps1 -ServerPath C:\valheim-server -DiscordWebhook https://discord.com/api/webhooks/...
 ```
 
 The script builds everything, starts a fresh world, runs the tests, shuts the server down and

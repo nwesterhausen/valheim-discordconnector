@@ -13,8 +13,8 @@
     Exit code is the number of failed checks.
 
 .EXAMPLE
-    .\tests\run-tests.ps1 -ServerPath E:\valheim-dev\server
-    .\tests\run-tests.ps1 -ServerPath E:\valheim-dev\server -DiscordWebhook https://discord.com/api/webhooks/...
+    .\tests\run-tests.ps1 -ServerPath C:\valheim-server
+    .\tests\run-tests.ps1 -ServerPath C:\valheim-server -DiscordWebhook https://discord.com/api/webhooks/...
 #>
 param(
     [Parameter(Mandatory = $true)][string]$ServerPath,
