@@ -44,7 +44,10 @@ function Pass([string]$msg) { Write-Host "  PASS $msg" -ForegroundColor Green }
 
 # ---- Config helper: set "Key = Value" inside [Section], creating either if missing --------------
 function Set-CfgValue([string]$file, [string]$section, [string]$key, [string]$value) {
-    $lines = if (Test-Path $file) { [System.Collections.Generic.List[string]](Get-Content $file) } else { New-Object System.Collections.Generic.List[string] }
+    # Build the list explicitly: returning a List from an `if` unrolls it into a fixed-size array (or $null when
+    # empty), and Insert/Add then fail. That only happened on a fresh server, where the keys don't exist yet.
+    $lines = New-Object System.Collections.Generic.List[string]
+    if (Test-Path $file) { foreach ($l in Get-Content $file) { $lines.Add($l) } }
     $inSection = $false; $sectionIdx = -1
     for ($i = 0; $i -lt $lines.Count; $i++) {
         $line = $lines[$i]
