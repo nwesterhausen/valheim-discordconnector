@@ -18,7 +18,9 @@ see the messages.
    `BepInExPack_Valheim` folder into the server folder.
 3. Set `ValheimGamePath` in `Environment.props` to your Valheim **client** install, and add
    `<BepInExPath>` pointing at the server's `BepInEx` folder. The build needs the client's
-   `valheim_Data` folder and a BepInEx install.
+   `valheim_Data` folder and a BepInEx install. No client? Build against the server instead: run
+   `mklink /J valheim_Data valheim_server_Data` in the server folder and set `GamePath` to the server
+   folder (this is how GitHub Actions runs the tests, see `.github/actions/setup-valheim`).
 4. .NET SDK 8+ (the capture tool targets net10.0).
 
 ## Running
