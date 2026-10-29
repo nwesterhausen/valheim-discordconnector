@@ -49,14 +49,20 @@ jobs:
           .\tests\run-tests.ps1 -ServerPath "${{ steps.valheim.outputs.server-path }}" -Embeds -SkipBuild
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+      - name: Collect server log
+        if: always()
+        shell: pwsh
+        # The server is on a different drive from the checkout, and an artifact can't mix the two.
+        run: |
+          New-Item -ItemType Directory -Force tests/out | Out-Null
+          Copy-Item "${{ steps.valheim.outputs.server-path }}\BepInEx\LogOutput.log" tests/out/ -ErrorAction SilentlyContinue
+
       - name: Upload test results and logs
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: test-results
-          path: |
-            tests/out/
-            ${{ steps.valheim.outputs.server-path }}/BepInEx/LogOutput.log
+          path: tests/out/
           retention-days: 14
 
       - name: Upload Thunderstore packages
