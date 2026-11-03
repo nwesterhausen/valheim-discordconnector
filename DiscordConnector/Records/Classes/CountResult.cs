@@ -26,7 +26,7 @@ public class CountResult
 
     public static int CompareByName(CountResult cr1, CountResult cr2)
     {
-        return cr1.Name.CompareTo(cr2.Name);
+        return string.Compare(cr1.Name, cr2.Name, System.StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>

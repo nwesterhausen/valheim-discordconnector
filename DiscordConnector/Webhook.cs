@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -105,88 +106,56 @@ public class Webhook
         Event.PlayerFirstAll
     };
 
+    // Config tokens, matched without regard to case ("playerdeath" and "PlayerDeath" both work).
+    private static readonly Dictionary<string, Event> s_eventTokens = new(StringComparer.OrdinalIgnoreCase)
+    {
+        { "ALL", Event.ALL },
+        { "serverLifecycle", Event.ServerLifecycle },
+        { "eventLifecycle", Event.EventLifecycle },
+        { "playerAll", Event.PlayerAll },
+        { "playerFirstAll", Event.PlayerFirstAll },
+        { "leaderboardsAll", Event.LeaderboardsAll },
+        { "serverLaunch", Event.ServerLaunch },
+        { "serverStart", Event.ServerStart },
+        { "serverStop", Event.ServerStop },
+        { "serverShutdown", Event.ServerShutdown },
+        { "serverSave", Event.ServerSave },
+        { "eventStart", Event.EventStart },
+        { "eventPaused", Event.EventPaused },
+        { "eventResumed", Event.EventResumed },
+        { "eventStop", Event.EventStop },
+        { "playerJoin", Event.PlayerJoin },
+        { "playerLeave", Event.PlayerLeave },
+        { "playerShout", Event.PlayerShout },
+        { "playerPing", Event.PlayerPing },
+        { "playerDeath", Event.PlayerDeath },
+        { "playerFirstJoin", Event.PlayerFirstJoin },
+        { "playerFirstLeave", Event.PlayerFirstLeave },
+        { "playerFirstShout", Event.PlayerFirstShout },
+        { "playerFirstPing", Event.PlayerFirstPing },
+        { "playerFirstDeath", Event.PlayerFirstDeath },
+        { "activePlayers", Event.ActivePlayers },
+        { "leaderboard1", Event.Leaderboard1 },
+        { "leaderboard2", Event.Leaderboard2 },
+        { "leaderboard3", Event.Leaderboard3 },
+        { "leaderboard4", Event.Leaderboard4 },
+        { "leaderboard5", Event.Leaderboard5 },
+        { "cronjob", Event.CronJob },
+        { "newDayNumber", Event.NewDayNumber },
+        // Listed in docs/config/webhook.events.md but never parsed (issue #382).
+        { "other", Event.Other }
+    };
+
     public static Event StringToEvent(string eventToken)
     {
-        switch (eventToken)
+        if (eventToken != null && s_eventTokens.TryGetValue(eventToken.Trim(), out Event ev))
         {
-            case "ALL":
-                return Event.ALL;
-            case "serverLifecycle":
-                return Event.ServerLifecycle;
-            case "eventLifecycle":
-                return Event.EventLifecycle;
-            case "playerAll":
-                return Event.PlayerAll;
-            case "playerFirstAll":
-                return Event.PlayerFirstAll;
-            case "leaderboardsAll":
-                return Event.LeaderboardsAll;
-
-            case "serverLaunch":
-                return Event.ServerLaunch;
-            case "serverStart":
-                return Event.ServerStart;
-            case "serverStop":
-                return Event.ServerStop;
-            case "serverShutdown":
-                return Event.ServerShutdown;
-            case "serverSave":
-                return Event.ServerSave;
-
-            case "eventStart":
-                return Event.EventStart;
-            case "eventPaused":
-                return Event.EventPaused;
-            case "eventResumed":
-                return Event.EventResumed;
-            case "eventStop":
-                return Event.EventStop;
-
-            case "playerJoin":
-                return Event.PlayerJoin;
-            case "playerLeave":
-                return Event.PlayerLeave;
-            case "playerShout":
-                return Event.PlayerShout;
-            case "playerPing":
-                return Event.PlayerPing;
-            case "playerDeath":
-                return Event.PlayerDeath;
-
-            case "playerFirstJoin":
-                return Event.PlayerFirstJoin;
-            case "playerFirstLeave":
-                return Event.PlayerFirstLeave;
-            case "playerFirstShout":
-                return Event.PlayerFirstShout;
-            case "playerFirstPing":
-                return Event.PlayerFirstPing;
-            case "playerFirstDeath":
-                return Event.PlayerFirstDeath;
-
-            case "activePlayers":
-                return Event.ActivePlayers;
-            case "leaderboard1":
-                return Event.Leaderboard1;
-            case "leaderboard2":
-                return Event.Leaderboard2;
-            case "leaderboard3":
-                return Event.Leaderboard3;
-            case "leaderboard4":
-                return Event.Leaderboard4;
-            case "leaderboard5":
-                return Event.Leaderboard5;
-
-            case "cronjob":
-                return Event.CronJob;
-
-            case "newDayNumber":
-                return Event.NewDayNumber;
-
-            default:
-                DiscordConnectorPlugin.StaticLogger.LogDebug($"Unmatched event token '{eventToken}'");
-                return Event.None;
+            return ev;
         }
+
+        DiscordConnectorPlugin.StaticLogger.LogWarning(
+            $"Unknown webhook event '{eventToken}' in config (see docs/config/webhook.events.md for valid names).");
+        return Event.None;
     }
 
     public static List<Event> StringToEventList(string configEntry)
@@ -197,21 +166,27 @@ public class Webhook
             return [];
         }
 
-        //Clean string (remove all non-word non-semi-colon characters)
-        string cleaned = Regex.Replace(configEntry, @"[^;\w]", "");
+        // ';' is the documented separator, but people also use ',', ':' or spaces (issue #357), which used to glue
+        // two names together into one unknown name. Treat all of them as separators, then drop anything else.
+        string cleaned = Regex.Replace(configEntry.Trim(), @"[,:\s]+", ";");
+        cleaned = Regex.Replace(cleaned, @"[^;\w]", "");
         DiscordConnectorPlugin.StaticLogger.LogDebug($"Webhooks: cleaned config entry '{configEntry}' => '{cleaned}'");
 
         // Check for ALL case
-        if (cleaned.Equals("ALL"))
+        if (cleaned.Equals("ALL", StringComparison.OrdinalIgnoreCase))
         {
             return [Event.ALL];
         }
 
         List<Event> events = [];
 
-        foreach (string ev in cleaned.Split(';'))
+        foreach (string ev in cleaned.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
         {
-            events.Add(StringToEvent(ev));
+            Event parsed = StringToEvent(ev);
+            if (parsed != Event.None && !events.Contains(parsed))
+            {
+                events.Add(parsed);
+            }
         }
 
         DiscordConnectorPlugin.StaticLogger.LogDebug(

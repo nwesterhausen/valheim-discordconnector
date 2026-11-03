@@ -538,3 +538,5 @@ docs/.vitepress/cache
 .pnp.*
 
 .pnp*
+# Test run output
+tests/out/

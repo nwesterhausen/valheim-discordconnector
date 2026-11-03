@@ -42,6 +42,16 @@ internal class GamePatches
         [HarmonyBefore("HackShardGaming.WorldofValheimServerSideCharacters")]
         private static void Prefix()
         {
+            if (HostPlayer.IsListenServer)
+            {
+                // The host quitting the game is also the host leaving.
+                ZNetPeer? host = HostPlayer.Peer();
+                if (host != null)
+                {
+                    Handlers.Leave(host);
+                }
+            }
+
             if (DiscordConnectorPlugin.StaticConfig.StopMessageEnabled)
             {
                 DiscordApi.SendMessage(
@@ -64,6 +74,13 @@ internal class GamePatches
                     Webhook.Event.ServerShutdown,
                     MessageTransformer.FormatServerMessage(DiscordConnectorPlugin.StaticConfig.ShutdownMessage)
                 );
+            }
+
+            // The process exits right after this. Give queued messages (including the two above) a moment to go
+            // out, otherwise the stop/shutdown messages are often lost.
+            if (!DiscordApi.Flush(TimeSpan.FromSeconds(5)))
+            {
+                DiscordConnectorPlugin.StaticLogger.LogWarning("Some Discord messages were not sent before shutdown.");
             }
         }
     }

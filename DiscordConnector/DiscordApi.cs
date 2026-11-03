@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
@@ -533,7 +534,15 @@ internal class DiscordApi
     /// </summary>
     /// <param name="webhook">The webhook to use for the request</param>
     /// <param name="byteArray">The payload as a byte array</param>
-    private static async void DispatchRequest(WebhookEntry webhook, string serializedJson)
+    private static readonly HttpClient s_httpClient = new() { Timeout = TimeSpan.FromSeconds(30) };
+
+    // One queue per webhook URL. Messages to the same webhook are sent one at a time, in the order they were
+    // created; sending them all at once let Discord receive them out of order.
+    private static readonly Dictionary<string, Task> s_queues = new();
+    private static readonly object s_queueLock = new();
+    private const int MaxRateLimitRetries = 3;
+
+    private static void DispatchRequest(WebhookEntry webhook, string serializedJson)
     {
         if (string.IsNullOrEmpty(webhook.Url))
         {
@@ -546,36 +555,91 @@ internal class DiscordApi
         DiscordConnectorPlugin.StaticLogger.LogDebug(
             $"DispatchRequest.{requestId}: sending {serializedJson} to Discord");
 
-        // Create a web request to send the payload to discord
-        HttpClient request = new();
-        StringContent content = new(serializedJson, Encoding.UTF8, "application/json");
+        string url = webhook.Url;
+        lock (s_queueLock)
+        {
+            s_queues.TryGetValue(url, out Task? tail);
+            Task next = (tail ?? Task.CompletedTask)
+                .ContinueWith(_ => SendAsync(url, serializedJson, requestId), TaskScheduler.Default)
+                .Unwrap();
+            s_queues[url] = next;
+        }
+    }
+
+    /// <summary>
+    ///     Waits (up to <paramref name="timeout" />) for every queued webhook message to be sent.
+    ///     Used at shutdown so the "server stopped" messages aren't lost when the process exits.
+    /// </summary>
+    internal static bool Flush(TimeSpan timeout)
+    {
+        Task[] pending;
+        lock (s_queueLock)
+        {
+            pending = s_queues.Values.ToArray();
+        }
 
         try
         {
-            HttpResponseMessage response = await request.PostAsync(webhook.Url, content);
-            DiscordConnectorPlugin.StaticLogger.LogDebug(
-                                $"DispatchRequest.{requestId}: Response Code: {response.StatusCode}");
-
-            if(response.StatusCode != HttpStatusCode.NoContent)
-            {
-                var responseFromServer = await response.Content.ReadAsStringAsync();
-                if (responseFromServer.Length > 0)
-                {
-                    DiscordConnectorPlugin.StaticLogger.LogDebug(
-                        $"DispatchRequest.{requestId}: Response from server: {responseFromServer}");
-                }
-                else
-                {
-                    DiscordConnectorPlugin.StaticLogger.LogDebug(
-                        $"DispatchRequest.{requestId}: Empty response from server (normal)");
-                }
-            }
+            return Task.WaitAll(pending, timeout);
         }
         catch (Exception ex)
         {
-            DiscordConnectorPlugin.StaticLogger.LogError(
-                        $"DispatchRequest.{requestId}: Error getting web response: {ex}");
-            return;
+            DiscordConnectorPlugin.StaticLogger.LogDebug($"Flush: {ex.Message}");
+            return false;
+        }
+    }
+
+    private static async Task SendAsync(string url, string serializedJson, string requestId)
+    {
+        for (int attempt = 0; ; attempt++)
+        {
+            try
+            {
+                // One shared client; disposing each response returns its connection to the pool.
+                using StringContent content = new(serializedJson, Encoding.UTF8, "application/json");
+                using HttpResponseMessage response = await s_httpClient.PostAsync(url, content).ConfigureAwait(false);
+                DiscordConnectorPlugin.StaticLogger.LogDebug(
+                    $"DispatchRequest.{requestId}: Response Code: {response.StatusCode}");
+
+                if ((int)response.StatusCode == 429 && attempt < MaxRateLimitRetries)
+                {
+                    // Discord rate limit: wait as long as it asks, then try again (keeps the message order).
+                    TimeSpan wait = response.Headers.RetryAfter?.Delta ?? TimeSpan.FromSeconds(1);
+                    if (wait > TimeSpan.FromSeconds(30))
+                    {
+                        wait = TimeSpan.FromSeconds(30);
+                    }
+
+                    DiscordConnectorPlugin.StaticLogger.LogWarning(
+                        $"DispatchRequest.{requestId}: rate limited by Discord, retrying in {wait.TotalSeconds:0.0}s");
+                    await Task.Delay(wait).ConfigureAwait(false);
+                    continue;
+                }
+
+                if (response.StatusCode != HttpStatusCode.NoContent)
+                {
+                    string responseFromServer = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        DiscordConnectorPlugin.StaticLogger.LogWarning(
+                            $"DispatchRequest.{requestId}: Discord returned {(int)response.StatusCode}: {responseFromServer}");
+                    }
+                    else if (responseFromServer.Length > 0)
+                    {
+                        DiscordConnectorPlugin.StaticLogger.LogDebug(
+                            $"DispatchRequest.{requestId}: Response from server: {responseFromServer}");
+                    }
+                }
+
+                return;
+            }
+            catch (Exception ex)
+            {
+                DiscordConnectorPlugin.StaticLogger.LogError(
+                    $"DispatchRequest.{requestId}: Error getting web response: {ex.Message}");
+                DiscordConnectorPlugin.StaticLogger.LogDebug(ex.ToString());
+                return;
+            }
         }
     }
 

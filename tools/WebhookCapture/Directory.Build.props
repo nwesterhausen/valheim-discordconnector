@@ -1,0 +1,3 @@
+<Project>
+  <!-- Stops the repo-root Directory.Build.props (mod settings) from applying to this tool. -->
+</Project>

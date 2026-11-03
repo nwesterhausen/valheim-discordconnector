@@ -40,13 +40,38 @@ namespace DiscordConnector
         /// <returns>String ready to send to discord listing each player and their value.</returns>
         public static string RankedCountResultToString(List<CountResult> rankings)
         {
-            string res = "";
+            List<string> lines = new();
             for (int i = 0; i < rankings.Count; i++)
             {
-                res += $"{i + 1}: {rankings[i].Name}: {rankings[i].Count}{Environment.NewLine}";
+                lines.Add($"{i + 1}: {rankings[i].Name}: {rankings[i].Count}");
             }
 
-            return res;
+            return JoinWithinFieldLimit(lines);
+        }
+
+        /// <summary>Discord rejects the whole message if any embed field value is longer than this.</summary>
+        internal const int MaxFieldLength = 1024;
+
+        /// <summary>
+        ///     Joins ranking lines, dropping lines from the end so the text fits in one Discord field. Up to 48 rankings
+        ///     can be configured, and with long names or durations that went over the limit, so the leaderboard was
+        ///     never posted.
+        /// </summary>
+        internal static string JoinWithinFieldLimit(List<string> lines)
+        {
+            string newLine = Environment.NewLine;
+            System.Text.StringBuilder res = new();
+            foreach (string line in lines)
+            {
+                if (res.Length + line.Length + newLine.Length > MaxFieldLength)
+                {
+                    break;
+                }
+
+                res.Append(line).Append(newLine);
+            }
+
+            return res.ToString();
         }
 
         // https://stackoverflow.com/a/4423615/624900
@@ -86,14 +111,14 @@ namespace DiscordConnector
         /// <returns>String ready to send to discord listing each player and their duration.</returns>
         public static string RankedSecondsToString(List<CountResult> rankings)
         {
-            string res = "";
+            List<string> lines = new();
             for (int i = 0; i < rankings.Count; i++)
             {
                 string formattedDuration = ToReadableString(TimeSpan.FromSeconds(rankings[i].Count));
-                res += $"{i + 1}: {rankings[i].Name}: {formattedDuration}{Environment.NewLine}";
+                lines.Add($"{i + 1}: {rankings[i].Name}: {formattedDuration}");
             }
 
-            return res;
+            return JoinWithinFieldLimit(lines);
         }
     }
 }
@@ -181,55 +206,38 @@ namespace DiscordConnector.Leaderboards
         /// <returns>A tuple with two dates for the time range, where the earlier date is <code>Item1</code></returns>
         public static Tuple<DateTime, DateTime> StartEndDatesForTimeRange(TimeRange timeRange)
         {
+            return StartEndDatesForTimeRange(timeRange, DateTime.Today);
+        }
+
+        /// <summary>
+        ///     Same as <see cref="StartEndDatesForTimeRange(TimeRange)" />, as if <paramref name="today" /> were today.
+        /// </summary>
+        internal static Tuple<DateTime, DateTime> StartEndDatesForTimeRange(TimeRange timeRange, DateTime today)
+        {
+            today = today.Date;
             switch (timeRange)
             {
                 case TimeRange.Today:
-                    DateTime today = DateTime.Today;
                     return new Tuple<DateTime, DateTime>(today, today);
 
                 case TimeRange.Yesterday:
-                    DateTime yesterday = DateTime.Today.AddDays(-1.0);
+                    DateTime yesterday = today.AddDays(-1.0);
                     return new Tuple<DateTime, DateTime>(yesterday, yesterday);
 
                 case TimeRange.PastWeek:
-                    DateTime weekAgo = DateTime.Today.AddDays(-7.0);
-                    DateTime today1 = DateTime.Today;
-                    return new Tuple<DateTime, DateTime>(weekAgo, today1);
+                    // Seven days including today (the old range started 7 days back, covering 8 days).
+                    return new Tuple<DateTime, DateTime>(today.AddDays(-6.0), today);
 
                 case TimeRange.WeekSundayToSaturday:
-                    DateTime today2 = DateTime.Today;
-                    int dow = (int)today2.DayOfWeek;
-
-                    DateTime sunday = today2.AddDays(-dow);
-                    DateTime saturday = today2.AddDays(6 - dow);
-                    // If we are on sunday, show for the current week
-                    if (today2.DayOfWeek == DayOfWeek.Sunday)
-                    {
-                        sunday = today2;
-                        saturday = today2.AddDays(6);
-                    }
-
-                    return new Tuple<DateTime, DateTime>(sunday, saturday);
+                    int daysSinceSunday = (int)today.DayOfWeek;
+                    DateTime sunday = today.AddDays(-daysSinceSunday);
+                    return new Tuple<DateTime, DateTime>(sunday, sunday.AddDays(6));
 
                 case TimeRange.WeekMondayToSunday:
-                    DateTime today3 = DateTime.Today;
-                    int dow1 = (int)today3.DayOfWeek;
-
-                    DateTime
-                        monday = today3.AddDays(1 -
-                                                dow1); // Monday - day of week = goes backward to previous monday until we are in Sunday
-                    DateTime
-                        sunday1 = today3.AddDays(7 -
-                                                 dow1); // (Next monday) - day of week = goes to next monday until we are in Sunday then shows next Sunday
-
-                    // If we are on sunday, fix to show "current" week still
-                    if (today3.DayOfWeek == DayOfWeek.Sunday)
-                    {
-                        monday = today3.AddDays(-6); // Sunday - 6 = previous monday
-                        sunday = today3; // Sunday is today
-                    }
-
-                    return new Tuple<DateTime, DateTime>(monday, sunday1);
+                    // On a Sunday this used to set the wrong variable, giving Monday to *next* Sunday (13 days).
+                    int daysSinceMonday = ((int)today.DayOfWeek + 6) % 7;
+                    DateTime monday = today.AddDays(-daysSinceMonday);
+                    return new Tuple<DateTime, DateTime>(monday, monday.AddDays(6));
 
                 case TimeRange.AllTime:
                     return new Tuple<DateTime, DateTime>(DummyDateTime, DummyDateTime);

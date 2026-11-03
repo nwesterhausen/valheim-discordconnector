@@ -21,18 +21,20 @@ internal static class Strings
     public static string HumanReadableMs(double ms)
     {
         TimeSpan t = TimeSpan.FromMilliseconds(ms);
+        // Total hours, not t.Hours: a 3 day period used to print as "00h:00m" because the days were dropped.
+        int hours = (int)t.TotalHours;
 
         if (t.Milliseconds == t.Seconds && t.Seconds == 0)
         {
             return string.Format(
                 "{0:D2}h:{1:D2}m",
-                t.Hours,
+                hours,
                 t.Minutes);
         }
 
         return string.Format(
             "{0:D2}h:{1:D2}m:{2:D2}s:{3:D3}ms",
-            t.Hours,
+            hours,
             t.Minutes,
             t.Seconds,
             t.Milliseconds);

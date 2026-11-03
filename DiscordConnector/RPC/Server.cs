@@ -2,6 +2,11 @@ using DiscordConnector.Patches;
 
 namespace DiscordConnector.RPC;
 
+/// <summary>
+///     Receives chat messages forwarded by the optional DiscordConnector client plugin.
+///     The server also sees shouts and pings on its own (see <see cref="ChatRelay" />); the client plugin is still
+///     useful for shouts from a player who is alone on the server, which the game never sends to the server.
+/// </summary>
 public static class Server
 {
     internal static void RPC_OnNewChatMessage(long sender, ZPackage pkg)
@@ -10,69 +15,46 @@ public static class Server
 
         if (sender == 0)
         {
-            DiscordConnectorPlugin.StaticLogger.LogError($"Server.{Common.RPC_OnNewChatMessage}: Sender is 0");
+            DiscordConnectorPlugin.StaticLogger.LogWarning($"Server.{Common.RPC_OnNewChatMessage}: Sender is 0");
             return;
         }
 
         ZNetPeer peer = ZNet.instance.GetPeer(sender);
         if (peer == null)
         {
-            DiscordConnectorPlugin.StaticLogger.LogError($"Server.{Common.RPC_OnNewChatMessage}: Peer is null");
+            DiscordConnectorPlugin.StaticLogger.LogWarning($"Server.{Common.RPC_OnNewChatMessage}: Peer is null");
             return;
         }
 
-        string hostName = peer.m_socket.GetHostName();
-        string playerName = peer.m_playerName;
-        DiscordConnectorPlugin.StaticLogger.LogDebug(
-            $"Server.{Common.RPC_OnNewChatMessage}: Message from {playerName}/{hostName}");
-        ChatMessageDetail chatMessageDetail = ChatMessageDetail.FromZPackage(pkg);
-        DiscordConnectorPlugin.StaticLogger.LogDebug(
-            $"Pkg: {chatMessageDetail}");
-
-        if (chatMessageDetail == null)
+        ChatMessageDetail chatMessageDetail;
+        try
         {
-            DiscordConnectorPlugin.StaticLogger.LogError(
-                $"Server.{Common.RPC_OnNewChatMessage}: ChatMessageDetail is null");
+            chatMessageDetail = ChatMessageDetail.FromZPackage(pkg);
+        }
+        catch (System.Exception e)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogWarning(
+                $"Server.{Common.RPC_OnNewChatMessage}: could not read message from {peer.m_playerName}: {e.Message}");
             return;
         }
 
-        switch (chatMessageDetail.TalkerType)
+        DiscordConnectorPlugin.StaticLogger.LogDebug($"Pkg: {chatMessageDetail}");
+
+        if (chatMessageDetail.TalkerType == Talker.Type.Shout)
         {
-            case Talker.Type.Normal:
-                // Handlers.PlayerChat(peer, chatMessageDetail.Pos, chatMessageDetail.Text);
-                DiscordConnectorPlugin.StaticLogger.LogInfo(
-                    $"Server.{Common.RPC_OnNewChatMessage}: Normal message '{chatMessageDetail.Text}' at {chatMessageDetail.Pos}");
-                break;
-            case Talker.Type.Shout:
-                if (chatMessageDetail.Text == ChatMessageDetail.EmptyTextMessage)
-                {
-                    DiscordConnectorPlugin.StaticLogger.LogDebug(
-                        $"Skipping shout message '{ChatMessageDetail.EmptyTextMessage}'");
-                    return;
-                }
+            if (chatMessageDetail.Text == ChatMessageDetail.EmptyTextMessage)
+            {
+                return;
+            }
 
-                if (chatMessageDetail.Text == ChatPatches.ArrivalShout)
-                {
-                    DiscordConnectorPlugin.StaticLogger.LogInfo(
-                        $"Server.{Common.RPC_OnNewChatMessage}: Arrival shout message '{ChatPatches.ArrivalShout}' at {chatMessageDetail.Pos}");
-                    Handlers.Join(peer);
-                    return;
-                }
-
-                Handlers.Shout(peer, chatMessageDetail.Pos, chatMessageDetail.Text);
-                break;
-            case Talker.Type.Whisper:
-                // Handlers.Whisper(peer, chatMessageDetail.Pos, chatMessageDetail.Text);
-                DiscordConnectorPlugin.StaticLogger.LogInfo(
-                    $"Server.{Common.RPC_OnNewChatMessage}: Whisper message '{chatMessageDetail.Text}' at {chatMessageDetail.Pos}");
-                break;
-            case Talker.Type.Ping:
-                Handlers.Ping(peer, chatMessageDetail.Pos);
-                break;
-            default:
-                DiscordConnectorPlugin.StaticLogger.LogError(
-                    $"Server.{Common.RPC_OnNewChatMessage}: Unknown TalkerType {chatMessageDetail.TalkerType}");
-                break;
+            if (chatMessageDetail.Text == ChatPatches.ArrivalShout)
+            {
+                // Arrives around the same time as the character ID; Join ignores whichever comes second.
+                Handlers.Join(peer);
+            }
         }
+
+        ChatRelay.Report(peer, chatMessageDetail.TalkerType, chatMessageDetail.Pos, chatMessageDetail.Text,
+            ChatRelay.ClientPluginTarget, 0);
     }
 }

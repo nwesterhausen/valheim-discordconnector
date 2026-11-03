@@ -1,123 +1,47 @@
-# For most projects, this workflow file will not need changing; you simply need
-# to commit it to your repository.
-#
-# You may wish to alter this file to override the set of languages analyzed,
-# or to provide custom queries or build logic.
-#
-# ******** NOTE ********
-# We have attempted to detect the languages in your repository. Please check
-# the `language` matrix defined below to confirm you have the correct set of
-# supported CodeQL languages.
-#
-name: "CodeQL"
+name: CodeQL
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: [main]
   schedule:
     - cron: "33 18 * * 2"
 
 jobs:
   analyze:
-    name: Analyze
-    runs-on: ubuntu-latest
+    name: Analyze (C#)
+    runs-on: windows-latest
+    timeout-minutes: 45
     permissions:
       actions: read
       contents: read
       security-events: write
 
-    strategy:
-      fail-fast: false
-      matrix:
-        language: ["csharp"]
-        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python' ]
-        # Learn more:
-        # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v7
 
-      # Initializes the CodeQL tools for scanning.
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: "10.x"
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
-          languages: ${{ matrix.language }}
-          # If you wish to specify custom queries, you can do so here or in a config file.
-          # By default, queries listed here will override any specified in a config file.
-          # Prefix the list here with "+" to use these queries and those in the config file.
-          # queries: ./path/to/local/query, your-org/your-repo/queries@main
+          languages: csharp
+          build-mode: manual
 
+      - name: Set up Valheim dedicated server
+        uses: ./.github/actions/setup-valheim
 
-      # Get Valheim version id
-      - name: Get Valheim version id
-        id: valheimversion
-        run: echo "valheimversion=$(curl -s https://api.steamcmd.net/v1/info/896660 | jq -r ".data.\"896660\".depots.branches.public.buildid")" >> $GITHUB_OUTPUT
+      - name: Build
+        # -m:1: the Jotunn publicizer step races when projects build in parallel.
+        run: dotnet build DiscordConnector.sln -c Release -m:1
 
-      - name: Install Dependencies
-        run: dotnet restore DiscordConnector/DiscordConnector.csproj
-
-      # Cache the results
-      - name: Cache Valheim
-        id: cachevalheim
-        uses: actions/cache@v6
-        with:
-          path: ~/VHINSTALL
-          key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2333
-
-      - name: Install SteamCMD
-        if: steps.cachevalheim.outputs.cache-hit != 'true'
-        uses: CyberAndrii/setup-steamcmd@v1
-
-      # Prepare Valheim dependencies
-      - name: Prepare Valheim dependencies
-        if: steps.cachevalheim.outputs.cache-hit != 'true'
-        run: |
-          wget -O bepinex.zip "https://thunderstore.io/package/download/denikson/BepInExPack_Valheim/5.4.2333/"
-          unzip bepinex.zip -d ~/BepInExRaw
-          steamcmd +force_install_dir ~/VHINSTALL +login anonymous +app_update 896660 validate +exit
-          mv ~/VHINSTALL/valheim_server_Data/ ~/VHINSTALL/valheim_Data/
-          mv ~/BepInExRaw/BepInExPack_Valheim/* ~/VHINSTALL/
-
-      - name: Remove old publicized dlls from cache
-        if: steps.cachevalheim.outputs.cache-hit != 'true'
-        run: |
-          rm -rf ~/VHINSTALL/valheim_Data/Managed/publicized_assemblies
-          rm -rf ~/VHINSTALL/valheim_server_Data/Managed/publicized_assemblies
-
-      - name: Save Cache
-        if: steps.cachevalheim.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v6
-        with:
-          path: ~/VHINSTALL
-          key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2333
-
-      - name: Set references to DLLs
-        run: |
-          echo "<?xml version=\"1.0\" encoding=\"utf-8\"?><Project ToolsVersion=\"Current\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"><PropertyGroup><VALHEIM_INSTALL>$HOME/VHINSTALL/</VALHEIM_INSTALL></PropertyGroup></Project>" > Environment.props
-
-      - name: Reset DoPrebuild.props
-        run: |
-          echo "<?xml version=\"1.0\" encoding=\"utf-8\"?><Project ToolsVersion=\"Current\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"><PropertyGroup><ExecutePrebuild>true</ExecutePrebuild></PropertyGroup></Project>" > DiscordConnector/DoPrebuild.props
-
-      # Build DLLs
-      - name: Build solution
-        run: |
-          dotnet build DiscordConnector.sln
-
-      # ℹ️ Command-line programs to run using the OS shell.
-      # 📚 https://git.io/JvXDl
-
-      # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
-      #    and modify them (or add more) to build your code if your project
-      #    uses a compiled language
-
-      #- run: |
-      #   make bootstrap
-      #   make release
-
-      - name: Perform CodeQL Analysis
+      - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:csharp"

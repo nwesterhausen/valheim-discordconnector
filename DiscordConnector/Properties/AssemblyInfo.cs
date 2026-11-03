@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 using DiscordConnector;
@@ -19,6 +20,9 @@ using DiscordConnector;
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
+
+// Lets the in-server test plugin call internal handlers and database methods.
+[assembly: InternalsVisibleTo("DiscordConnector.Tests")]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("4D35EB3F-E4D0-4FD9-9258-9066A85F1BFE")]

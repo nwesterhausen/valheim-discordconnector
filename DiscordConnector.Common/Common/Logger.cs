@@ -89,18 +89,28 @@ public sealed class VdcLogger
     ///     /// This will attempt to write to the log file. If it fails, it will log an error to the BepInEx logger.
     ///     Nothing is returned from this method.
     /// </returns>
-    private async Task LogToFileAsync(string severity, string message)
+    private Task LogToFileAsync(string severity, string message)
     {
-        try
+        // Messages are logged from the main thread and from background webhook tasks at the same time. Opening the
+        // file from two threads at once failed with "Sharing violation", so writes take turns.
+        lock (s_fileLock)
         {
-            using StreamWriter writer = new(s_logFilePath, true);
-            await writer.WriteLineAsync($"{DateTime.Now} [{severity}]: {message}");
+            try
+            {
+                using FileStream stream = new(s_logFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                using StreamWriter writer = new(stream);
+                writer.WriteLine($"{DateTime.Now} [{severity}]: {message}");
+            }
+            catch (Exception ex)
+            {
+                s_logger.LogError($"Error writing to log file: {ex.Message}");
+            }
         }
-        catch (Exception ex)
-        {
-            s_logger.LogError($"Error writing to log file: {ex.Message}");
-        }
+
+        return Task.CompletedTask;
     }
+
+    private static readonly object s_fileLock = new();
 
 
     public async Task LogDebugAsync(string message)

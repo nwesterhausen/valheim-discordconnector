@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 using UnityEngine;
 
@@ -15,41 +16,32 @@ public class ChatMessageDetail(Vector3 pos, Talker.Type type, string text)
 
     private string EncodeSelf()
     {
-        string pos = $"{Pos.x}{Separator}{Pos.y}{Separator}{Pos.z}";
-        string talkerType = ((int)TalkerType).ToString();
+        // Invariant culture: "1.5" everywhere. A client using e.g. German settings used to send "1,5", which
+        // a server with English settings read as 15.
+        string pos = string.Join(Separator.ToString(),
+            Pos.x.ToString("R", CultureInfo.InvariantCulture),
+            Pos.y.ToString("R", CultureInfo.InvariantCulture),
+            Pos.z.ToString("R", CultureInfo.InvariantCulture));
+        string talkerType = ((int)TalkerType).ToString(CultureInfo.InvariantCulture);
         return $"{pos}{Separator}{talkerType}{Separator}{Text}";
     }
 
-    private static ChatMessageDetail DecodeSelf(string encoded)
+    internal static ChatMessageDetail DecodeSelf(string encoded)
     {
-        string[] parts = encoded.Split(Separator);
+        // The text is last and may itself contain '|', so split into at most 5 parts.
+        string[] parts = encoded.Split(new[] { Separator }, ExpectedParts);
         if (parts.Length != ExpectedParts)
         {
             throw new ArgumentException(
                 $"Invalid number of parts in encoded string ({parts.Length} instead of {ExpectedParts})");
         }
 
-        if (!float.TryParse(parts[0], out float x))
-        {
-            throw new ArgumentException(
-                $"Failed to parse Pos.X component: {parts[0]}");
-        }
-
-        if (!float.TryParse(parts[1], out float y))
-        {
-            throw new ArgumentException(
-                $"Failed to parse Pos.Y component: {parts[1]}");
-        }
-
-        if (!float.TryParse(parts[2], out float z))
-        {
-            throw new ArgumentException(
-                $"Failed to parse Pos.Z component: {parts[2]}");
-        }
-
+        float x = ParseFloat(parts[0], "X");
+        float y = ParseFloat(parts[1], "Y");
+        float z = ParseFloat(parts[2], "Z");
         Vector3 pos = new(x, y, z);
 
-        if (!int.TryParse(parts[3], out int talkerTypeInt))
+        if (!int.TryParse(parts[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out int talkerTypeInt))
         {
             throw new ArgumentException(
                 $"Failed to parse Talker.Type component: {parts[3]}");
@@ -64,6 +56,23 @@ public class ChatMessageDetail(Vector3 pos, Talker.Type type, string text)
         Talker.Type type = (Talker.Type)talkerTypeInt;
 
         return new ChatMessageDetail(pos, type, parts[4]);
+    }
+
+    private static float ParseFloat(string value, string component)
+    {
+        if (float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out float result))
+        {
+            return result;
+        }
+
+        // Older client plugins wrote numbers in the player's own format (e.g. "1,5").
+        if (float.TryParse(value, NumberStyles.Float, CultureInfo.CurrentCulture, out result) ||
+            float.TryParse(value.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out result))
+        {
+            return result;
+        }
+
+        throw new ArgumentException($"Failed to parse Pos.{component} component: {value}");
     }
 
     public ZPackage ToZPackage()

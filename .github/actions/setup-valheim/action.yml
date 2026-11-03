@@ -1,0 +1,97 @@
+name: Set up Valheim dedicated server
+description: >
+  Installs the Valheim dedicated server (SteamCMD, anonymous login) with BepInEx, caches it per game build,
+  and points the build at it. The mod is built against the server's game files, so the paid game client
+  isn't needed. Windows runners only.
+
+inputs:
+  bepinex-version:
+    description: BepInExPack_Valheim version from Thunderstore
+    default: "5.4.2351"
+  server-path:
+    description: Where to install the server
+    default: C:\valheim-server
+
+outputs:
+  server-path:
+    description: The server folder (pass to tests/run-tests.ps1 -ServerPath)
+    value: ${{ inputs.server-path }}
+  build-id:
+    description: Steam build id of the installed server
+    value: ${{ steps.version.outputs.build-id }}
+
+runs:
+  using: composite
+  steps:
+    - name: Get current server build id
+      id: version
+      shell: pwsh
+      run: |
+        $id = "unknown"
+        try {
+          $info = Invoke-RestMethod "https://api.steamcmd.net/v1/info/896660" -TimeoutSec 30
+          $id = $info.data.'896660'.depots.branches.public.buildid
+        } catch { Write-Warning "Could not look up the server build id: $_" }
+        "build-id=$id" >> $env:GITHUB_OUTPUT
+        Write-Host "Valheim dedicated server build: $id"
+
+    - name: Restore cached server
+      id: cache
+      uses: actions/cache/restore@v6
+      with:
+        path: ${{ inputs.server-path }}
+        key: valheim-server-win-${{ steps.version.outputs.build-id }}-bepinex-${{ inputs.bepinex-version }}
+
+    - name: Install server and BepInEx
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        $server = "${{ inputs.server-path }}"
+        $steam = Join-Path $env:RUNNER_TEMP "steamcmd"
+        New-Item -ItemType Directory -Force $steam, $server | Out-Null
+        Invoke-WebRequest "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip" -OutFile "$steam\steamcmd.zip"
+        Expand-Archive "$steam\steamcmd.zip" $steam -Force
+
+        # SteamCMD updates itself on the first run and often fails that run (exit code 7, or
+        # "Missing configuration"), so retry until the server is really there.
+        $ErrorActionPreference = "Continue"
+        for ($i = 1; $i -le 5 -and -not (Test-Path "$server\valheim_server.exe"); $i++) {
+          Write-Host "SteamCMD attempt $i"
+          & "$steam\steamcmd.exe" +force_install_dir $server +login anonymous +app_update 896660 validate +quit
+          Write-Host "SteamCMD exit code $LASTEXITCODE"
+        }
+        $ErrorActionPreference = "Stop"
+        if (-not (Test-Path "$server\valheim_server.exe")) { throw "SteamCMD did not install the Valheim dedicated server." }
+
+        $zip = Join-Path $env:RUNNER_TEMP "bepinex.zip"
+        Invoke-WebRequest "https://thunderstore.io/package/download/denikson/BepInExPack_Valheim/${{ inputs.bepinex-version }}/" -OutFile $zip
+        $unpacked = Join-Path $env:RUNNER_TEMP "bepinex"
+        Expand-Archive $zip $unpacked -Force
+        Copy-Item "$unpacked\BepInExPack_Valheim\*" $server -Recurse -Force
+
+    - name: Save server to cache
+      if: steps.cache.outputs.cache-hit != 'true' && steps.version.outputs.build-id != 'unknown'
+      uses: actions/cache/save@v6
+      with:
+        path: ${{ inputs.server-path }}
+        key: valheim-server-win-${{ steps.version.outputs.build-id }}-bepinex-${{ inputs.bepinex-version }}
+
+    - name: Point the build at the server
+      shell: pwsh
+      run: |
+        $server = "${{ inputs.server-path }}"
+        # The build looks for the game's files in valheim_Data, the client's folder name. The server has the same
+        # files in valheim_server_Data, so link one to the other.
+        if (-not (Test-Path "$server\valheim_Data")) {
+          New-Item -ItemType Junction -Path "$server\valheim_Data" -Target "$server\valheim_server_Data" | Out-Null
+        }
+        @"
+        <Project>
+          <PropertyGroup>
+            <GamePath>$server</GamePath>
+            <VALHEIM_INSTALL>$server</VALHEIM_INSTALL>
+            <BepInExPath>$server\BepInEx</BepInExPath>
+          </PropertyGroup>
+        </Project>
+        "@ | Set-Content Environment.props -Encoding utf8

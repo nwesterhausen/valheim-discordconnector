@@ -1,96 +1,73 @@
-name: Build
+name: Build and test
 
 on:
   workflow_dispatch:
   push:
+    branches: [main]
   pull_request:
-    branches: [main, staging]
+    branches: [main]
+  # Weekly, so a Valheim update that breaks the mod shows up even when nothing here changed.
+  schedule:
+    - cron: "17 6 * * 1"
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-and-test:
+    # The tests run inside a real Valheim dedicated server, which needs Windows here (tests/run-tests.ps1).
+    runs-on: windows-latest
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      # Get date
-      - name: Get current date
-        id: date
-        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-
-      # Get Valheim version id
-      - name: Get Valheim version id
-        id: valheimversion
-        run: echo "valheimversion=$(curl -s https://api.steamcmd.net/v1/info/896660 | jq -r ".data.\"896660\".depots.branches.public.buildid")" >> $GITHUB_OUTPUT
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: '8.x'
+          dotnet-version: "10.x"
 
-      - name: Install Dependencies
-        run: dotnet restore DiscordConnector/DiscordConnector.csproj
+      - name: Set up Valheim dedicated server
+        id: valheim
+        uses: ./.github/actions/setup-valheim
 
-      # Cache the results
-      - name: Cache Valheim
-        id: cachevalheim
-        uses: actions/cache@v6
-        with:
-          path: ~/VHINSTALL
-          key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2333
+      - name: Build
+        # -m:1: the Jotunn publicizer step races when projects build in parallel.
+        run: dotnet build DiscordConnector.sln -c Release -m:1
 
-      - name: Install SteamCMD
-        if: steps.cachevalheim.outputs.cache-hit != 'true'
-        uses: CyberAndrii/setup-steamcmd@v1
-
-      # Prepare Valheim dependencies
-      - name: Prepare Valheim dependencies
-        if: steps.cachevalheim.outputs.cache-hit != 'true'
+      - name: Run tests
+        shell: pwsh
         run: |
-          wget -O bepinex.zip "https://thunderstore.io/package/download/denikson/BepInExPack_Valheim/5.4.2333/"
-          unzip bepinex.zip -d ~/BepInExRaw
-          steamcmd +force_install_dir ~/VHINSTALL +login anonymous +app_update 896660 validate +exit
-          mv ~/VHINSTALL/valheim_server_Data/ ~/VHINSTALL/Valheim_Data/
-          mv ~/BepInExRaw/BepInExPack_Valheim/* ~/VHINSTALL/
+          .\tests\run-tests.ps1 -ServerPath "${{ steps.valheim.outputs.server-path }}" -Slow
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Remove old publicized dlls from cache
-        if: steps.cachevalheim.outputs.cache-hit != 'true'
+      - name: Run tests with embed messages
+        shell: pwsh
         run: |
-          rm -rf ~/VHINSTALL/valheim_Data/Managed/publicized_assemblies
-          rm -rf ~/VHINSTALL/valheim_server_Data/Managed/publicized_assemblies
+          .\tests\run-tests.ps1 -ServerPath "${{ steps.valheim.outputs.server-path }}" -Embeds -SkipBuild
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Save Cache
-        if: steps.cachevalheim.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v6
-        with:
-          path: ~/VHINSTALL
-          key: ${{ steps.valheimversion.outputs.valheimversion }}-BepInExPack-5.4.2333
-
-      - name: Set references to DLLs
+      - name: Collect server log
+        if: always()
+        shell: pwsh
+        # The server is on a different drive from the checkout, and an artifact can't mix the two.
         run: |
-          echo "<?xml version=\"1.0\" encoding=\"utf-8\"?><Project ToolsVersion=\"Current\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"><PropertyGroup><VALHEIM_INSTALL>$HOME/VHINSTALL/</VALHEIM_INSTALL></PropertyGroup></Project>" > Environment.props
+          New-Item -ItemType Directory -Force tests/out | Out-Null
+          Copy-Item "${{ steps.valheim.outputs.server-path }}\BepInEx\LogOutput.log" tests/out/ -ErrorAction SilentlyContinue
 
-      - name: Reset DoPrebuild.props
-        run: |
-          echo "<?xml version=\"1.0\" encoding=\"utf-8\"?><Project ToolsVersion=\"Current\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"><PropertyGroup><ExecutePrebuild>true</ExecutePrebuild></PropertyGroup></Project>" > DiscordConnector/DoPrebuild.props
-
-      # Build DLLs
-      - name: Build solution
-        run: |
-          dotnet build DiscordConnector.sln --configuration Release
-
-      - name: Upload a Build Artifact
+      - name: Upload test results and logs
+        if: always()
         uses: actions/upload-artifact@v7
         with:
-          # Artifact name
-          name: DiscordConnector-artifact.zip
-          # A file, directory or wildcard pattern that describes what to upload
-          path: "./Packages/Thunderstore/*.zip"
-          # The desired behavior if no files are found using the provided path.
+          name: test-results
+          path: tests/out/
+          retention-days: 14
 
-          # Duration after which artifact will expire in days. 0 means using default retention.
-          # Minimum 1 day. Maximum 90 days unless changed from the repository settings page.
+      - name: Upload Thunderstore packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: DiscordConnector-packages
+          path: Packages/Thunderstore/*.zip
           retention-days: 30
