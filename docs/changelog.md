@@ -2,7 +2,7 @@
 
 A full changelog of changes, dating all the way back to the first release.
 
-## Unreleased (Valheim 1.0 fixes)
+## 3.2.0 (Valheim 1.0 fixes)
 
 Built and tested against Valheim 1.0.20 (network version 41).
 
